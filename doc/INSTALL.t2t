@@ -34,3 +34,73 @@ Tim Sutton 2010
 % -------------------
 
 
+= For the terminally lazy =
+
+For a readonly checkout do:
+
+```
+git checkout git@github.com:qgis/qgis-django.git
+cd qgis-django
+sudo easy_install virtualenv
+virtualenv --no-site-packages python
+source python/bin/activate
+easy_install pip
+pip install -r REQUIREMENTS.txt
+cd qgis-django
+```          
+
+```
+sudo apt-get install postgresql-8.3-postgis
+```
+
+Copy the settings template:
+
+```
+cp settings_local.py.templ settings_local.py
+```
+
+Then run the createdb script:
+
+```
+./createdb.sh
+```
+
+''Note:'' If you already have postgis installed in your template1 db, 
+just do the following command rather than running the createdb script:
+
+```
+createdb qgis-trunk
+```
+
+Modify settings_local.py to include the correct username and pwd for the
+db connection.
+
+```
+python manage.py syncdb
+```
+
+Then run the project using the embedded test server:
+
+```
+python manage.py runserver
+```
+
+Then point your browser at:
+
+```
+http://localhost:8000
+```
+
+= Deploying a live site using wsgi =
+
+```
+cd /etc/apache/sites-available
+sudo cp <path to qgis-django>/apache/apache.virtenv.conf.example qgis-django.conf
+```
+
+Now modify qgis-django.conf to your needs (making sure paths and web url are correct) then:
+
+```
+sudo a2ensite qgis-django.conf
+sudo /etc/init.d/apache2 reload
+```

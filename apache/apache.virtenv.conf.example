@@ -1,31 +1,31 @@
 <VirtualHost *>
   ServerAdmin tim@linfiniti.com 
-  ServerName afis.localhost
-  ServerAlias www.afis.localhost
+  ServerName qgis-django.localhost
+  ServerAlias www.qgis-django.localhost
   DocumentRoot /var/www
-  CustomLog /var/log/apache2/afis.access.log combined
+  CustomLog /var/log/apache2/qgis-django.access.log combined
   # Possible values include: debug, info, notice, warn, error, crit,
   # alert, emerg.
   LogLevel debug 
   #warn
-  ErrorLog /var/log/apache2/afis.error.log
+  ErrorLog /var/log/apache2/qgis-django.error.log
   ServerSignature Off
-  WSGIScriptAlias / /home/web/afis/afis_django_viewer/apache/django.wsgi
-  WSGIDaemonProcess afis user=timlinux group=timlinux processes=1 threads=10 python-path=/home/web/afis/python/lib/python2.6/site-packages
-  WSGIProcessGroup afis
-  <Directory /home/web/afis/afis_django_viewer/apache>
+  WSGIScriptAlias / /home/web/qgis-django/apache/django.wsgi
+  WSGIDaemonProcess qgis user=timlinux group=timlinux processes=1 threads=10 python-path=/home/web/qgis-django/python/lib/python2.6/site-packages
+  WSGIProcessGroup qgis-django
+  <Directory /home/web/qgis-django/apache>
     Order deny,allow
     Allow from all
   </Directory>
 
-  Alias /admin_media /home/web/afis/python/lib/python2.6/site-packages/django/contrib/admin/media/
+  Alias /admin_media /home/web/qgis-django/python/lib/python2.6/site-packages/django/contrib/admin/media/
   <Location /admin_media>
     Order deny,allow
     Allow from all
     SetHandler None
   </Location>
 
-  Alias /media /home/web/afis/afis_django_viewer/media
+  Alias /media /home/web/qgis-django/qgis/media
   <Location /media>
     Order deny,allow
     Allow from all
