@@ -72,10 +72,18 @@ just do the following command rather than running the createdb script:
 createdb qgis-trunk
 ```
 
+''Note:'' Remember to source the activate script to enabled the python 
+virtual environment:
+
+```
+source python/bin/activate
+```
+
 Modify settings_local.py to include the correct username and pwd for the
 db connection.
 
 ```
+cd qgis
 python manage.py syncdb
 ```
 
