@@ -1,0 +1,6 @@
+django>=1.2
+django-registration
+django-debug-toolbar
+django-extensions
+psycopg2
+pil
