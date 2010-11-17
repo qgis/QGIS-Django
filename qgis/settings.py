@@ -1,5 +1,5 @@
 # Django settings for qgis project.
-import settings_local
+from settings_local import *
 
 TEMPLATE_DEBUG = DEBUG
 

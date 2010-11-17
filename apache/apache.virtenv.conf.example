@@ -11,7 +11,7 @@
   ErrorLog /var/log/apache2/qgis-django.error.log
   ServerSignature Off
   WSGIScriptAlias / /home/web/qgis-django/apache/django.wsgi
-  WSGIDaemonProcess qgis user=timlinux group=timlinux processes=1 threads=10 python-path=/home/web/qgis-django/python/lib/python2.6/site-packages
+  WSGIDaemonProcess qgis-django user=timlinux group=timlinux processes=1 threads=10 python-path=/home/web/qgis-django/python/lib/python2.6/site-packages
   WSGIProcessGroup qgis-django
   <Directory /home/web/qgis-django/apache>
     Order deny,allow
