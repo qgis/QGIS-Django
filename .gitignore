@@ -1,2 +1,20 @@
 *.*~
 *~
+
+# ABP: ignore quanta plus project files
+*.webprj
+*.session
+# ABP: ignore local settings
+local_settings.py
+# ABP: ignore pyc
+*.pyc
+# ABP: ignore zips
+*.zip
+*tar.gz
+*.tgz
+*.rar
+# ABP: ignore temp
+temp/*
+# ABP: ignore local settings
+settings_local.py
+
