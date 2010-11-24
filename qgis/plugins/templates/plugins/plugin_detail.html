@@ -1,0 +1,39 @@
+{% extends 'base.html' %}{% load i18n %}
+{% block body %}
+    <h1>{{ object.title }}</h1>
+    <div class="details">
+        <p><strong>{% trans "Description" %}:</strong> {{ object.description }}</p>
+        <p><strong>{% trans "Last stable version"%}:</strong> {{ object.stable }}</p>
+        <p><strong>{% trans "Last experimental version"%}:</strong> {{ object.experimental }}</p>
+    </div>
+    {# show all versions if user is authorized #}
+    {% if user in object.owners.all or user = object.created_by %}
+    <div class="button">{% trans "Admin" %}</div>
+    <div id="admin">
+    <div><a href="{% url version_create object.pk %}">{% trans "Add version" %}</a></div>
+    {% if object.pluginversion_set.count %}
+        <table>
+            <thead>
+                <tr>
+                <th>{% trans "Version" %}</th>
+                <th>{% trans "Last" %}</th>
+                <th>{% trans "Experimental" %}</th>
+                <th>{% trans "Date" %}</th>
+                <th colspan="2">{% trans "Manage" %}</th>
+                </tr>
+            </thead>
+            <tbody>{% for version in object.pluginversion_set.all %}
+                <tr>
+                    <td>{{ version.version }}</td>
+                    <td>{{ version.last }}</td>
+                    <td>{{ version.experimental }}</td>
+                    <td>{{ version.created_on }}</td>
+                    <td><a href="{% url version_delete version.pk %}">{% trans "Delete version" %}</a></td>
+                    <td><a href="{% url version_update version.pk %}">{% trans "Edit version" %}</a></td>
+                </tr>{% endfor %}
+            </tbody>
+        </table>
+    {% endif %}
+    </div>
+    {% endif %}
+{% endblock %}

@@ -1,5 +1,5 @@
 django>=1.2
-django-registration
+#hg+http://bitbucket.org/ubernostrum/django-registration
 django-debug-toolbar
 django-extensions
 psycopg2

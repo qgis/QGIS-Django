@@ -15,5 +15,11 @@ urlpatterns = patterns('',
     (r'^admin/', include(admin.site.urls)),
 
     # ABP: plugins app
-    (r'^plugins/', include('plugins.urls'))
+    (r'^plugins/', include('plugins.urls')),
 )
+
+#ABP: temporary home page
+urlpatterns += patterns('django.views.generic.simple',
+    (r'^$', 'direct_to_template', {'template': 'index.html'}),
+)
+

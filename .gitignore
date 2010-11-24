@@ -5,7 +5,7 @@
 *.webprj
 *.session
 # ABP: ignore local settings
-local_settings.py
+settings_local.py
 # ABP: ignore pyc
 *.pyc
 # ABP: ignore zips
@@ -15,6 +15,6 @@ local_settings.py
 *.rar
 # ABP: ignore temp
 temp/*
-# ABP: ignore local settings
-settings_local.py
-
+python/*
+packages/*
+packages/

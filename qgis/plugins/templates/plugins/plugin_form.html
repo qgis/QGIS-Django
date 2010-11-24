@@ -1,0 +1,14 @@
+{% extends 'base.html' %}{% load i18n %}
+{% block body %}
+    <h1>{% trans "Add a new plugin" %}</h1>
+    <form action="" method="post">{% csrf_token %}
+        {% for field in form %}
+            <div class="fieldWrapper">
+                {{ field.errors }}
+                {{ field.label_tag }}: {{ field }}
+            </div>
+        {% endfor %}
+        <p><input type="submit" value="{% trans "Create" %}" /></p>
+    </form>
+
+{% endblock %}

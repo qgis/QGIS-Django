@@ -1,0 +1,31 @@
+{% load i18n %}<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+
+<head>
+  <title>QGIS Plugins Repository</title>
+  <meta name="AUTHOR" content="ItOpen" />
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+  <style type="text/css">
+  /* <![CDATA[ */
+
+  /* ]]> */
+  </style>
+  <script type="text/javascript">
+  /* <![CDATA[ */
+
+  /* ]]> */
+  </script>
+</head>
+<body>
+{% if messages %}
+<ul class="messages">
+    {% for message in messages %}
+    <li{% if message.tags %} class="{{ message.tags }}"{% endif %}>{{ message }}</li>
+    {% endfor %}
+</ul>
+{% endif %}
+{% block body %}
+{% endblock %}
+</body>
+</html>
