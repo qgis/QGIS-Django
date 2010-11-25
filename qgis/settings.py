@@ -1,12 +1,14 @@
 # Django settings for qgis project.
-from settings_local import *
 
 # ABP: More portable config
 import os
 SITE_ROOT = os.path.dirname(os.path.realpath(__file__))
 
-TEMPLATE_DEBUG = DEBUG
+TEMPLATE_DEBUG = False
 
+ADMINS = (
+    ('Your Name', 'info@domain.com'),
+)
 MANAGERS = ADMINS
 
 # Local time zone for this installation. Choices can be found here:
@@ -62,6 +64,9 @@ MIDDLEWARE_CLASSES = (
     'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
+    # ABP:
+    'django_sorting.middleware.SortingMiddleware',
+    'pagination.middleware.PaginationMiddleware',
 )
 
 ROOT_URLCONF = 'qgis.urls'
@@ -86,6 +91,20 @@ INSTALLED_APPS = (
 
     # ABP:
     'plugins',
+    'django_sorting',
+    'pagination',
+    'django.contrib.humanize',
+)
+
+TEMPLATE_CONTEXT_PROCESSORS = (
+    "django.core.context_processors.auth",
+    "django.core.context_processors.debug",
+    "django.core.context_processors.i18n",
+    "django.core.context_processors.media",
+    "django.core.context_processors.request",
 )
 
 ACCOUNT_ACTIVATION_DAYS = 7 # One-week activation window; you may, of course, use a different value
+
+# Local settings overrides
+from settings_local import *

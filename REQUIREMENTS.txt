@@ -1,6 +1,8 @@
 django>=1.2
-#hg+http://bitbucket.org/ubernostrum/django-registration
+#django-registration
 django-debug-toolbar
 django-extensions
 psycopg2
 pil
+django-pagination
+django-sorting

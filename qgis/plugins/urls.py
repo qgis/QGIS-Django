@@ -4,7 +4,6 @@ from plugins.models import Plugin, PluginVersion
 
 info_dict =  {
     'queryset' : Plugin.objects.filter(published = True),
-    'paginate_by' : 10,
 }
 
 detail_info_dict = {
@@ -25,6 +24,7 @@ urlpatterns += patterns('plugins.views',
     url(r'^version/(?P<plugin_id>[0-9]+)/add/$', 'version_create', {}, name = 'version_create'),
     url(r'^version/(?P<version_id>[0-9]+)/delete/$', 'version_delete', {}, name = 'version_delete'),
     url(r'^version/(?P<version_id>[0-9]+)/update/$', 'version_update', {}, name = 'version_update'),
-    url(r'^version/(?P<version_id>[0-9]+)/$', 'version_detail', {}, name = 'version_detail'),
+    url(r'^version/(?P<version_id>[0-9]+)/download/$', 'version_download', {}, name = 'version_download'),
+
 )
 

@@ -45,7 +45,7 @@ class Plugin (models.Model):
     featured        = models.BooleanField(_('Featured'), default = False)
 
     class Meta:
-        ordering = ('title' , 'modified_on')
+        ordering = ('featured', 'title' , 'modified_on')
         permissions = (
             ("can_publish", "Can publish plugins"),
         )
@@ -73,12 +73,12 @@ class PluginVersion (models.Model):
     # owners
     created_by      = models.ForeignKey(User, verbose_name = _('Created by'))
     # version info, the first should be read from plugin
-    min_qg_version  = models.CharField(_('Minimum QGIS version'), editable = False, max_length = 32)
+    min_qg_version  = models.CharField(_('Minimum QGIS version'), max_length = 32)
     version         = models.CharField(_('Version'), max_length = 32)
     changelog       = models.TextField(_('Changelog'))
 
     # the file!
-    package         = models.FileField(_('Plugin package'), upload_to = 'packages')
+    package         = models.FileField(_('Plugin package'), upload_to = 'static/packages')
     # Flags TODO: checks on unique last/experimental
     experimental    = models.BooleanField(_('Experimental flag'), default = False, help_text = _("Check this box if this version is experimental, leave unchecked if it's stable"))
     last            = models.BooleanField(_('Last flag'), default = True, help_text = _('Check this box if this version is the latest'))
@@ -86,10 +86,17 @@ class PluginVersion (models.Model):
     def save(self, *args, **kwargs):
         """
         Soft trigger: ensures that last is unique (among experimental and stable = not experimental)
+        Update modified_on in parent
         """
         versions_to_check = PluginVersion.objects.filter(plugin = self.plugin, experimental = self.experimental)
+
+        # Onli change modified_on when a new version is created,
+        # each download triggers a save
         if self.pk:
             versions_to_check = versions_to_check.exclude(pk = self.pk)
+        else:
+            self.plugin.modified_on = self.created_on
+
         if self.last:
             for p in versions_to_check:
                 p.last = False

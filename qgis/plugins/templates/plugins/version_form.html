@@ -1,6 +1,6 @@
 {% extends 'base.html' %}{% load i18n %}
 {% block body %}
-    <h1>{% trans "Add a new version for the plugin" %} {{ plugin }}</h1>
+    <h1>{{ form_title }} {{ plugin }}</h1>
     <form action="" method="post" enctype="multipart/form-data">{% csrf_token %}
         {% for field in form %}
             <div class="fieldWrapper">
@@ -8,7 +8,7 @@
                 {{ field.label_tag }}: {{ field }}
             </div>
         {% endfor %}
-        <p><input type="submit" value="{% trans "Create" %}" /></p>
+        <p><input type="submit" value="{% trans "Save" %}" /> <a href="javascript:history.back()">{% trans "Back" %}</a></p>
     </form>
 
 {% endblock %}

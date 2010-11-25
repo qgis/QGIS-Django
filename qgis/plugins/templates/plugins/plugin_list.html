@@ -1,35 +1,45 @@
-{% extends 'base.html' %}{% load i18n %}
+{% extends 'base.html' %}{% load i18n sorting_tags pagination_tags humanize %}
 {% block body %}
     <h1>{% trans "QGIS Plugins list" %}</h1>
     {% if perms.plugins.can_add %}
     <div class="button"><a href="{% url plugin_create %}">{% trans "Add plugin" %}</a></div>
     {% endif %}
+    {% if object_list.count %}
+    {% autosort object_list %}
+    {% autopaginate object_list %}
     <div class="list">
-    {% for object in page_obj.object_list %}
-    <div class"item">
-        <h2><a href="{% url plugin_detail object.pk %}">{{ object.title }}</a></h2>
-        <p><strong>{% trans "Last stable version"%}:</strong> {{ object.stable }}</p>
-        <p><strong>{% trans "Last experimental version"%}:</strong> {{ object.experimental }}</p>
+    <table>
+        <thead>
+            <tr>
+                <th>{% anchor name %}</th>
+                <th>{% anchor featured %}</th>
+                <th>{% anchor created_on "Date" %}</th>
+                <th>{% anchor modified_on "Last modified" %}</th>
+                <th>{% trans "Stable" %}</th>
+                <th>{% trans "Experimental" %}</th>
+                {% if perms.plugins.can_add %}<th colspan="2">{% trans "Manage" %}</th>{% endif %}
+            </tr>
+        </thead>
+        <tbody>
+            {% for object in object_list %}
+            <tr>
+                <td><a href="{% url plugin_detail object.pk %}">{{ object.title }}</a></td>
+                <td>{{ object.featured }}</td>
+                <td>{{ object.created_on|naturalday }}</td>
+                <td>{{ object.modified_on|naturalday }}</td>
+                <td>{{ object.stable }}</td>
+                <td>{{ object.experimental }}</td>
+                {% if perms.plugins.can_add %}
+                {% if user in object.owners.all or user.is_staff %}<td><a href="{% url             plugin_update object.pk %}">{% trans "Edit" %}</a></td>
+                <td><a href="{% url plugin_delete object.pk %}">{% trans "Delete" %}</a></td>{% else %}<td>&nbsp;</td><td>&nbsp;</td>{% endif %}
+                {% endif %}
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+    {% paginate %}
     </div>
-    {% empty %}
+    {% else %}
     <p>{% trans "This list is empty!" %}</p>
-    {% endfor %}
-    </div>
-    {% if is_paginated %}
-        <div class="pagination">
-            <span class="step-links">
-                {% if page_obj.has_previous %}
-                    <a href="?page={{ page_obj.previous_page_number }}">previous</a>
-                {% endif %}
-
-                <span class="current">
-                    Page {{ page_obj.number }} of {{ paginator.num_pages }}.
-                </span>
-
-                {% if page_obj.has_next %}
-                    <a href="?page={{ page_obj.next_page_number }}">next</a>
-                {% endif %}
-            </span>
-        </div>
     {% endif %}
 {% endblock %}

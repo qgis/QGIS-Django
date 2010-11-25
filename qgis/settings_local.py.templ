@@ -1,4 +1,5 @@
 DEBUG = True
+TEMPLATE_DEBUG = DEBUG
 
 ADMINS = (
     # ('Your Name', 'your_email@domain.com'),
@@ -15,3 +16,20 @@ DATABASES = {
     }
 }
 
+
+PAGINATION_DEFAULT_PAGINATION=5
+
+# ABP: More portable config
+import os
+SITE_ROOT = os.path.dirname(os.path.realpath(__file__))
+
+# Absolute path to the directory that holds media.
+# Example: "/home/media/media.lawrence.com/"
+MEDIA_ROOT = SITE_ROOT  + '/static/'
+
+# URL that handles the media served from MEDIA_ROOT. Make sure to use a
+# trailing slash if there is a path component (optional in other cases).
+# Examples: "http://media.lawrence.com", "http://example.com/media/"
+MEDIA_URL = 'http://localhost:8000/static/'
+
+SERVE_STATIC_MEDIA = True
