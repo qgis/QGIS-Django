@@ -1,52 +1,38 @@
 [
     {
-        "pk": 2,
-        "model": "plugins.plugin",
-        "fields": {
-            "owners": [
-                1
-            ],
-            "description": "Plugin to add rasters",
-            "title": "Plugin 2",
-            "featured": true,
-            "created_by": 1,
-            "created_on": "2010-11-24 05:24:03",
-            "published": true,
-            "modified_on": "2010-11-24 05:24:03",
-            "name": "plugin 2"
-        }
-    },
-    {
         "pk": 1,
         "model": "plugins.plugin",
         "fields": {
             "owners": [
+                2,
                 1
             ],
-            "description": "a Plugin for coffee",
-            "title": "Plugin one",
+            "description": "A Plugin for making coffee",
+            "name": "Coffee Plugin",
+            "downloads": 2,
             "featured": false,
             "created_by": 1,
             "created_on": "2010-11-24 03:25:32",
             "published": true,
-            "modified_on": "2010-11-24 05:24:23",
-            "name": "plugin"
+            "modified_on": "2010-11-25 07:37:05"
         }
     },
     {
         "pk": 2,
-        "model": "plugins.pluginversion",
+        "model": "plugins.plugin",
         "fields": {
-            "last": true,
-            "plugin": 1,
+            "owners": [
+                1,
+                3
+            ],
+            "description": "Plugin to make pizza",
+            "name": "Pizza Plugin",
             "downloads": 0,
-            "changelog": "Added coffee filtering",
+            "featured": true,
             "created_by": 1,
-            "package": "packages/tmp_1.txt",
-            "min_qg_version": "1",
-            "created_on": "2010-11-24 03:27:23",
-            "version": "1.2",
-            "experimental": true
+            "created_on": "2010-11-24 05:24:03",
+            "published": true,
+            "modified_on": "2010-11-25 07:36:57"
         }
     },
     {
@@ -71,7 +57,7 @@
         "fields": {
             "last": true,
             "plugin": 1,
-            "downloads": 0,
+            "downloads": 1,
             "changelog": "Added coffee filtering",
             "created_by": 1,
             "package": "packages/tmp.txt",
@@ -79,6 +65,22 @@
             "created_on": "2010-11-24 03:26:27",
             "version": "1.2",
             "experimental": false
+        }
+    },
+    {
+        "pk": 2,
+        "model": "plugins.pluginversion",
+        "fields": {
+            "last": true,
+            "plugin": 1,
+            "downloads": 1,
+            "changelog": "Added coffee filtering",
+            "created_by": 1,
+            "package": "packages/tmp_1.txt",
+            "min_qg_version": "1",
+            "created_on": "2010-11-24 03:27:23",
+            "version": "1.2",
+            "experimental": true
         }
     }
 ]

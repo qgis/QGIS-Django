@@ -6,13 +6,7 @@
   <title>QGIS Plugins Repository</title>
   <meta name="AUTHOR" content="ItOpen" />
   <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-  <style type="text/css">
-  /* <![CDATA[ */
-    html,body{height:100%;color:black;}
-    body{background-color:white;font:13.34px helvetica,arial,freesans,clean,sans-serif;*font-size:small;}
-
-  /* ]]> */
-  </style>
+  <link type="text/css" href="{{ MEDIA_URL }}style/style.css" rel="stylesheet" />
   <script type="text/javascript">
   /* <![CDATA[ */
 
@@ -20,14 +14,29 @@
   </script>
 </head>
 <body>
-{% if messages %}
-<ul class="messages">
-    {% for message in messages %}
-    <li{% if message.tags %} class="{{ message.tags }}"{% endif %}>{{ message }}</li>
-    {% endfor %}
-</ul>
-{% endif %}
-{% block body %}
-{% endblock %}
+    {% if messages %}
+    <ul class="messages">
+        {% for message in messages %}
+        <li{% if message.tags %} class="{{ message.tags }}"{% endif %}>{{ message }}</li>
+        {% endfor %}
+    </ul>
+    {% endif %}
+    {% block navigation %}
+    <div class="navigation">
+        <ul>
+            <li><a href="{% url index %}">{% trans "Home" %}</a></li>
+            <li><a href="{% url featured_plugins %}">{% trans "Plugins" %}</a></li>
+            {% block navigation_extra %}
+            {% endblock %}
+        </ul>
+    </div>
+    {% endblock %}
+    {% block status %}
+    <div id="status">
+        {% if user.is_authenticated %}<div class="userinfo">{% trans "Welcome"%}: {{ user }}</div>{% endif %}
+    </div>
+    {% endblock %}
+    {% block body %}
+    {% endblock %}
 </body>
 </html>

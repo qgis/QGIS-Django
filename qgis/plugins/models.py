@@ -6,13 +6,79 @@ from django.contrib.auth.models import User
 from django.utils.translation import ugettext_lazy as _
 # For permalinks
 from django.core.urlresolvers import reverse
+import datetime
+from django.conf import settings
+
+PLUGINS_STORAGE_PATH = getattr(settings, 'PLUGINS_STORAGE_PATH', 'packages')
+
+class PublishedPlugins(models.Manager):
+    """
+    Shows only public plugins: i.e. those with "published" flag set
+    and with at least one version ("stable" or "experimental")
+    """
+    def get_query_set(self):
+        return super(PublishedPlugins, self).get_query_set().filter(published = True, pluginversion__last = True)
+
+class StablePlugins(models.Manager):
+    """
+    Shows only public plugins: i.e. those with "published" flag set
+    and with one "stable" version
+    """
+    def get_query_set(self):
+        return super(StablePlugins, self).get_query_set().filter(published = True, pluginversion__last = True, pluginversion__experimental = False)
+
+class ExperimentalPlugins(models.Manager):
+    """
+    Shows only public plugins: i.e. those with "published" flag set
+    and with one "experimental" version
+    """
+    def get_query_set(self):
+        return super(ExperimentalPlugins, self).get_query_set().filter(published = True, pluginversion__last = True, pluginversion__experimental = True)
+
+class FeaturedPlugins(models.Manager):
+    """
+    Shows only public featured stable plugins: i.e. those with "published" flag set
+    with one "stable" version and "featured" flag set
+    """
+    def get_query_set(self):
+        return super(FeaturedPlugins, self).get_query_set().filter(published = True, featured = True)
+
+class FreshPlugins(models.Manager):
+    """
+    Shows only public plugins: i.e. those with "published" flag set
+    and modified less than "days" ago.
+    A Plugin is modified even when a new version is uploaded
+    """
+    def __init__(self, days = 10, *args, **kwargs):
+        self.days = days
+        return super(FreshPlugins, self).__init__(*args, **kwargs)
+
+    def get_query_set(self):
+        return super(FreshPlugins, self).get_query_set().filter(published = True, pluginversion__last = True, modified_on__gte = datetime.datetime.now()- datetime.timedelta(days = self.days))
+
+class UnpublishedPlugins(models.Manager):
+    """
+    Shows only unpublished plugins
+    """
+    def get_query_set(self):
+        return super(UnpublishedPlugins, self).get_query_set().filter(published = False)
+
+
+class PopularPlugins(PublishedPlugins):
+    """
+    Shows only unpublished plugins, sort by downloads
+    """
+    def get_query_set(self):
+        return super(UnpublishedPlugins, self).get_query_set().order_by('downloads')
+
+
+
 
 class Plugin (models.Model):
     """
     Plugins model
     # TODO: category, MPTT?
     # TODO: links to Plugin's page, trac etc.
-    # TODO: managers
     """
 
     # dates
@@ -24,9 +90,11 @@ class Plugin (models.Model):
     owners          = models.ManyToManyField(User)
 
     # name, desc etc.
-    name            = models.CharField(_('Name'), help_text = _('Internal name, must be unique'), max_length = 256, unique = True)
-    title           = models.CharField(_('Title'), max_length = 256, unique = True)
+    name            = models.CharField(_('Name'), help_text = _('Must be unique'), max_length = 256, unique = True)
     description     = models.TextField(_('Description'))
+
+    # downloads (soft trigger from versions)
+    downloads       = models.IntegerField(_('Downloads'), default = 0, editable = False)
 
     @property
     def stable(self):
@@ -36,16 +104,21 @@ class Plugin (models.Model):
     def experimental(self):
         return self.pluginversion_set.get(last = True, experimental = True)
 
-    @property
-    def downloads(self):
-        return self.pluginversion_set.aggregate(models.Sum('downloads'))['downloads__sum']
-
     # Flags
     published       = models.BooleanField(_('Published'), default = True, help_text = _('Set to false if you wish to unpublish the plugin'))
     featured        = models.BooleanField(_('Featured'), default = False)
 
+    # Managers
+    objects                 = models.Manager()
+    published_objects       = PublishedPlugins()
+    stable_objects          = StablePlugins()
+    experimental_objects    = ExperimentalPlugins()
+    featured_objects        = FeaturedPlugins()
+    fresh_objects           = FreshPlugins()
+    unpublished_objects     = UnpublishedPlugins()
+
     class Meta:
-        ordering = ('featured', 'title' , 'modified_on')
+        ordering = ('featured', 'name' , 'modified_on')
         permissions = (
             ("can_publish", "Can publish plugins"),
         )
@@ -78,7 +151,7 @@ class PluginVersion (models.Model):
     changelog       = models.TextField(_('Changelog'))
 
     # the file!
-    package         = models.FileField(_('Plugin package'), upload_to = 'static/packages')
+    package         = models.FileField(_('Plugin package'), upload_to = PLUGINS_STORAGE_PATH)
     # Flags TODO: checks on unique last/experimental
     experimental    = models.BooleanField(_('Experimental flag'), default = False, help_text = _("Check this box if this version is experimental, leave unchecked if it's stable"))
     last            = models.BooleanField(_('Last flag'), default = True, help_text = _('Check this box if this version is the latest'))
@@ -86,7 +159,7 @@ class PluginVersion (models.Model):
     def save(self, *args, **kwargs):
         """
         Soft trigger: ensures that last is unique (among experimental and stable = not experimental)
-        Update modified_on in parent
+        Updates modified_on in parent
         """
         versions_to_check = PluginVersion.objects.filter(plugin = self.plugin, experimental = self.experimental)
 

@@ -20,7 +20,7 @@ urlpatterns = patterns('',
 
 #ABP: temporary home page
 urlpatterns += patterns('django.views.generic.simple',
-    (r'^$', 'direct_to_template', {'template': 'index.html'}),
+    url(r'^$', 'direct_to_template', {'template': 'index.html'}, name = 'index'),
 )
 
 

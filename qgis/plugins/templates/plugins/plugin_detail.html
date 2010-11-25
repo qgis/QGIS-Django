@@ -1,13 +1,14 @@
-{% extends 'base.html' %}{% load i18n %}
+{% extends 'plugins/plugin_base.html' %}{% load i18n %}
 {% block body %}
     <h1>{{ object.title }}</h1>
     <div class="details">
         <p><strong>{% trans "Description" %}:</strong> {{ object.description }}</p>
-        <p><strong>{% trans "Last stable version"%}:</strong> {{ object.stable }}</p>
-        <p><strong>{% trans "Last experimental version"%}:</strong> {{ object.experimental }}</p>
+        {% if object.stable %}<p><strong>{% trans "Last stable version"%}:</strong> <a href="{% url version_download object.stable.pk %}">{{ object.stable }}</a></p>{% endif %}
+        {% if object.experimental %}<p><strong>{% trans "Last experimental version"%}:</strong> <a href="{% url version_download object.experimental.pk %}">{{ object.experimental }}</a></p>{% endif %}
+        {% if not object.experimental and not object.stable %}<p><strong>{% trans "This plugin has not yet released any version" %}</strong>{% endif %}
     </div>
     {# show all versions if user is authorized #}
-    {% if user in object.owners.all or user = object.created_by %}
+    {% if user.is_staff or user in object.owners.all %}
     <div class="button">{% trans "Admin" %}</div>
     <div id="admin">
         <div>

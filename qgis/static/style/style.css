@@ -1,0 +1,18 @@
+html,body{height:100%;color:black;}
+body{background-color:white;font:13.34px helvetica,arial,freesans,clean,sans-serif;font-size:small;}
+table {
+    border-collapse: collapse;
+}
+table th {
+    background-color: black;
+    color: white;
+}
+
+table th a{
+    color: white;
+}
+
+table td {
+    border: solid 1px gray;
+}
+

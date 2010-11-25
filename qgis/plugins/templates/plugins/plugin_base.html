@@ -1,0 +1,7 @@
+{% extends 'base.html' %}{% load i18n %}
+            {% block navigation_extra %}
+            {% if user.is_authenticated %}
+                <li><a href="{% url plugin_upload %}">{% trans "Upload a new plugin" %}</a></li>
+                {% if user.plugin_set_count %}<li><a href="{% url my_plugins user %}">{% trans "My plugins" %}</a></li>{% endif %}
+            {% endif %}
+            {% endblock %}

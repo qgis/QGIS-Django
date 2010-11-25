@@ -1,12 +1,26 @@
-{% extends 'base.html' %}{% load i18n sorting_tags pagination_tags humanize %}
+{% extends 'plugins/plugin_base.html' %}{% load i18n sorting_tags pagination_tags humanize %}
 {% block body %}
-    <h1>{% trans "QGIS Plugins list" %}</h1>
-    {% if perms.plugins.can_add %}
-    <div class="button"><a href="{% url plugin_create %}">{% trans "Add plugin" %}</a></div>
-    {% endif %}
+    <h1>{% if title %}{{title}}{% else %}{% trans "QGIS Plugins list" %}{% endif %}</h1>
+    {# Filtered views menu #}
+    <div class="sub-navigation">
+        <ul>
+            <li><a href="{% url featured_plugins %}">{% trans "Featured "%}</a></li>
+            <li><a href="{% url published_plugins %}">{% trans "All"%}</a></li>
+            <li><a href="{% url stable_plugins %}">{% trans "Stable"%}</a></li>
+            <li><a href="{% url experimental_plugins %}">{% trans "Experimental"%}</a></li>
+            {% if user.is_authenticated %}
+            <li class="authenticated"><a href="{% url my_plugins %}">{% trans "My"%}</a></li>
+            {% endif %}
+            {% if user.is_staff %}
+            <li class="staff"><a href="{% url unpublished_plugins %}">{% trans "Unpublished"%}</a></li>
+            {% endif %}
+        </ul>
+    </div>
+
     {% if object_list.count %}
     {% autosort object_list %}
     {% autopaginate object_list %}
+
     <div class="list">
     <table>
         <thead>
@@ -17,7 +31,7 @@
                 <th>{% anchor modified_on "Last modified" %}</th>
                 <th>{% trans "Stable" %}</th>
                 <th>{% trans "Experimental" %}</th>
-                {% if perms.plugins.can_add %}<th colspan="2">{% trans "Manage" %}</th>{% endif %}
+                {% if user.is_authenticated or user.is_staff %}<th colspan="2">{% trans "Manage" %}</th>{% endif %}
             </tr>
         </thead>
         <tbody>
@@ -28,11 +42,9 @@
                 <td>{{ object.created_on|naturalday }}</td>
                 <td>{{ object.modified_on|naturalday }}</td>
                 <td>{{ object.stable }}</td>
-                <td>{{ object.experimental }}</td>
-                {% if perms.plugins.can_add %}
-                {% if user in object.owners.all or user.is_staff %}<td><a href="{% url             plugin_update object.pk %}">{% trans "Edit" %}</a></td>
-                <td><a href="{% url plugin_delete object.pk %}">{% trans "Delete" %}</a></td>{% else %}<td>&nbsp;</td><td>&nbsp;</td>{% endif %}
-                {% endif %}
+                <td>{{ object.experimental }}</td>{% if user.is_authenticated %}
+                {% if user in object.owners.all or user.is_staff %}<td><a href="{% url plugin_update object.pk %}">{% trans "Edit" %}</a></td>
+                <td><a href="{% url plugin_delete object.pk %}">{% trans "Delete" %}</a></td>{% else %}<td>&nbsp;</td><td>&nbsp;</td>{% endif %}{% endif %}
             </tr>
             {% endfor %}
         </tbody>
