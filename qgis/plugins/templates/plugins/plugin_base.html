@@ -1,7 +1,29 @@
 {% extends 'base.html' %}{% load i18n %}
-            {% block navigation_extra %}
-            {% if user.is_authenticated %}
+
+{% block menu %}
+{{ block.super }}
+<div class="module_menu">
+    <div>
+        <div>
+            <h3>{% trans "Plugin menu" %}</h3>
+            <ul class="menu">
+                {% if user.is_authenticated %}
                 <li><a href="{% url plugin_upload %}">{% trans "Upload a new plugin" %}</a></li>
                 {% if user.plugin_set_count %}<li><a href="{% url my_plugins user %}">{% trans "My plugins" %}</a></li>{% endif %}
-            {% endif %}
-            {% endblock %}
+                {% endif %}
+                {% if user.is_authenticated %}
+                <li class="authenticated"><a href="{% url my_plugins %}">{% trans "My"%}</a></li>
+                {% endif %}
+                {% if user.is_staff %}
+                <li class="staff"><a href="{% url unpublished_plugins %}">{% trans "Unpublished"%}</a></li>
+                {% endif %}
+                <li><a href="{% url featured_plugins %}">{% trans "Featured "%}</a></li>
+                <li><a href="{% url published_plugins %}">{% trans "All"%}</a></li>
+                <li><a href="{% url stable_plugins %}">{% trans "Stable"%}</a></li>
+                <li><a href="{% url experimental_plugins %}">{% trans "Experimental"%}</a></li>
+                <li><a href="{% url popular_plugins %}">{% trans "Popular" %}</a></li>
+            </ul>
+        </div>
+    </div>
+</div>
+{% endblock %}

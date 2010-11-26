@@ -17,7 +17,7 @@ from plugins.validator import validator
 class PluginForm(ModelForm):
     class Meta:
         model = Plugin
-        fields = ('name', 'description')
+        fields = ('name', 'description', 'homepage')
 
 
 class PluginVersionForm(ModelForm):
@@ -156,6 +156,15 @@ def plugin_update(request, plugin_id):
 
 
 @login_required
+def my_plugins(request):
+    """
+    Shows user's plugins (plugins where user is in owners)
+    """
+    object_list = Plugin.objects.filter(owners=request.user)
+    return render_to_response('plugins/plugin_list.html', { 'object_list' : object_list, 'title' : _('My plugins')}, context_instance=RequestContext(request))
+
+
+@login_required
 def version_create(request, plugin_id):
     """
     The form will create versions according to permissions
@@ -212,14 +221,6 @@ def version_update(request, version_id):
 
     return render_to_response('plugins/version_form.html', { 'form' : form, 'plugin' : plugin, 'form_title' : _('Edit version for plugin')}, context_instance=RequestContext(request))
 
-@login_required
-def my_plugins(request):
-    """
-    Shows user's plugins (plugins where user is in owners)
-    """
-    object_list = Plugin.objects.filter(owners=request.user)
-    return render_to_response('plugins/plugin_list.html', { 'object_list' : object_list, 'title' : _('My plugins')}, context_instance=RequestContext(request))
-
 def version_download(request, version_id):
     """
     Update download counter(s)
@@ -231,3 +232,10 @@ def version_download(request, version_id):
     plugin.downloads = plugin.downloads + 1
     plugin.save()
     return HttpResponseRedirect(version.package.url)
+
+def version_detail(request, version_id):
+    """
+    Show version details
+    """
+    version = get_object_or_404(PluginVersion, pk=version_id)
+    return render_to_response('plugins/version_detail.html', {'version' : version }, context_instance=RequestContext(request))

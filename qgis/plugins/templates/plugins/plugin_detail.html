@@ -1,15 +1,15 @@
 {% extends 'plugins/plugin_base.html' %}{% load i18n %}
 {% block body %}
-    <h1>{{ object.title }}</h1>
+    <h2>{% trans "Edit plugin" %}: {{ object.name }}</h2>
     <div class="details">
         <p><strong>{% trans "Description" %}:</strong> {{ object.description }}</p>
-        {% if object.stable %}<p><strong>{% trans "Last stable version"%}:</strong> <a href="{% url version_download object.stable.pk %}">{{ object.stable }}</a></p>{% endif %}
-        {% if object.experimental %}<p><strong>{% trans "Last experimental version"%}:</strong> <a href="{% url version_download object.experimental.pk %}">{{ object.experimental }}</a></p>{% endif %}
+        {% if object.stable %}<p><strong>{% trans "Last stable version"%}:</strong> <a href="{% url version_detail object.stable.pk %}">{{ object.stable.version }}</a></p>{% endif %}
+        {% if object.experimental %}<p><strong>{% trans "Last experimental version"%}:</strong> <a href="{% url version_detail object.experimental.pk %}">{{ object.experimental.version }}</a></p>{% endif %}
         {% if not object.experimental and not object.stable %}<p><strong>{% trans "This plugin has not yet released any version" %}</strong>{% endif %}
     </div>
     {# show all versions if user is authorized #}
     {% if user.is_staff or user in object.owners.all %}
-    <div class="button">{% trans "Admin" %}</div>
+    <h3>{% trans "Admin" %}</h3>
     <div id="admin">
         <div>
             <ul class="actions">
@@ -26,16 +26,18 @@
                 <th>{% trans "Last" %}</th>
                 <th>{% trans "Experimental" %}</th>
                 <th>{% trans "Minimum QGIS version" %}</th>
+                <th>{% trans "Downloads" %}</th>
                 <th>{% trans "Date" %}</th>
                 <th colspan="2">{% trans "Manage" %}</th>
                 </tr>
             </thead>
             <tbody>{% for version in object.pluginversion_set.all %}
                 <tr>
-                    <td><a href="{% url version_download version.pk %}">{{ version.version }}</a></td>
+                    <td><a href="{% url version_detail version.pk %}">{{ version.version }}</a></td>
                     <td>{{ version.last }}</td>
                     <td>{{ version.experimental }}</td>
                     <td>{{ version.min_qg_version }}</td>
+                    <td>{{ version.downloads }}</td>
                     <td>{{ version.created_on }}</td>
                     <td><a href="{% url version_delete version.pk %}">{% trans "Delete" %}</a></td>
                     <td><a href="{% url version_update version.pk %}">{% trans "Edit" %}</a></td>

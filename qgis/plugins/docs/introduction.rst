@@ -47,6 +47,10 @@ Configuration
 
 All values can be overridden in `settings.py`
 
-PLUGINS_STORAGE_PATH
-PLUGIN_MAX_UPLOAD_SIZE
-
+========================== ============= =======================
+Parameter                  Default       Notes
+========================== ============= =======================
+PLUGINS_STORAGE_PATH       packages
+PLUGIN_MAX_UPLOAD_SIZE     1048576       in bytes
+PLUGINS_FRESH_DAYS         30            days
+========================== ============= =======================

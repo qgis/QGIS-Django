@@ -10,6 +10,7 @@ import datetime
 from django.conf import settings
 
 PLUGINS_STORAGE_PATH = getattr(settings, 'PLUGINS_STORAGE_PATH', 'packages')
+PLUGINS_FRESH_DAYS   = getattr(settings, 'PLUGINS_FRESH_DAYS', 30)
 
 class PublishedPlugins(models.Manager):
     """
@@ -17,7 +18,7 @@ class PublishedPlugins(models.Manager):
     and with at least one version ("stable" or "experimental")
     """
     def get_query_set(self):
-        return super(PublishedPlugins, self).get_query_set().filter(published = True, pluginversion__last = True)
+        return super(PublishedPlugins, self).get_query_set().filter(published = True, pluginversion__last = True).distinct()
 
 class StablePlugins(models.Manager):
     """
@@ -41,7 +42,7 @@ class FeaturedPlugins(models.Manager):
     with one "stable" version and "featured" flag set
     """
     def get_query_set(self):
-        return super(FeaturedPlugins, self).get_query_set().filter(published = True, featured = True)
+        return super(FeaturedPlugins, self).get_query_set().filter(published = True, featured = True, pluginversion__last = True, pluginversion__experimental = False)
 
 class FreshPlugins(models.Manager):
     """
@@ -49,12 +50,12 @@ class FreshPlugins(models.Manager):
     and modified less than "days" ago.
     A Plugin is modified even when a new version is uploaded
     """
-    def __init__(self, days = 10, *args, **kwargs):
+    def __init__(self, days = PLUGINS_FRESH_DAYS, *args, **kwargs):
         self.days = days
         return super(FreshPlugins, self).__init__(*args, **kwargs)
 
     def get_query_set(self):
-        return super(FreshPlugins, self).get_query_set().filter(published = True, pluginversion__last = True, modified_on__gte = datetime.datetime.now()- datetime.timedelta(days = self.days))
+        return super(FreshPlugins, self).get_query_set().filter(published = True, pluginversion__last = True, modified_on__gte = datetime.datetime.now()- datetime.timedelta(days = self.days)).distinct()
 
 class UnpublishedPlugins(models.Manager):
     """
@@ -69,7 +70,7 @@ class PopularPlugins(PublishedPlugins):
     Shows only unpublished plugins, sort by downloads
     """
     def get_query_set(self):
-        return super(UnpublishedPlugins, self).get_query_set().order_by('downloads')
+        return super(PublishedPlugins, self).get_query_set().order_by('-downloads')
 
 
 
@@ -87,6 +88,7 @@ class Plugin (models.Model):
 
     # owners
     created_by      = models.ForeignKey(User, verbose_name = _('Created by'), related_name = 'plugins_created_by')
+    homepage        = models.URLField(_('Plugin homepage'), verify_exists = False, blank = True, null = True)
     owners          = models.ManyToManyField(User)
 
     # name, desc etc.
@@ -98,11 +100,17 @@ class Plugin (models.Model):
 
     @property
     def stable(self):
-        return self.pluginversion_set.get(last = True, experimental = False)
+        try:
+            return self.pluginversion_set.get(last = True, experimental = False)
+        except:
+            return None
 
     @property
     def experimental(self):
-        return self.pluginversion_set.get(last = True, experimental = True)
+        try:
+            return self.pluginversion_set.get(last = True, experimental = True)
+        except:
+            return None
 
     # Flags
     published       = models.BooleanField(_('Published'), default = True, help_text = _('Set to false if you wish to unpublish the plugin'))
@@ -116,6 +124,7 @@ class Plugin (models.Model):
     featured_objects        = FeaturedPlugins()
     fresh_objects           = FreshPlugins()
     unpublished_objects     = UnpublishedPlugins()
+    popular_objects         = PopularPlugins()
 
     class Meta:
         ordering = ('featured', 'name' , 'modified_on')
@@ -189,6 +198,7 @@ class PluginVersion (models.Model):
 
     class Meta:
         unique_together = ('plugin', 'version', 'experimental')
+        ordering = ('plugin', '-created_on' , 'experimental')
 
     def get_absolute_url(self):
         return reverse('version_detail', args=(self.pk))

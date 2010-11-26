@@ -1,7 +1,5 @@
-{% load i18n %}<?xml version="1.0" encoding="utf-8"?>
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
-<html xmlns="http://www.w3.org/1999/xhtml">
-
+{% load i18n %}<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en-gb" lang="en-gb" >
 <head>
   <title>QGIS Plugins Repository</title>
   <meta name="AUTHOR" content="ItOpen" />
@@ -13,30 +11,51 @@
   /* ]]> */
   </script>
 </head>
-<body>
-    {% if messages %}
-    <ul class="messages">
-        {% for message in messages %}
-        <li{% if message.tags %} class="{{ message.tags }}"{% endif %}>{{ message }}</li>
-        {% endfor %}
-    </ul>
-    {% endif %}
-    {% block navigation %}
-    <div class="navigation">
-        <ul>
-            <li><a href="{% url index %}">{% trans "Home" %}</a></li>
-            <li><a href="{% url featured_plugins %}">{% trans "Plugins" %}</a></li>
-            {% block navigation_extra %}
+<body id="page_bg">
+    <div id="main_bg">
+        <img src="{{ MEDIA_URL }}images/blue/top.png" alt="top" />
+        <img src="{{ MEDIA_URL }}images/blue/logo.png" alt="logo" align="left" hspace="5" />
+        <div id="logo_bg">
+            <a href="{% url index %}" class="logo">{% trans "Quantum GIS Plugin Respository" %}</a>
+        </div>
+        {% block navigation %}
+        <div id="user3">
+            <div class="navigation" id="pillmenu">
+                <ul>
+                    <li><a href="{% url index %}">{% trans "Home" %}</a></li>
+                    <li><a href="{% url featured_plugins %}">{% trans "Plugins" %}</a></li>
+                    {% block navigation_extra %}
+                    {% endblock %}
+                </ul>
+            </div>
+        </div>
+        {% endblock %}
+        {% block status %}
+        <div id="user4">
+            {% if user.is_authenticated %}<div class="userinfo">{% trans "Welcome"%}: {{ user }}</div>{% endif %}
+        </div>
+        {% endblock %}
+        <div id="banner"></div>
+        <div id="leftcolumn">{% block menu %}&nbsp;{% endblock %}</div>
+        <div id="maincolumn">
+            {% if messages %}
+            <ul class="messages">
+                {% for message in messages %}
+                <div {% if message.tags %} class="{{ message.tags }}"{% endif %}>{{ message }}</li>
+                {% endfor %}
+            </ul>
+            {% endif %}
+            <div class="nopad">
+            {% block body %}
             {% endblock %}
-        </ul>
-    </div>
-    {% endblock %}
-    {% block status %}
-    <div id="status">
-        {% if user.is_authenticated %}<div class="userinfo">{% trans "Welcome"%}: {{ user }}</div>{% endif %}
-    </div>
-    {% endblock %}
-    {% block body %}
-    {% endblock %}
+            </div>
+        </div>
+        <div id="rightcolumn"></div>
+        <br clear="all" />
+        <img id="main_bottom" src="{{ MEDIA_URL }}images/blue/bottom.png" alt="bottom" align="bottom" /></div>
+<p id="power_by" align="center">
+    Powered by <a href="http://www.djangoproject.com">Django!</a>.
+<!--    Valid <a href="http://validator.w3.org/check/referer">XHTML</a> and <a href="http://jigsaw.w3.org/css-validator/check/referer">CSS</a>.-->
+</p>
 </body>
 </html>
