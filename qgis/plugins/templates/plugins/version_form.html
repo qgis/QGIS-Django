@@ -1,6 +1,12 @@
 {% extends 'plugins/plugin_base.html' %}{% load i18n %}
 {% block body %}
-    <h1>{{ form_title }} {{ plugin }}</h1>
+    <h2>{{ form_title }} {{ plugin }}</h2>
+    {% if form.non_field_errors %}
+    <ul class="form-messages">{% for error in form.non_field_errors %}
+        <li class="error">{{ error }} </li>
+        {% endfor %}
+    </ul>
+    {% endif %}
     <form action="" method="post" enctype="multipart/form-data">{% csrf_token %}
         {% for field in form %}
             <div class="fieldWrapper">

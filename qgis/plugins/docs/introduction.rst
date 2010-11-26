@@ -20,14 +20,13 @@ These rules have been implemented:
 * plugin's versions can be uploaded, edited and deleted only by *staff* users and users listed in plugin's *owners* field
 * if a user without `plugins.can_publish` permission uploads a new version, the plugin becomes unpublished
 
+
 Trust management
 ----------------
 
-Staff members can grant to selected users *trust* permission setting `plugins.can_publish` permission through the front-end application.
+Staff members can grant *trust* to selected plugin creators setting `plugins.can_publish` permission through the front-end application.
 
-The unpublished plugins view offers direct links to grant trust to the plugin creator or the plugin owners.
-
-
+The detail plugins view offers direct links to grant trust to the plugin creator or the plugin owners.
 
 
 The PluginVersion model
@@ -47,8 +46,6 @@ The validation takes place in the PluginVersions forms, at loading time, the com
     * description
     * version
     * qgisMinimumVersion
-
-
 
 
 Configuration

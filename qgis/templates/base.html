@@ -28,11 +28,11 @@
                     {% endblock %}
                 </ul>
             </div>
-        </div>
-        {% endblock %}
-        {% block status %}
-        <div id="user4">
-            {% if user.is_authenticated %}<div class="userinfo">{% trans "Welcome"%}: {{ user }}</div>{% endif %}
+            {% block status %}
+            <div id="user4">
+                {% if user.is_authenticated %}<div class="userinfo">{% trans "Welcome"%}: {{ user }}</div>{% endif %}
+            </div>
+            {% endblock %}
         </div>
         {% endblock %}
         <div id="banner"></div>

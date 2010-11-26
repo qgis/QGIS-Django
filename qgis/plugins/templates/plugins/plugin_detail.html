@@ -1,6 +1,6 @@
 {% extends 'plugins/plugin_base.html' %}{% load i18n %}
 {% block body %}
-    <h2>{% trans "Edit plugin" %}: {{ object.name }}</h2>
+    <h2>{% trans "Plugin" %}: {{ object.name }}</h2>
     <div class="details">
         <p><strong>{% trans "Description" %}:</strong> {{ object.description }}</p>
         <p><strong>{% trans "Author"%}:</strong> {{ object.created_by }}</p>
@@ -8,9 +8,10 @@
         {% if object.stable %}<p><strong>{% trans "Last stable version"%}:</strong> <a href="{% url version_detail object.stable.pk %}">{{ object.stable.version }}</a></p>{% endif %}
         {% if object.experimental %}<p><strong>{% trans "Last experimental version"%}:</strong> <a href="{% url version_detail object.experimental.pk %}">{{ object.experimental.version }}</a></p>{% endif %}
         {% if not object.experimental and not object.stable %}<p class="warning">{% trans "This plugin has not yet released any version." %}</p>{% endif %}
+        {% if not object.published %}<p class="warning">{% trans "This plugin is not published." %}</p>{% endif %}
     </div>
     {# show all versions if user is authorized #}
-    {% if user.is_staff or user in object.owners.all %}
+    {% if user.is_staff or user in object.editors %}
     <h3>{% trans "Admin" %}</h3>
     <div id="admin">
         <div>
@@ -23,7 +24,7 @@
                 {% if not object.published %}<li><a href="{% url plugin_publish object.pk %}">{% trans "Publish" %}</a></li>{% endif %}
                 {% if object.published %}<li><a href="{% url plugin_unpublish object.pk %}">{% trans "Unpublish" %}</a></li>{% endif %}
                 {% endif %}
-                {% if user.is_staff or user in object.owners.all %}
+                {% if user.is_staff or user in object.editors %}
                 <li><a class="delete" href="{% url plugin_delete object.pk %}">{% trans "Delete" %}</a></li>{% endif %}
             </ul>
         </div>
@@ -40,17 +41,17 @@
                 <th colspan="2">{% trans "Manage" %}</th>
                 </tr>
             </thead>
-            <tbody>{% cycle 'odd' 'even' as rowclass %}
+            <tbody>
             {% for version in object.pluginversion_set.all %}
-                <tr class="{% cycle rowclass %}">
+                <tr class="{% cycle "even" "odd" %}">
                     <td><a href="{% url version_detail version.pk %}">{{ version.version }}</a></td>
-                    <td>{{ version.last }}</td>
-                    <td>{{ version.experimental }}</td>
+                    <td>{{ version.last|yesno }}</td>
+                    <td>{{ version.experimental|yesno }}</td>
                     <td>{{ version.min_qg_version }}</td>
                     <td>{{ version.downloads }}</td>
                     <td>{{ version.created_on }}</td>
-                    <td><a href="{% url version_delete version.pk %}">{% trans "Delete" %}</a></td>
                     <td><a href="{% url version_update version.pk %}">{% trans "Edit" %}</a></td>
+                    <td><a class="delete" href="{% url version_delete version.pk %}">{% trans "Delete" %}</a></td>
                 </tr>{% endfor %}
             </tbody>
         </table>

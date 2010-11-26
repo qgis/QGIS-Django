@@ -4,11 +4,13 @@
     <div class="details">
         <p><strong>{% trans "Changelog" %}:</strong> {{ version.changelog }}</p>
         <p><strong>{% trans "Last" %}:</strong> {{ version.last }}</p>
-        <p><strong>{% trans "Experimental" %}:</strong> {{ version.experimental }}</p>
+        <p {% if version.experimental %}class="warning"{% endif %}><strong>{% trans "Experimental" %}:</strong> {{ version.experimental|yesno }}</p>
     </div>
     <ul class="actions">
         <li><a href="{% url version_download version.pk %}">{% trans "Download" %}</a></li>
         <li><a href="{% url plugin_detail version.plugin.pk %}">{% trans "Plugin details" %}</a></li>
+        {% if user.is_staff or user in version.plugin.editors %}
+        <li><a class="delete" href="{% url plugin_delete version.plugin.pk %}">{% trans "Delete" %}</a></li>{% endif %}
     </ul>
 
 {% endblock %}

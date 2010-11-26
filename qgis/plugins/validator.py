@@ -57,10 +57,9 @@ def validator(package):
             raise ValidationError(_('Cannot find valid metadata in %s') % initname)
 
         for md in ('name', 'description', 'version', 'qgisMinimumVersion'):
-            if not md in dict(metadata):
+            if not md in dict(metadata) or not dict(metadata)[md]:
                 raise ValidationError(_('Cannot find metadata %s') % md)
         zip.close()
         del zip
-
     return metadata
 

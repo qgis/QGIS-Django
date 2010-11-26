@@ -90,7 +90,7 @@ class Plugin (models.Model):
     # owners
     created_by      = models.ForeignKey(User, verbose_name = _('Created by'), related_name = 'plugins_created_by')
     homepage        = models.URLField(_('Plugin homepage'), verify_exists = False, blank = True, null = True)
-    owners          = models.ManyToManyField(User)
+    owners          = models.ManyToManyField(User, null = True, blank = True)
 
     # name, desc etc.
     name            = models.CharField(_('Name'), help_text = _('Must be unique'), max_length = 256, unique = True)
@@ -98,6 +98,21 @@ class Plugin (models.Model):
 
     # downloads (soft trigger from versions)
     downloads       = models.IntegerField(_('Downloads'), default = 0, editable = False)
+
+    # Flags
+    published       = models.BooleanField(_('Published'), default = True, help_text = _('Set to false if you wish to unpublish the plugin'))
+    featured        = models.BooleanField(_('Featured'), default = False)
+
+    # Managers
+    objects                 = models.Manager()
+    published_objects       = PublishedPlugins()
+    stable_objects          = StablePlugins()
+    experimental_objects    = ExperimentalPlugins()
+    featured_objects        = FeaturedPlugins()
+    fresh_objects           = FreshPlugins()
+    unpublished_objects     = UnpublishedPlugins()
+    popular_objects         = PopularPlugins()
+
 
     @property
     def trusted(self):
@@ -120,19 +135,14 @@ class Plugin (models.Model):
         except:
             return None
 
-    # Flags
-    published       = models.BooleanField(_('Published'), default = True, help_text = _('Set to false if you wish to unpublish the plugin'))
-    featured        = models.BooleanField(_('Featured'), default = False)
-
-    # Managers
-    objects                 = models.Manager()
-    published_objects       = PublishedPlugins()
-    stable_objects          = StablePlugins()
-    experimental_objects    = ExperimentalPlugins()
-    featured_objects        = FeaturedPlugins()
-    fresh_objects           = FreshPlugins()
-    unpublished_objects     = UnpublishedPlugins()
-    popular_objects         = PopularPlugins()
+    @property
+    def editors(self):
+        """
+        Returns a list of users that can edit th plugin: creator and owners
+        """
+        l = [o for o in self.owners.all()]
+        l.append(self.created_by)
+        return l
 
     class Meta:
         ordering = ('featured', 'name' , 'modified_on')
@@ -200,20 +210,29 @@ class PluginVersion (models.Model):
     def clean(self):
         """
         Validates that exists one last version in the experimental/stable "branch"
+        also checks for unique version value and plugin name mismatch
         """
         from django.core.exceptions import ValidationError
         versions_to_check = PluginVersion.objects.filter(plugin = self.plugin, experimental = self.experimental)
         if self.pk:
             versions_to_check = versions_to_check.exclude(pk = self.pk)
+        # TODO: Be smarter ...
         if not (self.last or versions_to_check.filter(last = True).count()):
-            raise ValidationError(unicode(_('At least one version must be checked as "last" among experimental and not-experimental plugin versions.')))
+            raise ValidationError(unicode(_('At least one version must be checked as "last" among experimental and not-experimental branches of the same plugin.')))
+        # Checks for unique_together
+        if versions_to_check.filter(plugin = self.plugin, version = self.version, experimental = self.experimental).count() > 0:
+            raise ValidationError(unicode(_('Version value must be unique among experimental and not-experimental branches of the same plugin.')))
+
 
     class Meta:
         unique_together = ('plugin', 'version', 'experimental')
         ordering = ('plugin', '-created_on' , 'experimental')
 
     def get_absolute_url(self):
-        return reverse('version_detail', args=(self.pk))
+        return reverse('version_detail', args=(self.pk,))
+
+    def get_download_url(self):
+        return reverse('version_download', args=(self.pk,))
 
     def __unicode__(self):
         desc = "%s %s" % (self.plugin ,self.version)

@@ -1,5 +1,6 @@
 # Create your views here.
-from django.db import transaction
+from django.core.exceptions import NON_FIELD_ERRORS
+from django.db import IntegrityError
 from django.forms import ModelForm, ValidationError
 from django.shortcuts import get_object_or_404, render_to_response
 from django.template import RequestContext
@@ -30,21 +31,31 @@ class PluginForm(ModelForm):
 
 class PluginVersionForm(ModelForm):
     """
-    Form for version upload
+    Form for version upload on existing plugins
     """
     class Meta:
         model = PluginVersion
         exclude = ('created_by', 'plugin', 'version', 'min_qg_version')
 
     def clean_package(self):
-        cleaned_data    = self.cleaned_data
         package         = self.cleaned_data.get('package')
         try:
             self.cleaned_data.update(validator(package))
         except ValidationError, e:
             msg = unicode(_('File upload must be a valid QGIS Python plugin compressed archive.'))
             raise ValidationError("%s %s" % (msg, ','.join(e.messages)))
+
         return package
+
+    def clean(self):
+        # Populate instance
+        self.instance.min_qg_version = self.cleaned_data.get('qgisMinimumVersion')
+        self.instance.version        = self.cleaned_data.get('version')
+        # Check plugin name
+        if self.cleaned_data.get('name') and self.cleaned_data.get('name') != self.instance.plugin.name:
+            raise ValidationError(_('Plugin name mismatch: the plugin name in the compressed file is different from the original plugin name.'))
+        return super(PluginVersionForm, self).clean()
+
 
 class PackageUploadForm(forms.Form):
     """
@@ -64,6 +75,7 @@ class PackageUploadForm(forms.Form):
             raise ValidationError(_('A plugin with this name already exists.'))
         return package
 
+
 def check_plugin_access(user, plugin):
     """
     Returns true if the user can modify the plugin:
@@ -72,7 +84,7 @@ def check_plugin_access(user, plugin):
         * is owner
 
     """
-    return user.is_staff or user in plugin.owners.all()
+    return user.is_staff or user in plugin.editors
 
 @login_required
 def plugin_create(request):
@@ -86,9 +98,9 @@ def plugin_create(request):
         if form.is_valid():
             new_object = form.save(commit = False)
             new_object.created_by = request.user
-            new_object.published = request.user.has_perm('plugins.can_publish')
+            new_object.published  = request.user.has_perm('plugins.can_publish')
             new_object.save()
-            new_object.owners.add(request.user)
+            #new_object.owners.add(request.user)
             msg = _("The Plugin has been successfully created.")
             messages.success(request, msg, fail_silently=True)
             return HttpResponseRedirect(new_object.get_absolute_url())
@@ -153,27 +165,30 @@ def plugin_upload(request):
     if request.method == 'POST':
         form = PackageUploadForm(request.POST, request.FILES)
         if form.is_valid():
-            plugin_data = {
-                'name'              : form.cleaned_data['name'],
-                'description'       : form.cleaned_data['description'],
-                'created_by'        : request.user,
-                'published'         : request.user.has_perm('plugins.can_publish'),
-            }
-            new_plugin = Plugin(**plugin_data)
-            new_plugin.save()
-            new_plugin.owners.add(request.user)
+            try:
+                plugin_data = {
+                    'name'              : form.cleaned_data['name'],
+                    'description'       : form.cleaned_data['description'],
+                    'created_by'        : request.user,
+                    'published'         : request.user.has_perm('plugins.can_publish'),
+                }
+                new_plugin = Plugin(**plugin_data)
+                new_plugin.save()
 
-            version_data =  {
-                'plugin'            : new_plugin,
-                'min_qg_version'    : form.cleaned_data['qgisMinimumVersion'],
-                'version'           : form.cleaned_data['version'],
-                'created_by'        : request.user,
-                'package'           : form.cleaned_data['package']
-            }
-            new_version = PluginVersion(**version_data)
-            new_version.save()
-            msg = _("The Plugin has been successfully created.")
-            messages.success(request, msg, fail_silently=True)
+                version_data =  {
+                    'plugin'            : new_plugin,
+                    'min_qg_version'    : form.cleaned_data['qgisMinimumVersion'],
+                    'version'           : form.cleaned_data['version'],
+                    'last'              : True,
+                    'created_by'        : request.user,
+                    'package'           : form.cleaned_data['package']
+                }
+                new_version = PluginVersion(**version_data)
+                new_version.save()
+                msg = _("The Plugin has been successfully created.")
+                messages.success(request, msg, fail_silently=True)
+            except (IntegrityError, ValidationError), e:
+                e
             return HttpResponseRedirect(new_plugin.get_absolute_url())
     else:
         form = PackageUploadForm()
@@ -190,7 +205,7 @@ def plugin_delete(request, plugin_id):
         plugin.delete()
         msg = _("The Plugin has been successfully deleted.")
         messages.success(request, msg, fail_silently=True)
-        return HttpResponseRedirect(reverse('plugins_list'))
+        return HttpResponseRedirect(reverse('published_plugins'))
     return render_to_response('plugins/plugin_delete_confirm.html', { 'plugin' : plugin }, context_instance=RequestContext(request))
 
 
@@ -211,8 +226,6 @@ def plugin_update(request, plugin_id):
                 new_object.published = False
             new_object.modified_by = request.user
             new_object.save()
-            if not new_object.owners.count():
-                new_object.owners.add(request.user)
             msg = _("The Plugin has been successfully updated.")
             messages.success(request, msg, fail_silently=True)
             return HttpResponseRedirect(new_object.get_absolute_url())
@@ -225,9 +238,9 @@ def plugin_update(request, plugin_id):
 @login_required
 def my_plugins(request):
     """
-    Shows user's plugins (plugins where user is in owners)
+    Shows user's plugins (plugins where user is in owners or user is author)
     """
-    object_list = Plugin.objects.filter(owners=request.user)
+    object_list = Plugin.objects.filter(owners=request.user).distinct() | Plugin.objects.filter(created_by=request.user).distinct()
     return render_to_response('plugins/plugin_list.html', { 'object_list' : object_list, 'title' : _('My plugins')}, context_instance=RequestContext(request))
 
 def user_plugins(request, username):
@@ -239,6 +252,7 @@ def user_plugins(request, username):
     return render_to_response('plugins/plugin_list.html', { 'object_list' : object_list, 'title' : _('Plugins from %s') % user }, context_instance=RequestContext(request))
 
 
+
 @login_required
 def version_create(request, plugin_id):
     """
@@ -248,24 +262,29 @@ def version_create(request, plugin_id):
     if not check_plugin_access(request.user, plugin):
         return render_to_response('plugins/version_permission_deny.html', { 'plugin' : plugin }, context_instance=RequestContext(request))
 
+    version = PluginVersion(plugin = plugin, created_by = request.user)
     if request.method == 'POST':
-        version = PluginVersion(plugin = plugin, created_by = request.user)
         form = PluginVersionForm(request.POST, request.FILES, instance = version)
         if form.is_valid():
             new_object = form.save()
             msg = _("The Plugin Version has been successfully created.")
             messages.success(request, msg, fail_silently=True)
+            if not request.user.has_perm('plugins.can_publish'):
+                new_object.plugin.published = False
+                new_object.plugin.save()
+                messages.warning(request, _('You do not have publish permissions, plugin has been unpublished.'), fail_silently=True)
             return HttpResponseRedirect(new_object.plugin.get_absolute_url())
     else:
         form = PluginVersionForm()
 
     return render_to_response('plugins/version_form.html', { 'form' : form, 'plugin' : plugin, 'form_title' : _('New version for plugin')}, context_instance=RequestContext(request))
 
+
 @login_required
 def version_delete(request, version_id):
     version = get_object_or_404(PluginVersion, pk=version_id)
     plugin = version.plugin
-    if not user in plugin.owners.all():
+    if not check_plugin_access(request.user, plugin):
         return render_to_response('plugins/version_permission_deny.html', {}, context_instance=RequestContext(request))
     if 'delete_confirm' in request.POST:
         version.delete()

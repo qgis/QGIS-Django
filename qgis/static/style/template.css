@@ -78,7 +78,7 @@ a.logo,a.logo:hover, a.logo:visited{
 div#user4{
 	float:right;
 	width:250px;
-	text-align:left;
+	text-align:right;
 	padding-right:10px;
 }
 
@@ -427,11 +427,11 @@ div#f_area{
 
 /* System Error Messages */
 #system-message dd.error u
-l, ul.errorlist, ul.messages > li.error { color: #c00; background: #E6C0C0 url(../images/notice-alert.png) 4px center no-repeat; border-top: 3px solid #DE7A7B; border-bottom: 3px solid #DE7A7B; margin:0px; padding-left: 40px; text-indent:0px;}
+l, ul.errorlist, li.error { color: #c00; background: #E6C0C0 url(../images/notice-alert.png) 4px center no-repeat; border-top: 3px solid #DE7A7B; border-bottom: 3px solid #DE7A7B; margin:0px; padding-left: 40px; text-indent:0px;}
 
 /* System Notice Messages */
-#system-message dd.notice ul, ul.messages > li.warning { color: #c00; background: #EFE7B8 url(../images/notice-note.png) 4px center no-repeat; border-top: 3px solid #F0DC7E; border-bottom: 3px solid #F0DC7E;}
-
+#system-message dd.notice ul, li.warning, p.warning { color: #c00; background: #EFE7B8 url(../images/notice-note.png) 4px center no-repeat; border-top: 3px solid #F0DC7E; border-bottom: 3px solid #F0DC7E;}
+p.warning { padding-left: 40px;}
 ul.messages > li.success { color: #000; background: #E7EBFF url(../images/notice-info.png) 4px center no-repeat; border-top: 3px solid #003983; border-bottom: 3px solid #003983;}
 
 #syndicate{
@@ -455,12 +455,12 @@ a.delete:hover {
     color: white;
 }
 
-ul.actions, ul.messages {
+ul.actions, ul.messages, ul.form-messages {
     list-style-type: none;
     padding-left: 0;
 }
 
-ul.messages li {
+ul.messages li, ul.form-messages li {
     list-style-type: none;
     padding-left: 40px;
 }
