@@ -2,7 +2,7 @@
 {% block body %}
     <h2>{{ form_title }}</h2>
      {% if form.non_field_errors %}
-    <ul>{% for error in form.non_field_errors %}
+    <ul class="form-messages">{% for error in form.non_field_errors %}
         <li class="error">{{ error }} </li>
         {% endfor %}
     </ul>
