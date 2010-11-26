@@ -2,6 +2,8 @@
 QGIS Plugins application
 ========================
 
+Author: Alessandro Pasotti (www.itopen.it)
+
 The Plugin model
 ================
 
@@ -39,13 +41,18 @@ Validation
 
 The validation takes place in the PluginVersions forms, at loading time, the compressed file is checked for:
 
-* file size <= PLUGIN_MAX_UPLOAD_SIZE
-* zip contains __init__.py in first level dir
-* __init__.py must contain valid metadata:
-    * name
-    * description
-    * version
-    * qgisMinimumVersion
+* file size <= `PLUGIN_MAX_UPLOAD_SIZE`
+* zip contains `__init__.py` in first level dir
+* `__init__.py` must contain valid metadata:
+    * `name`
+    * `description`
+    * `version`
+    * `qgisMinimumVersion`
+
+* in case of version editing or add, `name` metadata must be = to plugin's name
+* `version` must be unique whithin a plugin's branch
+* the must be one and only *last* versions in each plugin's branch
+
 
 
 Configuration
