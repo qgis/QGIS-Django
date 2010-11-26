@@ -6,8 +6,9 @@ from django.contrib.auth.models import User
 from django.utils.translation import ugettext_lazy as _
 # For permalinks
 from django.core.urlresolvers import reverse
-import datetime
 from django.conf import settings
+import datetime, os
+
 
 PLUGINS_STORAGE_PATH = getattr(settings, 'PLUGINS_STORAGE_PATH', 'packages')
 PLUGINS_FRESH_DAYS   = getattr(settings, 'PLUGINS_FRESH_DAYS', 30)
@@ -70,7 +71,7 @@ class PopularPlugins(PublishedPlugins):
     Shows only unpublished plugins, sort by downloads
     """
     def get_query_set(self):
-        return super(PublishedPlugins, self).get_query_set().order_by('-downloads')
+        return super(PopularPlugins, self).get_query_set().order_by('-downloads')
 
 
 
@@ -97,6 +98,13 @@ class Plugin (models.Model):
 
     # downloads (soft trigger from versions)
     downloads       = models.IntegerField(_('Downloads'), default = 0, editable = False)
+
+    @property
+    def trusted(self):
+        """
+        Returns True if the author has plugins.can_publish permission
+        """
+        return self.created_by.has_perm('plugins.can_publish')
 
     @property
     def stable(self):
@@ -165,6 +173,10 @@ class PluginVersion (models.Model):
     experimental    = models.BooleanField(_('Experimental flag'), default = False, help_text = _("Check this box if this version is experimental, leave unchecked if it's stable"))
     last            = models.BooleanField(_('Last flag'), default = True, help_text = _('Check this box if this version is the latest'))
 
+    @property
+    def file_name(self):
+        return os.path.basename(self.package.file.name)
+
     def save(self, *args, **kwargs):
         """
         Soft trigger: ensures that last is unique (among experimental and stable = not experimental)
@@ -172,7 +184,7 @@ class PluginVersion (models.Model):
         """
         versions_to_check = PluginVersion.objects.filter(plugin = self.plugin, experimental = self.experimental)
 
-        # Onli change modified_on when a new version is created,
+        # Only change modified_on when a new version is created,
         # each download triggers a save
         if self.pk:
             versions_to_check = versions_to_check.exclude(pk = self.pk)

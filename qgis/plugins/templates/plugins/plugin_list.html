@@ -22,9 +22,9 @@
                 {% if user.is_authenticated or user.is_staff %}<th colspan="2">{% trans "Manage" %}</th>{% endif %}
             </tr>
         </thead>
-        <tbody>
+        <tbody>{% cycle 'odd' 'even' as rowclass %}
             {% for object in object_list %}
-            <tr>
+            <tr class="{% cycle rowclass %}">
                 <td><a href="{% url plugin_detail object.pk %}">{{ object.name }}</a></td>
                 <td>{{ object.featured }}</td>
                 <td>{{ object.downloads }}</td>
@@ -33,7 +33,7 @@
                 <td>{{ object.stable.version }}</td>
                 <td>{{ object.experimental.version }}</td>{% if user.is_authenticated %}
                 {% if user in object.owners.all or user.is_staff %}<td><a href="{% url plugin_update object.pk %}">{% trans "Edit" %}</a></td>
-                <td><a href="{% url plugin_delete object.pk %}">{% trans "Delete" %}</a></td>{% else %}<td>&nbsp;</td><td>&nbsp;</td>{% endif %}{% endif %}
+                <td><a class="delete" href="{% url plugin_delete object.pk %}">{% trans "Delete" %}</a></td>{% else %}<td>&nbsp;</td><td>&nbsp;</td>{% endif %}{% endif %}
             </tr>
             {% endfor %}
         </tbody>

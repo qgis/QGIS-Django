@@ -1,12 +1,12 @@
 <?xml version = '1.0' encoding = 'UTF-8'?>
-<?xml-stylesheet type="text/xsl" href="plugins.xsl" ?>
+<?xml-stylesheet type="text/xsl" href="{{ MEDIA_URL}}style/plugins.xsl" ?>
 <plugins>
     {% for plugin in object_list %}{% if plugin.stable %}<pyqgis_plugin name="{{plugin.name}}" version="{{ plugin.stable.version }}">
         <description><![CDATA[{{ plugin.description }}]]></description>
         <version>{{ plugin.stable.version }}</version>
         <qgis_minimum_version>{{ plugin.min_qg_version }}</qgis_minimum_version>
         <homepage>{{ plugin.homepage }}</homepage>
-        <file_name>{{ plugin.stable.package }}</file_name>
+        <file_name>{{ plugin.stable.file_name }}</file_name>
         <author_name>{{ plugin.created_by }}</author_name>
         <download_url>{% url version_download plugin.stable.pk %}</download_url>
         <uploaded_by>{{ plugin.stable.created_by }}</uploaded_by>
@@ -19,7 +19,7 @@
         <version>{{ plugin.experimental.version }}</version>
         <qgis_minimum_version>{{ plugin.min_qg_version }}</qgis_minimum_version>
         <homepage>{{ plugin.homepage }}</homepage>
-        <file_name>{{ plugin.experimental.package }}</file_name>
+        <file_name>{{ plugin.experimental.file_name }}</file_name>
         <author_name>{{ plugin.created_by }}</author_name>
         <download_url>{% url version_download plugin.experimental.pk %}</download_url>
         <uploaded_by>{{ plugin.experimental.created_by }}</uploaded_by>

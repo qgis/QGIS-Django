@@ -14,12 +14,17 @@ urlpatterns = patterns('django.views.generic.list_detail',
     url(r'^experimental/$', 'object_list', {'queryset' : Plugin.experimental_objects.all(), 'extra_context' : {'title' : _('Experimental plugins')}}, name = 'experimental_plugins'),
     url(r'^popular/$', 'object_list', {'queryset' : Plugin.popular_objects.all(), 'extra_context' : {'title' : _('Popular plugins')}}, name = 'popular_plugins'),
     # XML
-    url(r'^plugins.xml/$', 'object_list', {'queryset' : Plugin.published_objects.all(), 'template_name' : 'plugins/plugins.xml'}, name = 'xml_plugins'),
+    url(r'^plugins.xml$', 'object_list', {'queryset' : Plugin.published_objects.all(), 'template_name' : 'plugins/plugins.xml'}, name = 'xml_plugins'),
  )
 
 # Plugins filtered views (need user parameter from request)
 urlpatterns += patterns('plugins.views',
     url(r'^my/$', 'my_plugins', {}, name = 'my_plugins'),
+    url(r'^user/(?P<user>)/$', 'user_plugins', {}, name = 'user_plugins'),
+    url(r'^(?P<plugin_id>[0-9]+)/trust/$', 'plugin_trust', {}, name = 'plugin_trust'),
+    url(r'^(?P<plugin_id>[0-9]+)/untrust/$', 'plugin_untrust', {}, name = 'plugin_untrust'),
+    url(r'^(?P<plugin_id>[0-9]+)/publish/$', 'plugin_publish', {}, name = 'plugin_publish'),
+    url(r'^(?P<plugin_id>[0-9]+)/unpublish/$', 'plugin_unpublish', {}, name = 'plugin_unpublish'),
 )
 
 # Management
