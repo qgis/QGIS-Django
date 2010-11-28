@@ -62,10 +62,7 @@ td.menu_panel {
 
 </head>
 <body>
-<h2>QGIS 1.x Official Python Plugins</h2>
-<p>
-View <a href="/repo/contributed">user-contributed</a> plugins.
-</p>
+<h2>Quantum GIS Python Plugins</h2>
 <table>
 <tr>
 
