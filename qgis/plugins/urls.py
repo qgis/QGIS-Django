@@ -20,9 +20,12 @@ urlpatterns = patterns('django.views.generic.list_detail',
 # Plugins filtered views (need user parameter from request)
 urlpatterns += patterns('plugins.views',
     url(r'^my/$', 'my_plugins', {}, name = 'my_plugins'),
-    url(r'^user/(?P<user>)/$', 'user_plugins', {}, name = 'user_plugins'),
+    url(r'^user/(?P<username>\w+)/$', 'user_plugins', {}, name = 'user_plugins'),
+    url(r'^user/(?P<username>\w+)/block/$', 'user_block', {}, name = 'user_block'),
     url(r'^(?P<plugin_id>[0-9]+)/trust/$', 'plugin_trust', {}, name = 'plugin_trust'),
     url(r'^(?P<plugin_id>[0-9]+)/untrust/$', 'plugin_untrust', {}, name = 'plugin_untrust'),
+    url(r'^(?P<plugin_id>[0-9]+)/set_featured/$', 'plugin_set_featured', {}, name = 'plugin_set_featured'),
+    url(r'^(?P<plugin_id>[0-9]+)/unset_featured/$', 'plugin_unset_featured', {}, name = 'plugin_unset_featured'),
     url(r'^(?P<plugin_id>[0-9]+)/publish/$', 'plugin_publish', {}, name = 'plugin_publish'),
     url(r'^(?P<plugin_id>[0-9]+)/unpublish/$', 'plugin_unpublish', {}, name = 'plugin_unpublish'),
 )

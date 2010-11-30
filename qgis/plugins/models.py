@@ -19,7 +19,7 @@ class PublishedPlugins(models.Manager):
     and with at least one version ("stable" or "experimental")
     """
     def get_query_set(self):
-        return super(PublishedPlugins, self).get_query_set().filter(published = True, pluginversion__last = True).distinct()
+        return super(PublishedPlugins, self).get_query_set().filter(published = True, pluginversion__current = True).distinct()
 
 class StablePlugins(models.Manager):
     """
@@ -27,7 +27,7 @@ class StablePlugins(models.Manager):
     and with one "stable" version
     """
     def get_query_set(self):
-        return super(StablePlugins, self).get_query_set().filter(published = True, pluginversion__last = True, pluginversion__experimental = False)
+        return super(StablePlugins, self).get_query_set().filter(published = True, pluginversion__current = True, pluginversion__experimental = False)
 
 class ExperimentalPlugins(models.Manager):
     """
@@ -35,7 +35,7 @@ class ExperimentalPlugins(models.Manager):
     and with one "experimental" version
     """
     def get_query_set(self):
-        return super(ExperimentalPlugins, self).get_query_set().filter(published = True, pluginversion__last = True, pluginversion__experimental = True)
+        return super(ExperimentalPlugins, self).get_query_set().filter(published = True, pluginversion__current = True, pluginversion__experimental = True)
 
 class FeaturedPlugins(models.Manager):
     """
@@ -43,7 +43,7 @@ class FeaturedPlugins(models.Manager):
     with one "stable" version and "featured" flag set
     """
     def get_query_set(self):
-        return super(FeaturedPlugins, self).get_query_set().filter(published = True, featured = True, pluginversion__last = True, pluginversion__experimental = False)
+        return super(FeaturedPlugins, self).get_query_set().filter(published = True, featured = True, pluginversion__current = True, pluginversion__experimental = False)
 
 class FreshPlugins(models.Manager):
     """
@@ -56,7 +56,7 @@ class FreshPlugins(models.Manager):
         return super(FreshPlugins, self).__init__(*args, **kwargs)
 
     def get_query_set(self):
-        return super(FreshPlugins, self).get_query_set().filter(published = True, pluginversion__last = True, modified_on__gte = datetime.datetime.now()- datetime.timedelta(days = self.days)).distinct()
+        return super(FreshPlugins, self).get_query_set().filter(published = True, pluginversion__current = True, modified_on__gte = datetime.datetime.now()- datetime.timedelta(days = self.days)).distinct()
 
 class UnpublishedPlugins(models.Manager):
     """
@@ -93,6 +93,7 @@ class Plugin (models.Model):
     owners          = models.ManyToManyField(User, null = True, blank = True)
 
     # name, desc etc.
+    package_name    = models.CharField(_('Package Name'), help_text = _('This is the plugin\'s internal name, equals to the main folder name'), max_length = 256, unique = True, editable = False)
     name            = models.CharField(_('Name'), help_text = _('Must be unique'), max_length = 256, unique = True)
     description     = models.TextField(_('Description'))
 
@@ -124,14 +125,14 @@ class Plugin (models.Model):
     @property
     def stable(self):
         try:
-            return self.pluginversion_set.get(last = True, experimental = False)
+            return self.pluginversion_set.get(current = True, experimental = False)
         except:
             return None
 
     @property
     def experimental(self):
         try:
-            return self.pluginversion_set.get(last = True, experimental = True)
+            return self.pluginversion_set.get(current = True, experimental = True)
         except:
             return None
 
@@ -179,9 +180,9 @@ class PluginVersion (models.Model):
 
     # the file!
     package         = models.FileField(_('Plugin package'), upload_to = PLUGINS_STORAGE_PATH)
-    # Flags TODO: checks on unique last/experimental
+    # Flags TODO: checks on unique current/experimental
     experimental    = models.BooleanField(_('Experimental flag'), default = False, help_text = _("Check this box if this version is experimental, leave unchecked if it's stable"))
-    last            = models.BooleanField(_('Last flag'), default = True, help_text = _('Check this box if this version is the latest'))
+    current         = models.BooleanField(_('Current flag'), default = True, help_text = _('Check this box if this version is the current version'))
 
     @property
     def file_name(self):
@@ -189,27 +190,28 @@ class PluginVersion (models.Model):
 
     def save(self, *args, **kwargs):
         """
-        Soft trigger: ensures that last is unique (among experimental and stable = not experimental)
-        Updates modified_on in parent
+        Soft triggers:
+        * ensures that current is unique (among experimental and stable = not experimental)
+        * updates modified_on in parent
         """
         versions_to_check = PluginVersion.objects.filter(plugin = self.plugin, experimental = self.experimental)
 
         # Only change modified_on when a new version is created,
-        # each download triggers a save
+        # every download triggers a save to update the counter
         if self.pk:
             versions_to_check = versions_to_check.exclude(pk = self.pk)
         else:
             self.plugin.modified_on = self.created_on
 
-        if self.last:
+        if self.current:
             for p in versions_to_check:
-                p.last = False
+                p.current = False
                 p.save()
         super(PluginVersion, self).save(*args, **kwargs)
 
     def clean(self):
         """
-        Validates that exists one last version in the experimental/stable "branch"
+        Validates that exists one current version in the experimental/stable "branch"
         also checks for unique version value and plugin name mismatch
         """
         from django.core.exceptions import ValidationError
@@ -217,8 +219,8 @@ class PluginVersion (models.Model):
         if self.pk:
             versions_to_check = versions_to_check.exclude(pk = self.pk)
         # TODO: Be smarter ...
-        if not (self.last or versions_to_check.filter(last = True).count()):
-            raise ValidationError(unicode(_('At least one version must be checked as "last" among experimental and not-experimental branches of the same plugin.')))
+        if not (self.current or versions_to_check.filter(current = True).count()):
+            raise ValidationError(unicode(_('At least one version must be checked as "current" among experimental and not-experimental branches of the same plugin.')))
         # Checks for unique_together
         if versions_to_check.filter(plugin = self.plugin, version = self.version, experimental = self.experimental).count() > 0:
             raise ValidationError(unicode(_('Version value must be unique among experimental and not-experimental branches of the same plugin.')))
@@ -236,8 +238,8 @@ class PluginVersion (models.Model):
 
     def __unicode__(self):
         desc = "%s %s" % (self.plugin ,self.version)
-        if self.last:
-            desc = "%s %s" % (desc, _('Last'))
+        if self.current:
+            desc = "%s %s" % (desc, _('current'))
         if self.experimental:
             desc = "%s %s" % (desc, _('Experimental'))
         return desc

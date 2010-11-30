@@ -9,6 +9,7 @@
             ],
             "description": "A Plugin for making coffee",
             "name": "Coffee Plugin",
+            "package_name": "CoffeePlugin",
             "downloads": 2,
             "featured": false,
             "created_by": 1,
@@ -28,6 +29,7 @@
             ],
             "description": "Plugin to make pizza",
             "name": "Pizza Plugin",
+            "package_name": "PizzaPlugin",
             "downloads": 0,
             "featured": true,
             "homepage" : "",
@@ -41,7 +43,7 @@
         "pk": 3,
         "model": "plugins.pluginversion",
         "fields": {
-            "last": false,
+            "current": false,
             "plugin": 1,
             "downloads": 0,
             "changelog": "Added coffee filtering",
@@ -57,7 +59,7 @@
         "pk": 1,
         "model": "plugins.pluginversion",
         "fields": {
-            "last": true,
+            "current": true,
             "plugin": 1,
             "downloads": 1,
             "changelog": "Added coffee filtering",
@@ -73,7 +75,7 @@
         "pk": 2,
         "model": "plugins.pluginversion",
         "fields": {
-            "last": true,
+            "current": true,
             "plugin": 1,
             "downloads": 1,
             "changelog": "Added coffee filtering",

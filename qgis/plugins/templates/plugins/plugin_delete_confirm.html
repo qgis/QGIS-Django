@@ -1,5 +1,5 @@
 {% extends 'plugins/plugin_base.html' %}{% load i18n %}
-{% block body %}
+{% block content %}
     <h2>{% trans "Delete plugin"%}: {{ plugin.title }}</h2>
     <form action="" method="post">{% csrf_token %}
         <p class="warning">{% trans "You asked to delete the plugin and all its versions. The plugin will be permanently deleted. This action cannot be undone. Please confirm."%}</p>

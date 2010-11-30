@@ -1,5 +1,8 @@
 from django.conf.urls.defaults import *
 from django.conf import settings
+
+from django.contrib.auth.views import login, logout
+
 # Uncomment the next two lines to enable the admin:
 from django.contrib import admin
 admin.autodiscover()
@@ -29,3 +32,10 @@ if settings.SERVE_STATIC_MEDIA:
     urlpatterns += patterns('',
         (r'^static/(?P<path>.*)$', 'django.views.static.serve', {'document_root': settings.MEDIA_ROOT}),
     )
+
+
+# auth
+urlpatterns += patterns('',
+    url(r'^accounts/login/$',  login, {}, name = 'fe_login'),
+    url(r'^accounts/logout/$', logout, {}, name = 'fe_logout'),
+)

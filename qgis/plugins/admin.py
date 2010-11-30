@@ -8,8 +8,8 @@ class PluginAdmin (admin.ModelAdmin):
 
 
 class PluginVersionAdmin (admin.ModelAdmin):
-    list_filter     = ('last', 'experimental', 'plugin')
-    list_display    = ('plugin', 'version', 'last', 'experimental', 'created_on', 'downloads')
+    list_filter     = ('current', 'experimental', 'plugin')
+    list_display    = ('plugin', 'version', 'current', 'experimental', 'created_on', 'downloads')
 
 
 

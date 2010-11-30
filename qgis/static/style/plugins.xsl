@@ -49,7 +49,7 @@ div.description{
   font-weight:normal;
  }
 
-div.download, div.author{
+div.download, div.author, div.branch{
   font-size: 80%;
   padding: 0em 0em 0em 1em;
  }
@@ -111,6 +111,9 @@ Author: <xsl:value-of select="author_name" />
 </div>
 <div class="author">
 Version: <xsl:value-of select="version" />
+</div>
+<div class="branch">
+Experimental: <xsl:value-of select="experimental" />
 </div>
 <div class="author">
 Minimum QGIS Version: <xsl:value-of select="qgis_minimum_version" />

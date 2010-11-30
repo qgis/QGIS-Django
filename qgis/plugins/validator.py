@@ -11,8 +11,6 @@ from django.forms import ValidationError
 
 PLUGIN_MAX_UPLOAD_SIZE= getattr(settings, 'PLUGIN_MAX_UPLOAD_SIZE', 1048576)
 
-
-
 def validator(package):
     """
     Analyze a zipped file, returns metadata if success, False otherwise.
@@ -43,14 +41,16 @@ def validator(package):
             del zip
             raise ValidationError( msg )
 
-        # check that Dirname/__init__.py exists
+        # Checks that package_name/__init__.py exists
         namelist = zip.namelist()
-        dirname = namelist[0]
-        initname = dirname + '__init__.py'
+        package_name = namelist[0]
+        initname = package_name + '__init__.py'
+        # Cuts the trailing slash
+        package_name = package_name[:-1]
         if not initname in namelist:
             raise ValidationError(_('Cannot find __init__.py in the compressed package: this does not seems a valid plugin (I searched for %s)') % initname)
 
-        # Check metadata
+        # Checks metadata
         initcontent = zip.read(initname)
         metadata = re.findall('def\s+(\w+).*?return\s+["\'](.*?)["\']', initcontent , re.DOTALL)
         if not metadata:
@@ -61,5 +61,7 @@ def validator(package):
                 raise ValidationError(_('Cannot find metadata %s') % md)
         zip.close()
         del zip
+        # Adds package_name
+        metadata.append(('package_name', package_name))
     return metadata
 

@@ -1,5 +1,5 @@
 {% extends 'plugins/plugin_base.html' %}{% load i18n %}
-{% block body %}
+{% block content %}
     <h1>{% blocktrans with version.version as version and plugin.name as plugin_name %}Delete version {{ version }} of {{ plugin_name }}{% endblocktrans %}</h1>
     <form action="" method="post">{% csrf_token %}
         <p class="warning">{% trans "You asked to delete one version. The version will be permanently deleted. This action cannot be undone. Please confirm." %}</p>
