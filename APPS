@@ -19,6 +19,7 @@ Tim Sutton 2010
  3. snippets - a django app for users to share python and c++ snippets showing how to program QGIS
  4. styles - a django app for users to publish the QGIS styles they have created
  5. symbols - a django app for users to publish symbols (svg/png etc) they have created
+ 6. planet - a blog aggregator for people blogging with QGIS related stuff
 
 
 
