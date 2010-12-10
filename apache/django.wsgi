@@ -2,8 +2,8 @@ import os
 import sys
 
 ROOT_PROJECT_FOLDER = os.path.dirname(__file__)
-path1 = os.path.join(ROOT_PROJECT_FOLDER, '..')
-path2 = os.path.join(ROOT_PROJECT_FOLDER, '..', 'qgis')
+path1 = os.path.abspath(os.path.join(ROOT_PROJECT_FOLDER, '..'))
+path2 = os.path.abspath(os.path.join(ROOT_PROJECT_FOLDER, '..', 'qgis'))
 
 os.environ['DJANGO_SETTINGS_MODULE'] = 'settings'
 
