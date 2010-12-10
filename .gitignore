@@ -18,6 +18,7 @@ temp/*
 python/*
 packages/*
 packages/
+build
 
 # ipython debug shell
 ipy.php
