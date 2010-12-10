@@ -1,5 +1,12 @@
+# Tell django which clients may receive debug messages...used by django-debug-toolbar
+INTERNAL_IPS = ('127.0.0.1','')
+
+# Disable for prod machine
 DEBUG = True
 TEMPLATE_DEBUG = DEBUG
+LOGGING_OUTPUT_ENABLED=DEBUG
+LOGGING_LOG_SQL=DEBUG
+
 
 ADMINS = (
     # ('Your Name', 'your_email@domain.com'),
