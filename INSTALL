@@ -25,7 +25,25 @@ For a readonly checkout do:
   source python/bin/activate
   easy_install pip
   pip install -r REQUIREMENTS.txt
-  cd qgis-django
+
+
+Install some manual dependencies needed for django-snippets (make sure your
+virtual env is active):
+
+
+  git clone https://github.com/coleifer/django-amazon-resources.git
+  cd django-amazon-resources/
+  python setup.py install
+  cd ..
+
+
+Now install django snippets
+
+
+  git clone git://github.com/coleifer/djangosnippets.org.git
+  cd djangosnippets.org/
+  python setup.py install
+  cd ..
 
 
 
@@ -35,6 +53,7 @@ For a readonly checkout do:
 Copy the settings template:
 
 
+  cd qgis
   cp settings_local.py.templ settings_local.py
 
 
