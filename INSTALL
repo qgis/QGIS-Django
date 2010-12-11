@@ -37,11 +37,11 @@ virtual env is active):
   cd ..
 
 
-Now install django snippets
+Now install qgis snippets (a fork of django snippets)
 
 
-  git clone git://github.com/coleifer/djangosnippets.org.git
-  cd djangosnippets.org/
+  git clone git@github.com:qgis/qgis-snippets.git
+  cd qgis-snippets
   python setup.py install
   cd ..
 
