@@ -25,8 +25,8 @@
     SetHandler None
   </Location>
 
-  Alias /media /home/web/qgis-django/qgis/media
-  <Location /media>
+  Alias /static /home/web/qgis-django/qgis/static
+  <Location /static>
     Order deny,allow
     Allow from all
     SetHandler None
