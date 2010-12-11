@@ -19,6 +19,8 @@ urlpatterns = patterns('',
 
     # ABP: plugins app
     (r'^plugins/', include('plugins.urls')),
+    # TIM: snippets app
+    (r'^snippets/', include('cab.urls.snippets')),
 )
 
 #ABP: temporary home page

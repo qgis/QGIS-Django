@@ -109,6 +109,12 @@ INSTALLED_APPS = (
     'django_sorting',
     'pagination',
     'django.contrib.humanize',
+    # Tim for django snippets app support
+    'django.contrib.comments',
+    'django.contrib.markup',
+    'django.contrib.syndication',
+    'cab', #the django snippets app itself
+    # Tim for Debug toolbar
     'debug_toolbar',
 )
 
@@ -123,6 +129,11 @@ TEMPLATE_CONTEXT_PROCESSORS = (
 ACCOUNT_ACTIVATION_DAYS = 7 # One-week activation window; you may, of course, use a different value
 
 LOGIN_REDIRECT_URL='/'
+
+# Added by Tim for snippets (and possibly other site search support)
+HAYSTACK_SITECONF = 'search_sites'
+HAYSTACK_SEARCH_ENGINE = 'whoosh'
+
 
 # Local settings overrides
 from settings_local import *

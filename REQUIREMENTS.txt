@@ -6,3 +6,15 @@ psycopg2
 pil
 django-pagination
 django-sorting
+#
+# Following are deps for django snippets
+# see https://github.com/coleifer/djangosnippets.org/
+#
+pygments
+markdown
+django-simple-ratings 
+django-taggit 
+django-haystack
+whoosh
+# pip install django-amazon-resources <-- no such package have to manual install
+

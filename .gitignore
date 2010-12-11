@@ -22,3 +22,7 @@ build
 
 # ipython debug shell
 ipy.php
+
+#Tim Transient dirs when installing snippet deps
+django-amazon-resources
+djangosnippets.org
