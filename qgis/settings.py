@@ -113,6 +113,8 @@ INSTALLED_APPS = (
     'django.contrib.comments',
     'django.contrib.markup',
     'django.contrib.syndication',
+    'ratings',
+    'taggit',
     'cab', #the django snippets app itself
     # Tim for Debug toolbar
     'debug_toolbar',
