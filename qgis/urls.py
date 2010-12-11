@@ -21,6 +21,10 @@ urlpatterns = patterns('',
     (r'^plugins/', include('plugins.urls')),
     # TIM: snippets app
     (r'^snippets/', include('cab.urls.snippets')),
+    (r'^tags/', include('cab.urls.tags')),
+    (r'^bookmarks/', include('cab.urls.bookmarks')),
+    (r'^languages/', include('cab.urls.languages')),
+    (r'^popular/', include('cab.urls.popular')),
 )
 
 #ABP: temporary home page
