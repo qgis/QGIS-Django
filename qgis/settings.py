@@ -115,6 +115,7 @@ INSTALLED_APPS = (
     'django.contrib.syndication',
     'ratings',
     'taggit',
+    'haystack',
     'cab', #the django snippets app itself
     # Tim for Debug toolbar
     'debug_toolbar',

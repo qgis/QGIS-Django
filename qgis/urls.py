@@ -25,6 +25,9 @@ urlpatterns = patterns('',
     (r'^bookmarks/', include('cab.urls.bookmarks')),
     (r'^languages/', include('cab.urls.languages')),
     (r'^popular/', include('cab.urls.popular')),
+    (r'^search/', include('haystack.urls')),
+
+
 )
 
 #ABP: temporary home page

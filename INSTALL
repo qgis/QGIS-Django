@@ -7,6 +7,7 @@ Tim Sutton 2010
 
   1. For the terminally lazy
   2. Deploying a live site using wsgi
+  3. Updating the search indexes
 
 
 ------------------------------------------------------------------------
@@ -111,6 +112,22 @@ Now modify qgis-django.conf to your needs (making sure paths and web url are cor
 
   sudo a2ensite qgis-django.conf
   sudo /etc/init.d/apache2 reload
+
+
+
+  3. Updating the search indexes
+  ==============================
+
+The haystack search indexes should be created after initial install:
+
+
+  python manage.py create_index
+
+
+There after they should be updated regularly e.g. using a 5 min cron job:
+
+
+  python manage.py update_index
 
 
 
