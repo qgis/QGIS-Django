@@ -68,7 +68,7 @@ Then run the createdb script:
 just do the following command rather than running the createdb script:
 
 
-  createdb qgis-trunk
+  createdb qgis-django
 
 
 ''Note:'' Remember to source the activate script to enabled the python 

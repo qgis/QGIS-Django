@@ -27,6 +27,7 @@
                     <li><a href="{% url index %}">{% trans "Home" %}</a></li>
                     <li><a href="{% url featured_plugins %}">{% trans "Plugins" %}</a></li>
                     <li><a href="/snippets/">{% trans "Snippets" %}</a></li>
+                    <li><a href="/">{% trans "Users" %}</a></li>
                     {% if user.is_authenticated %}
                     <li><a href="{% url fe_logout %}">{% trans "Logout" %}</a></li>
                     {% else %}

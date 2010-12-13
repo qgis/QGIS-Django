@@ -17,4 +17,3 @@ django-taggit
 django-haystack
 whoosh
 # pip install django-amazon-resources <-- no such package have to manual install
-
