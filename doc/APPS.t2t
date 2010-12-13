@@ -42,7 +42,7 @@ Tim Sutton 2010
  + styles - a django app for users to publish the QGIS styles they have created
  + symbols - a django app for users to publish symbols (svg/png etc) they have created
  + planet - a blog aggregator for people blogging with QGIS related stuff
- +
+ + gallery - a gallery of maps made with QGIS
 
 
 
