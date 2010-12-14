@@ -97,6 +97,8 @@ class Plugin (models.Model):
     name            = models.CharField(_('Name'), help_text = _('Must be unique'), max_length = 256, unique = True)
     description     = models.TextField(_('Description'))
 
+    icon            = models.ImageField(_('Icon'), blank = True, null = True, upload_to = PLUGINS_STORAGE_PATH)
+
     # downloads (soft trigger from versions)
     downloads       = models.IntegerField(_('Downloads'), default = 0, editable = False)
 
@@ -160,6 +162,7 @@ class Plugin (models.Model):
     def __str__(self):
         return self.__unicode__()
 
+
 class PluginVersion (models.Model):
     """
     Plugin versions
@@ -180,7 +183,7 @@ class PluginVersion (models.Model):
 
     # the file!
     package         = models.FileField(_('Plugin package'), upload_to = PLUGINS_STORAGE_PATH)
-    # Flags TODO: checks on unique current/experimental
+    # Flags: checks on unique current/experimental are done in save() and possibly in the views
     experimental    = models.BooleanField(_('Experimental flag'), default = False, help_text = _("Check this box if this version is experimental, leave unchecked if it's stable"))
     current         = models.BooleanField(_('Current flag'), default = True, help_text = _('Check this box if this version is the current version'))
 

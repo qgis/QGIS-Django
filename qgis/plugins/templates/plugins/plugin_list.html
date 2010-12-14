@@ -12,6 +12,7 @@
     <table>
         <thead>
             <tr>
+                <th>&nbsp;</th>
                 <th>{% anchor name %}</th>
                 <th>{% anchor featured %}</th>
                 <th>{% anchor downloads %}</th>
@@ -26,6 +27,7 @@
         <tbody>
             {% for object in object_list %}
             <tr class="{% cycle "even" "odd" %}">
+                <td class="plugin-icon">{% if object.icon %}<a title="{% trans "Click here for plugin details" %}" href="{% url plugin_detail object.pk %}"><img src="{{ object.icon.url }}" alt="{% trans "Plugin icon" %}" /></a>{% else %}&nbsp;{% endif %}</td>
                 <td><a href="{% url plugin_detail object.pk %}">{{ object.name }}</a></td>
                 <td>{{ object.featured }}</td>
                 <td>{{ object.downloads }}</td>

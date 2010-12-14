@@ -2,7 +2,7 @@
 {% block content %}
     <h2>{% trans "Plugin" %}: {{ object.name }}</h2>
     <div class="details">
-        <p><strong>{% trans "Description" %}:</strong> {{ object.description }}</p>
+        <p>{% if object.icon %}<img src="{{ object.icon.url }}" alt="{% trans "Plugin icon" %}" />&nbsp;{% endif %}<strong>{% trans "Description" %}:</strong> {{ object.description }}</p>
         <p><strong>{% trans "Author"%}:</strong> {{ object.created_by }}</p>
         {% if object.homepage %}<p><strong>{% trans "Plugin home page"%}:</strong> <a href="{{ object.homepage }}">{{ object.homepage }}</a></p>{% endif %}
         {% if object.stable %}<p><strong>{% trans "Current stable version"%}:</strong> <a href="{% url version_detail object.stable.pk %}">{{ object.stable.version }}</a></p>{% endif %}

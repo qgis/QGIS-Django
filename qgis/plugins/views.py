@@ -186,7 +186,11 @@ def plugin_upload(request):
                     'description'       : form.cleaned_data['description'],
                     'created_by'        : request.user,
                     'published'         : request.user.has_perm('plugins.can_publish'),
+                    'icon'              : form.cleaned_data['icon_file'],
                 }
+
+                #import ipy; ipy.shell()
+
                 new_plugin = Plugin(**plugin_data)
                 new_plugin.save()
                 plugin_notify(new_plugin)
@@ -294,6 +298,7 @@ def version_create(request, plugin_id):
                 new_object.plugin.save()
                 messages.warning(request, _('You do not have publish permissions, plugin has been unpublished.'), fail_silently=True)
             # Update plugin
+            plugin.icon = form.cleaned_data['icon_file']
             plugin.name = form.cleaned_data['name']
             plugin.description = form.cleaned_data['description']
             return HttpResponseRedirect(new_object.plugin.get_absolute_url())

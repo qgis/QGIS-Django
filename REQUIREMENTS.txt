@@ -12,8 +12,10 @@ django-sorting
 #
 pygments
 markdown
-django-simple-ratings 
-django-taggit 
+django-simple-ratings
+django-taggit
 django-haystack
 whoosh
 # pip install django-amazon-resources <-- no such package have to manual install
+
+git+git://github.com/coleifer/djangosnippets.org.git
