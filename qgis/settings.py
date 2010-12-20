@@ -6,6 +6,8 @@ SITE_ROOT = os.path.dirname(os.path.realpath(__file__))
 
 TEMPLATE_DEBUG = False
 
+
+
 ADMINS = (
     ('Your Name', 'info@domain.com'),
 )
@@ -140,4 +142,5 @@ HAYSTACK_SEARCH_ENGINE = 'whoosh'
 
 # Local settings overrides
 from settings_local import *
-
+# auth overrids
+from settings_auth import *

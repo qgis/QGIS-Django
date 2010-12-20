@@ -17,5 +17,9 @@ django-taggit
 django-haystack
 whoosh
 # pip install django-amazon-resources <-- no such package have to manual install
+# Dont's use this - see INSTALL notes
+#git+git://github.com/coleifer/djangosnippets.org.git
 
-git+git://github.com/coleifer/djangosnippets.org.git
+
+# For ldap authentication
+python-ldap

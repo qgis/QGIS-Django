@@ -19,6 +19,7 @@ Tim Sutton 2010
 For a readonly checkout do:
 
 
+  sudo apt-get install libldap2-dev libsasl2-dev
   git checkout git@github.com:qgis/qgis-django.git
   cd qgis-django
   sudo easy_install virtualenv
@@ -41,7 +42,7 @@ virtual env is active):
 Now install qgis snippets (a fork of django snippets)
 
 
-  git clone https://github.com/qgis/qgis-snippets.git
+  git clone git@github.com:qgis/qgis-snippets.git
   cd qgis-snippets
   python setup.py install
   cd ..
@@ -68,7 +69,7 @@ Then run the createdb script:
 just do the following command rather than running the createdb script:
 
 
-  createdb qgis-django
+  createdb qgis-trunk
 
 
 ''Note:'' Remember to source the activate script to enabled the python 

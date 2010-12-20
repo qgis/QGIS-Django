@@ -39,6 +39,7 @@ Tim Sutton 2010
 For a readonly checkout do:
 
 ```
+sudo apt-get install libldap2-dev libsasl2-dev
 git checkout git@github.com:qgis/qgis-django.git
 cd qgis-django
 sudo easy_install virtualenv
