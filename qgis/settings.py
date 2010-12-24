@@ -121,6 +121,9 @@ INSTALLED_APPS = (
     'cab', #the django snippets app itself
     # Tim for Debug toolbar
     'debug_toolbar',
+    # Sam for Users map
+    'django.contrib.gis',
+    'users',
 )
 
 TEMPLATE_CONTEXT_PROCESSORS = (

@@ -1,0 +1,44 @@
+
+
+<html>
+  <head>
+    <title>QGIS Users - Around the world</title>
+    <style>
+      #map-id {
+        width: 512px;
+        height: 512px;
+        border-color:grey;
+      }
+    </style>
+    
+    <script src="http://openlayers.org/api/OpenLayers.js"></script> 
+  
+  </head>
+  
+  <body>
+    <h1>QGIS Community Map</h1>
+    <div id="map-id"></div>
+    
+   <script>
+       
+     var map = new OpenLayers.Map("map-id");
+    
+            var pointlayer = new OpenLayers.Layer.Vector("the_user");
+            var format = new OpenLayers.Format.WKT();
+               
+            {% for myObject in myObjects %}
+            var feature = format.read('{{myObject.wkb_geometry}}');
+            pointlayer.addFeatures(feature);
+            {% endfor %}
+            
+            map.addLayer(pointlayer);
+            map.zoomToMaxExtent();
+     
+    </script>
+  
+            
+   
+  </body>
+</html>
+
+
