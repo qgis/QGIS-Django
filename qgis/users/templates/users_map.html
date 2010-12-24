@@ -1,15 +1,13 @@
-
-
 <html>
   <head>
     <title>QGIS Users - Around the world</title>
-    <style>
-      #map-id {
+      <style>
+       #map-id {
         width: 512px;
         height: 512px;
         border-color:grey;
-      }
-    </style>
+       }
+      </style>
     
     <script src="http://openlayers.org/api/OpenLayers.js"></script> 
   
@@ -21,18 +19,27 @@
     
    <script>
        
-     var map = new OpenLayers.Map("map-id");
+            var map = new OpenLayers.Map("map-id");
+            
+            var country = new OpenLayers.Layer.WMS(
+        "Country",
+        "http://localhost/cgi-bin/mapserv?map=/mnt/my_files/linfiniti/dev/web/mapserver/world.map",
+        {layers: "Country", format : "image/png; mode=24bit"}
+      );
+      map.addLayer(country);
+
     
             var pointlayer = new OpenLayers.Layer.Vector("the_user");
             var format = new OpenLayers.Format.WKT();
                
-            {% for myObject in myObjects %}
+      {% for myObject in myObjects %}
             var feature = format.read('{{myObject.wkb_geometry}}');
             pointlayer.addFeatures(feature);
-            {% endfor %}
+       {% endfor %}
+         
             
             map.addLayer(pointlayer);
-            map.zoomToMaxExtent();
+           map.zoomToMaxExtent();
      
     </script>
   
