@@ -19,18 +19,42 @@
     
    <script>
        
-            var map = new OpenLayers.Map("map-id");
+     var map = new OpenLayers.Map("map-id");
             
-            var country = new OpenLayers.Layer.WMS(
+     var country = new OpenLayers.Layer.WMS(
         "Country",
         "http://localhost/cgi-bin/mapserv?map=/mnt/my_files/linfiniti/dev/web/mapserver/world.map",
         {layers: "Country", format : "image/png; mode=24bit"}
       );
-      map.addLayer(country);
+     map.addLayer(country);
 
     
-            var pointlayer = new OpenLayers.Layer.Vector("the_user");
-            var format = new OpenLayers.Format.WKT();
+    
+     // Create a styleMap to style your features for two different
+     // render intents.  The style for the 'default' render intent will
+     // be applied when the feature is first drawn.  The style for the
+     // 'select' render intent will be applied when the feature is
+     // selected.
+            var myStyles = new OpenLayers.StyleMap({
+                "default": new OpenLayers.Style({
+                    pointRadius: 1, 
+                    fillColor: "#ffcc66",
+                    strokeColor: "#ff9933",
+                    strokeWidth: 2,
+                    graphicZIndex: 1
+                }),
+                "select": new OpenLayers.Style({
+                    fillColor: "#66ccff",
+                    pointRadius: 5,
+                    strokeColor: "#3399ff",
+                    graphicZIndex: 2
+                })
+            });
+     var pointlayer = new OpenLayers.Layer.Vector("the_user", {
+        styleMap: myStyles,
+         rendererOptions: {zIndexing: true}
+         });
+     var format = new OpenLayers.Format.WKT();
                
       {% for myObject in myObjects %}
             var feature = format.read('{{myObject.wkb_geometry}}');
@@ -38,8 +62,13 @@
        {% endfor %}
          
             
-            map.addLayer(pointlayer);
-           map.zoomToMaxExtent();
+     map.addLayer(pointlayer);
+            
+    var select = new OpenLayers.Control.SelectFeature(pointlayer, {hover: true});
+    map.addControl(select);
+    select.activate();
+            
+    map.zoomToMaxExtent();
      
     </script>
   
