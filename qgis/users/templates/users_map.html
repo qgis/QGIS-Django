@@ -8,7 +8,7 @@
         border-color:grey;
        }
       </style>
-    
+    <script src="http://maps.google.com/maps/api/js?sensor=false"></script>
     <script src="http://openlayers.org/api/OpenLayers.js"></script> 
   
   </head>
@@ -18,19 +18,22 @@
     <div id="map-id"></div>
     
    <script>
-       
-     var map = new OpenLayers.Map("map-id");
-            
-     var country = new OpenLayers.Layer.WMS(
-        "Country",
-        "http://localhost/cgi-bin/mapserv?map=/mnt/my_files/linfiniti/dev/web/mapserver/world.map",
-        {layers: "Country", format : "image/png; mode=24bit"}
-      );
-     map.addLayer(country);
+     var geographic = new OpenLayers.Projection("EPSG:4326");
+     var gmercator = new OpenLayers.Projection("EPSG:900913");
 
+     var world = new OpenLayers.Bounds(-20037508.34,-20037508.34,20037508.34,20037508.34);
+     var options = {
+                projection: gmercator,
+                units: "m",
+                maxExtent: world
+            };
+     var map = new OpenLayers.Map("map-id", options);       
+
+     var osmLayer = new OpenLayers.Layer.OSM();
+     osmLayer.projection = gmercator;
+   
     
-    
-     // Create a styleMap to style your features for two different
+ // Create a styleMap to style your features for two different
      // render intents.  The style for the 'default' render intent will
      // be applied when the feature is first drawn.  The style for the
      // 'select' render intent will be applied when the feature is
@@ -50,25 +53,38 @@
                     graphicZIndex: 2
                 })
             });
-     var pointlayer = new OpenLayers.Layer.Vector("the_user", {
-        styleMap: myStyles,
+
+
+    var pointlayer = new OpenLayers.Layer.Vector("the_user", {
+         styleMap: myStyles,
          rendererOptions: {zIndexing: true}
          });
-     var format = new OpenLayers.Format.WKT();
-               
+    
+      
+     var proj_options = {
+                'internalProjection': gmercator,
+                'externalProjection': geographic
+            };
+     var format = new OpenLayers.Format.WKT(proj_options)
+
       {% for myObject in myObjects %}
-            var feature = format.read('{{myObject.wkb_geometry}}');
-            pointlayer.addFeatures(feature);
+            var element = '{{myObject.wkb_geometry}}';
+            var features = format.read(element);
+            pointlayer.addFeatures(features);
+                        
        {% endfor %}
          
-            
-     map.addLayer(pointlayer);
-            
+    
+   
     var select = new OpenLayers.Control.SelectFeature(pointlayer, {hover: true});
     map.addControl(select);
     select.activate();
             
-    map.zoomToMaxExtent();
+            
+   map.addLayers([osmLayer, pointlayer]);
+   map.addControl(new OpenLayers.Control.MousePosition());
+       
+   map.zoomToMaxExtent();
      
     </script>
   
