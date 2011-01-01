@@ -1,11 +1,14 @@
-<html>
+
+{% extends 'templates/user_base.html' %}{% load i18n %}
+
+{% block content %}
   <head>
     <title>QGIS Users - Around the world</title>
       <style>
        #map-id {
         width: 512px;
         height: 512px;
-        border-color:grey;
+        border-color: 2px solid #ccc;
        }
       </style>
     <script src="http://maps.google.com/maps/api/js?sensor=false"></script>
@@ -91,6 +94,7 @@
             
    
   </body>
-</html>
+
+{% endblock %}
 
 

@@ -13,32 +13,31 @@ from django.db import models
 from django.contrib.gis.db import models
 # use python time goodies
 import datetime
+import uuid
 
 class QgisUser(models.Model):
-    ogc_fid = models.IntegerField(primary_key=True)
     wkb_geometry = models.PointField(srid=4326,null=True, blank=True)
-    id = models.DecimalField(max_digits=10, decimal_places=0)
-    name = models.TextField() # This field type is a guess.
-    email = models.TextField() # This field type is a guess.
+    name = models.TextField() 
+    email = models.TextField() 
     image = models.TextField() # This field type is a guess.
-    image_url = models.TextField() # This field type is a guess.
     home_url = models.TextField() # This field type is a guess.
-    country_id = models.TextField() # This field type is a guess.
-    place_desc = models.TextField() # This field type is a guess.
-    admin_note = models.TextField() # This field type is a guess.
-    lat = models.DecimalField(max_digits=24, decimal_places=15)
-    long = models.DecimalField(max_digits=24, decimal_places=15)
-    added_date = models.TextField() # This field type is a guess.
-    checked_da = models.TextField() # This field type is a guess.
-    verified = models.TextField() # This field type is a guess.
-    hash = models.TextField() # This field type is a guess.
+    added_date = models.DateTimeField('DateAdded', 
+                auto_now=True, auto_now_add=False)
+    guid = models.CharField(max_length=40)
     objects = models.GeoManager()
+    
+    def save(self):
+      #makes a random globally unique id
+      if not self.guid or self.guid=='null':
+      self.guid = str(uuid.uuid4())
+      super(QgisUser, self).save() 
 
     class Meta:
         db_table = u'qgis_users'
         verbose_name = ('QGIS User')
         verbose_name_plural = ('QGIS Users')
         ordering = ('name',)
-
-
+        
+       
+                
 
