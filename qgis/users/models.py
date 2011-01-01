@@ -16,11 +16,11 @@ import datetime
 import uuid
 
 class QgisUser(models.Model):
-    wkb_geometry = models.PointField(srid=4326,null=True, blank=True)
+    geometry = models.PointField(srid=4326,null=True, blank=True)
     name = models.TextField() 
-    email = models.TextField() 
-    image = models.TextField() 
-    home_url = models.TextField() 
+    email = models.EmailField() 
+    image = models.ImageField() 
+    home_url = models.URLField() 
     added_date = models.DateTimeField('DateAdded', 
                 auto_now=True, auto_now_add=False)
     guid = models.CharField(max_length=40)
@@ -29,8 +29,8 @@ class QgisUser(models.Model):
     def save(self):
       #makes a random globally unique id
       if not self.guid or self.guid=='null':
-      self.guid = str(uuid.uuid4())
-      super(QgisUser, self).save() 
+        self.guid = str(uuid.uuid4())
+        super(QgisUser, self).save() 
 
     class Meta:
         db_table = u'qgis_users'
