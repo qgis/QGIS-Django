@@ -19,7 +19,7 @@ class QgisUser(models.Model):
     geometry = models.PointField(srid=4326,null=True, blank=True)
     name = models.TextField() 
     email = models.EmailField() 
-    image = models.ImageField() 
+    image = models.ImageField(upload_to="user-pics") 
     home_url = models.URLField() 
     added_date = models.DateTimeField('DateAdded', 
                 auto_now=True, auto_now_add=False)
