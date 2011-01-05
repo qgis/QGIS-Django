@@ -1,8 +1,20 @@
 @import url('template.css');
 @import url('blue.css');
+@import url('pygments.css');
 
 
 #map {
  width: 750px; 
  height: 400px; 
- }
+}
+
+textarea#id_code, textarea#id_description {
+  width: 100%;
+}
+input#id_title, input#id_tags{
+  width: 100%;
+}
+div#leftcolumn li {
+  list-style-type: none;
+  margin-left: -10px;
+}
