@@ -60,6 +60,7 @@ MIDDLEWARE_CLASSES = (
     'django.middleware.common.CommonMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
+    'django.middleware.csrf.CsrfResponseMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     # ABP:
@@ -120,6 +121,7 @@ INSTALLED_APPS = (
     # Sam for Users map
     'django.contrib.gis',
     'users',
+    'olwidget',
 )
 
 TEMPLATE_CONTEXT_PROCESSORS = (
