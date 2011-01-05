@@ -16,7 +16,7 @@ import datetime
 import uuid
 
 class QgisUser(models.Model):
-    geometry = models.PointField(srid=4326,null=True, blank=True)
+    geometry = models.PointField(srid=4326)
     name = models.TextField() 
     email = models.EmailField() 
     image = models.ImageField(upload_to="user-pics") 
@@ -24,7 +24,6 @@ class QgisUser(models.Model):
     added_date = models.DateTimeField('DateAdded', 
                 auto_now=True, auto_now_add=False)
     guid = models.CharField(max_length=40)
-    id = models.DecimalField(max_digits=10, decimal_places=0, primary_key=True)
     objects = models.GeoManager()
     
     def save(self):
@@ -34,7 +33,6 @@ class QgisUser(models.Model):
         super(QgisUser, self).save() 
 
     class Meta:
-        db_table = u'qgis_users'
         verbose_name = ('QGIS User')
         verbose_name_plural = ('QGIS Users')
         ordering = ('name',)
