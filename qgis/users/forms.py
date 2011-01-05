@@ -1,8 +1,13 @@
 from users.models import *
 from django import forms
+from django.conf import settings
 from django.forms import ModelForm, Textarea, TextInput
+
 from olwidget.widgets import EditableMap
 from olwidget.forms import MapModelForm
+from olwidget.fields import MapField, EditableLayerField, InfoLayerField
+
+from users.models import QgisUser
 
 class QgisUserForm(MapModelForm):
   name = forms.CharField(label="User name:",

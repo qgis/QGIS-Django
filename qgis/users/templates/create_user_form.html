@@ -1,7 +1,7 @@
 {% extends 'user_base.html' %}{% load i18n %}
 
 {% block extracss %}
-{{ form.media }}
+{{ myObject.media }}
 
         <script type='text/javascript' src='http://openlayers.org/api/2.9/OpenLayers.js'></script> 
         <script type='text/javascript' src='http://openstreetmap.org/openlayers/OpenStreetMap.js'></script> 
@@ -11,5 +11,9 @@
 
 
 {% block content %}
-  <div id="viewform"> {{ myObject|safe }}</div>
+  <div id="viewform"> 
+  <form action="" method="post" accept-charset="utf-8" class="horizontal">
+    {{ myObject }}
+  <button type="submit">Save</button></form>
+  </div>
 {% endblock %}
