@@ -1,2 +1,8 @@
 @import url('template.css');
 @import url('blue.css');
+
+
+#map {
+ width: 750px; 
+ height: 400px; 
+ }
