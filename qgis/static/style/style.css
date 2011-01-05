@@ -14,3 +14,7 @@ textarea#id_code, textarea#id_description {
 input#id_title, input#id_tags{
   width: 100%;
 }
+div#leftcolumn li {
+  list-style-type: none;
+  margin-left: -10px;
+}
