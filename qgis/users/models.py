@@ -16,7 +16,7 @@ import datetime
 import uuid
 
 class QgisUser(models.Model):
-    wkb_geometry = models.PointField(srid=4326,null=True, blank=True)
+    geometry = models.PointField(srid=4326,null=True, blank=True)
     name = models.TextField() 
     email = models.EmailField() 
     image = models.ImageField(upload_to="user-pics") 
