@@ -24,3 +24,7 @@ whoosh
 # For ldap authentication
 python-ldap
 django-auth-ldap
+
+# openlayers widget
+django-olwidget
+
