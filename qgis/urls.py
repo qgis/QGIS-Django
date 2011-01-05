@@ -31,7 +31,8 @@ urlpatterns = patterns('',
     (r'^search/', include('haystack.urls')),
     
     # SAM: qgis-users app
-    (r'^community-map/', usersMap),
+    (r'^community-map/view_users.html', usersMap),
+    (r'^community-map/create_user_form.html', createUser),
 
 
 )
