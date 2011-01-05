@@ -1,0 +1,18 @@
+{% extends 'base.html' %}{% load i18n %}
+
+{% block menu %}
+{{ block.super }}
+<div class="module_menu">
+    <div>
+        <div>
+            <h3>{% trans "QGIS Users Community Map" %}</h3>
+            <ul class="menu">
+                <li><a href="view_users.html">{% trans "Community map"%}</a></li>
+                <li><a href="create_user_form.html">{% trans "Add new user"%}</a></li>
+                <li><a href="delete_user.html">{% trans "Update user details"%}</a></li>
+          </ul>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
