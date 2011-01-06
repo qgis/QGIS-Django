@@ -26,4 +26,19 @@ def createUser(theRequest):
   else:
     myForm = QgisUserForm()
     return render_to_response("create_user_form.html", {'myObject' : myForm}, context_instance=RequestContext(theRequest))
+    
+
+def updateUser(theRequest, theUser):
+
+  if theRequest.method == 'POST':
+    myForm = QgisUserForm(theRequest.POST)
+    if myForm.is_valid():
+       myObject = myForm.save()
+       return HttpResponseRedirect("/community-map/view_users.html")
+    else:
+       return render_to_response("create_user_form.html", {'myObject' : myForm}, context_instance=RequestContext(theRequest))
+
+  else:
+    myForm = QgisUserForm()
+    return render_to_response("create_user_form.html", {'myObject' : myForm}, context_instance=RequestContext(theRequest))
 

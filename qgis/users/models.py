@@ -19,8 +19,8 @@ class QgisUser(models.Model):
     geometry = models.PointField(srid=4326)
     name = models.TextField() 
     email = models.EmailField() 
-    image = models.ImageField(upload_to="user-pics") 
-    home_url = models.URLField() 
+    image = models.ImageField(upload_to="user-pics",blank=True, null=True) 
+    home_url = models.URLField(blank=True, null=True) 
     added_date = models.DateTimeField('DateAdded', 
                 auto_now=True, auto_now_add=False)
     guid = models.CharField(max_length=40)
