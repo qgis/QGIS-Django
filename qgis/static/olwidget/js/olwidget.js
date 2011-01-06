@@ -182,6 +182,7 @@ var olwidget = {
 /*
  * The Map.  Extends an OpenLayers map.
  */
+OpenLayers.ImgPath = "http://js.mapbox.com/theme/dark/";
 olwidget.Map = OpenLayers.Class(OpenLayers.Map, {
     initialize: function(mapDivID, vectorLayers, options) {
         this.vectorLayers = vectorLayers;
