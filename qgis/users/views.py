@@ -18,27 +18,42 @@ def createUser(theRequest):
   if theRequest.method == 'POST':
     myForm = QgisUserForm(theRequest.POST)
     if myForm.is_valid():
-       myObject = myForm.save()
+       myForm.save()
        return HttpResponseRedirect("/community-map/view_users.html")
     else:
-       return render_to_response("create_user_form.html", {'myObject' : myForm}, context_instance=RequestContext(theRequest))
+       return render_to_response("create_user_form.html", {'myForm' : myForm}, context_instance=RequestContext(theRequest))
 
   else:
     myForm = QgisUserForm()
-    return render_to_response("create_user_form.html", {'myObject' : myForm}, context_instance=RequestContext(theRequest))
+    return render_to_response("create_user_form.html", {'myForm' : myForm}, context_instance=RequestContext(theRequest))
     
 
-def updateUser(theRequest, theUser):
-
+def updateUser(theRequest, theId):
+  myUser = get_object_or_404(QgisUser,guid=theId)
   if theRequest.method == 'POST':
-    myForm = QgisUserForm(theRequest.POST)
+    myForm = QgisUserForm(theRequest.POST, instance= myUser)
     if myForm.is_valid():
-       myObject = myForm.save()
-       return HttpResponseRedirect("/community-map/view_users.html")
-    else:
-       return render_to_response("create_user_form.html", {'myObject' : myForm}, context_instance=RequestContext(theRequest))
-
+        myForm.save()
+        return HttpResponseRedirect("/community-map/view_users.html")
+    return render_to_response("update_user_form.html", {
+            'myUser': myUser, 'myForm': myForm,
+        }, context_instance=RequestContext(request))
   else:
     myForm = QgisUserForm()
-    return render_to_response("create_user_form.html", {'myObject' : myForm}, context_instance=RequestContext(theRequest))
+    return render_to_response("update_user_form.html", {'myForm' : myForm}, context_instance=RequestContext(theRequest))
+    
+def getUserID(theRequest):
+  
+  if theRequest.method == 'POST':
+    myForm = LoginForm(theRequest.POST)
+    if myForm.is_valid():
+       return HttpResponseRedirect("/update.html")
+    else:
+       return render_to_response("update_user.html", {'myForm' : myForm}, context_instance=RequestContext(theRequest))
+
+  else:
+    myForm = LoginForm()
+    return render_to_response("update_user.html", {'myForm' : myForm}, context_instance=RequestContext(theRequest))        
+        
+ 
 

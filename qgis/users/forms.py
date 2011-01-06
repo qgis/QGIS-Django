@@ -40,11 +40,23 @@ class QgisUserForm(MapModelForm):
                error_messages={'required': 
                '''A location is required'''},
               )                           
-                                     
-
+            
   class Meta:
     model = QgisUser
     exclude = ('added_date', 'guid',)
+    
+class LoginForm(ModelForm):
+  guid = forms.CharField(label="User id:",
+               required=True,
+               widget=forms.TextInput(attrs={'size': 50,}),
+               help_text="",
+               error_messages={'required': 
+               '''Please enter your user id'''},
+              )
+  class Meta:
+    model = QgisUser
+    exclude = ('added_date', 'email', 'home_url', 'image', 'geometry',)    
+    
    
 
 

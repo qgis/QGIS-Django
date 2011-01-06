@@ -1,14 +1,13 @@
 {% extends 'user_base.html' %}{% load i18n %}
 
-{% block extracss %}
-{{ myObject.media }}
-{% endblock %}
-
 
 {% block content %}
-  <div id="viewform"> 
+  <div id="submit_guid"> 
   <form action="" method="post" accept-charset="utf-8" class="horizontal">
-    {{ myObject }}
-  <button type="submit">Save</button></form>
+   <label for="guid">Please enter your User ID:</label>
+   <input id="guid" type="text" name="name" size="50" />
+  <button type="submit">OK</button></form>
   </div>
 {% endblock %}
+
+
