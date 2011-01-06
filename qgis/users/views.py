@@ -22,7 +22,6 @@ def createUser(theRequest):
        return HttpResponseRedirect("/community-map/view_users.html")
     else:
        return render_to_response("create_user_form.html", {'myForm' : myForm}, context_instance=RequestContext(theRequest))
-
   else:
     myForm = QgisUserForm()
     return render_to_response("create_user_form.html", {'myForm' : myForm}, context_instance=RequestContext(theRequest))
@@ -31,7 +30,7 @@ def createUser(theRequest):
 def updateUser(theRequest, theId):
   myUser = get_object_or_404(QgisUser,guid=theId)
   if theRequest.method == 'POST':
-    myForm = QgisUserForm(theRequest.POST, instance= myUser)
+    myForm = QgisUserForm(theRequest.POST, instance=myUser)
     if myForm.is_valid():
         myForm.save()
         return HttpResponseRedirect("/community-map/view_users.html")
@@ -39,7 +38,7 @@ def updateUser(theRequest, theId):
             'myUser': myUser, 'myForm': myForm,
         }, context_instance=RequestContext(request))
   else:
-    myForm = QgisUserForm()
+    myForm = QgisUserForm(instance=myUser)
     return render_to_response("update_user_form.html", {'myForm' : myForm}, context_instance=RequestContext(theRequest))
     
 def getUserID(theRequest):
