@@ -1,11 +1,10 @@
 {% extends 'user_base.html' %}{% load i18n %}
 
-
 {% block content %}
+ <p> Please enter the email you registered with and further instructions will be emailed to you. </p>
   <div id="submit_guid"> 
   <form action="" method="post" accept-charset="utf-8" class="horizontal">
-   <label for="guid">Please enter your User ID:</label>
-   <input id="guid" type="text" name="name" size="50" />
+   {{ myForm.as_p }}
   <button type="submit">OK</button></form>
   </div>
 {% endblock %}

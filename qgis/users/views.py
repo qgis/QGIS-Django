@@ -6,6 +6,7 @@ from django.template import RequestContext
 from users.forms import *
 from olwidget.fields import MapField, EditableLayerField
 from olwidget.widgets import Map, EditableLayer, InfoLayer, InfoMap
+from django.core.mail import send_mail
 
 from users.models import *
   
@@ -41,17 +42,25 @@ def updateUser(theRequest, theId):
     myForm = QgisUserForm(instance=myUser)
     return render_to_response("update_user_form.html", {'myForm' : myForm}, context_instance=RequestContext(theRequest))
     
-def getUserID(theRequest):
+def emailEditAddress(theRequest):
   
   if theRequest.method == 'POST':
-    myForm = LoginForm(theRequest.POST)
+    myForm = EmailForm(theRequest.POST)
     if myForm.is_valid():
-       return HttpResponseRedirect("/update.html")
+     subject = "QGIS Community Map: update user"
+     message = "Please follow this link: http:/localhost:8000/community-map/edit/"
+     message += "" 
+     sender = "QGIS community website"
+     recipient = form.cleaned_data['email']
+        
+     send_mail(subject, message, sender, recipient)
+       
+     return HttpResponseRedirect("/community-map/edit/email_confirm.html")
     else:
        return render_to_response("update_user.html", {'myForm' : myForm}, context_instance=RequestContext(theRequest))
 
   else:
-    myForm = LoginForm()
+    myForm = EmailForm()
     return render_to_response("update_user.html", {'myForm' : myForm}, context_instance=RequestContext(theRequest))        
         
  

@@ -45,19 +45,13 @@ class QgisUserForm(MapModelForm):
     model = QgisUser
     exclude = ('added_date', 'guid',)
     
-class LoginForm(ModelForm):
-  guid = forms.CharField(label="User id:",
+class EmailForm(forms.Form):
+  email = forms.EmailField(label="Email:",
                required=True,
-               widget=forms.TextInput(attrs={'size': 50,}),
                help_text="",
                error_messages={'required': 
-               '''Please enter your user id'''},
-              )
-  class Meta:
-    model = QgisUser
-    exclude = ('added_date', 'email', 'home_url', 'image', 'geometry',)    
-    
-   
+               '''A valid email is required'''},)
+  
 
 
 
