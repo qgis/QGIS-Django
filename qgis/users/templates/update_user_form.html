@@ -8,7 +8,7 @@
 {% block content %}
   <div id="viewform"> 
   <form action="" method="post" accept-charset="utf-8" class="horizontal">
-    {{ myForm }}
+    {{ myForm.as_p }}
   <button type="submit">Save</button></form>
   </div>
 {% endblock %}

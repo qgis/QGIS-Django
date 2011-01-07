@@ -36,7 +36,7 @@ class QgisUserForm(MapModelForm):
   geometry = forms.CharField(label="User location:",
                required=True,
                widget=EditableMap(),
-               help_text="Please enter your base location",
+               help_text="To add your location: click 'Edit' on the top-right corner of the map, and then the pencil icon",
                error_messages={'required': 
                '''A location is required'''},
               )                           
