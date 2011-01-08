@@ -6,6 +6,8 @@ psycopg2
 pil
 django-pagination
 django-sorting
+# handy functions like get_object_or_none
+django-annoying
 #
 # Following are deps for django snippets
 # see https://github.com/coleifer/djangosnippets.org/

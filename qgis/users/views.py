@@ -2,6 +2,7 @@ from django.http import HttpResponse
 from users.models import *
 from django.http import HttpResponseRedirect
 from django.shortcuts import render_to_response, get_object_or_404
+from annoying.functions import get_object_or_None
 from django.template import RequestContext
 from users.forms import *
 from olwidget.fields import MapField, EditableLayerField
@@ -46,18 +47,20 @@ def emailEditAddress(theRequest):
   
   if theRequest.method == 'POST':
     myForm = EmailForm(theRequest.POST)
-    if myForm.is_valid():
-     subject = "QGIS Community Map: update user"
-     message = "Please follow this link: http:/localhost:8000/community-map/edit/"
-     message += "" 
-     sender = "QGIS community website"
-     recipient = form.cleaned_data['email']
+    recipient = myForm['email']
+    myUser = get_object_or_None(QgisUser, email=recipient)
+    if myForm.is_valid() and myUser:
+      myLink = "http://users.qgis.org/community-map/edit/" + myUser.guid 
+      subject = "QGIS Community Map: Edit Link Reminder"
+      message = """Someone, hopefully you, has asked for a reminder for the unique link that will allow you to edit your profile settings on our QGIS user's map. To edit your location on our QGIS community map, please follow this link <a href="%s">$s</a>.""" % (myLink,myLink)
+      message += "" 
+      sender = "QGIS community website"
+         
+      send_mail(subject, message, sender, recipient)
         
-     send_mail(subject, message, sender, recipient)
-       
-     return HttpResponseRedirect("/community-map/edit/email_confirm.html")
+      return HttpResponseRedirect("/community-map/edit/email_confirm.html")
     else:
-       return render_to_response("update_user.html", {'myForm' : myForm}, context_instance=RequestContext(theRequest))
+      return render_to_response("update_user.html", {'myForm' : myForm}, context_instance=RequestContext(theRequest))
 
   else:
     myForm = EmailForm()
