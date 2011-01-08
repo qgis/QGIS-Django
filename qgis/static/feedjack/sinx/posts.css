@@ -1,0 +1,151 @@
+
+h1, h2, h3, h4 {
+    clear: both;
+}
+
+acronym, abbr {
+	border-bottom: 1px dashed #333;
+}
+
+acronym, abbr, span.caps {
+	cursor: help;
+	letter-spacing: .07em;
+}
+
+blockquote {
+	margin-left: 2em;
+    border: 1px solid #00B;
+    border-left-width: 3px;
+    font-style: italic;
+    padding: 10px;
+    clear: both;
+    background: #FFFFE0;
+}
+
+cite {
+	font-style: normal;
+}
+
+#center h1 {
+    text-align: center;
+    border: 2px solid #27408B;
+    border-width: 2px 0;
+    margin-top: 1em;
+    font-weight: normal;
+}
+
+#center h2 {
+    background: #C3C3C3 url(h2_bg.png) repeat-x bottom;
+    padding: 5px;
+    border: 3px solid #666;
+    margin-top: 1em;
+}
+
+#center h2 a {
+    display: block;
+    color: #666;
+    text-decoration: none;
+}
+#center h2 a:hover {
+    text-decoration: underline;
+    background: none;
+}
+
+#center h3 {
+    text-align: center;
+    border-bottom: 1px solid #CCC;
+}
+
+#center h3 a {
+    text-decoration: none;
+    color: #000;
+    font-size: 160%;
+}
+
+#center h3 a:hover {
+    background: none;
+    color: #644;
+    text-decoration: underline;
+}
+
+#center .entry {
+    width: 80%;
+    border-left: 1px solid #DDD;
+    padding: 10px;
+    float: right;
+}
+
+.entry {
+    text-align: justify;
+    overflow: auto;
+}
+.entry li {
+    list-style-image: url('dot.png');
+    margin-left: 1em;
+}
+
+.entry img {
+    max-width: 95%;
+    height: auto;
+    padding: 2px;
+    border: 2px solid #224;
+    margin: 5px;
+}
+
+.content h3, .content h4 {
+    text-align: left;
+    border: 0;
+}
+
+.centrado, .center, .centrar {
+    text-align: center;
+}
+.alignleft, .align-left, .izquierda, .izq, .left {
+    float: left;
+}
+.alignright, .align-right, .derecha, .der, .right {
+    float: right;
+}
+
+.entry pre {
+    width: 85%;
+    padding: 10px;
+    border: 1px solid #BBB;
+    overflow: auto;
+}
+
+.entry pre.code {
+    border-color: 1px solid #00A;
+    color: #00A;
+}
+
+#center div.face {
+    float: left;
+    width: 14%;
+}
+#center div.face p {
+    color: #AAA;
+    font-size: 70%;
+    white-space: normal;
+}
+#center div.face img {
+    display: block;
+    max-width: 100%;
+    width: auto;
+    height: auto;
+}
+
+.content table {
+    max-width: 95;
+}
+
+div.ttag {
+	clear:both;
+	color:#BBB;
+	text-align:right;
+	font-family:monospace;
+}
+div.ttag img { border:0;margin:0;padding:0; }
+div.ttag a { color:#BBB; }
+div.ttag a:hover { color:#999;}
+

@@ -32,9 +32,11 @@ urlpatterns = patterns('',
     
     # SAM: qgis-users app
     (r'^community-map/', include('users.urls')),
-   
+    # Tim: Feedjack feed aggregator / planet
+    (r'^planet/', include('feedjack.urls')),
 
 )
+
 
 # ABP: temporary home page
 urlpatterns += patterns('django.views.generic.simple',

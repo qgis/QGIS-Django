@@ -30,3 +30,5 @@ django-auth-ldap
 # openlayers widget
 django-olwidget
 
+# for qgis rss planet
+Feedjack

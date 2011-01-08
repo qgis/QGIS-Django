@@ -122,6 +122,8 @@ INSTALLED_APPS = (
     'django.contrib.gis',
     'users',
     'olwidget',
+    # Tim for blog planet / feed aggregator
+    'feedjack', 
 )
 
 TEMPLATE_CONTEXT_PROCESSORS = (
