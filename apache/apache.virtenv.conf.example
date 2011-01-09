@@ -18,8 +18,8 @@
     Allow from all
   </Directory>
 
-  Alias /admin_media /home/web/qgis-django/python/lib/python2.6/site-packages/django/contrib/admin/media/
-  <Location /admin_media>
+  Alias /media /home/web/qgis-django/python/lib/python2.6/site-packages/django/contrib/admin/media/
+  <Location /media>
     Order deny,allow
     Allow from all
     SetHandler None
