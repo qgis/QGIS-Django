@@ -12,7 +12,7 @@
                 {% if user.plugin_set_count %}<li><a href="{% url my_plugins user %}">{% trans "My plugins" %}</a></li>{% endif %}
                 {% endif %}
                 {% if user.is_authenticated %}
-                <li class="authenticated"><a href="{% url my_plugins %}">{% trans "My"%}</a></li>
+                <li class="authenticated"><a href="{% url my_plugins %}">{% trans "My plugins"%}</a></li>
                 {% endif %}
                 {% if user.is_staff %}
                 <li class="staff"><a href="{% url unpublished_plugins %}">{% trans "Unpublished"%}</a></li>

@@ -7,14 +7,17 @@
         {% endfor %}
     </ul>
     {% endif %}
-    <form action="" method="post" enctype="multipart/form-data">{% csrf_token %}
+    <form action="" method="post" enctype="multipart/form-data" class="horizontal">{% csrf_token %}
         {% for field in form %}
             <div class="fieldWrapper">
                 {{ field.errors }}
                 {{ field.label_tag }}: {{ field }}
             </div>
         {% endfor %}
-        <div class="fieldWrapper"><input type="submit" value="{% trans "Upload" %}" /> <a class="button" href="javascript:history.back()">{% trans "Back" %}</a></div>
+        <div class="fieldWrapper">
+          <input type="submit" value="{% trans "Upload" %}" /> <br />
+          <a class="button" href="javascript:history.back()">{% trans "Back" %}</a>
+        </div>
     </form>
 
 {% endblock %}
