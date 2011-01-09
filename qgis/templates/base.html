@@ -4,7 +4,7 @@
   <title>QGIS Plugins Repository</title>
   <meta name="AUTHOR" content="ItOpen" />
   <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-  <link type="text/css" href="{{ MEDIA_URL }}style/style.css" rel="stylesheet" />
+  <link type="text/css" href="/static/style/style.css" rel="stylesheet" />
   {% block extrajs %}{% endblock %}
   {% block extracss %}{% endblock %}
   <script type="text/javascript">
@@ -15,8 +15,8 @@
 </head>
 <body id="page_bg" {% block onload %}{% endblock %}>
     <div id="main_bg">
-        <img src="{{ MEDIA_URL }}images/blue/top.png" alt="top" />
-        <img src="{{ MEDIA_URL }}images/blue/logo.png" alt="logo" align="left" hspace="5" />
+        <img src="/static/images/blue/top.png" alt="top" />
+        <img src="/static/images/blue/logo.png" alt="logo" align="left" hspace="5" />
         <div id="logo_bg">
             <a href="{% url index %}" class="logo">{% trans "Quantum GIS Plugin Respository" %}</a>
         </div>
@@ -62,7 +62,7 @@
         </div>
         <div id="rightcolumn"></div>
         <br clear="all" />
-        <img id="main_bottom" src="{{ MEDIA_URL }}images/blue/bottom.png" alt="bottom" align="bottom" /></div>
+        <img id="main_bottom" src="/static/images/blue/bottom.png" alt="bottom" align="bottom" /></div>
 <p id="power_by" align="center">
     Powered by <a href="http://www.djangoproject.com">Django!</a>.
 <!--    Valid <a href="http://validator.w3.org/check/referer">XHTML</a> and <a href="http://jigsaw.w3.org/css-validator/check/referer">CSS</a>.-->
