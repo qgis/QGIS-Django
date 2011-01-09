@@ -118,6 +118,8 @@ INSTALLED_APPS = (
     'cab', #the django snippets app itself
     # Tim for Debug toolbar
     'debug_toolbar',
+    # Tim for command extensions so we can run feedjack cron using python manage.py runscript
+    'django_extensions',
     # Sam for Users map
     'django.contrib.gis',
     'users',
