@@ -18,3 +18,10 @@ div#leftcolumn li {
   list-style-type: none;
   margin-left: -10px;
 }
+/* Make community map forms layout nicely */
+form.horizontal input{
+  display: block;
+}
+form.horizontal label{
+  font-weight: bold;
+}
