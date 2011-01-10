@@ -8,6 +8,7 @@ Tim Sutton 2010
   1. For the terminally lazy
   2. Deploying a live site using wsgi
   3. Updating the search indexes
+  4. Cache setup
 
 
 ------------------------------------------------------------------------
@@ -129,6 +130,19 @@ There after they should be updated regularly e.g. using a 5 min cron job:
 
 
   python manage.py update_index
+
+
+
+  4. Cache setup
+  ==============
+
+We will use database based caching here (see http://docs.djangoproject.com/en/dev/topics/cache/ | django (caching)).
+
+Make sure your virtual env is set up and then create a cache table:
+
+
+  python manage.py createcachetable cache_table
+
 
 
 

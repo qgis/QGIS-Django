@@ -144,6 +144,15 @@ LOGIN_REDIRECT_URL='/'
 HAYSTACK_SITECONF = 'search_sites'
 HAYSTACK_SEARCH_ENGINE = 'whoosh'
 
+# Added by Tim for database based caching
+# See http://docs.djangoproject.com/en/dev/topics/cache/
+CACHES = {
+  'default': {
+  'BACKEND': 'django.core.cache.backends.db.DatabaseCache',
+  'LOCATION': 'cache_table',
+  }
+}
+
 
 # Local settings overrides
 from settings_local import *
