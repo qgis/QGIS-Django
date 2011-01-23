@@ -53,7 +53,7 @@ SECRET_KEY = 'y2vu=4qarl)p=g_blq_c4afk!p6u_cor1gy1k@05ro=+tf7+)g'
 TEMPLATE_LOADERS = (
     'django.template.loaders.filesystem.Loader',
     'django.template.loaders.app_directories.Loader',
-    'django.template.loaders.eggs.Loader', #Tim: needed on live server for CAB 
+    'django.template.loaders.eggs.Loader', #Tim: needed on live server for CAB
 )
 
 MIDDLEWARE_CLASSES = (
@@ -125,7 +125,7 @@ INSTALLED_APPS = (
     'users',
     'olwidget',
     # Tim for blog planet / feed aggregator
-    'feedjack', 
+    'feedjack',
 )
 
 TEMPLATE_CONTEXT_PROCESSORS = (

@@ -21,7 +21,7 @@ packages/
 build
 
 # ipython debug shell
-ipy.php
+ipy.py
 
 #Tim Transient dirs when installing snippet deps
 django-amazon-resources

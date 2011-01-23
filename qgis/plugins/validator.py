@@ -48,8 +48,12 @@ def validator(package):
 
         # Checks that package_name/__init__.py exists
         namelist = zip.namelist()
-        package_name = namelist[0]
-        initname = package_name + '__init__.py'
+        try:
+            package_name = namelist[0][:namelist[0].index('/')]
+        except:
+            raise ValidationError( _("Cannot find a folder inside the compressed package: this does not seems a valid plugin") )
+
+        initname = package_name + '/__init__.py'
         # Cuts the trailing slash
         package_name = package_name[:-1]
         if not initname in namelist:
