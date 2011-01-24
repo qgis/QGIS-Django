@@ -21,7 +21,7 @@
                 <th>{% anchor modified_on "Last modified" %}</th>
                 <th>{% trans "Stable" %}</th>
                 <th>{% trans "Experimental" %}</th>
-                {% if user.is_authenticated or user.is_staff %}<th colspan="2">{% trans "Manage" %}</th>{% endif %}
+                {% if user in object.editors or user.is_staff %}<th colspan="2">{% trans "Manage" %}</th>{% endif %}
             </tr>
         </thead>
         <tbody>
@@ -35,9 +35,9 @@
                 <td>{{ object.created_on|naturalday }}</td>
                 <td>{{ object.modified_on|naturalday }}</td>
                 <td>{{ object.stable.version }}</td>
-                <td>{{ object.experimental.version }}</td>{% if user.is_authenticated %}
+                <td>{{ object.experimental.version }}</td>
                 {% if user in object.editors or user.is_staff %}<td><a href="{% url plugin_update object.pk %}">{% trans "Edit" %}</a></td>
-                <td><a class="delete" href="{% url plugin_delete object.pk %}">{% trans "Delete" %}</a></td>{% else %}<td>&nbsp;</td><td>&nbsp;</td>{% endif %}{% endif %}
+                <td><a class="delete" href="{% url plugin_delete object.pk %}">{% trans "Delete" %}</a></td>{% else %}<td>&nbsp;</td><td>&nbsp;</td>{% endif %}
             </tr>
             {% endfor %}
         </tbody>

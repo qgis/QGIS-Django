@@ -4,8 +4,8 @@
 
 
 #map {
- width: 750px; 
- height: 400px; 
+ width: 750px;
+ height: 400px;
 }
 
 textarea#id_code, textarea#id_description {
@@ -22,6 +22,11 @@ div#leftcolumn li {
 form.horizontal input{
   display: block;
 }
+
+form.horizontal input[type="submit"]{
+  display: inline;
+}
+
 form.horizontal label{
   font-weight: bold;
 }

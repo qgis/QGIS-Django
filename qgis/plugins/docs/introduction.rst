@@ -51,7 +51,7 @@ The validation takes place in the PluginVersions forms, at loading time, the com
 
 * in case of version editing or add, `name` metadata must be = to plugin's name
 * `version` must be unique whithin a plugin's branch
-* the must be one and only *last* versions in each plugin's branch
+* there must be one and only *last* versions in each plugin's branch
 
 
 
@@ -68,3 +68,4 @@ PLUGIN_MAX_UPLOAD_SIZE     1048576       in bytes
 PLUGINS_FRESH_DAYS         30            days
 MAIL_FROM_ADDRESS          -             used in email notifications
 ========================== ============= =======================
+

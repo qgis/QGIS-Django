@@ -242,7 +242,7 @@ class PluginVersion (models.Model):
     def __unicode__(self):
         desc = "%s %s" % (self.plugin ,self.version)
         if self.current:
-            desc = "%s %s" % (desc, _('current'))
+            desc = "%s %s" % (desc, _('Current'))
         if self.experimental:
             desc = "%s %s" % (desc, _('Experimental'))
         return desc
