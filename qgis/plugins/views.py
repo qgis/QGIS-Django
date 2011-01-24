@@ -69,6 +69,9 @@ def plugin_create(request):
             plugin_notify(plugin)
             msg = _("The Plugin has been successfully created.")
             messages.success(request, msg, fail_silently=True)
+            if not request.user.has_perm('plugins.can_publish'):
+                msg = _("Your plugin is awaiting approval from a staff member.")
+                messages.warning(request, msg, fail_silently=True)
             return HttpResponseRedirect(plugin.get_absolute_url())
     else:
         form = PluginForm()
@@ -188,9 +191,6 @@ def plugin_upload(request):
                     'published'         : request.user.has_perm('plugins.can_publish'),
                     'icon'              : form.cleaned_data['icon_file'],
                 }
-
-                #import ipy; ipy.shell()
-
                 new_plugin = Plugin(**plugin_data)
                 new_plugin.save()
                 plugin_notify(new_plugin)
@@ -207,6 +207,9 @@ def plugin_upload(request):
                 new_version.save()
                 msg = _("The Plugin has been successfully created.")
                 messages.success(request, msg, fail_silently=True)
+                if not request.user.has_perm('plugins.can_publish'):
+                    msg = _("Your plugin is awaiting approval from a staff member.")
+                    messages.warning(request, msg, fail_silently=True)
             except (IntegrityError, ValidationError), e:
                 messages.error(request, e, fail_silently=True)
                 if not new_plugin.pk:
@@ -248,6 +251,9 @@ def plugin_update(request, plugin_id):
                 new_object.published = False
             new_object.modified_by = request.user
             new_object.save()
+            new_object.owners.clear()
+            for o in form.cleaned_data['owners']:
+                new_object.owners.add(o)
             msg = _("The Plugin has been successfully updated.")
             messages.success(request, msg, fail_silently=True)
             return HttpResponseRedirect(new_object.get_absolute_url())
