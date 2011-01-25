@@ -26,8 +26,8 @@
                 <ul>
                     <li><a href="{% url index %}">{% trans "Home" %}</a></li>
                     <li><a href="{% url featured_plugins %}">{% trans "Plugins" %}</a></li>
-                    <li><a href="/snippets/">{% trans "Snippets" %}</a></li>
-                    <li><a href="/community-map/">{% trans "Users" %}</a></li>
+                    <li><a href="http://snippets.qgis.org/snippets/">{% trans "Snippets" %}</a></li>
+                    <li><a href="http://users.qgis.org/community-map/">{% trans "Users" %}</a></li>
                     <li><a href="/planet/">{% trans "Blog Planet" %}</a></li>
                     {% if user.is_authenticated %}
                     <li><a href="{% url fe_logout %}">{% trans "Logout" %}</a></li>
