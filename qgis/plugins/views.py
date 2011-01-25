@@ -42,6 +42,7 @@ def plugin_notify(plugin):
         [u.email for u in User.objects.filter(is_staff = True, email__isnull = False)],
         fail_silently=True)
 
+
 def check_plugin_access(user, plugin):
     """
     Returns true if the user can modify the plugin:
@@ -51,6 +52,7 @@ def check_plugin_access(user, plugin):
 
     """
     return user.is_staff or user in plugin.editors
+
 
 @login_required
 def plugin_create(request):
@@ -70,7 +72,7 @@ def plugin_create(request):
             msg = _("The Plugin has been successfully created.")
             messages.success(request, msg, fail_silently=True)
             if not request.user.has_perm('plugins.can_publish'):
-                msg = _("Your plugin is awaiting approval from a staff member.")
+                msg = _("Your plugin is awaiting approval from a staff member and will be published as soon as possible.")
                 messages.warning(request, msg, fail_silently=True)
             return HttpResponseRedirect(plugin.get_absolute_url())
     else:
@@ -101,7 +103,6 @@ def plugin_untrust(request, plugin_id):
     msg = _("The user %s is now an untrusted user." % plugin.created_by)
     messages.success(request, msg, fail_silently=True)
     return HttpResponseRedirect(plugin.get_absolute_url())
-
 
 
 @staff_required
@@ -161,6 +162,7 @@ def plugin_publish(request, plugin_id):
     messages.success(request, msg, fail_silently=True)
     return HttpResponseRedirect(plugin.get_absolute_url())
 
+
 @staff_required
 def plugin_unpublish(request, plugin_id):
     """
@@ -172,6 +174,7 @@ def plugin_unpublish(request, plugin_id):
     msg = _("The plugin is now unpublished")
     messages.success(request, msg, fail_silently=True)
     return HttpResponseRedirect(plugin.get_absolute_url())
+
 
 @login_required
 def plugin_upload(request):
@@ -208,7 +211,7 @@ def plugin_upload(request):
                 msg = _("The Plugin has been successfully created.")
                 messages.success(request, msg, fail_silently=True)
                 if not request.user.has_perm('plugins.can_publish'):
-                    msg = _("Your plugin is awaiting approval from a staff member.")
+                    msg = _("Your plugin is awaiting approval from a staff member and will be published as soon as possible.")
                     messages.warning(request, msg, fail_silently=True)
             except (IntegrityError, ValidationError), e:
                 messages.error(request, e, fail_silently=True)
@@ -232,7 +235,6 @@ def plugin_delete(request, plugin_id):
         messages.success(request, msg, fail_silently=True)
         return HttpResponseRedirect(reverse('published_plugins'))
     return render_to_response('plugins/plugin_delete_confirm.html', { 'plugin' : plugin }, context_instance=RequestContext(request))
-
 
 
 @login_required
@@ -278,7 +280,6 @@ def user_plugins(request, username):
     user = get_object_or_404(User, username=username)
     object_list = Plugin.published_objects.filter(created_by=user)
     return render_to_response('plugins/plugin_list.html', { 'object_list' : object_list, 'title' : _('Plugins from %s') % user }, context_instance=RequestContext(request))
-
 
 
 @login_required
@@ -350,6 +351,7 @@ def version_delete(request, version_id):
         return HttpResponseRedirect(reverse('plugin_detail', args=(plugin.pk,)))
     return render_to_response('plugins/version_delete_confirm.html', { 'plugin' : plugin, 'version' : version }, context_instance=RequestContext(request))
 
+
 def version_download(request, version_id):
     """
     Update download counter(s)
@@ -361,6 +363,7 @@ def version_download(request, version_id):
     plugin.downloads = plugin.downloads + 1
     plugin.save()
     return HttpResponseRedirect(version.package.url)
+
 
 def version_detail(request, version_id):
     """

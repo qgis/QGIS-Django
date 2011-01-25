@@ -14,10 +14,9 @@
                 {{ field.label_tag }}: {{ field }}
             </div>
         {% endfor %}
-        <div class="fieldWrapper">
-          <input type="submit" value="{% trans "Upload" %}" /> <br />
-          <a class="button" href="javascript:history.back()">{% trans "Back" %}</a>
-        </div>
+
+        <p><input type="submit" value="{% trans "Upload" %}" /> <a class="button" href="javascript:history.back()">{% trans "Back" %}</a></p>
+
     </form>
 
 {% endblock %}

@@ -8,8 +8,7 @@
     {% autosort object_list %}
     {% autopaginate object_list %}
 
-    <div class="list">
-    <table>
+    <table class="plugins">
         <thead>
             <tr>
                 <th>&nbsp;</th>
@@ -28,7 +27,7 @@
             {% for object in object_list %}
             <tr class="{% cycle "even" "odd" %}">
                 <td class="plugin-icon">{% if object.icon %}<a title="{% trans "Click here for plugin details" %}" href="{% url plugin_detail object.pk %}"><img src="{{ object.icon.url }}" alt="{% trans "Plugin icon" %}" /></a>{% else %}&nbsp;{% endif %}</td>
-                <td><a href="{% url plugin_detail object.pk %}">{{ object.name }}</a></td>
+                <td><a href="{% url plugin_detail object.pk %}" title="{{ object.description }}">{{ object.name }}</a></td>
                 <td>{{ object.featured }}</td>
                 <td>{{ object.downloads }}</td>
                 <td>{{ object.created_by }}</td>
@@ -43,7 +42,6 @@
         </tbody>
     </table>
     {% paginate %}
-    </div>
     {% else %}
     <p>{% trans "This list is empty!" %}</p>
     {% endif %}

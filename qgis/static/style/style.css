@@ -19,14 +19,37 @@ div#leftcolumn li {
   margin-left: -10px;
 }
 /* Make community map forms layout nicely */
-form.horizontal input{
+form.horizontal input,
+form.horizontal select,
+form.horizontal textarea  {
   display: block;
 }
 
 form.horizontal input[type="submit"]{
   display: inline;
+  cursor: pointer;
 }
 
 form.horizontal label{
   font-weight: bold;
 }
+
+
+/* ABP: plugins app styles */
+table.plugins {
+    width: 100%;
+    border-collapse:collapse;
+    padding: 0.25em;
+}
+
+table.plugins td {
+    border-bottom: solid 1px #ddd;
+}
+table.plugins th {
+    border-top: solid 2px #ddd;
+    border-bottom: solid 2px #ddd;
+    font-size: 110%;
+    background: url("../images/bg_menu.png") repeat-x scroll center top transparent;
+    line-height: 1.4em;
+}
+
