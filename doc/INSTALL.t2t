@@ -158,4 +158,4 @@ Make sure your virtual env is set up and then create a cache table:
 python manage.py createcachetable cache_table
 ```
 
-
+**NOTE:** The cache backend is required for the planet / feedjack to work properly
