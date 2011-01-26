@@ -33,7 +33,7 @@
                 <td>{{ object.created_by }}</td>
                 <td>{{ object.created_on|naturalday }}</td>
                 <td>{{ object.modified_on|naturalday }}</td>
-                <td>{{ object.stable.version }}</td>
+                <td><a href="{% url version_download object.stable.pk %}" title="{% trans "Download the stable version" %}" >{{ object.stable.version }}</a></td>
                 <td>{{ object.experimental.version }}</td>
                 {% if user in object.editors or user.is_staff %}<td><a href="{% url plugin_update object.pk %}">{% trans "Edit" %}</a></td>
                 <td><a class="delete" href="{% url plugin_delete object.pk %}">{% trans "Delete" %}</a></td>{% else %}<td>&nbsp;</td><td>&nbsp;</td>{% endif %}
