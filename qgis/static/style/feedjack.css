@@ -1,7 +1,10 @@
 .date{
   color: #000080;
-  font-size: 1.1em;
-  padding: 2.0em 0em 0em 0em;
+  font-size: 1.2em;
+  padding: 1.0em 0em 1.0em 0em;
+  margin: 2.5em 1em 0em 0em;
+  border-top: 2px solid gray;
+  border-bottom: 2px solid gray;
 }
 .name{
   font-family: Georgia,Verdana,sans-serif;
