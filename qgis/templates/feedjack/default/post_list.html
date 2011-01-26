@@ -71,28 +71,6 @@
      src="{{ media_url }}/img/faces/{{ item.subscriber.shortname}}.png" alt="">
     <br/>
     <span class="name">{{ item.subscriber.name }}</span><br/>
-    {% ifnotequal item.subscriber.shortname "nobody" %}
-    <span class="nick">{{ item.subscriber.shortname }}</span><br/>
-    {% endifnotequal %}
-    {% if item.subscriber.get_cloud %}
-    <span class="url">
-      <a href="{{ item.feed.link }}">{{ item.feed.title }}</a> {% trans "is about" %} »
-    </span>
-    <div class="tags">
-      <ul>
-        {% for tag in item.subscriber.get_cloud %}
-        <li><a
-          href="{{ site.url }}/user/{{ item.subscriber.feed.id }}/tag/{{ tag.tagname|urlencode}}/"
-          title="{% blocktrans count tag.count as posts %}{{ posts }} post{% plural %}{{ posts }} posts{% endblocktrans %}"
-          class="cloud_{{ tag.weight }}">{{ tag.tagname }}</a></li>
-        {% endfor %}
-      </ul>
-    </div>
-    {% else %}
-    <span class="url">
-      <a href="{{ item.feed.link }}">{{ item.feed.title }}</a>
-    </span>
-    {% endif %}
   </div>
   {% endifchanged %}
 

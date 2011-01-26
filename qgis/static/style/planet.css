@@ -4,18 +4,6 @@
 	font-family: "Bitstream Vera Sans", sans-serif;
 }
 
-html {
-	background: #2a5075;
-}
-
-body {
-	background: #f9f9f9;
-	margin: 10px;
-	border: 2px solid #fff;
-	padding-left: 20px;
-	padding-right: 230px;
-	border-radius: 7px 7px 0 0; -moz-border-radius: 7px 7px 0 0;
-}
 
 h1 {
 	font-weight: normal;
