@@ -20,7 +20,7 @@
                 <th>{% anchor modified_on "Last modified" %}</th>
                 <th>{% trans "Stable" %}</th>
                 <th>{% trans "Experimental" %}</th>
-                {% if user in object.editors or user.is_staff %}<th colspan="2">{% trans "Manage" %}</th>{% endif %}
+                {% if user.is_authenticated %}<th colspan="2">{% trans "Manage" %}</th>{% endif %}
             </tr>
         </thead>
         <tbody>
@@ -35,8 +35,8 @@
                 <td>{{ object.modified_on|naturalday }}</td>
                 <td><a href="{% url version_download object.stable.pk %}" title="{% trans "Download the stable version" %}" >{{ object.stable.version }}</a></td>
                 <td>{{ object.experimental.version }}</td>
-                {% if user in object.editors or user.is_staff %}<td><a href="{% url plugin_update object.pk %}">{% trans "Edit" %}</a></td>
-                <td><a class="delete" href="{% url plugin_delete object.pk %}">{% trans "Delete" %}</a></td>{% else %}<td>&nbsp;</td><td>&nbsp;</td>{% endif %}
+                {% if user.is_authenticated %}{% if user in object.editors or user.is_staff %}<td><a href="{% url plugin_update object.pk %}">{% trans "Edit" %}</a></td>
+                <td><a class="delete" href="{% url plugin_delete object.pk %}">{% trans "Delete" %}</a></td>{% else %}<td>&nbsp;</td><td>&nbsp;</td>{% endif %}{% endif %}
             </tr>
             {% endfor %}
         </tbody>

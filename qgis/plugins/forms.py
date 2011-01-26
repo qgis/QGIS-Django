@@ -1,6 +1,6 @@
 # i18n
 from django.utils.translation import ugettext_lazy as _
-
+from django.contrib.auth.models import User
 from django.forms import ModelForm, ValidationError
 from django import forms
 
@@ -12,6 +12,7 @@ class PluginForm(ModelForm):
     """
     Form for plugin editing
     """
+
     class Meta:
         model = Plugin
         fields = ('description', 'homepage', 'owners')
@@ -51,6 +52,7 @@ class PackageUploadForm(forms.Form):
     """
     package = forms.FileField(_('QGIS compressed plugin package'))
     experimental = forms.BooleanField(required = False, label = _('Experimental'))
+
     def clean_package(self):
         cleaned_data    = self.cleaned_data
         package         = self.cleaned_data.get('package')
@@ -64,6 +66,7 @@ class PackageUploadForm(forms.Form):
             raise ValidationError(_('A plugin with this package name already exists.'))
 
         if Plugin.objects.filter(name = self.cleaned_data['name']).count():
-            raise ValidationError(_('A plugin with this name already exists.'))
+            import ipy; ipy.shell()
+            raise ValidationError(_('A plugin with this name (%s) already exists.') % self.cleaned_data['name'])
         return package
 

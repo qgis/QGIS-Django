@@ -63,6 +63,7 @@ def plugin_create(request):
     """
     if request.method == 'POST':
         form = PluginForm(request.POST, request.FILES)
+        form.fields['owners'].queryset = User.objects.exclude(pk=request.user.pk)
         if form.is_valid():
             plugin = form.save(commit = False)
             plugin.created_by = request.user
@@ -77,6 +78,7 @@ def plugin_create(request):
             return HttpResponseRedirect(plugin.get_absolute_url())
     else:
         form = PluginForm()
+        form.fields['owners'].queryset = User.objects.exclude(pk=request.user.pk)
 
     return render_to_response('plugins/plugin_form.html', { 'form' : form , 'form_title' : _('New plugin')}, context_instance=RequestContext(request))
 
@@ -247,6 +249,7 @@ def plugin_update(request, plugin_id):
         return render_to_response('plugins/plugin_permission_deny.html', {}, context_instance=RequestContext(request))
     if request.method == 'POST':
         form = PluginForm(request.POST, request.FILES, instance = plugin)
+        form.fields['owners'].queryset = User.objects.exclude(pk=request.user.pk)
         if form.is_valid():
             new_object = form.save(commit = False)
             if not request.user.has_perm('plugins.can_publish'):
@@ -261,6 +264,7 @@ def plugin_update(request, plugin_id):
             return HttpResponseRedirect(new_object.get_absolute_url())
     else:
         form = PluginForm(instance = plugin)
+        form.fields['owners'].queryset = User.objects.exclude(pk=request.user.pk)
 
     return render_to_response('plugins/plugin_form.html', { 'form' : form , 'form_title' : _('Edit plugin')}, context_instance=RequestContext(request))
 
