@@ -9,6 +9,7 @@ Tim Sutton 2010
   2. Deploying a live site using wsgi
   3. Updating the search indexes
   4. Cache setup
+  5. Feedjack Update
 
 
 ------------------------------------------------------------------------
@@ -145,6 +146,23 @@ Make sure your virtual env is set up and then create a cache table:
 
 
 NOTE: The cache backend is required for the planet / feedjack to work properly
+
+
+  5. Feedjack Update
+  ==================
+
+The Blog Planet requires feedjack_update.py to run at regular intervals to keep
+the site fresh. The update_planet.sh shell script sets up the environment and
+runs feedjack_update.py. 
+
+The script requires you to set SITE_DIR to point at the Django site directory prior to first use.
+
+The script must be run by a user that has permissions to the site directory.
+
+To install as a cron, use the following (adjust the paths for your site):
+
+
+    */2 * * * * /home/web/qgis-django/update_planet.sh 1>>/tmp/planet_update.log 2>>/tmp/planet_update.err
 
 
 
