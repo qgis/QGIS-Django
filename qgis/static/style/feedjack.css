@@ -2,7 +2,7 @@
   color: #000080;
   font-size: 1.2em;
   padding: 1.0em 0em 1.0em 0em;
-  margin: 2.5em 1em 0em 0em;
+  margin: 2.5em 1em 0em 1em;
   border-top: 2px solid gray;
   border-bottom: 2px solid gray;
 }
@@ -11,11 +11,24 @@
   font-size: 2.2em;
   font-weight: bold;
   color: #234261;
+  margin: 0em 0em 0em 1em;
 }
 
 .post-title{
   font-size: 1.4em;
   font-style: italic;
   font-weight: bold;
-  padding: 1.0em 0em 0em 0em;
+  padding: 1.0em 0em 0em 1em;
+}
+#feed_list{
+  margin: 2.0em 0em 0em 2.0em;
+}
+#paginate{
+  margin: 2.0em 0em 0em 2.0em;
+}
+#tags{
+  margin: 2.0em 0em 0em 2em;
+}
+.post-content{
+  margin: 0em 0em 0em 2em;
 }
