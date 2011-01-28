@@ -1,0 +1,172 @@
+* {
+	padding: 0;
+	margin: 0;
+	font-family: "Bitstream Vera Sans", sans-serif;
+}
+
+
+h1 {
+	font-weight: normal;
+	font-size: 3.5em;
+	letter-spacing: -2px;
+	text-transform: lowercase;
+	text-align: right;
+	color: #fff;
+	background: #224262;
+	margin: 0 -230px 21px -20px;
+	border-top: 30px solid #e9eef1;
+	height: 85px;
+	padding-right: 240px;
+	padding-top: 35px;
+}
+
+.admin {
+	text-align: right;
+}
+
+.daygroup {
+	background: #fff;
+	padding: 12px;
+	margin-bottom: 7px;
+	border: 1px solid #ebeaea;
+	border-radius: 7px; -moz-border-radius: 7px;
+}
+
+.daygroup h2 {
+	color: #2a5075;
+	font-weight: normal;
+	font-size: 1.1em;
+	margin-top: 7px;
+	margin-bottom: 7px;
+	
+}
+
+.channelgroup h3 {
+	font-weight: normal;
+	font-size: 1.2em;
+	background-color: #dee988;
+	padding: 4px 12px 4px 12px;
+	margin-top: 14px;
+	margin-bottom: 14px;
+	border-radius: 7px; -moz-border-radius: 7px;
+}
+
+.entry p {
+	font-size: 1em;
+}
+
+.entry li {
+	margin-left: 21px;
+}
+
+.entry a {
+	color: #224262;
+}
+
+.entry p, ul, ol {
+	margin-bottom: 7px;
+}
+
+h3 a {
+	text-decoration: none;
+	color: inherit;
+}
+
+h4 {
+	font-weight: bold;
+}
+
+h4 a {
+	text-decoration: none;
+	color: inherit;
+}
+
+img.face {
+	float: right;
+	margin-top: -3em;
+}
+
+.entry {
+	margin-bottom: 2em;
+}
+
+.entry .date {
+	font-family: "Bitstream Vera Sans", sans-serif;
+	color: grey;
+}
+
+.entry .date a {
+	text-decoration: none;
+	color: inherit;
+}
+
+.sidebar {
+	position: absolute;
+	top: 10px;
+	right: 10px;
+	width: 200px;
+
+	
+
+	margin-left: 0px;
+	margin-right: 0px;
+	padding-right: 10px;
+
+	padding-top: 25px;
+	padding-left: 0px;
+
+	
+	font-size: 0.9em;
+}
+
+.sidebar h2 {
+	padding-top: 21px;
+	font-size: 1.1em;
+	font-weight: bold;
+	color: black;
+}
+
+.sidebar ul {
+	padding-left: 7px;
+	list-style-type: none;
+}
+
+.sidebar ul li:hover {
+	color: grey;
+}
+
+.sidebar ul li a {
+        text-decoration: none;
+}
+
+.sidebar ul li a:hover {
+        text-decoration: underline;
+}
+
+.sidebar ul li a img {
+        border: 0;
+}
+
+.sidebar p {
+	margin-top: 30px;
+	padding-top: 10px;
+
+	padding-left: 5px;
+}
+
+.sidebar .message {
+    cursor: help;
+    border-bottom: 1px dashed red;
+}
+
+.sidebar a.message:hover {
+    cursor: help;
+	background-color: #ff0000;
+	color: #ffffff !important;
+	text-decoration: none !important;
+}
+
+a:hover {
+	text-decoration: underline !important;
+	color: blue !important;
+}

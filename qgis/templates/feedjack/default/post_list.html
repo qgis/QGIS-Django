@@ -23,6 +23,46 @@
       {% endif %}
     </ul>
   </div>
+  <div id="feed_list">
+<h4>{% trans "Blog List" %}</h4>
+
+<ul class="suscriptores">
+{% for feed in subscribers %}
+<li>
+<a href="{{ feed.feed.feed_url }}"
+{% if feed.feed.last_modified %}
+title="{% blocktrans with feed.feed.last_modified as last_modified %}feed (last modified: {{ last_modified }}){% endblocktrans %}"
+{% else %}
+title="{% trans "feed" %}"
+{% endif %}
+>
+<img src="{{ media_url }}/img/feed.png" alt="feed"></a>
+<a class="nombre" href="{{ site.url }}/user/{{ feed.feed.id }}"
+title="{{ feed.feed.title }}">{{ feed.name }}</a></li>
+{% endfor %}
+</ul>
+</div>
+
+<div id="tags">
+<h4>Tags</h4>
+    <ul id="cloud">
+    {% for tag in tagcloud %}
+      <li><a
+      {% if user_id %}
+      href="{{ site.url }}/user/{{ user_id }}/tag/{{ tag.tagname|urlencode }}/"
+      {% else %}
+      href="{{ site.url }}/tag/{{ tag.tagname|urlencode }}/"
+      {% endif %}
+      title="{% blocktrans count tag.count as posts %}{{ posts }} post{% plural %}{{ posts }} posts{% endblocktrans %}"
+      class="cloud_{{ tag.weight }}">{{ tag.tagname }}</a></li>
+    {% endfor %}
+    </ul>
+</div>
+<p>
+{% trans "Last update" %}:<br/>
+<b>{{ last_modified }}</b>
+<br/>
+</p>
 
   <div id="buttons">
     <a href="{{ site.url }}/feed/rss/" title="RSS 2.0 feed"><img src="{{ media_url }}/img/button-rss.png"/></a> &bull;   
@@ -98,11 +138,14 @@
   </div>
 {% endfor %}
 </div>
+{% comment %}
 <div id="sidebar">
 <h4>{{ site.name }}</h4>
 
 {{ site.welcome|safe }}
 
+{% endcomment %}
+{% comment %}
 <h4>
 {% if user_id %}
   {% blocktrans with user.name as person %}What {{ person }} talks about{% endblocktrans %}
@@ -151,11 +194,11 @@ title="{{ feed.feed.title }}">{{ feed.name }}</a></li>
 {% endfor %}
 </ul>
 
-
 <h4>{% trans "Greetings" %}</h4>
 {{ site.greets|safe }}
 
 </div>
+{% endcomment %}
 
 <div id="paginate">
 <ul>
