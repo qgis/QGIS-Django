@@ -57,6 +57,7 @@ TEMPLATE_LOADERS = (
 )
 
 MIDDLEWARE_CLASSES = (
+    'django.middleware.cache.UpdateCacheMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
@@ -68,6 +69,7 @@ MIDDLEWARE_CLASSES = (
     'pagination.middleware.PaginationMiddleware',
     # Added by Tim for advanced loggin options
     'debug_toolbar.middleware.DebugToolbarMiddleware',
+    'django.middleware.cache.FetchFromCacheMiddleware',
 )
 
 ROOT_URLCONF = 'urls'
@@ -152,7 +154,9 @@ CACHES = {
   'LOCATION': 'cache_table',
   }
 }
-
+CACHE_MIDDLEWARE_ALIAS = 'qgis'
+CACHE_MIDDLEWARE_SECONDS = 600
+CACHE_MIDDLEWARE_PREFIX = ''
 
 # Local settings overrides
 from settings_local import *
