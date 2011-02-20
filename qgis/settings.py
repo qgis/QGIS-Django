@@ -158,7 +158,9 @@ CACHE_MIDDLEWARE_ALIAS = 'qgis'
 CACHE_MIDDLEWARE_SECONDS = 600
 CACHE_MIDDLEWARE_PREFIX = ''
 
-# Local settings overrides
-from settings_local import *
 # auth overrids
 from settings_auth import *
+
+# Local settings overrides
+# Must be the last!
+from settings_local import *
