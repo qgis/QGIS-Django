@@ -365,7 +365,7 @@ def version_download(request, version_id):
     version.save()
     plugin = version.plugin
     plugin.downloads = plugin.downloads + 1
-    plugin.save()
+    plugin.save(keep_date=True)
     return HttpResponseRedirect(version.package.url)
 
 
