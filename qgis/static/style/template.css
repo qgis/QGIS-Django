@@ -184,10 +184,15 @@ div#user4{
 
 /*change to 2-column layout*/
 #maincolumn{
-	width: 767px;
+	width: 717px;
 	float:left;
 	margin:0px;
-	padding:0px;
+	padding:25px;
+}
+
+#maincolumn h2{
+	font-size: 200%;
+	padding-bottom:20px;
 }
 
 div.path{
