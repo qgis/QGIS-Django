@@ -84,8 +84,8 @@ class Plugin (models.Model):
     """
 
     # dates
-    created_on      = models.DateTimeField(_('Created on'),  auto_now_add = True,  editable = False )
-    modified_on     = models.DateTimeField(_('Modified on'), auto_now = True, editable = False )
+    created_on      = models.DateTimeField(_('Created on'), auto_now_add = True, editable = False )
+    modified_on     = models.DateTimeField(_('Modified on'), editable = False )
 
     # owners
     created_by      = models.ForeignKey(User, verbose_name = _('Created by'), related_name = 'plugins_created_by')
@@ -162,6 +162,18 @@ class Plugin (models.Model):
     def __str__(self):
         return self.__unicode__()
 
+    def save(self, keep_date=False, *args, **kwargs):
+        """
+        Soft triggers:
+        * updates modified_on if keep_date is not set
+        """
+        if self.pk and not keep_date:
+            import logging
+            logging.debug('setting date')
+            self.modified_on = datetime.datetime.now()
+        super(Plugin, self).save(*args, **kwargs)
+
+
 
 class PluginVersion (models.Model):
     """
@@ -205,6 +217,7 @@ class PluginVersion (models.Model):
             versions_to_check = versions_to_check.exclude(pk = self.pk)
         else:
             self.plugin.modified_on = self.created_on
+            self.plugin.save()
 
         if self.current:
             for p in versions_to_check:

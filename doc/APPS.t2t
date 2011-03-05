@@ -43,6 +43,7 @@ Tim Sutton 2010
  + symbols - a django app for users to publish symbols (svg/png etc) they have created
  + planet - a blog aggregator for people blogging with QGIS related stuff
  + gallery - a gallery of maps made with QGIS
- + 
+ + web links - a list of sites, articles etc. that feature QGIS prominantly
+ +
 
 

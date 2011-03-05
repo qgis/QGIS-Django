@@ -20,6 +20,8 @@ Tim Sutton 2010
  4. styles - a django app for users to publish the QGIS styles they have created
  5. symbols - a django app for users to publish symbols (svg/png etc) they have created
  6. planet - a blog aggregator for people blogging with QGIS related stuff
+ 7. gallery - a gallery of maps made with QGIS
+ 8. web links - a list of sites, articles etc. that feature QGIS prominantly
 
 
 
