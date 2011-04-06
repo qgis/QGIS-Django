@@ -158,6 +158,8 @@ CACHE_MIDDLEWARE_ALIAS = 'qgis'
 CACHE_MIDDLEWARE_SECONDS = 600
 CACHE_MIDDLEWARE_PREFIX = ''
 
+INTERNAL_IPS = ('127.0.0.1',)
+
 # auth overrids
 from settings_auth import *
 

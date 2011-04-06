@@ -20,6 +20,7 @@ from plugins.forms import *
 
 from django.core.mail import send_mail
 from django.contrib.sites.models import Site
+import logging
 
 # Decorator
 staff_required = user_passes_test(lambda u: u.is_staff)
@@ -30,17 +31,23 @@ def plugin_notify(plugin):
     Sends a message to staff on new plugins
     """
 
-    domain = Site.objects.get_current().domain
-    mail_from = getattr(settings, 'MAIL_FROM_ADDRESS', None)
-    if not mail_from:
-        mail_from = 'qgis-plugins-no-reply@%s' % domain
+    recipients = [u.email for u in User.objects.filter(is_staff=True, email__isnull=False).exclude(email='')]
 
-    send_mail(
-        _('A new plugin has been created by %s.') % plugin.created_by,
-        _('\r\nPlugin name is: %s\r\nPlugin description is: %s\r\nLink: http://%s%s\r\n') % (plugin.name, plugin.description, domain, plugin.get_absolute_url()),
-        mail_from,
-        [u.email for u in User.objects.filter(is_staff = True, email__isnull = False)],
-        fail_silently=True)
+    if recipients:
+      domain = Site.objects.get_current().domain
+      mail_from = getattr(settings, 'MAIL_FROM_ADDRESS', None)
+      if not mail_from:
+          mail_from = 'qgis-plugins-no-reply@%s' % domain
+
+      send_mail(
+          _('A new plugin has been created by %s.') % plugin.created_by,
+          _('\r\nPlugin name is: %s\r\nPlugin description is: %s\r\nLink: http://%s%s\r\n') % (plugin.name, plugin.description, domain, plugin.get_absolute_url()),
+          mail_from,
+          recipients,
+          fail_silently=True)
+      logging.debug('Sending email notification for %s plugin, recipients:  %s' % (plugin, recipients))
+    else:
+      logging.warning('No recipients found for %s plugin notification' % plugin)
 
 
 def check_plugin_access(user, plugin):

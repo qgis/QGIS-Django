@@ -19,6 +19,8 @@ python/*
 packages/*
 packages/
 build
+# ABP: ignore debug shell
+qgis/ipy.py
 
 # ipython debug shell
 ipy.py

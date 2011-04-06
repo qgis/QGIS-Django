@@ -171,6 +171,8 @@ class Plugin (models.Model):
             import logging
             logging.debug('setting date')
             self.modified_on = datetime.datetime.now()
+        if not self.pk:
+          self.modified_on = datetime.datetime.now()
         super(Plugin, self).save(*args, **kwargs)
 
 

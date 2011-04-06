@@ -465,7 +465,8 @@ a.delete:hover {
 
 ul.actions, ul.messages, ul.form-messages {
     list-style-type: none;
-    padding-left: 0;
+    padding: 1em 1em 1em 0;
+    margin-left: 0;
 }
 
 ul.messages li, ul.form-messages li {
@@ -480,4 +481,3 @@ ul.actions li {
 tr.odd td {
     background-color: #EEE;
 }
-

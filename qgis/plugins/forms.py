@@ -66,7 +66,6 @@ class PackageUploadForm(forms.Form):
             raise ValidationError(_('A plugin with this package name (%s) already exists.') % self.cleaned_data['package_name'])
 
         if Plugin.objects.filter(name = self.cleaned_data['name']).count():
-            import ipy; ipy.shell()
             raise ValidationError(_('A plugin with this name (%s) already exists.') % self.cleaned_data['name'])
         return package
 

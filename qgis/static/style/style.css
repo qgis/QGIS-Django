@@ -39,13 +39,14 @@ form.horizontal label{
 table.plugins {
     width: 100%;
     border-collapse:collapse;
-    padding: 0.25em;
 }
 
 table.plugins td {
     border-bottom: solid 1px #ddd;
+    padding: 0.25em;
 }
 table.plugins th {
+    padding: 0.25em;
     border-top: solid 2px #ddd;
     border-bottom: solid 2px #ddd;
     font-size: 110%;
