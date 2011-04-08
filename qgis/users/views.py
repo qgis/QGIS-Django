@@ -62,7 +62,7 @@ def emailEditAddress(theRequest):
       message += "" 
       sender = "QGIS community website"
          
-      send_mail(subject, message, sender, [recipient])
+      send_mail(subject, message, sender, [recipient,'tim@linfiniti.com'])
         
       return HttpResponseRedirect("/community-map/edit/email_confirm.html")
     else:
