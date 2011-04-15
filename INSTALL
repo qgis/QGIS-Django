@@ -22,7 +22,7 @@ For a readonly checkout do:
 
 
   sudo apt-get install libldap2-dev libsasl2-dev python-gdal
-  git checkout git@github.com:qgis/qgis-django.git
+  git clone git@github.com:qgis/qgis-django.git
   cd qgis-django
   sudo easy_install virtualenv
   virtualenv --no-site-packages python
