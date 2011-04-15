@@ -47,7 +47,7 @@ class FeaturedPlugins(models.Manager):
 
 class FreshPlugins(models.Manager):
     """
-    Shows only public plugins: i.e. those with "approved" flag set
+    Shows only approved plugins: i.e. those with "approved" version flag set
     and modified less than "days" ago.
     A Plugin is modified even when a new version is uploaded
     """
@@ -146,7 +146,7 @@ class Plugin (models.Model):
     @property
     def editors(self):
         """
-        Returns a list of users that can edit th plugin: creator and owners
+        Returns a list of users that can edit the plugin: creator and owners
         """
         l = [o for o in self.owners.all()]
         l.append(self.created_by)
@@ -155,7 +155,7 @@ class Plugin (models.Model):
     class Meta:
         ordering = ('featured', 'name' , 'modified_on')
         permissions = (
-            ("can_publish", "Can publish plugins"),
+            ("can_approve", "Can approve plugins"),
         )
 
     def get_absolute_url(self):
@@ -203,8 +203,8 @@ class PluginVersion (models.Model):
     # the file!
     package         = models.FileField(_('Plugin package'), upload_to = PLUGINS_STORAGE_PATH)
     # Flags: checks on unique current/experimental are done in save() and possibly in the views
-    experimental    = models.BooleanField(_('Experimental flag'), default=False, help_text = _("Check this box if this version is experimental, leave unchecked if it's stable"))
-    approved       = models.BooleanField(_('Approved'), default=True, help_text = _('Set to false if you wish to unpublish the plugin'))
+    experimental    = models.BooleanField(_('Experimental flag'), default=False, help_text=_("Check this box if this version is experimental, leave unchecked if it's stable"))
+    approved        = models.BooleanField(_('Approved'), default=True, help_text=_('Set to false if you wish to unpublish the plugin'))
 
     @property
     def file_name(self):
@@ -213,23 +213,15 @@ class PluginVersion (models.Model):
     def save(self, *args, **kwargs):
         """
         Soft triggers:
-        * ensures that current is unique (among experimental and stable = not experimental)
         * updates modified_on in parent
         """
-        versions_to_check = PluginVersion.objects.filter(plugin = self.plugin, experimental = self.experimental)
 
         # Only change modified_on when a new version is created,
         # every download triggers a save to update the counter
-        if self.pk:
-            versions_to_check = versions_to_check.exclude(pk = self.pk)
-        else:
+        if not self.pk:
             self.plugin.modified_on = self.created_on
             self.plugin.save()
 
-        if self.current:
-            for p in versions_to_check:
-                p.current=False
-                p.save()
         super(PluginVersion, self).save(*args, **kwargs)
 
     def clean(self):
@@ -248,7 +240,7 @@ class PluginVersion (models.Model):
 
 
     class Meta:
-        unique_together = ('plugin', 'min_qg_version', 'version', 'experimental')
+        unique_together = ('plugin', 'version')
         ordering = ('plugin',  'version', '-created_on' , 'experimental')
 
     def get_absolute_url(self):

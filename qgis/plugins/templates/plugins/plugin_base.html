@@ -15,10 +15,10 @@
                 <li class="authenticated"><a href="{% url my_plugins %}">{% trans "My plugins"%}</a></li>
                 {% endif %}
                 {% if user.is_staff %}
-                <li class="staff"><a href="{% url unpublished_plugins %}">{% trans "Unpublished"%}</a></li>
+                <li class="staff"><a href="{% url unapproved_plugins %}">{% trans "Unapproved"%}</a></li>
                 {% endif %}
                 <li><a href="{% url featured_plugins %}">{% trans "Featured "%}</a></li>
-                <li><a href="{% url published_plugins %}">{% trans "All"%}</a></li>
+                <li><a href="{% url approved_plugins %}">{% trans "All"%}</a></li>
                 <li><a href="{% url stable_plugins %}">{% trans "Stable"%}</a></li>
                 <li><a href="{% url experimental_plugins %}">{% trans "Experimental"%}</a></li>
                 <li><a href="{% url popular_plugins %}">{% trans "Popular" %}</a></li>
