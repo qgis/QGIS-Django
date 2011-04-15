@@ -311,7 +311,7 @@ def version_create(request, plugin_id):
             new_object = form.save()
             msg = _("The Plugin Version has been successfully created.")
             messages.success(request, msg, fail_silently=True)
-            if plugin.published and not request.user.has_perm('plugins.can_publish'):
+            if plugin.published and not request.user.has_perm('pluginversion.can_approve'):
                 new_object.plugin.published = False
                 new_object.plugin.save()
                 messages.warning(request, _('You do not have publish permissions, plugin has been unpublished.'), fail_silently=True)
