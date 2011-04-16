@@ -297,6 +297,19 @@ def user_plugins(request, username):
     object_list = Plugin.approved_objects.filter(created_by=user)
     return render_to_response('plugins/plugin_list.html', { 'object_list' : object_list, 'title' : _('Plugins from "%s"') % user }, context_instance=RequestContext(request))
 
+def xml_plugins(request):
+    """
+    The XML file
+    """
+    min_qg_version = request.GET.get('qgis')
+    if min_qg_version:
+        object_list = Plugin.approved_objects.filter(pluginversion__min_qg_version__lte=min_qg_version)
+    else:
+        object_list = Plugin.approved_objects.all()
+    return render_to_response('plugins/plugins.xml', {'object_list' : object_list}, mimetype='text/xml', context_instance=RequestContext(request))
+
+
+
 def tags_plugins(request, tags):
     """
     List plugins with given tags

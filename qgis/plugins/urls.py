@@ -13,12 +13,12 @@ urlpatterns = patterns('django.views.generic.list_detail',
     url(r'^stable/$', 'object_list', {'queryset' : Plugin.stable_objects.all(), 'extra_context' : {'title' : _('Stable plugins')}}, name = 'stable_plugins'),
     url(r'^experimental/$', 'object_list', {'queryset' : Plugin.experimental_objects.all(), 'extra_context' : {'title' : _('Experimental plugins')}}, name = 'experimental_plugins'),
     url(r'^popular/$', 'object_list', {'queryset' : Plugin.popular_objects.all(), 'extra_context' : {'title' : _('Popular plugins')}}, name = 'popular_plugins'),
-    # XML
-    url(r'^plugins.xml$', 'object_list', {'queryset' : Plugin.approved_objects.all(), 'template_name' : 'plugins/plugins.xml', 'mimetype' : 'text/xml' }, name = 'xml_plugins'),
  )
 
 # Plugins filtered views (need user parameter from request)
 urlpatterns += patterns('plugins.views',
+    # XML
+    url(r'^plugins.xml$', 'xml_plugins', {}, name = 'xml_plugins'),
     url(r'^tags/(?P<tags>\w+)/$', 'tags_plugins', {}, name = 'tags_plugins'),
     url(r'^my/$', 'my_plugins', {}, name = 'my_plugins'),
     url(r'^user/(?P<username>\w+)/$', 'user_plugins', {}, name = 'user_plugins'),
