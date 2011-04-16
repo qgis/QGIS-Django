@@ -309,22 +309,26 @@ def version_create(request, plugin_id):
 
     version = PluginVersion(plugin = plugin, created_by = request.user)
     if request.method == 'POST':
-        form = PluginVersionForm(request.POST, request.FILES, instance = version)
+
+        form = PluginVersionForm(request.POST, request.FILES, instance=version, is_trusted=request.user.has_perm('pluginversion.can_approve'))
         if form.is_valid():
             new_object = form.save()
             msg = _("The Plugin Version has been successfully created.")
             messages.success(request, msg, fail_silently=True)
-            if plugin.published and not request.user.has_perm('pluginversion.can_approve'):
-                new_object.plugin.published = False
-                new_object.plugin.save()
-                messages.warning(request, _('You do not have publish permissions, plugin has been unpublished.'), fail_silently=True)
+            # The approved flag is also controlled in the form, but we
+            # are checking it here in any case for additional security
+            if not request.user.has_perm('pluginversion.can_approve'):
+                new_object.approved = False
+                new_object.save()
+                messages.warning(request, _('You do not have approval permissions, plugin version has been set unapproved.'), fail_silently=True)
             # Update plugin
             plugin.icon = form.cleaned_data['icon_file']
             plugin.name = form.cleaned_data['name']
             plugin.description = form.cleaned_data['description']
+            plugin.save()
             return HttpResponseRedirect(new_object.plugin.get_absolute_url())
     else:
-        form = PluginVersionForm()
+        form = PluginVersionForm(is_trusted=request.user.has_perm('pluginversion.can_approve'))
 
     return render_to_response('plugins/version_form.html', { 'form' : form, 'plugin' : plugin, 'form_title' : _('New version for plugin')}, context_instance=RequestContext(request))
 
@@ -340,14 +344,14 @@ def version_update(request, version_id):
         return render_to_response('plugins/version_permission_deny.html', { 'plugin' : plugin }, context_instance=RequestContext(request))
 
     if request.method == 'POST':
-        form = PluginVersionForm(request.POST, request.FILES, instance = version)
+        form = PluginVersionForm(request.POST, request.FILES, instance=version, is_trusted=request.user.has_perm('pluginversion.can_approve'))
         if form.is_valid():
             new_object = form.save()
             msg = _("The Plugin Version has been successfully updated.")
             messages.success(request, msg, fail_silently=True)
             return HttpResponseRedirect(new_object.plugin.get_absolute_url())
     else:
-        form = PluginVersionForm(instance = version)
+        form = PluginVersionForm(instance=version, is_trusted=request.user.has_perm('pluginversion.can_approve'))
 
     return render_to_response('plugins/version_form.html', { 'form' : form, 'plugin' : plugin, 'form_title' : _('Edit version for plugin')}, context_instance=RequestContext(request))
 

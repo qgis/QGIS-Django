@@ -13,6 +13,7 @@
             <tr>
                 <th>&nbsp;</th>
                 <th>{% anchor name %}</th>
+                <th>{% anchor approved %}</th>
                 <th>{% anchor featured %}</th>
                 <th>{% anchor downloads %}</th>
                 <th>{% anchor created_by "Author" %}</th>
@@ -28,7 +29,8 @@
             <tr class="{% cycle "even" "odd" %}">
                 <td class="plugin-icon">{% if object.icon %}<a title="{% trans "Click here for plugin details" %}" href="{% url plugin_detail object.pk %}"><img src="{{ object.icon.url }}" alt="{% trans "Plugin icon" %}" /></a>{% else %}&nbsp;{% endif %}</td>
                 <td><a href="{% url plugin_detail object.pk %}" title="{{ object.description }}">{{ object.name }}</a></td>
-                <td>{{ object.featured }}</td>
+                <td>{{ object.approved|yesno }}</td>
+                <td>{{ object.featured|yesno }}</td>
                 <td>{{ object.downloads }}</td>
                 <td>{{ object.created_by }}</td>
                 <td>{{ object.created_on|naturalday }}</td>

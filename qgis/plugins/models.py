@@ -117,9 +117,17 @@ class Plugin (models.Model):
 
 
     @property
+    def approved(self):
+        """
+        Returns True if the plugin has at least one approved version
+        """
+        return self.pluginversion_set.filter(approved=True).count() > 0
+
+    @property
     def trusted(self):
         """
         Returns True if the author has plugins.can_approve permission
+        Purpose of this decorator is to show/hide buttons in the template
         """
         return self.created_by.has_perm('plugins.can_approve')
 
@@ -155,7 +163,7 @@ class Plugin (models.Model):
     class Meta:
         ordering = ('featured', 'name' , 'modified_on')
         permissions = (
-            ("can", "Can approve plugins"),
+            ("can_approve", "Can approve plugins"),
         )
 
     def get_absolute_url(self):

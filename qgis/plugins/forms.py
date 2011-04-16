@@ -22,6 +22,17 @@ class PluginVersionForm(ModelForm):
     """
     Form for version upload on existing plugins
     """
+    def __init__(self, *args, **kwargs):
+        is_trusted = kwargs.pop('is_trusted')
+        super(PluginVersionForm, self).__init__(*args, **kwargs)
+        instance = getattr(self, 'instance', None)
+        #import ipy; ipy.shell()
+        if instance and not is_trusted:
+            self.fields['approved'].initial = False
+            self.fields['approved'].widget.attrs = {'disabled':'disabled'}
+            instance.approved = False
+
+
     class Meta:
         model = PluginVersion
         exclude = ('created_by', 'plugin', 'version', 'min_qg_version')
