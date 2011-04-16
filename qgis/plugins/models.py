@@ -8,7 +8,6 @@ from django.utils.translation import ugettext_lazy as _
 from django.core.urlresolvers import reverse
 from django.conf import settings
 import datetime, os
-from django.db.models import Q
 
 PLUGINS_STORAGE_PATH = getattr(settings, 'PLUGINS_STORAGE_PATH', 'packages')
 PLUGINS_FRESH_DAYS   = getattr(settings, 'PLUGINS_FRESH_DAYS', 30)
@@ -126,7 +125,7 @@ class Plugin (models.Model):
     @property
     def trusted(self):
         """
-        Returns True if the author has plugins.can_approve permission
+        Returns True if the plugin's author has plugins.can_approve permission
         Purpose of this decorator is to show/hide buttons in the template
         """
         return self.created_by.has_perm('plugins.can_approve')
@@ -159,6 +158,13 @@ class Plugin (models.Model):
         l = [o for o in self.owners.all()]
         l.append(self.created_by)
         return l
+
+    @property
+    def approvers(self):
+        """
+        Returns a list of editor users that can approve a version
+        """
+        return [l for l in self.editors if l.has_perm('plugins.can_approve')]
 
     class Meta:
         ordering = ('featured', 'name' , 'modified_on')
