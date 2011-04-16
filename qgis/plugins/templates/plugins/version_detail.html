@@ -22,5 +22,8 @@
         {% if user.is_staff and not version.created_by.is_staff and version.created_by.is_active %}
         <li><a href="{% url user_block version.created_by %}">{% trans "Block author" %}</a></li>
         {% endif %}
+        {% if not object.approved %}<li><a href="{% url plugin_approve object.pk %}">{% trans "Approve" %}</a></li>{% endif %}
+        {% if object.approved %}<li><a href="{% url plugin_unapprove object.pk %}">{% trans "Disapprove" %}</a>
+        </li>{% endif %}
     </ul>
 {% endblock %}

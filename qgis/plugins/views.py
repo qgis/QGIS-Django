@@ -50,6 +50,8 @@ def plugin_notify(plugin):
       logging.warning('No recipients found for %s plugin notification' % plugin)
 
 
+## Access control ##
+
 def check_plugin_access(user, plugin):
     """
     Returns true if the user can modify the plugin:
@@ -59,6 +61,17 @@ def check_plugin_access(user, plugin):
 
     """
     return user.is_staff or user in plugin.editors
+
+
+def check_plugin_version_approval_rights(user, plugin):
+    """
+    Returns true if the user can approve the plugin version:
+
+        * is_staff
+        * is owner and is trusted
+
+    """
+    return user.is_staff or (user in plugin.editors and user.has_perm('plugins.can_approve'))
 
 
 @login_required
@@ -74,14 +87,14 @@ def plugin_create(request):
         if form.is_valid():
             plugin = form.save(commit = False)
             plugin.created_by = request.user
-            plugin.published  = request.user.has_perm('plugins.can_publish')
+            #plugin.published  = request.user.has_perm('plugins.can_approve')
             plugin.save()
             plugin_notify(plugin)
             msg = _("The Plugin has been successfully created.")
             messages.success(request, msg, fail_silently=True)
-            if not request.user.has_perm('plugins.can_publish'):
-                msg = _("Your plugin is awaiting approval from a staff member and will be published as soon as possible.")
-                messages.warning(request, msg, fail_silently=True)
+            #if not request.user.has_perm('plugins.can_approve'):
+                #msg = _("Your plugin is awaiting approval from a staff member and will be published as soon as possible.")
+                #messages.warning(request, msg, fail_silently=True)
             return HttpResponseRedirect(plugin.get_absolute_url())
     else:
         form = PluginForm()
@@ -93,10 +106,10 @@ def plugin_create(request):
 @staff_required
 def plugin_trust(request, plugin_id):
     """
-    Assigns can_publish permission to the plugin creator
+    Assigns can_approve permission to the plugin creator
     """
     plugin = get_object_or_404(Plugin, pk=plugin_id)
-    plugin.created_by.user_permissions.add(Permission.objects.get(codename='can_publish', content_type=ContentType.objects.get(name='plugin')))
+    plugin.created_by.user_permissions.add(Permission.objects.get(codename='can_approve', content_type=ContentType.objects.get(name='plugin')))
     msg = _("The user %s is now a trusted user." % plugin.created_by)
     messages.success(request, msg, fail_silently=True)
     return HttpResponseRedirect(plugin.get_absolute_url())
@@ -105,10 +118,10 @@ def plugin_trust(request, plugin_id):
 @staff_required
 def plugin_untrust(request, plugin_id):
     """
-    Revokes can_publish permission to the plugin creator
+    Revokes can_approve permission to the plugin creator
     """
     plugin = get_object_or_404(Plugin, pk=plugin_id)
-    plugin.created_by.user_permissions.remove(Permission.objects.get(codename='can_publish', content_type=ContentType.objects.get(name='plugin')))
+    plugin.created_by.user_permissions.remove(Permission.objects.get(codename='can_approve', content_type=ContentType.objects.get(name='plugin')))
     msg = _("The user %s is now an untrusted user." % plugin.created_by)
     messages.success(request, msg, fail_silently=True)
     return HttpResponseRedirect(plugin.get_absolute_url())
@@ -151,39 +164,30 @@ def user_block(request, username):
     user.save()
     msg = _("The user %s is now blocked." % user)
     messages.success(request, msg, fail_silently=True)
-    redirect_to = reverse('published_plugins')
+    redirect_to = reverse('approved_plugins')
     try:
         redirect_to = urlsplit(request.REQUEST.get('HTTP_REFERER', None), 'http', False)[2]
     except:
-        redirect_to = reverse('published_plugins')
+        redirect_to = reverse('approved_plugins')
     return HttpResponseRedirect(redirect_to)
 
-
 @staff_required
-def plugin_publish(request, plugin_id):
+def user_unblock(request, username):
     """
-    Publishes the plugin
+    unblocks a user
     """
-    plugin = get_object_or_404(Plugin, pk=plugin_id)
-    plugin.published = True
-    plugin.save()
-    msg = _("The plugin is now published")
+    user = get_object_or_404(User, username=username)
+    # Disable
+    user.is_active = False
+    user.save()
+    msg = _("The user %s is now unblocked." % user)
     messages.success(request, msg, fail_silently=True)
-    return HttpResponseRedirect(plugin.get_absolute_url())
-
-
-@staff_required
-def plugin_unpublish(request, plugin_id):
-    """
-    Unpublishes the plugin
-    """
-    plugin = get_object_or_404(Plugin, pk=plugin_id)
-    plugin.published = False
-    plugin.save()
-    msg = _("The plugin is now unpublished")
-    messages.success(request, msg, fail_silently=True)
-    return HttpResponseRedirect(plugin.get_absolute_url())
-
+    redirect_to = reverse('approved_plugins')
+    try:
+        redirect_to = urlsplit(request.REQUEST.get('HTTP_REFERER', None), 'http', False)[2]
+    except:
+        redirect_to = reverse('approved_plugins')
+    return HttpResponseRedirect(redirect_to)
 
 @login_required
 def plugin_upload(request):
@@ -200,7 +204,6 @@ def plugin_upload(request):
                     'package_name'      : form.cleaned_data['package_name'],
                     'description'       : form.cleaned_data['description'],
                     'created_by'        : request.user,
-                    'published'         : request.user.has_perm('plugins.can_publish'),
                     'icon'              : form.cleaned_data['icon_file'],
                 }
                 new_plugin = Plugin(**plugin_data)
@@ -214,12 +217,13 @@ def plugin_upload(request):
                     'current'           : True,
                     'created_by'        : request.user,
                     'package'           : form.cleaned_data['package']
+                    'approved'          : request.user.has_perm('plugins.can_approve'),
                 }
                 new_version = PluginVersion(**version_data)
                 new_version.save()
                 msg = _("The Plugin has been successfully created.")
                 messages.success(request, msg, fail_silently=True)
-                if not request.user.has_perm('plugins.can_publish'):
+                if not request.user.has_perm('plugins.can_approve'):
                     msg = _("Your plugin is awaiting approval from a staff member and will be published as soon as possible.")
                     messages.warning(request, msg, fail_silently=True)
             except (IntegrityError, ValidationError), e:
@@ -242,7 +246,7 @@ def plugin_delete(request, plugin_id):
         plugin.delete()
         msg = _("The Plugin has been successfully deleted.")
         messages.success(request, msg, fail_silently=True)
-        return HttpResponseRedirect(reverse('published_plugins'))
+        return HttpResponseRedirect(reverse('approved_plugins'))
     return render_to_response('plugins/plugin_delete_confirm.html', { 'plugin' : plugin }, context_instance=RequestContext(request))
 
 
@@ -259,7 +263,7 @@ def plugin_update(request, plugin_id):
         form.fields['owners'].queryset = User.objects.exclude(pk=plugin.created_by.pk)
         if form.is_valid():
             new_object = form.save(commit = False)
-            if not request.user.has_perm('plugins.can_publish'):
+            if not request.user.has_perm('plugins.can_approve'):
                 new_object.published = False
             new_object.modified_by = request.user
             new_object.save()
@@ -289,7 +293,7 @@ def user_plugins(request, username):
     List published plugins created_by user
     """
     user = get_object_or_404(User, username=username)
-    object_list = Plugin.published_objects.filter(created_by=user)
+    object_list = Plugin.approved_objects.filter(created_by=user)
     return render_to_response('plugins/plugin_list.html', { 'object_list' : object_list, 'title' : _('Plugins from %s') % user }, context_instance=RequestContext(request))
 
 
@@ -361,6 +365,41 @@ def version_delete(request, version_id):
         messages.success(request, msg, fail_silently=True)
         return HttpResponseRedirect(reverse('plugin_detail', args=(plugin.pk,)))
     return render_to_response('plugins/version_delete_confirm.html', { 'plugin' : plugin, 'version' : version }, context_instance=RequestContext(request))
+
+
+
+@staff_required
+def version_approve(request, version_id):
+    """
+    Approves the plugin version
+    """
+    version = get_object_or_404(PluginVersion, pk=version_id)
+    if not check_plugin_version_approval_rights(request.user, version.plugin):
+        msg = _("You do not have approval rights for this plugin.")
+        messages.error(request, msg, fail_silently=True)
+        return HttpResponseRedirect(version.get_absolute_url())
+    version.approved = True
+    version.save()
+    msg = _("The plugin version is now approved")
+    messages.success(request, msg, fail_silently=True)
+    return HttpResponseRedirect(version.get_absolute_url())
+
+
+@staff_required
+def version_disapprove(request, version_id):
+    """
+    Disapproves the plugin version
+    """
+    version = get_object_or_404(PluginVersion, pk=version_id)
+    if not check_plugin_version_approval_rights(request.user, version.plugin):
+        msg = _("You do not have approval rights for this plugin.")
+        messages.error(request, msg, fail_silently=True)
+        return HttpResponseRedirect(version.get_absolute_url())
+    version.approved = False
+    version.save()
+    msg = _("The plugin version is now disapproved")
+    messages.success(request, msg, fail_silently=True)
+    return HttpResponseRedirect(version.get_absolute_url())
 
 
 def version_download(request, version_id):

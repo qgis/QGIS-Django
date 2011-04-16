@@ -8,7 +8,7 @@
         {% if object.stable %}<p><strong>{% trans "Current stable version"%}:</strong> <a href="{% url version_detail object.stable.pk %}">{{ object.stable.version }}</a></p>{% endif %}
         {% if object.experimental %}<p><strong>{% trans "Current experimental version"%}:</strong> <a href="{% url version_detail object.experimental.pk %}">{{ object.experimental.version }}</a></p>{% endif %}
         {% if not object.experimental and not object.stable %}<p class="warning">{% trans "This plugin has not yet released any version." %}</p>{% endif %}
-        {% if not object.published %}<p class="warning">{% trans "This plugin is not published." %}</p>{% endif %}
+        {% if not object.approved %}<p class="warning">{% trans "This plugin is not approved." %}</p>{% endif %}
         {% if not object.created_by.is_active %}<p class="warning">{% trans "The plugin author has been blocked." %}</p>{% endif %}
     </div>
     {# show all versions if user is authorized #}
@@ -25,8 +25,6 @@
                 {% if not object.trusted and not object.created_by.is_staff %}<li><a href="{% url plugin_trust object.pk %}">{% trans "Trust author" %}</a></li>{% endif %}
                 {% if object.trusted and not object.created_by.is_staff %}<li><a href="{% url plugin_untrust object.pk %}">{% trans "Untrust author" %}</a></li>{% endif %}
                 {% if object.created_by.is_active and not object.created_by.is_staff %}<li><a href="{% url user_block object.created_by %}">{% trans "Block author" %}</a></li>{% endif %}
-                {% if not object.published %}<li><a href="{% url plugin_publish object.pk %}">{% trans "Publish" %}</a></li>{% endif %}
-                {% if object.published %}<li><a href="{% url plugin_unpublish object.pk %}">{% trans "Unpublish" %}</a></li>{% endif %}
                 {% if object.featured %}<li><a href="{% url plugin_unset_featured object.pk %}">{% trans "Unset featured" %}</a></li>
                 {% else %}<li><a href="{% url plugin_set_featured object.pk %}">{% trans "Set featured" %}</a></li>
                 {% endif %}

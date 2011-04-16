@@ -119,9 +119,9 @@ class Plugin (models.Model):
     @property
     def trusted(self):
         """
-        Returns True if the author has plugins.can_publish permission
+        Returns True if the author has plugins.can_approve permission
         """
-        return self.created_by.has_perm('plugins.can_publish')
+        return self.created_by.has_perm('plugins.can_approve')
 
     @property
     def stable(self):
@@ -155,7 +155,7 @@ class Plugin (models.Model):
     class Meta:
         ordering = ('featured', 'name' , 'modified_on')
         permissions = (
-            ("can_approve", "Can approve plugins"),
+            ("can", "Can approve plugins"),
         )
 
     def get_absolute_url(self):
@@ -204,7 +204,7 @@ class PluginVersion (models.Model):
     package         = models.FileField(_('Plugin package'), upload_to = PLUGINS_STORAGE_PATH)
     # Flags: checks on unique current/experimental are done in save() and possibly in the views
     experimental    = models.BooleanField(_('Experimental flag'), default=False, help_text=_("Check this box if this version is experimental, leave unchecked if it's stable"))
-    approved        = models.BooleanField(_('Approved'), default=True, help_text=_('Set to false if you wish to unpublish the plugin'))
+    approved        = models.BooleanField(_('Approved'), default=True, help_text=_('Set to false if you wish to unapprova the plugin version.'))
 
     @property
     def file_name(self):

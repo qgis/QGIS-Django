@@ -26,8 +26,6 @@ urlpatterns += patterns('plugins.views',
     url(r'^(?P<plugin_id>[0-9]+)/untrust/$', 'plugin_untrust', {}, name = 'plugin_untrust'),
     url(r'^(?P<plugin_id>[0-9]+)/set_featured/$', 'plugin_set_featured', {}, name = 'plugin_set_featured'),
     url(r'^(?P<plugin_id>[0-9]+)/unset_featured/$', 'plugin_unset_featured', {}, name = 'plugin_unset_featured'),
-    url(r'^(?P<plugin_id>[0-9]+)/publish/$', 'plugin_publish', {}, name = 'plugin_publish'),
-    url(r'^(?P<plugin_id>[0-9]+)/unpublish/$', 'plugin_unpublish', {}, name = 'plugin_unpublish'),
 )
 
 # Management
@@ -40,5 +38,7 @@ urlpatterns += patterns('plugins.views',
     url(r'^version/(?P<version_id>[0-9]+)/delete/$', 'version_delete', {}, name = 'version_delete'),
     url(r'^version/(?P<version_id>[0-9]+)/update/$', 'version_update', {}, name = 'version_update'),
     url(r'^version/(?P<version_id>[0-9]+)/download/$', 'version_download', {}, name = 'version_download'),
+    url(r'^version/(?P<version_id>[0-9]+)/approve/$', 'version_approve', {}, name = 'version_approve'),
+    url(r'^version/(?P<version_id>[0-9]+)/disapprove/$', 'version_disapprove', {}, name = 'version_disapprove'),
 )
 
