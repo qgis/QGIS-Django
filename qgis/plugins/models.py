@@ -9,6 +9,10 @@ from django.core.urlresolvers import reverse
 from django.conf import settings
 import datetime, os
 
+# Tagging
+from taggit.managers import TaggableManager
+
+
 PLUGINS_STORAGE_PATH = getattr(settings, 'PLUGINS_STORAGE_PATH', 'packages')
 PLUGINS_FRESH_DAYS   = getattr(settings, 'PLUGINS_FRESH_DAYS', 30)
 
@@ -113,6 +117,8 @@ class Plugin (models.Model):
     fresh_objects           = FreshPlugins()
     unapproved_objects      = UnapprovedPlugins()
     popular_objects         = PopularPlugins()
+
+    tags = TaggableManager()
 
 
     @property

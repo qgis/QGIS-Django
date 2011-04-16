@@ -388,7 +388,7 @@ td.contentheading, td.buttonheading{
 	color:#2a5075;
 	font-size:14px;
 	height:33px;
-#	background: url(../images/contentheading_line.png) bottom repeat-x;
+	background: url(../images/contentheading_line.png) bottom repeat-x;
 }
 table.contentpaneopen{
 	border-collapse: collapse;

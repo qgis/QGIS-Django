@@ -258,14 +258,16 @@ def plugin_update(request, plugin_id):
     if not check_plugin_access(request.user, plugin):
         return render_to_response('plugins/plugin_permission_deny.html', {}, context_instance=RequestContext(request))
     if request.method == 'POST':
-        form = PluginForm(request.POST, request.FILES, instance = plugin)
+        form = PluginForm(request.POST, request.FILES, instance=plugin)
         form.fields['owners'].queryset = User.objects.exclude(pk=plugin.created_by.pk)
         if form.is_valid():
-            new_object = form.save(commit = False)
+            new_object = form.save(commit=False)
             if not request.user.has_perm('plugins.can_approve'):
                 new_object.published = False
             new_object.modified_by = request.user
             new_object.save()
+            # Without this next line the tags won't be saved.
+            form.save_m2m()
             new_object.owners.clear()
             for o in form.cleaned_data['owners']:
                 new_object.owners.add(o)
@@ -293,7 +295,16 @@ def user_plugins(request, username):
     """
     user = get_object_or_404(User, username=username)
     object_list = Plugin.approved_objects.filter(created_by=user)
-    return render_to_response('plugins/plugin_list.html', { 'object_list' : object_list, 'title' : _('Plugins from %s') % user }, context_instance=RequestContext(request))
+    return render_to_response('plugins/plugin_list.html', { 'object_list' : object_list, 'title' : _('Plugins from "%s"') % user }, context_instance=RequestContext(request))
+
+def tags_plugins(request, tags):
+    """
+    List plugins with given tags
+    """
+    tag_list = tags.split(',')
+    object_list = Plugin.approved_objects.filter(tags__name__in=tag_list)
+    #import ipy; ipy.shell()
+    return render_to_response('plugins/plugin_list.html', { 'object_list' : object_list, 'title' : _('Plugins with tags "%s"') % tags }, context_instance=RequestContext(request))
 
 
 @login_required

@@ -1,4 +1,4 @@
-{% extends 'base.html' %}{% load i18n %}
+{% extends 'base.html' %}{% load i18n taggit_extras %}
 
 {% block menu %}
 {{ block.super }}
@@ -24,6 +24,12 @@
                 <li><a href="{% url popular_plugins %}">{% trans "Popular" %}</a></li>
             </ul>
         </div>
+        <div>
+            <h3>{% trans "Plugin tags" %}</h3>
+            {% include_tagcloud 'plugins.plugin' %}
+        </div>
     </div>
 </div>
+
+
 {% endblock %}

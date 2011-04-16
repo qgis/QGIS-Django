@@ -15,7 +15,7 @@ class PluginForm(ModelForm):
 
     class Meta:
         model = Plugin
-        fields = ('description', 'homepage', 'owners')
+        fields = ('description', 'homepage', 'owners', 'tags')
 
 
 class PluginVersionForm(ModelForm):

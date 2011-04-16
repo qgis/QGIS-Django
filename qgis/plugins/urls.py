@@ -19,6 +19,7 @@ urlpatterns = patterns('django.views.generic.list_detail',
 
 # Plugins filtered views (need user parameter from request)
 urlpatterns += patterns('plugins.views',
+    url(r'^tags/(?P<tags>\w+)/$', 'tags_plugins', {}, name = 'tags_plugins'),
     url(r'^my/$', 'my_plugins', {}, name = 'my_plugins'),
     url(r'^user/(?P<username>\w+)/$', 'user_plugins', {}, name = 'user_plugins'),
     url(r'^user/(?P<username>\w+)/block/$', 'user_block', {}, name = 'user_block'),

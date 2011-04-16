@@ -116,6 +116,7 @@ INSTALLED_APPS = (
     'django.contrib.syndication',
     'ratings',
     'taggit',
+    'taggit_templatetags',
     'haystack',
     'cab', #the django snippets app itself
     # Tim for Debug toolbar
@@ -154,9 +155,12 @@ CACHES = {
   'LOCATION': 'cache_table',
   }
 }
-CACHE_MIDDLEWARE_ALIAS = 'qgis'
+#CACHE_MIDDLEWARE_ALIAS = 'qgis'
 CACHE_MIDDLEWARE_SECONDS = 600
 CACHE_MIDDLEWARE_PREFIX = ''
+
+TAGGIT_TAGCLOUD_MIN=10
+TAGGIT_TAGCLOUD_MAX=30
 
 INTERNAL_IPS = ('127.0.0.1',)
 

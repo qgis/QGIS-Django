@@ -4,6 +4,8 @@
     <div class="details">
         <p>{% if object.icon %}<img src="{{ object.icon.url }}" alt="{% trans "Plugin icon" %}" />&nbsp;{% endif %}<strong>{% trans "Description" %}:</strong> {{ object.description }}</p>
         <p><strong>{% trans "Author"%}:</strong> {{ object.created_by }}</p>
+        {% if object.tags.count %}<p><strong>{% trans "Tags"%}:</strong>
+        {% for tag in object.tags.all %}<a href="{% url tags_plugins tag.name %}">{{tag}}</a>{% if not forloop.last %},&nbsp;{% endif %}{% endfor %}</p>{% endif %}
         {% if object.homepage %}<p><strong>{% trans "Plugin home page"%}:</strong> <a href="{{ object.homepage }}">{{ object.homepage }}</a></p>{% endif %}
         {% if object.stable %}<p><strong>{% trans "Latest stable version"%}:</strong> <a title="{% trans "Click to download" %}"  href="{% url version_detail object.stable.pk %}">{{ object.stable.version }}</a></p>{% endif %}
         {% if object.experimental %}<p><strong>{% trans "Lates experimental version"%}:</strong> <a title="{% trans "Click to download" %}" href="{% url version_detail object.experimental.pk %}">{{ object.experimental.version }}</a></p>{% endif %}

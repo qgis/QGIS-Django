@@ -53,4 +53,12 @@ table.plugins th {
     background: url("../images/bg_menu.png") repeat-x scroll center top transparent;
     line-height: 1.4em;
 }
+#leftcolumn div.module_menu div.tag_cloud {
+    margin: 20px 0;
+}
 
+div.tag_cloud a {
+   display: block;
+   float: left;
+   margin: 4px;
+}
