@@ -214,9 +214,8 @@ def plugin_upload(request):
                     'plugin'            : new_plugin,
                     'min_qg_version'    : form.cleaned_data['qgisMinimumVersion'],
                     'version'           : form.cleaned_data['version'],
-                    'current'           : True,
                     'created_by'        : request.user,
-                    'package'           : form.cleaned_data['package']
+                    'package'           : form.cleaned_data['package'],
                     'approved'          : request.user.has_perm('plugins.can_approve'),
                 }
                 new_version = PluginVersion(**version_data)

@@ -36,7 +36,7 @@
             <thead>
                 <tr>
                 <th>{% trans "Version" %}</th>
-                <th>{% trans "current" %}</th>
+                <th>{% trans "Approved" %}</th>
                 <th>{% trans "Experimental" %}</th>
                 <th>{% trans "Minimum QGIS version" %}</th>
                 <th>{% trans "Downloads" %}</th>
@@ -49,7 +49,7 @@
             {% for version in object.pluginversion_set.all %}
                 <tr class="{% cycle "even" "odd" %}">
                     <td><a href="{% url version_detail version.pk %}">{{ version.version }}</a></td>
-                    <td>{{ version.current|yesno }}</td>
+                    <td>{{ version.approved|yesno }}</td>
                     <td>{{ version.experimental|yesno }}</td>
                     <td>{{ version.min_qg_version }}</td>
                     <td>{{ version.downloads }}</td>
