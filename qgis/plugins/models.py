@@ -255,12 +255,12 @@ class PluginVersion (models.Model):
         if self.pk:
             versions_to_check = versions_to_check.exclude(pk = self.pk)
         # Checks for unique_together
-        if versions_to_check.filter(plugin=self.plugin, version=self.version, experimental=self.experimental, min_qg_version=self.min_qg_version).count() > 0:
-            raise ValidationError(unicode(_('Version value must be unique among experimental and not-experimental branches of the same plugin.')))
+        if versions_to_check.filter(plugin=self.plugin, version=self.version).count() > 0:
+            raise ValidationError(unicode(_('Version value must be unique for this plugin.')))
 
 
     class Meta:
-        unique_together = ('plugin', 'version', 'experimental')
+        unique_together = ('plugin', 'version')
         ordering = ('plugin',  'version', '-created_on' , 'experimental')
 
     def get_absolute_url(self):
