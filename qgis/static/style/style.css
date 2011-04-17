@@ -54,7 +54,7 @@ table.plugins th {
     line-height: 1.4em;
 }
 #leftcolumn div.module_menu div.tag_cloud {
-    margin: 20px 0;
+    padding-top: 8px;
 }
 
 div.tag_cloud a {
