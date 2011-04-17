@@ -53,9 +53,11 @@ def validator(package):
         except:
             raise ValidationError( _("Cannot find a folder inside the compressed package: this does not seems a valid plugin") )
 
-        initname = package_name + '/__init__.py'
         # Cuts the trailing slash
-        package_name = package_name[:-1]
+        #import ipy; ipy.shell()
+        if package_name.endswith('/'):
+            package_name = package_name[:-1]
+        initname = package_name + '/__init__.py'
         if not initname in namelist:
             raise ValidationError(_('Cannot find __init__.py in the compressed package: this does not seems a valid plugin (I searched for %s)') % initname)
 

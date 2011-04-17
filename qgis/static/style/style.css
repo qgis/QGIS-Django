@@ -70,3 +70,13 @@ div.tag_cloud a {
 .fieldWrapper .help {
     color: gray;
 }
+
+td img.plugin-icon {
+    width: 32px;
+    height: 32px;
+}
+
+div.details img.plugin-icon {
+   display: block;
+   float: right;
+}
