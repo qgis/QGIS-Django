@@ -6,12 +6,14 @@ from django import forms
 
 from plugins.validator import validator
 from plugins.models import *
-
+from taggit.forms import *
 
 class PluginForm(ModelForm):
     """
     Form for plugin editing
     """
+
+    tags = TagField(required=False)
 
     class Meta:
         model = Plugin
@@ -78,5 +80,6 @@ class PackageUploadForm(forms.Form):
 
         if Plugin.objects.filter(name = self.cleaned_data['name']).count():
             raise ValidationError(_('A plugin with this name (%s) already exists.') % self.cleaned_data['name'])
+
         return package
 
