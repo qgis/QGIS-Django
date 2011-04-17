@@ -1,0 +1,30 @@
+{% extends 'plugins/plugin_list.html' %}{% load i18n %}
+
+{% block content %}
+
+    <h2>{% trans "User Details of: " %} {{ plugin_user.username }}</h2>
+
+    <ul>
+        <li>{% trans "First name: " %} {{ plugin_user.first_name }}</li>
+        <li>{% trans "Last name: " %} {{ plugin_user.last_name }}</li>
+        <li>{% trans "Email: " %} {{ plugin_user.email }}</li>
+    </ul>
+    {% if not plugin_user.is_staff %}
+    <div>
+        <ul class="actions">
+            {% if plugin_user.is_active %}
+                <li><a href="{% url user_block plugin_user.username %}">{% trans "Block author" %}</a></li>{% else %}
+                <li><a href="{% url user_unblock plugin_user.username %}">{% trans "Unblock author" %}</a></li>
+            {% endif %}
+            {% if plugin_user.is_active %}
+                {% if not user_is_trusted %}<li><a href="{% url user_trust plugin_user.username %}">{% trans "Trust author" %}</a></li>{% else %}
+                <li><a href="{% url user_untrust plugin_user.username %}">{% trans "Untrust author" %}</a></li>{% endif %}
+            {% endif %}
+        </ul>
+    </div>
+    {% endif %}
+
+    {{ block.super }}
+
+{% endblock %}
+

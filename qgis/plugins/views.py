@@ -1,6 +1,7 @@
 # Create your views here.
 from django.core.exceptions import NON_FIELD_ERRORS
 from django.db import IntegrityError
+from django.db.models import Q
 from django.shortcuts import get_object_or_404, render_to_response
 from django.template import RequestContext
 from django.utils.translation import ugettext_lazy as _
@@ -103,29 +104,6 @@ def plugin_create(request):
     return render_to_response('plugins/plugin_form.html', { 'form' : form , 'form_title' : _('New plugin')}, context_instance=RequestContext(request))
 
 
-@staff_required
-def plugin_trust(request, plugin_id):
-    """
-    Assigns can_approve permission to the plugin creator
-    """
-    plugin = get_object_or_404(Plugin, pk=plugin_id)
-    plugin.created_by.user_permissions.add(Permission.objects.get(codename='can_approve', content_type=ContentType.objects.get(name='plugin')))
-    msg = _("The user %s is now a trusted user." % plugin.created_by)
-    messages.success(request, msg, fail_silently=True)
-    return HttpResponseRedirect(plugin.get_absolute_url())
-
-
-@staff_required
-def plugin_untrust(request, plugin_id):
-    """
-    Revokes can_approve permission to the plugin creator
-    """
-    plugin = get_object_or_404(Plugin, pk=plugin_id)
-    plugin.created_by.user_permissions.remove(Permission.objects.get(codename='can_approve', content_type=ContentType.objects.get(name='plugin')))
-    msg = _("The user %s is now an untrusted user." % plugin.created_by)
-    messages.success(request, msg, fail_silently=True)
-    return HttpResponseRedirect(plugin.get_absolute_url())
-
 
 @staff_required
 def plugin_set_featured(request, plugin_id):
@@ -152,42 +130,6 @@ def plugin_unset_featured(request, plugin_id):
     messages.success(request, msg, fail_silently=True)
     return HttpResponseRedirect(plugin.get_absolute_url())
 
-
-@staff_required
-def user_block(request, username):
-    """
-    Completely blocks a user
-    """
-    user = get_object_or_404(User, username=username)
-    # Disable
-    user.is_active = False
-    user.save()
-    msg = _("The user %s is now blocked." % user)
-    messages.success(request, msg, fail_silently=True)
-    redirect_to = reverse('approved_plugins')
-    try:
-        redirect_to = urlsplit(request.REQUEST.get('HTTP_REFERER', None), 'http', False)[2]
-    except:
-        redirect_to = reverse('approved_plugins')
-    return HttpResponseRedirect(redirect_to)
-
-@staff_required
-def user_unblock(request, username):
-    """
-    unblocks a user
-    """
-    user = get_object_or_404(User, username=username)
-    # Disable
-    user.is_active = False
-    user.save()
-    msg = _("The user %s is now unblocked." % user)
-    messages.success(request, msg, fail_silently=True)
-    redirect_to = reverse('approved_plugins')
-    try:
-        redirect_to = urlsplit(request.REQUEST.get('HTTP_REFERER', None), 'http', False)[2]
-    except:
-        redirect_to = reverse('approved_plugins')
-    return HttpResponseRedirect(redirect_to)
 
 @login_required
 def plugin_upload(request):
@@ -297,6 +239,77 @@ def user_plugins(request, username):
     object_list = Plugin.approved_objects.filter(created_by=user)
     return render_to_response('plugins/plugin_list.html', { 'object_list' : object_list, 'title' : _('Plugins from "%s"') % user }, context_instance=RequestContext(request))
 
+
+###############################################
+
+# User management functions
+
+###############################################
+
+@staff_required
+def user_details(request, username):
+    """
+    List plugins created_by OR owned by user
+    """
+    user = get_object_or_404(User, username=username)
+    user_is_trusted = user.has_perm('plugins.can_approve')
+    object_list = Plugin.approved_objects.filter(Q(created_by=user) | Q(owners=user))
+    return render_to_response('plugins/user.html', { 'user_is_trusted' : user_is_trusted, 'object_list' : object_list, 'plugin_user': user, 'title' : _('Plugins from %s') % user }, context_instance=RequestContext(request))
+
+
+@staff_required
+def user_block(request, username):
+    """
+    Completely blocks a user
+    """
+    user = get_object_or_404(User, username=username, is_staff=False)
+    # Disable
+    user.is_active = False
+    user.save()
+    msg = _("The user %s is now blocked." % user)
+    messages.success(request, msg, fail_silently=True)
+    return HttpResponseRedirect(reverse('user_details', args=[user.username]))
+
+
+@staff_required
+def user_unblock(request, username):
+    """
+    unblocks a user
+    """
+    user = get_object_or_404(User, username=username, is_staff=False)
+    # Enable
+    user.is_active = True
+    user.save()
+    msg = _("The user %s is now unblocked." % user)
+    messages.success(request, msg, fail_silently=True)
+    return HttpResponseRedirect(reverse('user_details', args=[user.username]))
+
+
+@staff_required
+def user_trust(request, username):
+    """
+    Assigns can_approve permission to the plugin creator
+    """
+    user = get_object_or_404(User, username=username)
+    user.user_permissions.add(Permission.objects.get(codename='can_approve', content_type=ContentType.objects.get(name='plugin')))
+    msg = _("The user %s is now a trusted user." % user)
+    messages.success(request, msg, fail_silently=True)
+    return HttpResponseRedirect(reverse('user_details', args=[user.username]))
+
+
+@staff_required
+def user_untrust(request, username):
+    """
+    Revokes can_approve permission to the plugin creator
+    """
+    user = get_object_or_404(User, username=username)
+    user.user_permissions.remove(Permission.objects.get(codename='can_approve', content_type=ContentType.objects.get(name='plugin')))
+    msg = _("The user %s is now an untrusted user." % user)
+    messages.success(request, msg, fail_silently=True)
+    return HttpResponseRedirect(reverse('user_details', args=[user.username]))
+
+
+
 def xml_plugins(request):
     """
     The XML file
@@ -307,7 +320,6 @@ def xml_plugins(request):
     else:
         object_list = Plugin.approved_objects.all()
     return render_to_response('plugins/plugins.xml', {'object_list' : object_list}, mimetype='text/xml', context_instance=RequestContext(request))
-
 
 
 def tags_plugins(request, tags):

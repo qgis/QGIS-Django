@@ -73,7 +73,7 @@ class PackageUploadForm(forms.Form):
             msg = unicode(_('File upload must be a valid QGIS Python plugin compressed archive.'))
             raise ValidationError("%s %s" % (msg, ','.join(e.messages)))
 
-        if Plugin.objects.filter(name = self.cleaned_data['package_name']).count():
+        if Plugin.objects.filter(package_name = self.cleaned_data['package_name']).count():
             raise ValidationError(_('A plugin with this package name (%s) already exists.') % self.cleaned_data['package_name'])
 
         if Plugin.objects.filter(name = self.cleaned_data['name']).count():

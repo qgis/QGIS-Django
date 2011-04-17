@@ -139,7 +139,7 @@ class Plugin (models.Model):
     @property
     def stable(self):
         """
-        Returns the latest stable version
+        Returns the latest stable and approved version
         """
         try:
             return self.pluginversion_set.filter(approved=True, experimental=False).order_by('-version')[0]
@@ -149,7 +149,7 @@ class Plugin (models.Model):
     @property
     def experimental(self):
         """
-        Returns the latest experimental version
+        Returns the latest experimental and approved version
         """
         try:
             return self.pluginversion_set.filter(approved=True, experimental=True).order_by('-version')[0]

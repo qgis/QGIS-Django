@@ -8,14 +8,13 @@
         {% for tag in object.tags.all %}<a href="{% url tags_plugins tag.name %}">{{tag}}</a>{% if not forloop.last %},&nbsp;{% endif %}{% endfor %}</p>{% endif %}
         {% if object.homepage %}<p><strong>{% trans "Plugin home page"%}:</strong> <a href="{{ object.homepage }}">{{ object.homepage }}</a></p>{% endif %}
         {% if object.stable %}<p><strong>{% trans "Latest stable version"%}:</strong> <a title="{% trans "Click to download" %}"  href="{% url version_detail object.stable.pk %}">{{ object.stable.version }}</a></p>{% endif %}
-        {% if object.experimental %}<p><strong>{% trans "Lates experimental version"%}:</strong> <a title="{% trans "Click to download" %}" href="{% url version_detail object.experimental.pk %}">{{ object.experimental.version }}</a></p>{% endif %}
-        {% if not object.experimental and not object.stable %}<p class="warning">{% trans "This plugin has not yet released any version." %}</p>{% endif %}
-        {% if not object.approved %}<p class="warning">{% trans "This plugin is not approved." %}</p>{% endif %}
+        {% if object.experimental %}<p><strong>{% trans "Latest experimental version"%}:</strong> <a title="{% trans "Click to download" %}" href="{% url version_detail object.experimental.pk %}">{{ object.experimental.version }}</a></p>{% endif %}
+        {% if not object.experimental and not object.stable %}<p class="warning">{% trans "This plugin has no public version yet." %}</p>{% endif %}
+
+
         {% if not object.created_by.is_active %}<p class="warning">{% trans "The plugin author has been blocked." %}</p>{% endif %}
     </div>
-    {# show all versions if user is authorized #}
     {% if user.is_staff or user in object.editors %}
-    <h3>{% trans "Admin" %}</h3>
     <div id="admin">
         <ul class="actions">
             <li><a href="{% url plugin_update object.pk %}">{% trans "Edit" %}</a></li>
@@ -23,9 +22,6 @@
             {% if user.is_staff or user in object.editors %}
             <li><a class="delete" href="{% url plugin_delete object.pk %}">{% trans "Delete" %}</a></li>{% endif %}
         {% if user.is_staff  %}
-            {% if not object.trusted and not object.created_by.is_staff %}<li><a href="{% url plugin_trust object.pk %}">{% trans "Trust author" %}</a></li>{% endif %}
-            {% if object.trusted and not object.created_by.is_staff %}<li><a href="{% url plugin_untrust object.pk %}">{% trans "Untrust author" %}</a></li>{% endif %}
-            {% if object.created_by.is_active and not object.created_by.is_staff %}<li><a href="{% url user_block object.created_by %}">{% trans "Block author" %}</a></li>{% endif %}
             {% if object.featured %}<li><a href="{% url plugin_unset_featured object.pk %}">{% trans "Unset featured" %}</a></li>
             {% else %}<li><a href="{% url plugin_set_featured object.pk %}">{% trans "Set featured" %}</a></li>
             {% endif %}
@@ -35,7 +31,9 @@
     {% endif %}
     {# end admin #}
     {% if object.pluginversion_set.count %}
+    {# show all versions if user is authorized #}
     <div id="version_list">
+        <h3>{% trans "Version list" %}</h3>
         <table class="plugins">
             <thead>
                 <tr>
@@ -58,7 +56,7 @@
                     <td>{{ version.experimental|yesno }}</td>
                     <td>{{ version.min_qg_version }}</td>
                     <td>{{ version.downloads }}</td>
-                    <td>{{ version.created_by }}</td>
+                    <td><a href="{% url user_details version.created_by.username %}">{{ version.created_by }}</a></td>
                     <td>{{ version.created_on }}</td>
                     {% if user.is_staff or user in version.plugin.approvers or user in version.plugin.editors %}<td>
                     {% if user.is_staff or user in version.plugin.approvers %}
