@@ -16,7 +16,7 @@
         <li><a class="delete" href="{% url version_delete version.pk %}">{% trans "Delete" %}</a></li>
         {% endif %}
         <li><a href="{% url plugin_detail version.plugin.pk %}">{% trans "Plugin details" %}</a></li>
-        {% if user.is_staff and not version.plugin.trusted and not version.plugin.created_by.is_staff %}<li><a href="{% url plugin_trust version.plugin.pk %}">{% trans "Trust author" %}</a></li>{% endif %}
+        {% if user.is_staff and not version.plugin.trusted and not version.plugin.created_by.is_staff %}<li><a href="{% url user_trust version.plugin.pk %}">{% trans "Trust author" %}</a></li>{% endif %}
         {% if user.is_staff and version.plugin.trusted and not version.plugin.created_by.is_staff %}<li><a href="{% url user_untrust version.plugin.pk %}">{% trans "Untrust author" %}</a></li>{% endif %}
         {% if user.is_staff and not version.created_by.is_staff and version.created_by.is_active %}
         <li><a href="{% url user_block version.created_by %}">{% trans "Block author" %}</a></li>
