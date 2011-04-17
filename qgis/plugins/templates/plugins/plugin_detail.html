@@ -4,9 +4,9 @@
     <div class="details">
         <p>{% if object.icon %}<img class="plugin-icon" src="{{ object.icon.url }}" alt="{% trans "Plugin icon" %}" />&nbsp;{% endif %}<strong>{% trans "Description" %}:</strong> {{ object.description }}</p>
 	<p><strong>{% trans "Author"%}:</strong> <a href="{% url user_details object.created_by %}">{{ object.created_by }}</a></p>
-	<p><strong>{% trans "Owners"%}:</strong>{% for owner in object.owners.all %} 
-		<a href="{% url user_details owner.username %}">{{ owner.username }}</a> {% endfor %}
-	</p>
+	{% if object.owners.count %}<p><strong>{% trans "Owners"%}:</strong>{% for owner in object.owners.all %}
+		<a href="{% url user_details owner.username %}">{{ owner.username }}</a>{% if not forloop.last %},{% endif %}{% endfor %}
+	</p>{% endif %}
         {% if object.tags.count %}<p><strong>{% trans "Tags"%}:</strong>
         {% for tag in object.tags.all %}<a href="{% url tags_plugins tag.name %}">{{tag}}</a>{% if not forloop.last %},&nbsp;{% endif %}{% endfor %}</p>{% endif %}
         {% if object.homepage %}<p><strong>{% trans "Plugin home page"%}:</strong> <a href="{{ object.homepage }}">{{ object.homepage }}</a></p>{% endif %}

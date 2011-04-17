@@ -75,8 +75,8 @@ def validator(package):
 
         # Process Icon
         try:
-            icon = zip.open(package_name + '/' + dict(metadata)['icon'])
-            icon_file = SimpleUploadedFile(dict(metadata)['icon'], icon.read(), mimetypes.guess_type(dict(metadata)['icon']))
+            icon = zip.read(package_name + '/' + dict(metadata)['icon'])
+            icon_file = SimpleUploadedFile(dict(metadata)['icon'], icon, mimetypes.guess_type(dict(metadata)['icon']))
         except:
             icon_file = None
 
