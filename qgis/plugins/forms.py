@@ -61,8 +61,8 @@ class PackageUploadForm(forms.Form):
     """
     Single step upload for new plugins
     """
-    package = forms.FileField(_('QGIS compressed plugin package'))
-    experimental = forms.BooleanField(required = False, label = _('Experimental'))
+    package = forms.FileField(_('QGIS compressed plugin package'), label=_('Plugin package'), help_text=_('Please select the zipped file of the new plugin.'))
+    experimental = forms.BooleanField(required=False, label=_('Experimental'), help_text=_('Please check this box if the plugin is experimental.'))
 
     def clean_package(self):
         cleaned_data    = self.cleaned_data

@@ -45,6 +45,8 @@
     </table>
     {% paginate %}
     {% else %}
+    {% block plugins_message %}
     <p>{% trans "This list is empty!" %}</p>
+    {% endblock %}
     {% endif %}
 {% endblock %}

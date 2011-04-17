@@ -287,7 +287,7 @@ def my_plugins(request):
     Shows user's plugins (plugins where user is in owners or user is author)
     """
     object_list = Plugin.objects.filter(owners=request.user).distinct() | Plugin.objects.filter(created_by=request.user).distinct()
-    return render_to_response('plugins/plugin_list.html', { 'object_list' : object_list, 'title' : _('My plugins')}, context_instance=RequestContext(request))
+    return render_to_response('plugins/plugin_list_my.html', { 'object_list' : object_list, 'title' : _('My plugins')}, context_instance=RequestContext(request))
 
 def user_plugins(request, username):
     """

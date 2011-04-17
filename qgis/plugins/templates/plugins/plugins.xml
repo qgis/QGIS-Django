@@ -13,6 +13,7 @@
         <create_date>{{ plugin.created_on.isoformat }}</create_date>
         <update_date>{{ plugin.stable.created_on.isoformat }}</update_date>
         <experimental>False</experimental>
+        <tags>{% for tag in plugin.tags.all %}{{ tag }}{% if not forloop.last %},{% endif %}{% endfor %}</tags>
     </pyqgis_plugin>{% endif %}{% if plugin.experimental %}
     <pyqgis_plugin name="{{plugin.name}}" version="{{ plugin.experimental.version }}">
         <description><![CDATA[{{ plugin.description }}]]></description>
@@ -26,5 +27,6 @@
         <create_date>{{ plugin.created_on.isoformat }}</create_date>
         <update_date>{{ plugin.experimental.created_on.isoformat }}</update_date>
         <experimental>True</experimental>
+        <tags>{% for tag in plugin.tags.all %}{{ tag }}{% if not forloop.last %},{% endif %}{% endfor %}</tags>
     </pyqgis_plugin>{% endif %}{% endfor %}
 </plugins>

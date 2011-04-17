@@ -2,13 +2,21 @@
 
 {% block menu %}
 {{ block.super }}
+{% if user.is_authenticated %}
+<div class="module_menu" id="new_plugin_button">
+    <div>
+        <div>
+            <h3><a href="{% url plugin_upload %}">{% trans "Create a new plugin" %}</a></h3>
+        </div>
+    </div>
+</div>
+{% endif %}
 <div class="module_menu">
     <div>
         <div>
             <h3>{% trans "Plugin menu" %}</h3>
             <ul class="menu">
                 {% if user.is_authenticated %}
-                <li><a href="{% url plugin_upload %}">{% trans "Upload a new plugin" %}</a></li>
                 {% if user.plugin_set_count %}<li><a href="{% url my_plugins user %}">{% trans "My plugins" %}</a></li>{% endif %}
                 {% endif %}
                 {% if user.is_authenticated %}

@@ -1,0 +1,14 @@
+{% load taggit_extras %}
+
+{% if forvar %}
+{% get_tagcloud as tags for forvar %}
+{% else %}
+{% get_tagcloud as tags %}
+{% endif %}
+
+<div class="tag_cloud">
+{% for tag in tags %}
+<a style="font-size:{{tag.weight|floatformat:0}}px" href="{% url tags_plugins tag.name %}">{{tag}}</a>
+{% endfor %}
+<div style="clear:both"></div>
+</div>

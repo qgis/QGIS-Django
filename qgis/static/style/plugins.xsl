@@ -47,13 +47,17 @@ div.description{
   color: black;
   font-size:85%;
   font-weight:normal;
+  font-style: italic;
  }
-
+div.tags{
+  padding:0 0 0 1em;
+  font-size:85%;
+  font-weight:normal;
+}
 div.download, div.author, div.branch{
   font-size: 80%;
   padding: 0em 0em 0em 1em;
  }
-
 td.menu_panel {
  	width: 180px;
 	font-size: 80%;
@@ -97,6 +101,10 @@ Download:
 <div class="description">
 <xsl:value-of select="description" />
 </div>
+<div class="tags">
+Tags:
+<xsl:value-of select="tags" />
+</div>
 <div class="download">
 Download:
 <xsl:element name="a">
@@ -132,9 +140,6 @@ Home page:
 </td>
 </tr>
 </table>
-<!--
-<p>This URL is subject to change at release of QGIS 1.0
--->
 </body>
 </html>
 

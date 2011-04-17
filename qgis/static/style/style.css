@@ -62,3 +62,11 @@ div.tag_cloud a {
    float: left;
    margin: 4px;
 }
+
+#new_plugin_button h3  {
+    background:  url(../images/blue/bg_h3_btn.png) top left no-repeat;
+}
+
+.fieldWrapper .help {
+    color: gray;
+}
