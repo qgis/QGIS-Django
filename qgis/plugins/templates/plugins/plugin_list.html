@@ -32,7 +32,7 @@
                 <td>{{ object.approved|yesno }}</td>
                 <td>{{ object.featured|yesno }}</td>
                 <td>{{ object.downloads }}</td>
-                <td>{{ object.created_by }}</td>
+		<td><a href="{% url user_details user.username %}">{{ object.created_by }}</a></td>
                 <td>{{ object.created_on|naturalday }}</td>
                 <td>{{ object.modified_on|naturalday }}</td>
                 <td>{% if object.stable %}<a href="{% url version_download object.stable.pk %}" title="{% trans "Download the stable version" %}" >{{ object.stable.version }}</a>{% else %}&mdash;{% endif %}</td>

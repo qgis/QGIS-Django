@@ -246,7 +246,6 @@ def user_plugins(request, username):
 
 ###############################################
 
-@staff_required
 def user_details(request, username):
     """
     List plugins created_by OR owned by user

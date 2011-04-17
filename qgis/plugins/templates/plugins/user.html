@@ -2,6 +2,7 @@
 
 {% block content %}
 
+    {% if user.is_staff %}
     <h2>{% trans "User Details of: " %} {{ plugin_user.username }}</h2>
 
     <ul>
@@ -9,7 +10,6 @@
         <li>{% trans "Last name: " %} {{ plugin_user.last_name }}</li>
         <li>{% trans "Email: " %} {{ plugin_user.email }}</li>
     </ul>
-    {% if not plugin_user.is_staff %}
     <div>
         <ul class="actions">
             {% if plugin_user.is_active %}
