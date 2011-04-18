@@ -72,8 +72,8 @@ div.tag_cloud a {
 }
 
 td img.plugin-icon {
-    width: 32px;
-    height: 32px;
+    max-width: 24px;
+    max-height: 24px;
 }
 
 div.details img.plugin-icon {

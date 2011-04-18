@@ -2,7 +2,6 @@
 
 {% block menu %}
 {{ block.super }}
-{% if user.is_authenticated %}
 <div class="module_menu" id="new_plugin_button">
     <div>
         <div>
@@ -10,7 +9,6 @@
         </div>
     </div>
 </div>
-{% endif %}
 <div class="module_menu">
     <div>
         <div>

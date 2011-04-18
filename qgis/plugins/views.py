@@ -14,8 +14,6 @@ from django.conf import settings
 from django.contrib.auth.models import User, Permission
 from django.contrib.contenttypes.models import ContentType
 
-from urlparse import urlsplit
-
 from plugins.models import Plugin, PluginVersion
 from plugins.forms import *
 
@@ -240,7 +238,6 @@ def tags_plugins(request, tags):
     """
     tag_list = tags.split(',')
     object_list = Plugin.approved_objects.filter(tags__name__in=tag_list)
-    #import ipy; ipy.shell()
     return render_to_response('plugins/plugin_list.html', { 'object_list' : object_list, 'title' : _('Plugins with tags "%s"') % tags }, context_instance=RequestContext(request))
 
 
@@ -419,9 +416,13 @@ def version_approve(request, version_id):
         return HttpResponseRedirect(version.get_absolute_url())
     version.approved = True
     version.save()
-    msg = _("The plugin version is now approved")
+    msg = _("The plugin version \"%s\" is now approved" % version)
     messages.success(request, msg, fail_silently=True)
-    return HttpResponseRedirect(version.get_absolute_url())
+    try:
+        redirect_to = request.META['HTTP_REFERER']
+    except:
+        redirect_to = version.get_absolute_url()
+    return HttpResponseRedirect(redirect_to)
 
 
 @staff_required
@@ -436,9 +437,13 @@ def version_disapprove(request, version_id):
         return HttpResponseRedirect(version.get_absolute_url())
     version.approved = False
     version.save()
-    msg = _("The plugin version is now disapproved")
+    msg = _("The plugin version \"%s\" is now disapproved" % version)
     messages.success(request, msg, fail_silently=True)
-    return HttpResponseRedirect(version.get_absolute_url())
+    try:
+        redirect_to = request.META['HTTP_REFERER']
+    except:
+        redirect_to = version.get_absolute_url()
+    return HttpResponseRedirect(redirect_to)
 
 
 def version_download(request, version_id):
