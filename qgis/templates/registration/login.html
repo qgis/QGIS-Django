@@ -1,7 +1,10 @@
 {% extends "base.html" %}{% load i18n %}
 
 {% block content %}
-
+    <p>{% trans "Login using your OSGEO id." %}</p>
+    <p>
+       {% trans 'You can create a new OSGEO id on <a href="http://www.osgeo.org/register">OSGGEO registration form.</a>' %}
+    </p>
   {% if form.errors %}
   <ul class="messages">
     <li class="error">{% trans "Sorry, that's not a valid username or password" %}</li>
@@ -17,5 +20,6 @@
     <p><input type="submit" value="login" />
     <input type="hidden" name="next" value="{{ next }}" /></p>
   </form>
+
 
 {% endblock %}

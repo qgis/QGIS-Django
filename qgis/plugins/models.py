@@ -174,8 +174,13 @@ class Plugin (models.Model):
 
     class Meta:
         ordering = ('featured', 'name' , 'modified_on')
+        # ABP: Note: this permission should belong to the
+        # PluginVersion class. I left it here because it
+        # doesn't really matters where it is. Just be
+        # sure you query for it using the 'plugins' class
+        # instead of the 'pluginversion' class.
         permissions = (
-            ("can_approve", "Can approve plugins"),
+            ("can_approve", "Can approve plugins versions"),
         )
 
     def get_absolute_url(self):
@@ -194,7 +199,7 @@ class Plugin (models.Model):
         """
         if self.pk and not keep_date:
             import logging
-            logging.debug('setting date')
+            logging.debug('Updating modified_on for the Plugin instance')
             self.modified_on = datetime.datetime.now()
         if not self.pk:
           self.modified_on = datetime.datetime.now()
@@ -251,7 +256,7 @@ class PluginVersion (models.Model):
         """
         from django.core.exceptions import ValidationError
 
-        versions_to_check=PluginVersion.objects.filter(plugin = self.plugin, experimental=self.experimental)
+        versions_to_check=PluginVersion.objects.filter(plugin = self.plugin, version=self.version)
         if self.pk:
             versions_to_check = versions_to_check.exclude(pk = self.pk)
         # Checks for unique_together
