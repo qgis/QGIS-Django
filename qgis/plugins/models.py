@@ -91,19 +91,19 @@ class Plugin (models.Model):
     modified_on     = models.DateTimeField(_('Modified on'), editable=False )
 
     # owners
-    created_by      = models.ForeignKey(User, verbose_name = _('Created by'), related_name = 'plugins_created_by')
+    created_by      = models.ForeignKey(User, verbose_name=_('Created by'), related_name = 'plugins_created_by')
     homepage        = models.URLField(_('Plugin homepage'), verify_exists=False, blank=True, null=True)
     owners          = models.ManyToManyField(User, null=True, blank=True)
 
     # name, desc etc.
-    package_name    = models.CharField(_('Package Name'), help_text = _('This is the plugin\'s internal name, equals to the main folder name'), max_length = 256, unique=True, editable=False)
-    name            = models.CharField(_('Name'), help_text = _('Must be unique'), max_length = 256, unique=True)
+    package_name    = models.CharField(_('Package Name'), help_text=_('This is the plugin\'s internal name, equals to the main folder name'), max_length=256, unique=True, editable=False)
+    name            = models.CharField(_('Name'), help_text=_('Must be unique'), max_length=256, unique=True)
     description     = models.TextField(_('Description'))
 
-    icon            = models.ImageField(_('Icon'), blank=True, null=True, upload_to = PLUGINS_STORAGE_PATH)
+    icon            = models.ImageField(_('Icon'), blank=True, null=True, upload_to=PLUGINS_STORAGE_PATH)
 
     # downloads (soft trigger from versions)
-    downloads       = models.IntegerField(_('Downloads'), default = 0, editable=False)
+    downloads       = models.IntegerField(_('Downloads'), default=0, editable=False)
 
     # Flags
     featured        = models.BooleanField(_('Featured'), default=False)
@@ -215,18 +215,18 @@ class PluginVersion (models.Model):
     # link to parent
     plugin          = models.ForeignKey ( Plugin )
     # dates
-    created_on      = models.DateTimeField(_('Created on'),  auto_now_add=True,  editable=False )
+    created_on      = models.DateTimeField(_('Created on'),  auto_now_add=True, editable=False )
     # download counter
-    downloads       = models.IntegerField(_('Downloads'), default = 0, editable=False)
+    downloads       = models.IntegerField(_('Downloads'), default=0, editable=False)
     # owners
-    created_by      = models.ForeignKey(User, verbose_name = _('Created by'))
+    created_by      = models.ForeignKey(User, verbose_name=_('Created by'))
     # version info, the first should be read from plugin
-    min_qg_version  = models.CharField(_('Minimum QGIS version'), max_length = 32)
-    version         = models.CharField(_('Version'), max_length = 32)
+    min_qg_version  = models.CharField(_('Minimum QGIS version'), max_length=32)
+    version         = models.CharField(_('Version'), max_length=32)
     changelog       = models.TextField(_('Changelog'))
 
     # the file!
-    package         = models.FileField(_('Plugin package'), upload_to = PLUGINS_STORAGE_PATH)
+    package         = models.FileField(_('Plugin package'), upload_to=PLUGINS_STORAGE_PATH)
     # Flags: checks on unique current/experimental are done in save() and possibly in the views
     experimental    = models.BooleanField(_('Experimental flag'), default=False, help_text=_("Check this box if this version is experimental, leave unchecked if it's stable"))
     approved        = models.BooleanField(_('Approved'), default=True, help_text=_('Set to false if you wish to unapprova the plugin version.'))
@@ -256,9 +256,9 @@ class PluginVersion (models.Model):
         """
         from django.core.exceptions import ValidationError
 
-        versions_to_check=PluginVersion.objects.filter(plugin = self.plugin, version=self.version)
+        versions_to_check=PluginVersion.objects.filter(plugin=self.plugin, version=self.version)
         if self.pk:
-            versions_to_check = versions_to_check.exclude(pk = self.pk)
+            versions_to_check = versions_to_check.exclude(pk=self.pk)
         # Checks for unique_together
         if versions_to_check.filter(plugin=self.plugin, version=self.version).count() > 0:
             raise ValidationError(unicode(_('Version value must be unique for this plugin.')))
@@ -282,4 +282,26 @@ class PluginVersion (models.Model):
 
     def __str__(self):
         return self.__unicode__()
+
+
+def delete_version_package(sender, instance, **kw):
+    """
+    Removes the zip package
+    """
+    try:
+        os.remove(instance.package.path)
+    except:
+        pass
+
+def delete_plugin_icon(sender, instance, **kw):
+    """
+    Removes the plugin icon
+    """
+    try:
+        os.remove(instance.icon.path)
+    except:
+        pass
+
+models.signals.post_delete.connect(delete_version_package, sender = PluginVersion)
+models.signals.post_delete.connect(delete_plugin_icon, sender = Plugin)
 

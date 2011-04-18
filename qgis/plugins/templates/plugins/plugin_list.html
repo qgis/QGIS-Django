@@ -1,5 +1,4 @@
 {% extends 'plugins/plugin_base.html' %}{% load i18n sorting_tags pagination_tags humanize %}
-
 {% block content %}
     <h2>{% if title %}{{title}}{% else %}{% trans "QGIS Plugins list" %}{% endif %}</h2>
     {# Filtered views menu #}
@@ -26,13 +25,13 @@
         </thead>
         <tbody>
             {% for object in object_list %}
-            <tr class="{% cycle "even" "odd" %}">
+            <tr class="pmain {% cycle "even" "odd" %}" id="pmain{{object.pk}}">
                 <td>{% if object.icon %}<a title="{% trans "Click here for plugin details" %}" href="{% url plugin_detail object.pk %}"><img class="plugin-icon" src="{{ object.icon.url }}" alt="{% trans "Plugin icon" %}" /></a>{% else %}&nbsp;{% endif %}</td>
                 <td><a href="{% url plugin_detail object.pk %}" title="{{ object.description }}">{{ object.name }}</a></td>
                 <td>{{ object.approved|yesno }}</td>
                 <td>{{ object.featured|yesno }}</td>
                 <td>{{ object.downloads }}</td>
-		<td><a href="{% url user_details user.username %}">{{ object.created_by }}</a></td>
+                <td><a href="{% url user_details user.username %}">{{ object.created_by }}</a></td>
                 <td>{{ object.created_on|naturalday }}</td>
                 <td>{{ object.modified_on|naturalday }}</td>
                 <td>{% if object.stable %}<a href="{% url version_download object.stable.pk %}" title="{% trans "Download the stable version" %}" >{{ object.stable.version }}</a>{% else %}&mdash;{% endif %}</td>
@@ -40,6 +39,7 @@
                 {% if user.is_authenticated %}{% if user in object.editors or user.is_staff %}<td><a href="{% url plugin_update object.pk %}">{% trans "Edit" %}</a></td>
                 <td><a class="delete" href="{% url plugin_delete object.pk %}">{% trans "Delete" %}</a></td>{% else %}<td>&nbsp;</td><td>&nbsp;</td>{% endif %}{% endif %}
             </tr>
+            <tr id="pdesc{{object.pk}}" class="plugin-description"><td colspan="12">{{ object.description }}</td></tr>
             {% endfor %}
         </tbody>
     </table>
