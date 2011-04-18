@@ -151,13 +151,13 @@ HAYSTACK_SEARCH_ENGINE = 'whoosh'
 # See http://docs.djangoproject.com/en/dev/topics/cache/
 CACHES = {
   'default': {
-  'BACKEND': 'django.core.cache.backends.db.DatabaseCache',
+  'BACKEND': 'django.core.cache.backends.dummy.DummyCache',
   'LOCATION': 'cache_table',
   }
 }
 #CACHE_MIDDLEWARE_ALIAS = 'qgis'
-CACHE_MIDDLEWARE_SECONDS = 600
-CACHE_MIDDLEWARE_PREFIX = ''
+#CACHE_MIDDLEWARE_SECONDS = 600
+#CACHE_MIDDLEWARE_PREFIX = ''
 
 TAGGIT_TAGCLOUD_MIN=10
 TAGGIT_TAGCLOUD_MAX=30
