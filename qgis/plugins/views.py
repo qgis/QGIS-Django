@@ -153,6 +153,7 @@ def plugin_upload(request):
                     'created_by'        : request.user,
                     'package'           : form.cleaned_data['package'],
                     'approved'          : request.user.has_perm('plugins.can_approve'),
+                    'experimental'      : form.cleaned_data['experimental'],
                 }
                 new_version = PluginVersion(**version_data)
                 new_version.save()

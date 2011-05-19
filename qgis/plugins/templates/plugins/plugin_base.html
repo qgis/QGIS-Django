@@ -1,4 +1,4 @@
-{% extends 'base.html' %}{% load i18n taggit_extras %}
+{% extends 'base.html' %}{% load i18n plugins_tagcloud %}
 
 {% block menu %}
 {{ block.super }}
@@ -32,7 +32,7 @@
         </div>
         <div>
             <h3>{% trans "Plugin tags" %}</h3>
-            {% include_tagcloud 'plugins.plugin' %}
+            {% include_plugins_tagcloud 'plugins.plugin' %}
         </div>
          <div>
             <h3>{% trans "About" %}</h3>

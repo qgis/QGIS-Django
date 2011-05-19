@@ -78,6 +78,13 @@ class PopularPlugins(ApprovedPlugins):
 
 
 
+class TaggablePlugins (TaggableManager):
+    """
+    Shows only public plugins: i.e. those with "approved" flag set
+    and with one "stable" version
+    """
+    def get_query_set(self):
+        return super(TaggablePlugnis, self).get_query_set().filter(pluginversion__approved=True, pluginversion__experimental=False)
 
 class Plugin (models.Model):
     """

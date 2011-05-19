@@ -19,7 +19,7 @@ urlpatterns = patterns('django.views.generic.list_detail',
 urlpatterns += patterns('plugins.views',
     # XML
     url(r'^plugins.xml$', 'xml_plugins', {}, name = 'xml_plugins'),
-    url(r'^tags/(?P<tags>\w+)/$', 'tags_plugins', {}, name = 'tags_plugins'),
+    url(r'^tags/(?P<tags>[^\/]+)/$', 'tags_plugins', {}, name = 'tags_plugins'),
     url(r'^my/$', 'my_plugins', {}, name = 'my_plugins'),
     url(r'^user/(?P<username>\w+)/$', 'user_plugins', {}, name = 'user_plugins'),
     url(r'^user/(?P<username>\w+)/block/$', 'user_block', {}, name = 'user_block'),
