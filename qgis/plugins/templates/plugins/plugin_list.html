@@ -26,7 +26,7 @@
         <tbody>
             {% for object in object_list %}
             <tr class="pmain {% cycle "even" "odd" %}" id="pmain{{object.pk}}">
-                <td>{% if object.icon %}<a title="{% trans "Click here for plugin details" %}" href="{% url plugin_detail object.pk %}"><img class="plugin-icon" src="{{ object.icon.url }}" alt="{% trans "Plugin icon" %}" /></a>{% else %}&nbsp;{% endif %}</td>
+                <td><a title="{% trans "Click here for plugin details" %}" href="{% url plugin_detail object.pk %}"><img class="plugin-icon" src="{% if object.icon %}{{ object.icon.url }}{% else %}/static/images/qgis-icon-32x32.png{% endif %}" alt="{% trans "Plugin icon" %}" /></a></td>
                 <td><a href="{% url plugin_detail object.pk %}" title="{{ object.description }}">{{ object.name }}</a></td>
                 <td>{{ object.approved|yesno }}</td>
                 <td>{{ object.featured|yesno }}</td>
