@@ -1,0 +1,1 @@
+<p>{% if user.home_url %}<a href="{{ user.home_url }}">{% endif %}<b>{{ user.name }}</b>{% if user.home_url %}</a>{% endif %}{% if user.image %}<br /><img style="width:64px" src="{{ user.image.url }}" />{% endif %}</p>

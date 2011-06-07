@@ -17,26 +17,26 @@ import uuid
 
 class QgisUser(models.Model):
     geometry = models.PointField(srid=4326)
-    name = models.TextField() 
-    email = models.EmailField() 
-    image = models.ImageField(upload_to="user-pics",blank=True, null=True) 
-    home_url = models.URLField(blank=True, null=True) 
-    added_date = models.DateTimeField('DateAdded', 
+    name = models.TextField()
+    email = models.EmailField()
+    image = models.ImageField(upload_to="user-pics",blank=True, null=True)
+    home_url = models.URLField(blank=True, null=True)
+    added_date = models.DateTimeField('DateAdded',
                 auto_now=True, auto_now_add=False)
     guid = models.CharField(max_length=40)
     objects = models.GeoManager()
-    
+
     def save(self):
       #makes a random globally unique id
       if not self.guid or self.guid=='null':
         self.guid = str(uuid.uuid4())
-        super(QgisUser, self).save() 
+      super(QgisUser, self).save()
 
     class Meta:
         verbose_name = ('QGIS User')
         verbose_name_plural = ('QGIS Users')
         ordering = ('name',)
-        
-       
-                
+
+
+
 

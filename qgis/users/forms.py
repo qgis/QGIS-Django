@@ -14,21 +14,21 @@ class QgisUserForm(MapModelForm):
                required=True,
                widget=forms.TextInput(attrs={'size': 50,}),
                help_text="",
-               error_messages={'required': 
-               '''Please enter the QGIS user's name'''},
+               error_messages={'required':
+               'Please enter the QGIS user\'s name'},
               )
   email = forms.EmailField(label="Email:",
                required=True,
                widget=forms.TextInput(attrs={'size': 50,}),
                help_text="This will not be displayed on the map",
-               error_messages={'required': 
-               '''Please enter the email address you wish to use'''},
+               error_messages={'required':
+               'Please enter the email address you wish to use'},
               )
   home_url = forms.URLField(label="User home page:",
                required=False,
                widget=forms.TextInput(attrs={'size': 50,}),
                help_text="",
-             )    
+             )
   image = forms.ImageField(label="User profile picture:",
                required=False,
                help_text="",
@@ -36,24 +36,24 @@ class QgisUserForm(MapModelForm):
   geometry = forms.CharField(label="User location:",
                required=True,
                widget=EditableMap(
-                 options = { 'layers': ['osm.mapnik', 'osm.osmarender','google.streets','google.satellite','google.hybrid'] }
+                 options = { 'layers': ['osm.mapnik', 'osm.osmarender'] }
                ),
                help_text="To add your location: click 'Edit' on the top-right corner of the map, and then the pencil icon",
-               error_messages={'required': 
-               '''A location is required'''},
-              )                           
-            
+               error_messages={'required':
+               'A location is required'},
+              )
+
   class Meta:
     model = QgisUser
     exclude = ('added_date', 'guid',)
-    
+
 class EmailForm(forms.Form):
   email = forms.EmailField(label="Email:",
                required=True,
                help_text="",
-               error_messages={'required': 
-               '''A valid email is required'''},)
-  
+               error_messages={'required':
+               'A valid email is required'},)
+
 
 
 
