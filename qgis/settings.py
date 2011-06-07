@@ -164,6 +164,8 @@ TAGGIT_TAGCLOUD_MAX=30
 
 INTERNAL_IPS = ('127.0.0.1',)
 
+DEFAULT_FROM_EMAIL='noreply@qgis.org'
+
 # auth overrids
 from settings_auth import *
 

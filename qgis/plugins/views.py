@@ -34,9 +34,7 @@ def plugin_notify(plugin):
 
     if recipients:
       domain = Site.objects.get_current().domain
-      mail_from = getattr(settings, 'MAIL_FROM_ADDRESS', None)
-      if not mail_from:
-          mail_from = 'qgis-plugins-no-reply@%s' % domain
+      mail_from = settings.DEFAULT_FROM_EMAIL
 
       send_mail(
           _('A new plugin has been created by %s.') % plugin.created_by,
