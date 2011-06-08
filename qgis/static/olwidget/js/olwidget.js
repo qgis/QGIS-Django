@@ -206,7 +206,7 @@ olwidget.Map = OpenLayers.Class(OpenLayers.Map, {
             // Map div stuff
             mapDivClass: '',
             mapDivStyle: {
-                width: '600px',
+                width: '700px',
                 height: '400px'
             },
             layers: ['osm.mapnik'],
