@@ -110,7 +110,6 @@ INSTALLED_APPS = (
     'django_sorting',
     'pagination',
     'django.contrib.humanize',
-    # Tim for django snippets app support
     'django.contrib.comments',
     'django.contrib.markup',
     'django.contrib.syndication',
@@ -118,6 +117,7 @@ INSTALLED_APPS = (
     'taggit',
     'taggit_templatetags',
     'haystack',
+    # Tim for django snippets app support
     'cab', #the django snippets app itself
     # Tim for Debug toolbar
     'debug_toolbar',

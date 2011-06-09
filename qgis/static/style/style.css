@@ -80,3 +80,14 @@ div.details img.plugin-icon {
    display: block;
    float: right;
 }
+
+
+table.highlighttable pre,
+table.highlighttable pre span {
+  font-family: "Bitstream Vera Sans Mono", "Andale Mono", "Courier New", monospace;
+}
+
+table.highlighttable td.linenos {
+    padding-right: 1em;
+    vertical-align: top;
+}

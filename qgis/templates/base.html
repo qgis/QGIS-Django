@@ -19,6 +19,11 @@
         <img src="/static/images/blue/logo.png" alt="logo" align="left" hspace="5" />
         <div id="logo_bg">
             <a href="{% url index %}" class="logo">{% trans "Quantum GIS Plugin Repository" %}</a>
+            {% block status %}
+            <div id="user4">
+                {% if user.is_authenticated %}<div class="userinfo">{% trans "Welcome"%}: {{ user }}</div>{% endif %}
+            </div>
+            {% endblock %}
         </div>
         {% block navigation %}
         <div id="user3">
@@ -38,11 +43,6 @@
                     {% endblock %}
                 </ul>
             </div>
-            {% block status %}
-            <div id="user4">
-                {% if user.is_authenticated %}<div class="userinfo">{% trans "Welcome"%}: {{ user }}</div>{% endif %}
-            </div>
-            {% endblock %}
         </div>
         {% endblock %}
         <div id="leftcolumn">{% block menu %}&nbsp;{% endblock %}</div>
