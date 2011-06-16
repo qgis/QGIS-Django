@@ -440,6 +440,7 @@ l, ul.errorlist, li.error { color: #c00; background: #E6C0C0 url(../images/notic
 /* System Notice Messages */
 #system-message dd.notice ul, li.warning, p.warning { color: #c00; background: #EFE7B8 url(../images/notice-note.png) 4px center no-repeat; border-top: 3px solid #F0DC7E; border-bottom: 3px solid #F0DC7E;}
 p.warning { padding-left: 40px;}
+ul.messages > li,
 ul.messages > li.success { color: #000; background: #E7EBFF url(../images/notice-info.png) 4px center no-repeat; border-top: 3px solid #003983; border-bottom: 3px solid #003983;}
 
 #syndicate{
