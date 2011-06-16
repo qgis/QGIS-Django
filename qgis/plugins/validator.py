@@ -75,7 +75,12 @@ def validator(package):
 
         # Process Icon
         try:
-            icon = zip.read(package_name + '/' + dict(metadata)['icon'])
+            # Strip leading dir for ccrook plugins
+            if dict(metadata)['icon'].startswith('./'):
+                icon_path = dict(metadata)['icon'][2:]
+            else:
+                icon_path = dict(metadata)['icon']
+            icon = zip.read(package_name + '/' + icon_path)
             icon_file = SimpleUploadedFile(dict(metadata)['icon'], icon, mimetypes.guess_type(dict(metadata)['icon']))
         except:
             icon_file = None
