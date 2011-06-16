@@ -33,3 +33,9 @@ django-olwidget
 
 # for qgis rss planet
 Feedjack
+
+# For simple menus
+git+git://github.com:elpaso/django-simplemenu.git
+
+# For better flatpages
+django-tinymce
