@@ -67,6 +67,7 @@ MIDDLEWARE_CLASSES = (
     # ABP:
     'django_sorting.middleware.SortingMiddleware',
     'pagination.middleware.PaginationMiddleware',
+    'django.contrib.flatpages.middleware.FlatpageFallbackMiddleware',
     # Added by Tim for advanced loggin options
     'debug_toolbar.middleware.DebugToolbarMiddleware',
     'django.middleware.cache.FetchFromCacheMiddleware',
@@ -117,6 +118,9 @@ INSTALLED_APPS = (
     'taggit',
     'taggit_templatetags',
     'haystack',
+    'django.contrib.flatpages',
+    'simplemenu',
+    'tinymce',
     # Tim for django snippets app support
     'cab', #the django snippets app itself
     # Tim for Debug toolbar
@@ -165,6 +169,15 @@ TAGGIT_TAGCLOUD_MAX=30
 INTERNAL_IPS = ('127.0.0.1',)
 
 DEFAULT_FROM_EMAIL='noreply@qgis.org'
+
+
+#TINYMCE_JS_URL = 'http://debug.example.org/tiny_mce/tiny_mce_src.js'
+TINYMCE_DEFAULT_CONFIG = {
+    'plugins': "table,spellchecker,paste,searchreplace",
+    'theme': "advanced",
+}
+TINYMCE_SPELLCHECKER = True
+TINYMCE_COMPRESSOR = True
 
 # auth overrids
 from settings_auth import *
