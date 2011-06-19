@@ -92,9 +92,10 @@ table.highlighttable td.linenos {
     vertical-align: top;
 }
 
-.centered { text-align: center; }
+.centered, .wp-caption-text { text-align: center; }
 
-pre { 
-      background: #daccc8; 
+pre, .wp-caption-text { 
+      background: #f8f2f0; 
       border 1px solid daccc8;
+      padding-bottom: 0.5em;
     }
