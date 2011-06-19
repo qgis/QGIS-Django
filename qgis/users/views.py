@@ -51,7 +51,7 @@ def updateUser(theRequest, theId):
         return HttpResponseRedirect("/community-map/view_users.html")
     return render_to_response("update_user_form.html", {
             'myUser': myUser, 'myForm': myForm,
-        }, context_instance=RequestContext(request))
+        }, context_instance=RequestContext(theRequest))
   else:
     myForm = QgisUserForm(instance=myUser)
     return render_to_response("update_user_form.html", {'myForm' : myForm}, context_instance=RequestContext(theRequest))
