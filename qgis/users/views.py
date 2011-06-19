@@ -21,28 +21,35 @@ import logging
 def usersMap(theRequest):
 
   users = []
+  myUserCount = QgisUser.objects.all().count()
   for user in QgisUser.objects.all():
-      users.append([user.geometry, render_to_string('user_balloon.html', {'user' : user})])
+      users.append([user.geometry, render_to_string('user_balloon.html', 
+        {'user' : user})])
 
   myMap = InfoMap(users)
 
-  return render_to_response("view_users.html", {'myMap' : myMap}, context_instance=RequestContext(theRequest))
+  return render_to_response("view_users.html", {'myMap' : myMap, 'myUserCount' : myUserCount }, 
+      context_instance=RequestContext(theRequest))
 
 def createUser(theRequest):
 
+  myUserCount = QgisUser.objects.all().count()
   if theRequest.method == 'POST':
     myForm = QgisUserForm(theRequest.POST)
     if myForm.is_valid():
        myForm.save()
        return HttpResponseRedirect("/community-map/view_users.html")
     else:
-       return render_to_response("create_user_form.html", {'myForm' : myForm}, context_instance=RequestContext(theRequest))
+       return render_to_response("create_user_form.html", {'myForm' : myForm, 'myUserCount' : myUserCount }, 
+           context_instance=RequestContext(theRequest))
   else:
     myForm = QgisUserForm()
-    return render_to_response("create_user_form.html", {'myForm' : myForm}, context_instance=RequestContext(theRequest))
+    return render_to_response("create_user_form.html", {'myForm' : myForm, 'myUserCount' : myUserCount }, 
+        context_instance=RequestContext(theRequest))
 
 
 def updateUser(theRequest, theId):
+  myUserCount = QgisUser.objects.all().count()
   myUser = get_object_or_404(QgisUser,guid=theId)
   if theRequest.method == 'POST':
     myForm = QgisUserForm(theRequest.POST, theRequest.FILES, instance=myUser)
@@ -50,11 +57,12 @@ def updateUser(theRequest, theId):
         myForm.save()
         return HttpResponseRedirect("/community-map/view_users.html")
     return render_to_response("update_user_form.html", {
-            'myUser': myUser, 'myForm': myForm,
+            'myUser': myUser, 'myForm': myForm, 'myUserCount' : myUserCount 
         }, context_instance=RequestContext(theRequest))
   else:
     myForm = QgisUserForm(instance=myUser)
-    return render_to_response("update_user_form.html", {'myForm' : myForm}, context_instance=RequestContext(theRequest))
+    return render_to_response("update_user_form.html", {'myForm' : myForm, 'myUserCount' : myUserCount}, 
+        context_instance=RequestContext(theRequest))
 
 def emailEditAddress(theRequest):
 
@@ -78,14 +86,18 @@ def emailEditAddress(theRequest):
 
       return HttpResponseRedirect("/community-map/edit/email_confirm.html")
     else:
+      myUserCount = QgisUser.objects.all().count()
       msg = _("User is NOT valid.")
       messages.warning(theRequest, msg, fail_silently=True)
       logging.info("User or form is NOT valid")
-      return render_to_response("update_user.html", {'myForm' : myForm}, context_instance=RequestContext(theRequest))
+      return render_to_response("update_user.html", {'myForm' : myForm, 'myUserCount' : myUserCount}, 
+          context_instance=RequestContext(theRequest))
 
   else:
+    myUserCount = QgisUser.objects.all().count()
     myForm = EmailForm()
-    return render_to_response("update_user.html", {'myForm' : myForm}, context_instance=RequestContext(theRequest))
+    return render_to_response("update_user.html", {'myForm' : myForm}, 
+        context_instance=RequestContext(theRequest))
 
 
 
