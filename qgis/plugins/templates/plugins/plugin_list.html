@@ -4,8 +4,6 @@
     {# Filtered views menu #}
 
     {% if object_list.count %}
-    {% autosort object_list %}
-    {% autopaginate object_list %}
 
     <table class="plugins">
         <thead>
@@ -23,6 +21,8 @@
                 {% if user.is_authenticated %}<th colspan="2">{% trans "Manage" %}</th>{% endif %}
             </tr>
         </thead>
+        {% autosort object_list %}
+        {% autopaginate object_list %}
         <tbody>
             {% for object in object_list %}
             <tr class="pmain {% cycle "even" "odd" %}" id="pmain{{object.pk}}">
