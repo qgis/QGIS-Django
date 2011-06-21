@@ -2,13 +2,17 @@ from django.conf.urls.defaults import *
 from django.conf import settings
 
 from django.contrib.auth.views import login, logout
-
 # to find users app views
 from users.views import *
+
+# Menu system, registration of views is at the end of this file
+import simplemenu
+from django.contrib.flatpages.models import FlatPage
 
 # Uncomment the next two lines to enable the admin:
 from django.contrib import admin
 admin.autodiscover()
+
 
 urlpatterns = patterns('',
     # Example:
@@ -29,7 +33,7 @@ urlpatterns = patterns('',
     (r'^languages/', include('cab.urls.languages')),
     (r'^popular/', include('cab.urls.popular')),
     (r'^search/', include('haystack.urls')),
-    
+
     # SAM: qgis-users app
     (r'^community-map/', include('users.urls')),
     # Tim: Feedjack feed aggregator / planet
@@ -37,11 +41,10 @@ urlpatterns = patterns('',
 
 )
 
-
 # ABP: temporary home page
-urlpatterns += patterns('django.views.generic.simple',
-    url(r'^$', 'direct_to_template', {'template': 'index.html'}, name = 'index'),
-)
+#urlpatterns += patterns('django.views.generic.simple',
+#    url(r'^$', 'direct_to_template', {'template': 'index.html'}, name = 'index'),
+#)
 
 
 # serving static media
@@ -55,4 +58,18 @@ if settings.SERVE_STATIC_MEDIA:
 urlpatterns += patterns('',
     url(r'^accounts/login/$',  login, {}, name = 'fe_login'),
     url(r'^accounts/logout/$', logout, {}, name = 'fe_logout'),
+)
+
+# tinymce
+urlpatterns += patterns('',
+    (r'^tinymce/', include('tinymce.urls')),
+)
+
+simplemenu.register(
+    '/admin/',
+    '/planet/',
+    '/community-map/',
+    '/plugins/',
+    FlatPage.objects.all(),
+    simplemenu.models.URLItem.objects.all(),
 )

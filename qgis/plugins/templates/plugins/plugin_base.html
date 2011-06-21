@@ -12,7 +12,17 @@
 <div class="module_menu">
     <div>
         <div>
-            <h3>{% trans "Plugin menu" %}</h3>
+            <h3>{% trans "Plugins" %}</h3>
+            <form method="get" action="/search/">
+              <table>
+                <tr>
+                  <td><label for="id_q">Search:</label></td>
+                  <td><input type="text" name="q" id="id_q" style="width: 110px;" value="{{ request.GET.q }}" /><input type="hidden" id="models" name="models" value="plugins.plugin" /></td>
+                  <td><input type="submit" value="Go" /></td>
+                </tr>
+              </table>
+            </form>
+
             <ul class="menu">
                 {% if user.is_authenticated %}
                 {% if user.plugin_set_count %}<li><a href="{% url my_plugins user %}">{% trans "My plugins" %}</a></li>{% endif %}

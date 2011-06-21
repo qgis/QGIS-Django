@@ -1,0 +1,5 @@
+{% extends "base.html" %}
+{% block extratitle %}{{ flatpage.title }} - {% endblock %}
+{% block content %}
+    {{ flatpage.content|safe }}
+{% endblock %}

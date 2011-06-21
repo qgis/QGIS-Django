@@ -80,3 +80,22 @@ div.details img.plugin-icon {
    display: block;
    float: right;
 }
+
+pre,
+table.highlighttable pre,
+table.highlighttable pre span {
+  font-family: "Bitstream Vera Sans Mono", "Andale Mono", "Courier New", monospace;
+}
+
+table.highlighttable td.linenos {
+    padding-right: 1em;
+    vertical-align: top;
+}
+
+.centered, .wp-caption-text { text-align: center; }
+
+pre, .wp-caption-text { 
+      background: #f8f2f0; 
+      border 1px solid daccc8;
+      padding-bottom: 0.5em;
+    }

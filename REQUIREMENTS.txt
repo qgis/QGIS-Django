@@ -37,4 +37,8 @@ Feedjack
 #For users app to create thumbs
 sorl-thumbnail
 
+# For simple menus
+git+git://github.com/elpaso/django-simplemenu.git
 
+# For better flatpages
+django-tinymce

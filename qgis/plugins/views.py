@@ -47,6 +47,60 @@ def plugin_notify(plugin):
       logging.warning('No recipients found for %s plugin notification' % plugin)
 
 
+def plugin_approve_notify(plugin, msg):
+    """
+    Sends a message when a plugin is approved or disapproved.
+    """
+    recipients = [u.email for u in plugin.editors if u.email]
+    if plugin.approved:
+        approval_state = 'approval'
+        approved_state = 'approved'
+    else:
+        approval_state = 'disapproval'
+        approved_state = 'disapproved'
+
+    if len(recipients):
+        domain = Site.objects.get_current().domain
+        mail_from = settings.DEFAULT_FROM_EMAIL
+        logging.debug('Sending email %s notification for %s plugin, recipients:  %s' % (approval_state, plugin, recipients))
+        send_mail(
+          _('Plugin %s %s notification.') % (plugin, approval_state),
+          _('\r\nPlugin %s %s.\r\n%s\r\nLink: http://%s%s\r\n') % (plugin.name, approval_state, msg, domain, plugin.get_absolute_url()),
+          mail_from,
+          recipients,
+          fail_silently=True)
+    else:
+        logging.warning('No recipients found for %s plugin %s notification' % (plugin, approval_state))
+
+
+def user_trust_notify(user):
+    """
+    Sends a message when a plugin is approved or disapproved.
+    """
+    if user.is_staff:
+        logging.debug('Skipping trust notification for staff user %s' % user)
+    else:
+        if user.email:
+            recipients = [user.email]
+            mail_from = settings.DEFAULT_FROM_EMAIL
+
+            if user.has_perm('plugins.can_approve'):
+                subject = _('User trust notification.')
+                message = _('\r\nYou can now approve your own plugins and the plugins you can edit.\r\n')
+            else:
+                subject = _('User untrust notification.')
+                message = _('\r\nYou cannot approve any plugin.\r\n')
+
+            logging.debug('Sending email trust change notification to %s' % recipients)
+            send_mail(
+            subject,
+            message,
+            mail_from,
+            recipients,
+            fail_silently=True)
+        else:
+            logging.warning('No email found for %s user trust change notification' % user)
+
 ## Access control ##
 
 def check_plugin_access(user, plugin):
@@ -237,7 +291,7 @@ def tags_plugins(request, tags):
     """
     tag_list = tags.split(',')
     object_list = Plugin.approved_objects.filter(tags__name__in=tag_list)
-    return render_to_response('plugins/plugin_list.html', { 'object_list' : object_list, 'title' : _('Plugins with tags "%s"') % tags }, context_instance=RequestContext(request))
+    return render_to_response('plugins/plugin_list.html', { 'object_list' : object_list, 'title' : _('Plugins with tag "%s"') % tags }, context_instance=RequestContext(request))
 
 
 ###############################################
@@ -293,6 +347,7 @@ def user_trust(request, username):
     user.user_permissions.add(Permission.objects.get(codename='can_approve', content_type=ContentType.objects.get(name='plugin')))
     msg = _("The user %s is now a trusted user." % user)
     messages.success(request, msg, fail_silently=True)
+    user_trust_notify(user)
     return HttpResponseRedirect(reverse('user_details', args=[user.username]))
 
 
@@ -305,6 +360,7 @@ def user_untrust(request, username):
     user.user_permissions.remove(Permission.objects.get(codename='can_approve', content_type=ContentType.objects.get(name='plugin')))
     msg = _("The user %s is now an untrusted user." % user)
     messages.success(request, msg, fail_silently=True)
+    user_trust_notify(user)
     return HttpResponseRedirect(reverse('user_details', args=[user.username]))
 
 
@@ -417,6 +473,7 @@ def version_approve(request, version_id):
     version.save()
     msg = _("The plugin version \"%s\" is now approved" % version)
     messages.success(request, msg, fail_silently=True)
+    plugin_approve_notify(version.plugin, msg)
     try:
         redirect_to = request.META['HTTP_REFERER']
     except:
@@ -438,6 +495,7 @@ def version_disapprove(request, version_id):
     version.save()
     msg = _("The plugin version \"%s\" is now disapproved" % version)
     messages.success(request, msg, fail_silently=True)
+    plugin_approve_notify(version.plugin, msg)
     try:
         redirect_to = request.META['HTTP_REFERER']
     except:

@@ -49,6 +49,14 @@ Now install qgis snippets (a fork of django snippets)
   python setup.py install
   cd ..
 
+Important note: the server currently use python 2.5, due to some
+strange incompatibilities between compressed egg format and Django
+init machinery, in order to recognise "haystack" search stuff, the
+cab EGG must be uncompressed such as the final directories (in the virtualenv)
+are:
+
+python/lib/python2.5/site-packages/cab-0.2.0-py2.5.egg/cab
+python/lib/python2.5/site-packages/cab-0.2.0-py2.5.egg/EGG-INFO
 
 
   sudo apt-get install postgresql-8.4-postgis
@@ -67,14 +75,14 @@ Then run the createdb script:
   ./createdb.sh
 
 
-''Note:'' If you already have postgis installed in your template1 db, 
+''Note:'' If you already have postgis installed in your template1 db,
 just do the following command rather than running the createdb script:
 
 
   createdb qgis-trunk
 
 
-''Note:'' Remember to source the activate script to enabled the python 
+''Note:'' Remember to source the activate script to enabled the python
 virtual environment:
 
 
@@ -153,7 +161,7 @@ NOTE: The cache backend is required for the planet / feedjack to work properly
 
 The Blog Planet requires feedjack_update.py to run at regular intervals to keep
 the site fresh. The update_planet.sh shell script sets up the environment and
-runs feedjack_update.py. 
+runs feedjack_update.py.
 
 The script requires you to set SITE_DIR to point at the Django site directory prior to first use.
 

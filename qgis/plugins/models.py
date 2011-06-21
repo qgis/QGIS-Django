@@ -125,7 +125,7 @@ class Plugin (models.Model):
     unapproved_objects      = UnapprovedPlugins()
     popular_objects         = PopularPlugins()
 
-    tags = TaggableManager()
+    tags                    = TaggableManager(blank=True)
 
 
     @property

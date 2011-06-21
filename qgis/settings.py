@@ -1,5 +1,4 @@
 # Django settings for qgis project.
-
 # ABP: More portable config
 import os
 SITE_ROOT = os.path.dirname(os.path.realpath(__file__))
@@ -67,6 +66,7 @@ MIDDLEWARE_CLASSES = (
     # ABP:
     'django_sorting.middleware.SortingMiddleware',
     'pagination.middleware.PaginationMiddleware',
+    'django.contrib.flatpages.middleware.FlatpageFallbackMiddleware',
     # Added by Tim for advanced loggin options
     'debug_toolbar.middleware.DebugToolbarMiddleware',
     'django.middleware.cache.FetchFromCacheMiddleware',
@@ -110,7 +110,6 @@ INSTALLED_APPS = (
     'django_sorting',
     'pagination',
     'django.contrib.humanize',
-    # Tim for django snippets app support
     'django.contrib.comments',
     'django.contrib.markup',
     'django.contrib.syndication',
@@ -118,6 +117,10 @@ INSTALLED_APPS = (
     'taggit',
     'taggit_templatetags',
     'haystack',
+    'django.contrib.flatpages',
+    'simplemenu',
+    'tinymce',
+    # Tim for django snippets app support
     'cab', #the django snippets app itself
     # Tim for Debug toolbar
     'debug_toolbar',
@@ -130,7 +133,7 @@ INSTALLED_APPS = (
     # Tim for blog planet / feed aggregator
     'feedjack',
     # For users app thumbs
-    sorl.thumbnail,
+    'sorl.thumbnail',
 )
 
 TEMPLATE_CONTEXT_PROCESSORS = (
@@ -167,6 +170,15 @@ TAGGIT_TAGCLOUD_MAX=30
 INTERNAL_IPS = ('127.0.0.1',)
 
 DEFAULT_FROM_EMAIL='noreply@qgis.org'
+
+
+#TINYMCE_JS_URL = 'http://debug.example.org/tiny_mce/tiny_mce_src.js'
+TINYMCE_DEFAULT_CONFIG = {
+    'plugins': "table,spellchecker,paste,searchreplace",
+    'theme': "advanced",
+}
+TINYMCE_SPELLCHECKER = True
+TINYMCE_COMPRESSOR = True
 
 # auth overrids
 from settings_auth import *

@@ -1,7 +1,7 @@
-{% load i18n %}<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+{% load i18n simplemenu_tags %}<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en-gb" lang="en-gb" >
 <head>
-  <title>QGIS Plugins Repository</title>
+  <title>{% block extratitle %}{% endblock %}QGIS Plugins Repository</title>
   <meta name="AUTHOR" content="ItOpen" />
   <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
   <link type="text/css" href="/static/style/style.css" rel="stylesheet" />
@@ -18,17 +18,21 @@
         <img src="/static/images/blue/top.png" alt="top" />
         <img src="/static/images/blue/logo.png" alt="logo" align="left" hspace="5" />
         <div id="logo_bg">
-            <a href="{% url index %}" class="logo">{% trans "Quantum GIS Plugin Repository" %}</a>
+            <a href="/" class="logo">{% trans "Quantum GIS Plugin Repository" %}</a>
+            {% block status %}
+            <div id="user4">
+                {% if user.is_authenticated %}<div class="userinfo">{% trans "Welcome"%}: {{ user }}</div>{% endif %}
+            </div>
+            {% endblock %}
         </div>
         {% block navigation %}
         <div id="user3">
+            {% get_simplemenu as menu %}
             <div class="navigation" id="pillmenu">
                 <ul>
-                    <li><a href="{% url index %}">{% trans "Home" %}</a></li>
-                    <li><a href="{% url featured_plugins %}">{% trans "Plugins" %}</a></li>
-                    <li><a href="/snippets/">{% trans "Snippets" %}</a></li>
-                    <li><a href="/community-map/">{% trans "Users" %}</a></li>
-                    <li><a href="/planet/">{% trans "Blog Planet" %}</a></li>
+                {% for item in menu %}
+                    <li><a href="{{ item.page.url }}">{{ item.name }}</a></li>
+                {% endfor %}
                     {% if user.is_authenticated %}
                     <li><a href="{% url fe_logout %}">{% trans "Logout" %}</a></li>
                     {% else %}
@@ -38,11 +42,6 @@
                     {% endblock %}
                 </ul>
             </div>
-            {% block status %}
-            <div id="user4">
-                {% if user.is_authenticated %}<div class="userinfo">{% trans "Welcome"%}: {{ user }}</div>{% endif %}
-            </div>
-            {% endblock %}
         </div>
         {% endblock %}
         <div id="leftcolumn">{% block menu %}&nbsp;{% endblock %}</div>
@@ -56,13 +55,6 @@
             {% endif %}
             <div>
             {% block content %}
-
-            <h2>Welcome the the new QGIS Web Application</h2>
-            <p>This application in currently under testing and will become soon the official QGIS web portal.</p>
-            <p>You are strongly encouraged to use this application and report any issue on the <a href="http://hub.qgis.org/projects/qgis-django">QGIS Web Applications Bug Tracking System.</a></p>
-            <p>In order to access to some functionalities of this website you will need to login with a valid OSGEO id. You can create a new one on <a href="http://www.osgeo.org/osgeo_userid">OSGEO web portal.</a></p>
-            <p>Thank you for your cooperation.</p>
-
             {% endblock %}
             </div>
         </div>
