@@ -5,7 +5,11 @@ django-extensions
 psycopg2
 pil
 django-pagination
-django-sorting
+
+# ABP: fix for wrong sort fields
+git+git://github.com/mlavin/django-sorting.git
+#django-sorting
+
 # handy functions like get_object_or_none
 django-annoying
 #
