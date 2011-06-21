@@ -18,6 +18,9 @@
         <div>
             <h3>{% trans "Meet a user" %}</h3>
             <p class="centered">
+              <br/>
+              {% trans "To appear here you must have uploaded an image." %}
+              <br/>
               {% thumbnail myRandomUser.image "100x100" crop="center" as im %}
               <img width="{{ im.width }}" height="{{ im.height }}" src="{{ im.url }}" /><br/>
               {% endthumbnail %}

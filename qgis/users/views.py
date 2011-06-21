@@ -23,7 +23,7 @@ def usersMap(theRequest):
   users = []
   myUserCount = QgisUser.objects.all().count()
   myRandomUser = None
-  myRandomUsers = QgisUser.objects.filter( image__isnull=False ).order_by('?')[:1]
+  myRandomUsers = QgisUser.objects.exclude(image="").order_by('?')[:1]
   if myRandomUsers.count() > 0:
     myRandomUser = myRandomUsers[0]
   for user in QgisUser.objects.all():
