@@ -129,6 +129,8 @@ INSTALLED_APPS = (
     'olwidget',
     # Tim for blog planet / feed aggregator
     'feedjack',
+    # For users app thumbs
+    sorl.thumbnail,
 )
 
 TEMPLATE_CONTEXT_PROCESSORS = (

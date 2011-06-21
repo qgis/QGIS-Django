@@ -22,7 +22,7 @@ def usersMap(theRequest):
 
   users = []
   for user in QgisUser.objects.all():
-      users.append([user.geometry, render_to_string('user_balloon.html', {'user' : user})])
+      users.append([user.geometry, render_to_string('user_balloon.html', {'user' : user}) + "\n" ])
 
   myMap = InfoMap(users)
 
@@ -70,7 +70,10 @@ def emailEditAddress(theRequest):
       domain = Site.objects.get_current().domain
       myLink = "http://%s/community-map/edit/%s" % (domain, myUser.guid)
       subject = "QGIS Community Map: Edit Link Reminder"
-      message = """Someone, hopefully you, has asked for a reminder for the unique link that will allow you to edit your profile settings on our QGIS user's map. To edit your location on our QGIS community map, please follow this link %s.""" % myLink
+      message = """Someone, hopefully you, has asked for a reminder for the
+      unique link that will allow you to edit your profile settings on our QGIS
+      user's map. To edit your location on our QGIS community map, please
+      follow this link %s.""" % myLink
       message += ""
       sender =  mail_from = settings.DEFAULT_FROM_EMAIL
 

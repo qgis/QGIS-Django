@@ -33,3 +33,8 @@ django-olwidget
 
 # for qgis rss planet
 Feedjack
+
+#For users app to create thumbs
+sorl-thumbnail
+
+
