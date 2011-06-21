@@ -13,15 +13,15 @@
               <li><a href="/community-map/update_user.html">{% trans "Update your details"%}</a></li>
             </ul>
             <p class="centered">{{ myUserCount }} {% trans "users mapped" %}</p>
-            {% if user.image %}
+            {% if myRandomUser.image %}
             <p class="centered">
               Meet a random user!</br>
-              {% thumbnail user.image "100x100" crop="center" as im %}
+              {% thumbnail myRandomUser.image "100x100" crop="center" as im %}
               <img width="{{ im.width }}" height="{{ im.height }}" src="{{ im.url }}" />
               {% endthumbnail %}
-              {% if user.home_url %}<a href="{{ user.home_url }}">{% endif %}
-              <b>{{ user.name }}</b>
-              {% if user.home_url %}</a>{% endif %}
+              {% if myRandomUser.home_url %}<a href="{{ myRandomUser.home_url }}">{% endif %}
+              <b>{{ myRandomUser.name }}</b>
+              {% if myRandomUser.home_url %}</a>{% endif %}
             </p>
             {% endif %}
         </div>
