@@ -10,7 +10,7 @@ from olwidget.fields import MapField, EditableLayerField, InfoLayerField
 from users.models import QgisUser
 
 class QgisUserForm(MapModelForm):
-  name = forms.CharField(label="User name:",
+  name = forms.CharField(label="Your name:",
                required=True,
                widget=forms.TextInput(attrs={'size': 50,}),
                help_text="",

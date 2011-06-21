@@ -16,14 +16,14 @@ import datetime
 import uuid
 
 class QgisUser(models.Model):
-    geometry = models.PointField(srid=4326)
+    geometry = models.PointField(srid=4326, blank=False, null=False)
     name = models.TextField()
-    email = models.EmailField()
+    email = models.EmailField(unique=True)
     image = models.ImageField(upload_to="user-pics",blank=True, null=True)
     home_url = models.URLField(blank=True, null=True)
     added_date = models.DateTimeField('DateAdded',
                 auto_now=True, auto_now_add=False)
-    guid = models.CharField(max_length=40)
+    guid = models.CharField(max_length=40, unique=True)
     objects = models.GeoManager()
 
     def save(self):
