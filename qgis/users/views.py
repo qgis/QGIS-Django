@@ -22,12 +22,18 @@ def usersMap(theRequest):
 
   users = []
   myUserCount = QgisUser.objects.all().count()
+  myRandomUser = QgisUser.objects.order_by('?')[:1]
   for user in QgisUser.objects.all():
       users.append([user.geometry, render_to_string('user_balloon.html', {'user' : user})])
 
   myMap = InfoMap(users)
 
-  return render_to_response("view_users.html", {'myMap' : myMap, 'myUserCount' : myUserCount }, 
+  return render_to_response("view_users.html", 
+      {
+        'myMap' : myMap, 
+        'myUserCount' : myUserCount,
+        'myRandomUser' : myRandomUser,
+      }, 
       context_instance=RequestContext(theRequest))
 
 def createUser(theRequest):

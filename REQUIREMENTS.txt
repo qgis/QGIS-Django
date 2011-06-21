@@ -32,7 +32,7 @@ whoosh
 python-ldap
 django-auth-ldap
 
-# openlayers widget
+# openlayers widget - use easy install if pip install fails
 django-olwidget
 
 # for qgis rss planet
