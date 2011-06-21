@@ -19,7 +19,7 @@
             <h3>{% trans "Meet a user" %}</h3>
             <p class="centered">
               {% thumbnail myRandomUser.image "100x100" crop="center" as im %}
-              <img width="{{ im.width }}" height="{{ im.height }}" src="{{ im.url }}" />
+              <img width="{{ im.width }}" height="{{ im.height }}" src="{{ im.url }}" /><br/>
               {% endthumbnail %}
               {% if myRandomUser.home_url %}<a href="{{ myRandomUser.home_url }}">{% endif %}
               <b>{{ myRandomUser.name }}</b>
