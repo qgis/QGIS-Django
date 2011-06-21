@@ -22,7 +22,7 @@ def usersMap(theRequest):
 
   users = []
   myUserCount = QgisUser.objects.all().count()
-  myRandomUser = QgisUser.objects.order_by('?')[:1]
+  myRandomUser = QgisUser.objects.filter( image__isnull=False )order_by('?')[:1]
   for user in QgisUser.objects.all():
       users.append([user.geometry, render_to_string('user_balloon.html', {'user' : user})])
 
