@@ -1,4 +1,15 @@
 {% extends 'plugins/plugin_base.html' %}{% load i18n sorting_tags pagination_tags humanize %}
+{% block extrajs %}
+  <script type="text/javascript" src="/static/js/jquery-1.5.1.min.js"></script>
+  <script language="javascript">
+   $(document).ready(function () {
+     if ($("th > a").html() == 'Approved')
+     {
+       $("th > a").html('<img src="/static/images/tick_16.png" />');
+     }
+   });
+  </script>
+{% endblock %}
 {% block content %}
     <h2>{% if title %}{{title}}{% else %}{% trans "QGIS Plugins list" %}{% endif %}</h2>
     {# Filtered views menu #}
@@ -28,8 +39,8 @@
             <tr class="pmain {% cycle "even" "odd" %}" id="pmain{{object.pk}}">
                 <td><a title="{% trans "Click here for plugin details" %}" href="{% url plugin_detail object.pk %}"><img class="plugin-icon" src="{% if object.icon %}{{ object.icon.url }}{% else %}/static/images/qgis-icon-32x32.png{% endif %}" alt="{% trans "Plugin icon" %}" /></a></td>
                 <td><a href="{% url plugin_detail object.pk %}" title="{{ object.description }}">{{ object.name }}</a></td>
-                <td>{{ object.approved|yesno }}</td>
-                <td>{{ object.featured|yesno }}</td>
+                <td>{% if object.approved %}<img src="/static/images/tick_16.png" />{% else %}<img src="/static/images/delete_16.png" />{% endif %}</td>
+                <td>{% if object.featured%}<img src="/static/images/tick_16.png" />{% else %}<img src="/static/images/delete_16.png" />{% endif %}</td>
                 <td>{{ object.downloads }}</td>
                 <td><a href="{% url user_details object.created_by %}">{{ object.created_by }}</a></td>
                 <td>{{ object.created_on|naturalday }}</td>
