@@ -1,15 +1,4 @@
 {% extends 'plugins/plugin_base.html' %}{% load i18n sorting_tags pagination_tags humanize %}
-{% block extrajs %}
-  <script type="text/javascript" src="/static/js/jquery-1.5.1.min.js"></script>
-  <script language="javascript">
-   $(document).ready(function () {
-     if ($("th > a").html() == 'Approved')
-     {
-       $("th > a").html('<img src="/static/images/tick_16.png" />');
-     }
-   });
-  </script>
-{% endblock %}
 {% block content %}
     <h2>{% if title %}{{title}}{% else %}{% trans "QGIS Plugins list" %}{% endif %}</h2>
     {# Filtered views menu #}
