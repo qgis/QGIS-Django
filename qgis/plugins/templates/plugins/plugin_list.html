@@ -1,4 +1,30 @@
 {% extends 'plugins/plugin_base.html' %}{% load i18n sorting_tags pagination_tags humanize %}
+{% block extrajs %}
+  <script type="text/javascript" src="/static/js/jquery-1.5.1.min.js"></script>
+  <script language="javascript">
+   $(document).ready(function () {
+     if ($('tr > th > a:contains("Downloads ↓")'))
+     { 
+       $('tr > th > a:contains("Downloads ↓")').html('<img src="/static/images/down_16.png" />&darr;');
+     }
+     if ( $('tr > th > a:contains("Downloads ↑")') )
+     {
+       $('tr > th > a:contains("Downloads ↑")').html('<img src="/static/images/down_16.png" />&uarr;');
+     }
+     $('tr > th > a:contains("Downloads")').html('<img src="/static/images/down_16.png" />');
+
+     if ($('tr > th > a:contains("Featured ↓")'))
+     { 
+       $('tr > th > a:contains("Featured ↓")').html('<img src="/static/images/star_16.png" />&darr;');
+     }
+     if ( $('tr > th > a:contains("Featured ↑")') )
+     {
+       $('tr > th > a:contains("Featured ↑")').html('<img src="/static/images/star_16.png" />&uarr;');
+     }
+     $('tr > th > a:contains("Featured")').html('<img src="/static/images/star_16.png" />');
+   });
+  </script>
+{% endblock %}
 {% block content %}
     <h2>{% if title %}{{title}}{% else %}{% trans "QGIS Plugins list" %}{% endif %}</h2>
     {# Filtered views menu #}
@@ -10,7 +36,7 @@
             <tr>
                 <th>&nbsp;</th>
                 <th>{% anchor name %}</th>
-                <th>{% trans "Approved" %}</th>
+                <th><img src="/static/images/tick_16.png" alt="{% trans "Approved" %}"/></th>
                 <th>{% anchor featured %}</th>
                 <th>{% anchor downloads %}</th>
                 <th>{% anchor created_by "Author" %}</th>
