@@ -30,7 +30,7 @@ class StablePlugins(models.Manager):
     and with one "stable" version
     """
     def get_query_set(self):
-        return super(StablePlugins, self).get_query_set().filter(pluginversion__approved=True, pluginversion__experimental=False)
+        return super(StablePlugins, self).get_query_set().filter(pluginversion__approved=True, pluginversion__experimental=False).distinct()
 
 class ExperimentalPlugins(models.Manager):
     """
@@ -38,7 +38,7 @@ class ExperimentalPlugins(models.Manager):
     and with one "experimental" version
     """
     def get_query_set(self):
-        return super(ExperimentalPlugins, self).get_query_set().filter(pluginversion__approved=True, pluginversion__experimental=True)
+        return super(ExperimentalPlugins, self).get_query_set().filter(pluginversion__approved=True, pluginversion__experimental=True).distinct()
 
 class FeaturedPlugins(models.Manager):
     """
@@ -46,7 +46,7 @@ class FeaturedPlugins(models.Manager):
     with one "stable" version and "featured" flag set
     """
     def get_query_set(self):
-        return super(FeaturedPlugins, self).get_query_set().filter(pluginversion__approved=True, featured=True, pluginversion__experimental=False)
+        return super(FeaturedPlugins, self).get_query_set().filter(pluginversion__approved=True, featured=True, pluginversion__experimental=False).distinct()
 
 class FreshPlugins(models.Manager):
     """
@@ -74,7 +74,7 @@ class PopularPlugins(ApprovedPlugins):
     Shows only unapproved plugins, sort by downloads
     """
     def get_query_set(self):
-        return super(PopularPlugins, self).get_query_set().order_by('-downloads')
+        return super(PopularPlugins, self).get_query_set().order_by('-downloads').distinct()
 
 
 
@@ -84,7 +84,7 @@ class TaggablePlugins (TaggableManager):
     and with one "stable" version
     """
     def get_query_set(self):
-        return super(TaggablePlugnis, self).get_query_set().filter(pluginversion__approved=True, pluginversion__experimental=False)
+        return super(TaggablePlugnis, self).get_query_set().filter(pluginversion__approved=True, pluginversion__experimental=False).distinct()
 
 class Plugin (models.Model):
     """
