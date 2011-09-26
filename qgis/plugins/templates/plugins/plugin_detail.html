@@ -3,7 +3,7 @@
     <h2>{% trans "Plugin" %}: {{ object.name }}</h2>
     <div class="details">
         <p>{% if object.icon %}<img class="plugin-icon" src="{{ object.icon.url }}" alt="{% trans "Plugin icon" %}" />{% endif %}<strong>{% trans "Description" %}:</strong> {{ object.description }}</p>
-	<p><strong>{% trans "Author"%}:</strong> <a href="{% url user_details object.created_by %}">{{ object.created_by }}</a></p>
+	<p><strong>{% trans "Maintainer"%}:</strong> <a href="{% url user_details object.created_by %}">{{ object.created_by }}</a></p>
 	{% if object.owners.count %}<p><strong>{% trans "Owners"%}:</strong>{% for owner in object.owners.all %}
 		<a href="{% url user_details owner.username %}">{{ owner.username }}</a>{% if not forloop.last %},{% endif %}{% endfor %}
 	</p>{% endif %}
@@ -15,7 +15,7 @@
         {% if not object.experimental and not object.stable %}<p class="warning">{% trans "This plugin has no public version yet." %}</p>{% endif %}
 
 
-        {% if not object.created_by.is_active %}<p class="warning">{% trans "The plugin author has been blocked." %}</p>{% endif %}
+        {% if not object.created_by.is_active %}<p class="warning">{% trans "The plugin maintainer has been blocked." %}</p>{% endif %}
     </div>
     {% if user.is_staff or user in object.editors %}
     <div id="admin">
