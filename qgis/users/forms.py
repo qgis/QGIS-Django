@@ -6,6 +6,9 @@ from django.forms import ModelForm, Textarea, TextInput
 from olwidget.widgets import EditableMap
 from olwidget.forms import MapModelForm
 from olwidget.fields import MapField, EditableLayerField, InfoLayerField
+from olwidget import utils
+
+
 
 from users.models import QgisUser
 
@@ -42,6 +45,18 @@ class QgisUserForm(MapModelForm):
                error_messages={'required':
                'A location is required'},
               )
+
+  def clean_geometry(self):
+      data = self.cleaned_data['geometry']
+      try:
+        utils.get_ewkt(data)
+      except:
+        self.cleaned_data['geometry'] = ''
+        self.data['geometry']= ''
+        raise forms.ValidationError("Invalid geometry")
+      # Always return the cleaned data, whether you have changed it or
+      # not.
+      return data
 
   class Meta:
     model = QgisUser
