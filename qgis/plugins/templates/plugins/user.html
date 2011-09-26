@@ -6,8 +6,8 @@
     <h2>{% trans "User Details of: " %} {{ plugin_user.username }}</h2>
 
     <ul>
-        <li>{% trans "First name: " %} {{ plugin_user.first_name }}</li>
-        <li>{% trans "Last name: " %} {{ plugin_user.last_name }}</li>
+        {% if  plugin_user.first_name %}<li>{% trans "First name: " %} {{ plugin_user.first_name }}</li>{% endif %}
+        {% if  plugin_user.last_name %}<li>{% trans "Last name: " %} {{ plugin_user.last_name }}</li>{% endif %}
         <li>{% trans "Email: " %} {{ plugin_user.email }}</li>
     </ul>
     <div>
