@@ -4,7 +4,7 @@
   <script language="javascript">
    $(document).ready(function () {
      if ($('tr > th > a:contains("Downloads ↓")'))
-     { 
+     {
        $('tr > th > a:contains("Downloads ↓")').html('<img src="/static/images/down_16.png" />&darr;');
      }
      if ( $('tr > th > a:contains("Downloads ↑")') )
@@ -14,7 +14,7 @@
      $('tr > th > a:contains("Downloads")').html('<img src="/static/images/down_16.png" />');
 
      if ($('tr > th > a:contains("Featured ↓")'))
-     { 
+     {
        $('tr > th > a:contains("Featured ↓")').html('<img src="/static/images/star_16.png" />&darr;');
      }
      if ( $('tr > th > a:contains("Featured ↑")') )
@@ -65,7 +65,7 @@
                 {% if user.is_authenticated %}{% if user in object.editors or user.is_staff %}<td><a href="{% url plugin_update object.pk %}">{% trans "Edit" %}</a></td>
                 <td><a class="delete" href="{% url plugin_delete object.pk %}">{% trans "Delete" %}</a></td>{% else %}<td>&nbsp;</td><td>&nbsp;</td>{% endif %}{% endif %}
             </tr>
-            <tr id="pdesc{{object.pk}}" class="plugin-description"><td colspan="{% if user.is_authenticated %}12{% else %}11{% endif %}">{{ object.description }}</td></tr>
+            <tr id="pdesc{{object.pk}}" class="plugin-description {% cycle "even" "odd" %}"><td colspan="{% if user.is_authenticated %}12{% else %}11{% endif %}">{{ object.description }}</td></tr>
             {% endfor %}
         </tbody>
     </table>
