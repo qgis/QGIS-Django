@@ -48,7 +48,7 @@
             </tr>
         </thead>
         {% autosort object_list %}
-        {% autopaginate object_list %}
+        {% autopaginate object_list per_page %}
         <tbody>
             {% for object in object_list %}
             <tr class="pmain {% cycle "even" "odd" %}" id="pmain{{object.pk}}">

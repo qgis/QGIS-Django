@@ -5,14 +5,7 @@ from django.utils.translation import ugettext_lazy as _
 
 # Plugins
 urlpatterns = patterns('django.views.generic.list_detail',
-    url(r'^$', 'object_list', { 'queryset' : Plugin.approved_objects.all()}, name = 'approved_plugins'),
     url(r'^(?P<object_id>[0-9]+)/$', 'object_detail', { 'queryset' : Plugin.objects.all() }, name = 'plugin_detail'),
-    url(r'^featured/$', 'object_list', {'queryset' : Plugin.featured_objects.all(), 'extra_context' : {'title' : _('Featured plugins')}}, name = 'featured_plugins'),
-    url(r'^unapproved/$', 'object_list', {'queryset' : Plugin.unapproved_objects.all(), 'extra_context' : {'title' : _('Unapproved plugins')}}, name = 'unapproved_plugins'),
-    url(r'^fresh/$', 'object_list', {'queryset' : Plugin.fresh_objects.all(), 'extra_context' : {'title' : _('Fresh plugins')}}, name = 'fresh_plugins'),
-    url(r'^stable/$', 'object_list', {'queryset' : Plugin.stable_objects.all(), 'extra_context' : {'title' : _('Stable plugins')}}, name = 'stable_plugins'),
-    url(r'^experimental/$', 'object_list', {'queryset' : Plugin.experimental_objects.all(), 'extra_context' : {'title' : _('Experimental plugins')}}, name = 'experimental_plugins'),
-    url(r'^popular/$', 'object_list', {'queryset' : Plugin.popular_objects.all(), 'extra_context' : {'title' : _('Popular plugins')}}, name = 'popular_plugins'),
  )
 
 # Plugins filtered views (need user parameter from request)
@@ -29,6 +22,14 @@ urlpatterns += patterns('plugins.views',
     url(r'^user/(?P<username>\w+)/untrust/$', 'user_untrust', {}, name = 'user_untrust'),
     url(r'^(?P<plugin_id>[0-9]+)/set_featured/$', 'plugin_set_featured', {}, name = 'plugin_set_featured'),
     url(r'^(?P<plugin_id>[0-9]+)/unset_featured/$', 'plugin_unset_featured', {}, name = 'plugin_unset_featured'),
+
+    url(r'^$', 'plugins_list', { 'queryset' : Plugin.approved_objects.all()}, name = 'approved_plugins'),
+    url(r'^featured/$', 'plugins_list', {'queryset' : Plugin.featured_objects.all(), 'extra_context' : {'title' : _('Featured plugins')}}, name = 'featured_plugins'),
+    url(r'^unapproved/$', 'plugins_list', {'queryset' : Plugin.unapproved_objects.all(), 'extra_context' : {'title' : _('Unapproved plugins')}}, name = 'unapproved_plugins'),
+    url(r'^fresh/$', 'plugins_list', {'queryset' : Plugin.fresh_objects.all(), 'extra_context' : {'title' : _('Fresh plugins')}}, name = 'fresh_plugins'),
+    url(r'^stable/$', 'plugins_list', {'queryset' : Plugin.stable_objects.all(), 'extra_context' : {'title' : _('Stable plugins')}}, name = 'stable_plugins'),
+    url(r'^experimental/$', 'plugins_list', {'queryset' : Plugin.experimental_objects.all(), 'extra_context' : {'title' : _('Experimental plugins')}}, name = 'experimental_plugins'),
+    url(r'^popular/$', 'plugins_list', {'queryset' : Plugin.popular_objects.all(), 'extra_context' : {'title' : _('Popular plugins')}}, name = 'popular_plugins'),
 )
 
 # Management

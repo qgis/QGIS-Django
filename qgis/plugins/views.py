@@ -17,6 +17,9 @@ from django.contrib.contenttypes.models import ContentType
 from plugins.models import Plugin, PluginVersion
 from plugins.forms import *
 
+from django.views.generic.list_detail import object_list
+
+
 from django.core.mail import send_mail
 from django.contrib.sites.models import Site
 import logging
@@ -267,6 +270,21 @@ def plugin_update(request, plugin_id):
 
     return render_to_response('plugins/plugin_form.html', { 'form' : form , 'form_title' : _('Edit plugin')}, context_instance=RequestContext(request))
 
+def plugins_list(request, queryset, template_name=None, extra_context=None):
+    """
+    Supports per_page
+    """
+    per_page = request.REQUEST.get('per_page', settings.PAGINATION_DEFAULT_PAGINATION)
+    try:
+        extra_context['per_page'] = int(per_page)
+    except TypeError:
+        extra_context = {'per_page': int(per_page)}
+    return object_list(
+        request,
+        queryset,
+        template_name=template_name,
+        extra_context=extra_context,
+    )
 
 @login_required
 def my_plugins(request):
@@ -274,7 +292,7 @@ def my_plugins(request):
     Shows user's plugins (plugins where user is in owners or user is author)
     """
     object_list = Plugin.objects.filter(owners=request.user).distinct() | Plugin.objects.filter(created_by=request.user).distinct()
-    return render_to_response('plugins/plugin_list_my.html', { 'object_list' : object_list, 'title' : _('My plugins')}, context_instance=RequestContext(request))
+    return plugins_list(request, object_list, template_name = 'plugins/plugin_list_my.html', extra_context = { 'title' : _('My plugins')})
 
 def user_plugins(request, username):
     """
@@ -282,7 +300,7 @@ def user_plugins(request, username):
     """
     user = get_object_or_404(User, username=username)
     object_list = Plugin.approved_objects.filter(created_by=user)
-    return render_to_response('plugins/plugin_list.html', { 'object_list' : object_list, 'title' : _('Plugins from "%s"') % user }, context_instance=RequestContext(request))
+    return plugins_list(request, object_list, extra_context = { 'title' : _('Plugins from "%s"') % user})
 
 
 def tags_plugins(request, tags):
@@ -291,7 +309,7 @@ def tags_plugins(request, tags):
     """
     tag_list = tags.split(',')
     object_list = Plugin.approved_objects.filter(tags__name__in=tag_list)
-    return render_to_response('plugins/plugin_list.html', { 'object_list' : object_list, 'title' : _('Plugins with tag "%s"') % tags }, context_instance=RequestContext(request))
+    return plugins_list(request, object_list, extra_context = { 'title' : _('Plugins with tag "%s"') % tags})
 
 
 ###############################################
@@ -307,7 +325,7 @@ def user_details(request, username):
     user = get_object_or_404(User, username=username)
     user_is_trusted = user.has_perm('plugins.can_approve')
     object_list = Plugin.approved_objects.filter(Q(created_by=user) | Q(owners=user))
-    return render_to_response('plugins/user.html', { 'user_is_trusted' : user_is_trusted, 'object_list' : object_list, 'plugin_user': user, 'title' : _('Plugins from %s') % user }, context_instance=RequestContext(request))
+    return plugins_list(request, object_list, template_name = 'plugins/user.html', extra_context = { 'user_is_trusted' : user_is_trusted, 'plugin_user': user, 'title' : _('Plugins from %s') % user })
 
 
 @staff_required
