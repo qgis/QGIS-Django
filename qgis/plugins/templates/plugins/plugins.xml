@@ -6,7 +6,7 @@
         <version>{{ plugin.stable.version }}</version>
         <qgis_minimum_version>{{ plugin.stable.min_qg_version }}</qgis_minimum_version>
         <homepage>{{ plugin.homepage|default_if_none:"" }}</homepage>
-        <file_name>{{ plugin.stable.file_name }}</file_name>
+        <file_name>{{ plugin.stable.download_file_name }}</file_name>
         <icon>{% if plugin.icon %}{{ plugin.icon.url }}{% endif %}</icon>
         <author_name>{{ plugin.created_by }}</author_name>
         <download_url>{% if request.is_secure %}https{% else %}http{% endif %}://{{ request.get_host }}{{ plugin.stable.get_download_url }}</download_url>
@@ -21,7 +21,7 @@
         <version>{{ plugin.experimental.version }}</version>
         <qgis_minimum_version>{{ plugin.experimental.min_qg_version }}</qgis_minimum_version>
         <homepage>{{ plugin.homepage|default_if_none:"" }}</homepage>
-        <file_name>{{ plugin.experimental.file_name }}</file_name>
+        <file_name>{{ plugin.experimental.download_file_name }}</file_name>
         <icon>{% if plugin.icon %}{{ plugin.icon.url }}{% endif %}</icon>
         <author_name>{{ plugin.created_by }}</author_name>
         <download_url>{% if request.is_secure %}https{% else %}http{% endif %}://{{ request.get_host }}{{ plugin.experimental.get_download_url }}</download_url>

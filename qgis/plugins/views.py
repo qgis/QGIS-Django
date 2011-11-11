@@ -53,7 +53,7 @@ def plugin_notify(plugin):
 
 def plugin_approve_notify(plugin, msg):
     """
-    Sends a message when a plugin is approved or disapproved.
+    Sends a message when a plugin is approved or unapproved.
     """
     recipients = [u.email for u in plugin.editors if u.email]
     if plugin.approved:
@@ -61,7 +61,7 @@ def plugin_approve_notify(plugin, msg):
         approved_state = 'approved'
     else:
         approval_state = 'disapproval'
-        approved_state = 'disapproved'
+        approved_state = 'unapproved'
 
     if len(recipients):
         domain = Site.objects.get_current().domain
@@ -79,7 +79,7 @@ def plugin_approve_notify(plugin, msg):
 
 def user_trust_notify(user):
     """
-    Sends a message when a plugin is approved or disapproved.
+    Sends a message when a plugin is approved or unapproved.
     """
     if user.is_staff:
         logging.debug('Skipping trust notification for staff user %s' % user)
@@ -485,7 +485,7 @@ def version_update(request, package_name, version):
     The form will update versions according to permissions
     """
     plugin =  get_object_or_404(Plugin, package_name=package_name)
-    version = get_object_or_404(PluginVersion, version=version)
+    version = get_object_or_404(PluginVersion, plugin=plugin, version=version)
     if not check_plugin_access(request.user, plugin):
         return render_to_response('plugins/version_permission_deny.html', { 'plugin' : plugin }, context_instance=RequestContext(request))
 
@@ -506,7 +506,7 @@ def version_update(request, package_name, version):
 @login_required
 def version_delete(request, package_name, version):
     plugin =  get_object_or_404(Plugin, package_name=package_name)
-    version = get_object_or_404(PluginVersion, version=version)
+    version = get_object_or_404(PluginVersion, plugin=plugin, version=version)
     if not check_plugin_access(request.user, plugin):
         return render_to_response('plugins/version_permission_deny.html', {}, context_instance=RequestContext(request))
     if 'delete_confirm' in request.POST:
@@ -525,7 +525,7 @@ def version_approve(request, package_name, version):
     Approves the plugin version
     """
     plugin =  get_object_or_404(Plugin, package_name=package_name)
-    version = get_object_or_404(PluginVersion, version=version)
+    version = get_object_or_404(PluginVersion, plugin=plugin, version=version)
     if not check_plugin_version_approval_rights(request.user, version.plugin):
         msg = _("You do not have approval rights for this plugin.")
         messages.error(request, msg, fail_silently=True)
@@ -544,19 +544,19 @@ def version_approve(request, package_name, version):
 
 @staff_required
 @require_POST
-def version_disapprove(request, package_name, version):
+def version_unapprove(request, package_name, version):
     """
-    Disapproves the plugin version
+    unapproves the plugin version
     """
     plugin =  get_object_or_404(Plugin, package_name=package_name)
-    version = get_object_or_404(PluginVersion, version=version)
+    version = get_object_or_404(PluginVersion, plugin=plugin, version=version)
     if not check_plugin_version_approval_rights(request.user, version.plugin):
         msg = _("You do not have approval rights for this plugin.")
         messages.error(request, msg, fail_silently=True)
         return HttpResponseRedirect(version.get_absolute_url())
     version.approved = False
     version.save()
-    msg = _("The plugin version \"%s\" is now disapproved" % version)
+    msg = _("The plugin version \"%s\" is now unapproved" % version)
     messages.success(request, msg, fail_silently=True)
     plugin_approve_notify(version.plugin, msg)
     try:
@@ -573,10 +573,10 @@ def version_manage(request, package_name, version):
     """
     Entry point for the user management functions
     """
-    if request.POST.get('approve'):
-        return user_block(request, package_name, version)
-    if request.POST.get('disapprove'):
-        return user_unblock(request, package_name, version)
+    if request.POST.get('version_approve'):
+        return version_approve(request, package_name, version)
+    if request.POST.get('version_unapprove'):
+        return version_unapprove(request, package_name, version)
 
     return HttpResponseRedirect(reverse('plugin_detail', args=[package_name]))
 
@@ -593,7 +593,10 @@ def version_download(request, package_name, version):
     plugin = version.plugin
     plugin.downloads = plugin.downloads + 1
     plugin.save(keep_date=True)
-    return HttpResponseRedirect(version.package.url)
+    response = HttpResponse(version.package.file, mimetype='application/zip')
+    response['Content-Disposition'] = 'attachment; filename=%s' % version.plugin.package_name
+    return response
+    #return HttpResponseRedirect(version.package.url)
 
 
 def version_detail(request, package_name, version):

@@ -1,8 +1,8 @@
 {% extends 'plugins/plugin_base.html' %}{% load i18n %}
 {% block content %}
-    <h2>{% trans "Create a new plugin" %}</h2>
-    <p class="help">{% trans "To create a new plugin, you can upload the zipped file in this form." %}</p>
-    <p>{% trans "To add a new version for an existing plugin, you should open the plugin's details view an add a new version from there." %}</p>
+    <h2>{% trans "Upload a new plugin" %}</h2>
+    <p class="help">{% trans "To upload a new plugin, you can specify the zipped file in this form." %}</p>
+    <p>{% trans "Alternatively, to update an existing plugin, you should open the plugin's details view and add a new version from there." %}</p>
     {% if form.non_field_errors %}
     <ul class="form-messages">{% for error in form.non_field_errors %}
         <li class="error">{{ error }} </li>

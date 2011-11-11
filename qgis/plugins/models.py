@@ -281,6 +281,9 @@ class PluginVersion (models.Model):
     def get_download_url(self):
         return reverse('version_download', args=(self.plugin.package_name, self.version,))
 
+    def download_file_name(self):
+        return "%s.%s.zip" % (self.plugin.package_name, self.version)
+
     def __unicode__(self):
         desc = "%s %s" % (self.plugin ,self.version)
         if self.experimental:

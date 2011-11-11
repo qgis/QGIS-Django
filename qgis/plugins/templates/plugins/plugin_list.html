@@ -30,7 +30,7 @@
     {# Filtered views menu #}
 
     {% if object_list.count %}
-
+    <div class="num_items">{% blocktrans %}%n items found{% endblocktrans %}</div>
     <table class="plugins">
         <thead>
             <tr>
@@ -57,11 +57,11 @@
                 <td>{% if object.approved %}<img src="/static/images/tick_16.png" />{% else %}<img src="/static/images/delete_16.png" />{% endif %}</td>
                 <td>{% if object.featured%}<img src="/static/images/tick_16.png" />{% else %}<img src="/static/images/delete_16.png" />{% endif %}</td>
                 <td>{{ object.downloads }}</td>
-                <td><a href="{% url user_details object.created_by %}">{{ object.created_by }}</a></td>
+                <td><a title="{{ object.created_by.get_full_name }}" href="{% url user_details object.created_by %}">{{ object.created_by }}</a></td>
                 <td>{{ object.created_on|naturalday }}</td>
                 <td>{{ object.modified_on|naturalday }}</td>
                 <td>{% if object.stable %}<a href="{% url version_download object.package_name object.stable.version %}" title="{% trans "Download the stable version" %}" >{{ object.stable.version }}</a>{% else %}&mdash;{% endif %}</td>
-                <td>{% if object.experimental %}<a href="{% url version_download object.experimental.pk %}" title="{% trans "Download the experimental version" %}" >{{ object.experimental.version }}</a>{% else %}&mdash;{% endif %}</td>
+                <td>{% if object.experimental %}<a href="{% url version_download object.package_name object.experimental.version %}" title="{% trans "Download the experimental version" %}" >{{ object.experimental.version }}</a>{% else %}&mdash;{% endif %}</td>
                 {% if user.is_authenticated %}{% if user in object.editors or user.is_staff %}<td><a href="{% url plugin_update object.package_name %}">{% trans "Edit" %}</a></td>
                 <td><a class="delete" href="{% url plugin_delete object.package_name %}">{% trans "Delete" %}</a></td>{% else %}<td>&nbsp;</td><td>&nbsp;</td>{% endif %}{% endif %}
             </tr>
