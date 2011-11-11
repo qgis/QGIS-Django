@@ -17,8 +17,8 @@ from django.contrib.contenttypes.models import ContentType
 from plugins.models import Plugin, PluginVersion
 from plugins.forms import *
 
-from django.views.generic.list_detail import object_list
-
+from django.views.generic.list_detail import object_list, object_detail
+from django.views.decorators.http import require_POST
 
 from django.core.mail import send_mail
 from django.contrib.sites.models import Site
@@ -48,6 +48,7 @@ def plugin_notify(plugin):
       logging.debug('Sending email notification for %s plugin, recipients:  %s' % (plugin, recipients))
     else:
       logging.warning('No recipients found for %s plugin notification' % plugin)
+
 
 
 def plugin_approve_notify(plugin, msg):
@@ -155,11 +156,12 @@ def plugin_create(request):
 
 
 @staff_required
-def plugin_set_featured(request, plugin_id):
+@require_POST
+def plugin_set_featured(request, package_name):
     """
     Set as featured
     """
-    plugin = get_object_or_404(Plugin, pk=plugin_id)
+    plugin = get_object_or_404(Plugin, package_name=package_name)
     plugin.featured = True
     plugin.save()
     msg = _("The plugin %s is now a marked as featured." % plugin)
@@ -168,11 +170,12 @@ def plugin_set_featured(request, plugin_id):
 
 
 @staff_required
-def plugin_unset_featured(request, plugin_id):
+@require_POST
+def plugin_unset_featured(request, package_name):
     """
     Sets as not featured
     """
-    plugin = get_object_or_404(Plugin, pk=plugin_id)
+    plugin = get_object_or_404(Plugin, package_name=package_name)
     plugin.featured = False
     plugin.save()
     msg = _("The plugin %s is not marked as featured anymore." % plugin)
@@ -228,12 +231,20 @@ def plugin_upload(request):
     return render_to_response('plugins/plugin_upload.html', { 'form' : form }, context_instance=RequestContext(request))
 
 
+
+def plugin_detail(request, package_name, **kwargs):
+    """
+    Just a wrapper for clean urls
+    """
+    plugin = get_object_or_404(Plugin, package_name=package_name)
+    return object_detail(request, object_id=plugin.pk, **kwargs)
+
 @login_required
-def plugin_delete(request, plugin_id):
-    plugin = get_object_or_404(Plugin, pk=plugin_id)
+def plugin_delete(request, package_name):
+    plugin = get_object_or_404(Plugin, package_name=package_name)
     if not check_plugin_access(request.user, plugin):
         return render_to_response('plugins/plugin_permission_deny.html', {}, context_instance=RequestContext(request))
-    if 'delete_confirm'  in request.POST:
+    if 'delete_confirm' in request.POST:
         plugin.delete()
         msg = _("The Plugin has been successfully deleted.")
         messages.success(request, msg, fail_silently=True)
@@ -242,11 +253,11 @@ def plugin_delete(request, plugin_id):
 
 
 @login_required
-def plugin_update(request, plugin_id):
+def plugin_update(request, package_name):
     """
     Plugin update form
     """
-    plugin = get_object_or_404(Plugin, pk=plugin_id)
+    plugin = get_object_or_404(Plugin, package_name=package_name)
     if not check_plugin_access(request.user, plugin):
         return render_to_response('plugins/plugin_permission_deny.html', {}, context_instance=RequestContext(request))
     if request.method == 'POST':
@@ -312,6 +323,26 @@ def tags_plugins(request, tags):
     return plugins_list(request, object_list, extra_context = { 'title' : _('Plugins with tag "%s"') % tags})
 
 
+
+
+@staff_required
+@require_POST
+def plugin_manage(request, package_name):
+    """
+    Entry point for the user management functions
+    """
+    if request.POST.get('set_featured'):
+        return plugin_set_featured(request, package_name)
+    if request.POST.get('unset_featured'):
+        return plugin_unset_featured(request, package_name)
+    if request.POST.get('delete'):
+        return plugin_delete(request, package_name)
+    if request.POST.get('user_untrust'):
+        return user_untrust(request, username)
+
+    return HttpResponseRedirect(reverse('user_details', args=[username]))
+
+
 ###############################################
 
 # User management functions
@@ -329,6 +360,7 @@ def user_details(request, username):
 
 
 @staff_required
+@require_POST
 def user_block(request, username):
     """
     Completely blocks a user
@@ -343,6 +375,7 @@ def user_block(request, username):
 
 
 @staff_required
+@require_POST
 def user_unblock(request, username):
     """
     unblocks a user
@@ -357,6 +390,7 @@ def user_unblock(request, username):
 
 
 @staff_required
+@require_POST
 def user_trust(request, username):
     """
     Assigns can_approve permission to the plugin creator
@@ -370,6 +404,7 @@ def user_trust(request, username):
 
 
 @staff_required
+@require_POST
 def user_untrust(request, username):
     """
     Revokes can_approve permission to the plugin creator
@@ -382,17 +417,22 @@ def user_untrust(request, username):
     return HttpResponseRedirect(reverse('user_details', args=[user.username]))
 
 
+@staff_required
+@require_POST
+def user_permissions_manage(request, username):
+    """
+    Entry point for the user management functions
+    """
+    if request.POST.get('user_block'):
+        return user_block(request, username)
+    if request.POST.get('user_unblock'):
+        return user_unblock(request, username)
+    if request.POST.get('user_trust'):
+        return user_trust(request, username)
+    if request.POST.get('user_untrust'):
+        return user_untrust(request, username)
 
-def xml_plugins(request):
-    """
-    The XML file
-    """
-    min_qg_version = request.GET.get('qgis')
-    if min_qg_version:
-        object_list = Plugin.approved_objects.filter(pluginversion__min_qg_version__lte=min_qg_version)
-    else:
-        object_list = Plugin.approved_objects.all()
-    return render_to_response('plugins/plugins.xml', {'object_list' : object_list}, mimetype='text/xml', context_instance=RequestContext(request))
+    return HttpResponseRedirect(reverse('user_details', args=[username]))
 
 
 ###############################################
@@ -403,13 +443,13 @@ def xml_plugins(request):
 
 
 @login_required
-def version_create(request, plugin_id):
+def version_create(request, package_name):
     """
     The form will create versions according to permissions,
     plugin name and description are updated according to the info
     contained in the package metadata
     """
-    plugin = get_object_or_404(Plugin, pk=plugin_id)
+    plugin = get_object_or_404(Plugin, package_name=package_name)
     if not check_plugin_access(request.user, plugin):
         return render_to_response('plugins/version_permission_deny.html', { 'plugin' : plugin }, context_instance=RequestContext(request))
 
@@ -440,12 +480,12 @@ def version_create(request, plugin_id):
 
 
 @login_required
-def version_update(request, version_id):
+def version_update(request, package_name, version):
     """
     The form will update versions according to permissions
     """
-    version = get_object_or_404(PluginVersion, pk=version_id)
-    plugin = version.plugin
+    plugin =  get_object_or_404(Plugin, package_name=package_name)
+    version = get_object_or_404(PluginVersion, version=version)
     if not check_plugin_access(request.user, plugin):
         return render_to_response('plugins/version_permission_deny.html', { 'plugin' : plugin }, context_instance=RequestContext(request))
 
@@ -462,27 +502,30 @@ def version_update(request, version_id):
     return render_to_response('plugins/version_form.html', { 'form' : form, 'plugin' : plugin, 'form_title' : _('Edit version for plugin')}, context_instance=RequestContext(request))
 
 
+
 @login_required
-def version_delete(request, version_id):
-    version = get_object_or_404(PluginVersion, pk=version_id)
-    plugin = version.plugin
+def version_delete(request, package_name, version):
+    plugin =  get_object_or_404(Plugin, package_name=package_name)
+    version = get_object_or_404(PluginVersion, version=version)
     if not check_plugin_access(request.user, plugin):
         return render_to_response('plugins/version_permission_deny.html', {}, context_instance=RequestContext(request))
     if 'delete_confirm' in request.POST:
         version.delete()
         msg = _("The Plugin Version has been successfully deleted.")
         messages.success(request, msg, fail_silently=True)
-        return HttpResponseRedirect(reverse('plugin_detail', args=(plugin.pk,)))
+        return HttpResponseRedirect(reverse('plugin_detail', args=(plugin.package_name,)))
     return render_to_response('plugins/version_delete_confirm.html', { 'plugin' : plugin, 'version' : version }, context_instance=RequestContext(request))
 
 
 
 @staff_required
-def version_approve(request, version_id):
+@require_POST
+def version_approve(request, package_name, version):
     """
     Approves the plugin version
     """
-    version = get_object_or_404(PluginVersion, pk=version_id)
+    plugin =  get_object_or_404(Plugin, package_name=package_name)
+    version = get_object_or_404(PluginVersion, version=version)
     if not check_plugin_version_approval_rights(request.user, version.plugin):
         msg = _("You do not have approval rights for this plugin.")
         messages.error(request, msg, fail_silently=True)
@@ -500,11 +543,13 @@ def version_approve(request, version_id):
 
 
 @staff_required
-def version_disapprove(request, version_id):
+@require_POST
+def version_disapprove(request, package_name, version):
     """
     Disapproves the plugin version
     """
-    version = get_object_or_404(PluginVersion, pk=version_id)
+    plugin =  get_object_or_404(Plugin, package_name=package_name)
+    version = get_object_or_404(PluginVersion, version=version)
     if not check_plugin_version_approval_rights(request.user, version.plugin):
         msg = _("You do not have approval rights for this plugin.")
         messages.error(request, msg, fail_silently=True)
@@ -521,11 +566,28 @@ def version_disapprove(request, version_id):
     return HttpResponseRedirect(redirect_to)
 
 
-def version_download(request, version_id):
+
+@staff_required
+@require_POST
+def version_manage(request, package_name, version):
+    """
+    Entry point for the user management functions
+    """
+    if request.POST.get('approve'):
+        return user_block(request, package_name, version)
+    if request.POST.get('disapprove'):
+        return user_unblock(request, package_name, version)
+
+    return HttpResponseRedirect(reverse('plugin_detail', args=[package_name]))
+
+
+
+def version_download(request, package_name, version):
     """
     Update download counter(s)
     """
-    version = get_object_or_404(PluginVersion, pk=version_id)
+    plugin =  get_object_or_404(Plugin, package_name=package_name)
+    version = get_object_or_404(PluginVersion, version=version)
     version.downloads = version.downloads + 1
     version.save()
     plugin = version.plugin
@@ -534,9 +596,32 @@ def version_download(request, version_id):
     return HttpResponseRedirect(version.package.url)
 
 
-def version_detail(request, version_id):
+def version_detail(request, package_name, version):
     """
     Show version details
     """
-    version = get_object_or_404(PluginVersion, pk=version_id)
+    plugin =  get_object_or_404(Plugin, package_name=package_name)
+    version = get_object_or_404(PluginVersion, version=version)
     return render_to_response('plugins/version_detail.html', {'version' : version }, context_instance=RequestContext(request))
+
+
+###############################################
+
+# Misc functions
+
+###############################################
+
+
+
+def xml_plugins(request):
+    """
+    The XML file
+    """
+    min_qg_version = request.GET.get('qgis')
+    if min_qg_version:
+        object_list = Plugin.approved_objects.filter(pluginversion__min_qg_version__lte=min_qg_version)
+    else:
+        object_list = Plugin.approved_objects.all()
+    return render_to_response('plugins/plugins.xml', {'object_list' : object_list}, mimetype='text/xml', context_instance=RequestContext(request))
+
+

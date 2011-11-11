@@ -10,23 +10,24 @@
         {% if object.tags.count %}<p><strong>{% trans "Tags"%}:</strong>
         {% for tag in object.tags.all %}<a href="{% url tags_plugins tag.name %}">{{tag}}</a>{% if not forloop.last %},&nbsp;{% endif %}{% endfor %}</p>{% endif %}
         {% if object.homepage %}<p><strong>{% trans "Plugin home page"%}:</strong> <a href="{{ object.homepage }}">{{ object.homepage }}</a></p>{% endif %}
-        {% if object.stable %}<p><strong>{% trans "Latest stable version"%}:</strong> <a title="{% trans "Click to download" %}"  href="{% url version_detail object.stable.pk %}">{{ object.stable.version }}</a></p>{% endif %}
-        {% if object.experimental %}<p><strong>{% trans "Latest experimental version"%}:</strong> <a title="{% trans "Click to download" %}" href="{% url version_detail object.experimental.pk %}">{{ object.experimental.version }}</a></p>{% endif %}
+        {% if object.stable %}<p><strong>{% trans "Latest stable version"%}:</strong> <a title="{% trans "Click to download" %}"  href="{% url version_detail object.package_name object.stable.version %}">{{ object.stable.version }}</a></p>{% endif %}
+        {% if object.experimental %}<p><strong>{% trans "Latest experimental version"%}:</strong> <a title="{% trans "Click to download" %}" href="{% url version_detail object.package_name object.experimental.version %}">{{ object.experimental.version }}</a></p>{% endif %}
         {% if not object.experimental and not object.stable %}<p class="warning">{% trans "This plugin has no public version yet." %}</p>{% endif %}
 
 
         {% if not object.created_by.is_active %}<p class="warning">{% trans "The plugin maintainer has been blocked." %}</p>{% endif %}
     </div>
     {% if user.is_staff or user in object.editors %}
+    <form method="post" action="{% url plugin_manage object.package_name %}">
     <div id="admin">
         <ul class="actions">
-            <li><a href="{% url plugin_update object.pk %}">{% trans "Edit" %}</a></li>
-            <li><a href="{% url version_create object.pk %}">{% trans "Add version" %}</a></li>
+            <li><a href="{% url plugin_update object.package_name %}">{% trans "Edit" %}</a></li>
+            <li><a href="{% url version_create object.package_name %}">{% trans "Add version" %}</a></li>
             {% if user.is_staff or user in object.editors %}
-            <li><a class="delete" href="{% url plugin_delete object.pk %}">{% trans "Delete" %}</a></li>{% endif %}
+            <li><a class="delete" href="{% url plugin_delete object.package_name %}">{% trans "Delete" %}</a></li>{% endif %}
         {% if user.is_staff  %}
-            {% if object.featured %}<li><a href="{% url plugin_unset_featured object.pk %}">{% trans "Unset featured" %}</a></li>
-            {% else %}<li><a href="{% url plugin_set_featured object.pk %}">{% trans "Set featured" %}</a></li>
+            {% if object.featured %}<li><input type="submit" name="unset_featured" id="unset_featured" value="{% trans "Unset featured" %}" /></li>
+            {% else %}<li><input type="submit" name="set_featured" id="set_featured" value="{% trans "Set featured" %}" /></li>
             {% endif %}
         {% endif %}
         </ul>
@@ -54,7 +55,7 @@
             {% for version in object.pluginversion_set.all %}
                 {% if version.approved or not user.is_anonymous %}
                 <tr class="{% cycle "even" "odd" %}">
-                    <td><a title="{% trans "Version details" %}" href="{% url version_detail version.pk %}">{{ version.version }}</a></td>
+                    <td><a title="{% trans "Version details" %}" href="{% url version_detail object.package_name version.version %}">{{ version.version }}</a></td>
                     {% if not user.is_anonymous %}<td>{{ version.approved|yesno }}</td>{% endif %}
                     <td>{{ version.experimental|yesno }}</td>
                     <td>{{ version.min_qg_version }}</td>
@@ -63,10 +64,10 @@
                     <td>{{ version.created_on }}</td>
                     {% if user.is_staff or user in version.plugin.approvers or user in version.plugin.editors %}<td>
                     {% if user.is_staff or user in version.plugin.approvers %}
-                        {% if not version.approved %}<a href="{% url version_approve version.pk %}">{% trans "Approve" %}</a>&nbsp;{% else %}<a href="{% url version_disapprove version.pk %}">{% trans "Disapprove" %}</a>{% endif %}
+                        {% if not version.approved %}<a href="{% url version_approve object.package_name version.version %}">{% trans "Approve" %}</a>&nbsp;{% else %}<a href="{% url version_disapprove object.package_name version.version %}">{% trans "Disapprove" %}</a>{% endif %}
                     {% endif %}
                     {% if user.is_staff or user in version.plugin.editors %}
-                    <a href="{% url version_update version.pk %}">{% trans "Edit" %}</a>&nbsp;<a class="delete" href="{% url version_delete version.pk %}">{% trans "Delete" %}</a>{% endif %}
+                    <a href="{% url version_update object.package_name version.version %}">{% trans "Edit" %}</a>&nbsp;<a class="delete" href="{% url version_delete object.package_name version.version %}">{% trans "Delete" %}</a>{% endif %}
                     </td>
                     {% endif %}
                 </tr>

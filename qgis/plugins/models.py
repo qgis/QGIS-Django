@@ -191,7 +191,7 @@ class Plugin (models.Model):
         )
 
     def get_absolute_url(self):
-        return reverse('plugin_detail', args=(self.pk,))
+        return reverse('plugin_detail', args=(self.package_name,))
 
     def __unicode__(self):
         return "[%s] %s" % (self.pk ,self.name)
@@ -276,10 +276,10 @@ class PluginVersion (models.Model):
         ordering = ('plugin',  'version', '-created_on' , 'experimental')
 
     def get_absolute_url(self):
-        return reverse('version_detail', args=(self.pk,))
+        return reverse('version_detail', args=(self.plugin.package_name, self.version,))
 
     def get_download_url(self):
-        return reverse('version_download', args=(self.pk,))
+        return reverse('version_download', args=(self.plugin.package_name, self.version,))
 
     def __unicode__(self):
         desc = "%s %s" % (self.plugin ,self.version)
@@ -309,6 +309,6 @@ def delete_plugin_icon(sender, instance, **kw):
     except:
         pass
 
-models.signals.post_delete.connect(delete_version_package, sender = PluginVersion)
-models.signals.post_delete.connect(delete_plugin_icon, sender = Plugin)
+models.signals.post_delete.connect(delete_version_package, sender=PluginVersion)
+models.signals.post_delete.connect(delete_plugin_icon, sender=Plugin)
 

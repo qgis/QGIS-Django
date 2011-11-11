@@ -10,18 +10,20 @@
         {% if  plugin_user.last_name %}<li>{% trans "Last name: " %} {{ plugin_user.last_name }}</li>{% endif %}
         <li>{% trans "Email: " %} {{ plugin_user.email }}</li>
     </ul>
+    <form method="post" action="{% url user_permissions_manage plugin_user.username %}">
     <div>
         <ul class="actions">
             {% if plugin_user.is_active %}
-                <li><a href="{% url user_block plugin_user.username %}">{% trans "Block author" %}</a></li>{% else %}
-                <li><a href="{% url user_unblock plugin_user.username %}">{% trans "Unblock author" %}</a></li>
+            <li><input type="submit" id="user_block" name="user_block" value="{% trans "Block author" %}" /></li>{% else %}
+                <li><input type="submit" id="user_unblock" name="user_unblock" value="{% trans "Unblock author" %}" /></li>
             {% endif %}
             {% if plugin_user.is_active %}
-                {% if not user_is_trusted %}<li><a href="{% url user_trust plugin_user.username %}">{% trans "Trust author" %}</a></li>{% else %}
-                <li><a href="{% url user_untrust plugin_user.username %}">{% trans "Untrust author" %}</a></li>{% endif %}
+            {% if not user_is_trusted %}<li><input type="submit" id="user_trust" name="user_trust" value="{% trans "Trust author" %}" /></li>{% else %}
+            <li><input type="submit" id="user_untrust" name="user_untrust" value="{% trans "Untrust author" %}" /></li>{% endif %}
             {% endif %}
         </ul>
     </div>
+    </form>
     {% endif %}
 
     {{ block.super }}

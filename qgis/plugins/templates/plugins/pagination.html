@@ -1,0 +1,46 @@
+{% if is_paginated %}
+{% load i18n %}
+<div class="pagination">
+    {% if page_obj.has_previous %}
+        <a href="?page={{ page_obj.previous_page_number }}{{ getvars }}{{ hashtag }}" class="prev">&lsaquo;&lsaquo; {% trans "previous" %}</a>
+    {% else %}
+        <span class="disabled prev">&lsaquo;&lsaquo; {% trans "previous" %}</span>
+    {% endif %}
+    {% for page in pages %}
+        {% if page %}
+            {% ifequal page page_obj.number %}
+                <span class="current page">{{ page }}</span>
+            {% else %}
+                <a href="?page={{ page }}{{ getvars }}{{ hashtag }}" class="page">{{ page }}</a>
+            {% endifequal %}
+        {% else %}
+            ...
+        {% endif %}
+    {% endfor %}
+    {% if page_obj.has_next %}
+        <a href="?page={{ page_obj.next_page_number }}{{ getvars }}{{ hashtag }}" class="next">{% trans "next" %} &rsaquo;&rsaquo;</a>
+    {% else %}
+        <span class="disabled next">{% trans "next" %} &rsaquo;&rsaquo;</span>
+        {% endif %}
+    {# ABP: per_page #}
+    {% if per_page_list %}
+    <script type="text/javascript">
+        function set_per_page(n){
+            if(window.location.href.search('per_page') >= 0){
+                 window.location.href = window.location.href.replace(/per_page=\d+/, 'per_page=' + n);
+            } else {
+                window.location.href = -1 == window.location.href.search('\\?') ? window.location.href + '?' + 'per_page=' + n : window.location.href + '&' + 'per_page=' + n;
+            }
+        }
+    </script>
+    <div id="pagination_per_page">{% trans "Elements per page:" %}&nbsp;
+        {% for p in per_page_list %}{% if p = paginator.per_page %}
+        <span class="current">{{ p }}</span>
+        {% else %}
+        <span><a href="javascript:set_per_page({{ p }})">{% if forloop.last %}{% trans "All" %}{% else %}{{ p }}{% endif %}</a></span>
+        {% endif %}
+    {% endfor %}
+    </div>
+    {% endif %}
+</div>
+{% endif %}
