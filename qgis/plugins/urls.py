@@ -54,9 +54,8 @@ urlpatterns += patterns('plugins.views',
 # RPC
 urlpatterns += patterns('',
     # rpc4django will need to be in your Python path
-    (r'^RPC2$', 'rpc4django.views.serve_rpc_request'),
+    (r'^RPC2/$', 'rpc4django.views.serve_rpc_request'),
 )
-
 
 # Plugin detail (keep last)
 urlpatterns += patterns('plugins.views',
