@@ -55,3 +55,8 @@ urlpatterns += patterns('plugins.views',
     url(r'^(?P<package_name>[A-Za-z][A-Za-z0-9-_]+)/version/(?P<version>[^\/]+)/unapprove/$', 'version_unapprove', {}, name='version_unapprove'),
 )
 
+
+urlpatterns += patterns('',
+   # if installed via source or easy_install
+   (r'^API$', 'rpc4django.views.serve_rpc_request'),
+)
