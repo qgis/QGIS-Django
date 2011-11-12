@@ -30,10 +30,6 @@ urlpatterns = patterns('plugins.views',
     url(r'^stable/$', 'plugins_list', {'queryset' : Plugin.stable_objects.all(), 'extra_context' : {'title' : _('Stable plugins')}}, name='stable_plugins'),
     url(r'^experimental/$', 'plugins_list', {'queryset' : Plugin.experimental_objects.all(), 'extra_context' : {'title' : _('Experimental plugins')}}, name='experimental_plugins'),
     url(r'^popular/$', 'plugins_list', {'queryset' : Plugin.popular_objects.all(), 'extra_context' : {'title' : _('Popular plugins')}}, name='popular_plugins'),
-
-
-    url(r'^(?P<package_name>[A-Za-z][A-Za-z0-9-_]+)/$', 'plugin_detail', { 'queryset' : Plugin.objects.all() }, name='plugin_detail'),
-
 )
 
 
@@ -53,5 +49,17 @@ urlpatterns += patterns('plugins.views',
     url(r'^(?P<package_name>[A-Za-z][A-Za-z0-9-_]+)/version/(?P<version>[^\/]+)/download/$', 'version_download', {}, name='version_download'),
     url(r'^(?P<package_name>[A-Za-z][A-Za-z0-9-_]+)/version/(?P<version>[^\/]+)/approve/$', 'version_approve', {}, name='version_approve'),
     url(r'^(?P<package_name>[A-Za-z][A-Za-z0-9-_]+)/version/(?P<version>[^\/]+)/unapprove/$', 'version_unapprove', {}, name='version_unapprove'),
+)
+
+# RPC
+urlpatterns += patterns('',
+    # rpc4django will need to be in your Python path
+    (r'^RPC2$', 'rpc4django.views.serve_rpc_request'),
+)
+
+
+# Plugin detail (keep last)
+urlpatterns += patterns('plugins.views',
+    url(r'^(?P<package_name>[A-Za-z][A-Za-z0-9-_]+)/$', 'plugin_detail', { 'queryset' : Plugin.objects.all() }, name='plugin_detail'),
 )
 
