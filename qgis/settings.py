@@ -135,7 +135,6 @@ INSTALLED_APPS = (
     # For users app thumbs
     'sorl.thumbnail',
     # RPC
-    'rpc4django',
 )
 
 TEMPLATE_CONTEXT_PROCESSORS = (
