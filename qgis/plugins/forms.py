@@ -8,6 +8,8 @@ from plugins.validator import validator
 from plugins.models import *
 from taggit.forms import *
 
+import re
+
 class PluginForm(ModelForm):
     """
     Form for plugin editing
@@ -48,6 +50,15 @@ class PluginVersionForm(ModelForm):
 
         return package
 
+    def clean_version(self):
+        """
+        Only accepts digits and dots, transform data
+        """
+        version         = self.cleaned_data.get('version')
+        version = re.sub(r'[^0-9\.]', '', version)
+        return version
+
+
     def clean(self):
         # Populate instance
         self.instance.min_qg_version = self.cleaned_data.get('qgisMinimumVersion')
@@ -71,7 +82,7 @@ class PackageUploadForm(forms.Form):
         try:
             self.cleaned_data.update(validator(package))
         except ValidationError, e:
-            msg = unicode(_('File upload must be a valid QGIS Python plugin compressed archive.'))
+            msg = unicode(_("File upload must be a valid QGIS Python plugin compressed archive (please check also your plugin's metadata)."))
             raise ValidationError("%s %s" % (msg, ','.join(e.messages)))
 
         if Plugin.objects.filter(package_name = self.cleaned_data['package_name']).count():

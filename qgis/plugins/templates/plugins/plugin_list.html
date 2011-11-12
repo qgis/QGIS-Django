@@ -30,7 +30,9 @@
     {# Filtered views menu #}
 
     {% if object_list.count %}
-    <div class="num_items">{% blocktrans %}%n items found{% endblocktrans %}</div>
+    {% autosort object_list %}
+    {% autopaginate object_list per_page %}
+    <div class="num_items">{% blocktrans with records_count=paginator.count %}{{ records_count }} records found{% endblocktrans %}</div>
     <table class="plugins">
         <thead>
             <tr>
@@ -47,8 +49,6 @@
                 {% if user.is_authenticated %}<th colspan="2">{% trans "Manage" %}</th>{% endif %}
             </tr>
         </thead>
-        {% autosort object_list %}
-        {% autopaginate object_list per_page %}
         <tbody>
             {% for object in object_list %}
             <tr class="pmain {% cycle "even" "odd" %}" id="pmain{{object.pk}}">

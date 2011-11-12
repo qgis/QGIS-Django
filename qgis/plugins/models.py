@@ -7,7 +7,7 @@ from django.utils.translation import ugettext_lazy as _
 # For permalinks
 from django.core.urlresolvers import reverse
 from django.conf import settings
-import datetime, os
+import datetime, os, re
 
 # Tagging
 from taggit.managers import TaggableManager
@@ -199,6 +199,34 @@ class Plugin (models.Model):
     def __str__(self):
         return self.__unicode__()
 
+    def clean(self):
+        """
+        Validates:
+
+        * Checks that package_name respect regexp [A-Za-z][A-Za-z0-9-_]+
+        * checks for case-insensitive unique package_name
+        """
+        from django.core.exceptions import ValidationError
+
+        if not re.match(r'^[A-Za-z][A-Za-z0-9-_]+$', self.package_name):
+           raise ValidationError(unicode(_('Plugin package_name (which equals to the main plugin folder inside the zip file) must start with an ASCII letter and can contain only ASCII letters, digits and the - and _ signs.')))
+
+        if self.pk:
+            qs = Plugins.objects.filter(name__iexact=self.name).exclude(pk=self.pk)
+        else:
+            qs = Plugins.objects.filter(name__iexact=self.name)
+        if qs.count():
+            raise ValidationError(unicode(_('A plugin with a similar name (%s) already exists (the name only differs in case).') % qs.all()[0].name))
+
+        if self.pk:
+            qs = Plugins.objects.filter(package_name__iexact=self.package_name).exclude(pk=self.pk)
+        else:
+            qs = Plugins.objects.filter(package_name__iexact=self.package_name)
+        if qs.count():
+            raise ValidationError(unicode(_('A plugin with a similar package_name (%s) already exists (the package_name only differs in case).') % qs.all()[0].package_name))
+
+
+
     def save(self, keep_date=False, *args, **kwargs):
         """
         Soft triggers:
@@ -259,9 +287,15 @@ class PluginVersion (models.Model):
     def clean(self):
         """
         Validates:
-        checks for unique
+
+        * checks for unique
+        * checks for version only digits and dots
         """
         from django.core.exceptions import ValidationError
+
+        # Transforms the version
+        if self.version.rfind(' ') > 0:
+            self.version = self.version.rsplit(' ')[-1]
 
         versions_to_check=PluginVersion.objects.filter(plugin=self.plugin, version=self.version)
         if self.pk:
@@ -269,7 +303,6 @@ class PluginVersion (models.Model):
         # Checks for unique_together
         if versions_to_check.filter(plugin=self.plugin, version=self.version).count() > 0:
             raise ValidationError(unicode(_('Version value must be unique for this plugin.')))
-
 
     class Meta:
         unique_together = ('plugin', 'version')

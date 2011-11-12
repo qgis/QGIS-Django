@@ -295,6 +295,7 @@ def plugins_list(request, queryset, template_name=None, extra_context=None):
         queryset,
         template_name=template_name,
         extra_context=extra_context,
+        allow_empty=True,
     )
 
 @login_required
@@ -302,16 +303,16 @@ def my_plugins(request):
     """
     Shows user's plugins (plugins where user is in owners or user is author)
     """
-    object_list = Plugin.objects.filter(owners=request.user).distinct() | Plugin.objects.filter(created_by=request.user).distinct()
-    return plugins_list(request, object_list, template_name = 'plugins/plugin_list_my.html', extra_context = { 'title' : _('My plugins')})
+    queryset = Plugin.objects.filter(owners=request.user).distinct() | Plugin.objects.filter(created_by=request.user).distinct()
+    return plugins_list(request, queryset, template_name = 'plugins/plugin_list_my.html', extra_context = { 'title' : _('My plugins')})
 
 def user_plugins(request, username):
     """
     List published plugins created_by user
     """
     user = get_object_or_404(User, username=username)
-    object_list = Plugin.approved_objects.filter(created_by=user)
-    return plugins_list(request, object_list, extra_context = { 'title' : _('Plugins from "%s"') % user})
+    queryset = Plugin.approved_objects.filter(created_by=user)
+    return plugins_list(request, queryset, extra_context = { 'title' : _('Plugins from "%s"') % user})
 
 
 def tags_plugins(request, tags):
@@ -319,10 +320,8 @@ def tags_plugins(request, tags):
     List plugins with given tags
     """
     tag_list = tags.split(',')
-    object_list = Plugin.approved_objects.filter(tags__name__in=tag_list)
-    return plugins_list(request, object_list, extra_context = { 'title' : _('Plugins with tag "%s"') % tags})
-
-
+    queryset = Plugin.approved_objects.filter(tags__name__in=tag_list)
+    return plugins_list(request, queryset, extra_context = { 'title' : _('Plugins with tag "%s"') % tags})
 
 
 @staff_required
@@ -355,8 +354,8 @@ def user_details(request, username):
     """
     user = get_object_or_404(User, username=username)
     user_is_trusted = user.has_perm('plugins.can_approve')
-    object_list = Plugin.approved_objects.filter(Q(created_by=user) | Q(owners=user))
-    return plugins_list(request, object_list, template_name = 'plugins/user.html', extra_context = { 'user_is_trusted' : user_is_trusted, 'plugin_user': user, 'title' : _('Plugins from %s') % user })
+    queryset = Plugin.approved_objects.filter(Q(created_by=user) | Q(owners=user))
+    return plugins_list(request, queryset, template_name = 'plugins/user.html', extra_context = { 'user_is_trusted' : user_is_trusted, 'plugin_user': user, 'title' : _('Plugins from %s') % user })
 
 
 @staff_required
@@ -622,9 +621,9 @@ def xml_plugins(request):
     """
     min_qg_version = request.GET.get('qgis')
     if min_qg_version:
-        object_list = Plugin.approved_objects.filter(pluginversion__min_qg_version__lte=min_qg_version)
+        queryset = Plugin.approved_objects.filter(pluginversion__min_qg_version__lte=min_qg_version)
     else:
-        object_list = Plugin.approved_objects.all()
+        queryset = Plugin.approved_objects.all()
     return render_to_response('plugins/plugins.xml', {'object_list' : object_list}, mimetype='text/xml', context_instance=RequestContext(request))
 
 
