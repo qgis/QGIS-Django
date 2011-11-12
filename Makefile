@@ -54,3 +54,5 @@ dumpplugins:
 loadplugins:
 	cd $(PRJ_DIR) && python manage.py loaddata fixtures/plugins.json
 
+check:
+	$(MAKE) -C qgis $@
