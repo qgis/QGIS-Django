@@ -442,9 +442,9 @@ ul.errorlist li {
 l, ul.errorlist, li.error { color: #c00; background: #E6C0C0 url(../images/notice-alert.png) 4px center no-repeat; border-top: 3px solid #DE7A7B; border-bottom: 3px solid #DE7A7B; margin:0px; padding-left: 40px; text-indent:0px; padding-top: 6px; padding-bottom: 6px;}
 
 /* System Notice Messages */
+
 #system-message dd.notice ul, li.warning, p.warning { color: #c00; background: #EFE7B8 url(../images/notice-note.png) 4px center no-repeat; border-top: 3px solid #F0DC7E; border-bottom: 3px solid #F0DC7E; padding-top: 6px; padding-bottom: 6px;}
 p.warning { padding-left: 40px;}
-ul.messages > li,
 ul.messages > li.success { color: #000; background: #E7EBFF url(../images/notice-info.png) 4px center no-repeat; border-top: 3px solid #003983; border-bottom: 3px solid #003983; padding-top: 6px; padding-bottom: 6px;}
 
 #syndicate{
@@ -458,14 +458,27 @@ ul.messages > li.success { color: #000; background: #E7EBFF url(../images/notice
 
 ul.actions a, a.button, input[type="submit"], input[type="file"] {
     border: solid 1px gray;
+    background-color: #dedede;
     font-size: inherit;
-    padding: 0.25em;
+    padding: 0.3em;
     margin-right: 1em;
+    text-decoration: none;
+    color: black;
 }
 
+ul.actions a:hover, a.button:hover, input[type="submit"]:hover, input[type="file"]:hover {
+    background-color: #eee;
+    border: solid 1px gray;
+    text-decoration: none;
+    color: black;
+}
+
+ul.actions a.delete:hover,
+input[type="submit"].delete:hover,
 a.delete:hover {
     background-color: red;
     color: white;
+    text-decoration: none;
 }
 
 ul.actions, ul.messages, ul.form-messages {

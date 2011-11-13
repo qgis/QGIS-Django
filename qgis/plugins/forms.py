@@ -40,15 +40,6 @@ class PluginVersionForm(ModelForm):
         model = PluginVersion
         exclude = ('created_by', 'plugin', 'version', 'min_qg_version')
 
-    def clean_package(self):
-        package         = self.cleaned_data.get('package')
-        try:
-            self.cleaned_data.update(validator(package))
-        except ValidationError, e:
-            msg = unicode(_('File upload must be a valid QGIS Python plugin compressed archive.'))
-            raise ValidationError("%s %s" % (msg, ','.join(e.messages)))
-
-        return package
 
     def clean_version(self):
         """
@@ -60,12 +51,19 @@ class PluginVersionForm(ModelForm):
 
 
     def clean(self):
+        package         = self.cleaned_data.get('package')
+        try:
+            self.cleaned_data.update(validator(package))
+        except ValidationError, e:
+            msg = unicode(_('File upload must be a valid QGIS Python plugin compressed archive.'))
+            raise ValidationError("%s %s" % (msg, ','.join(e.messages)))
+
         # Populate instance
         self.instance.min_qg_version = self.cleaned_data.get('qgisMinimumVersion')
         self.instance.version        = self.cleaned_data.get('version')
         # Check plugin name
         if self.cleaned_data.get('package_name') and self.cleaned_data.get('package_name') != self.instance.plugin.package_name:
-            raise ValidationError(_('Plugin name mismatch: the plugin main folder name in the compressed file is different from the original plugin package name.'))
+            raise ValidationError(_('Plugin name mismatch: the plugin main folder name in the compressed file (%s) is different from the original plugin package name (%s).') % (self.cleaned_data.get('package_name'), self.instance.plugin.package_name))
         return super(PluginVersionForm, self).clean()
 
 

@@ -65,14 +65,14 @@ def validator(package):
             raise ValidationError(_('Cannot find __init__.py or metadata.txt in the compressed package: this does not seems a valid plugin (I searched for %s and )') % (initname, metadataname))
 
         # Checks metadata
-
+        metadata = []
         # First parse metadata.ini
         if metadataname in namelist:
             try:
                 parser = ConfigParser.ConfigParser()
                 parser.optionxform = str
                 parser.readfp(zip.open(metadataname))
-                metadata = parser.items('general')
+                metadata.extend(parser.items('general'))
             except ConfigParser.NoSectionError:
                 raise ValidationError(_("Cannot find a section named 'general' in %s") % metadataname)
             metadata.append(('metadata_source', 'metadata.txt'))

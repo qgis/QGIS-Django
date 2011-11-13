@@ -220,6 +220,10 @@ def plugin_upload(request):
                 if not request.user.has_perm('plugins.can_approve'):
                     msg = _("Your plugin is awaiting approval from a staff member and will be approved as soon as possible.")
                     messages.warning(request, msg, fail_silently=True)
+                if not  form.cleaned_data.get('metadata_source') == 'metadata.txt':
+                    msg = _("Your plugin does not contain a metadata.txt file, metadata have been read from the __init__.py file. This is deprecated and its support will eventually cease.")
+                    messages.warning(request, msg, fail_silently=True)
+
             except (IntegrityError, ValidationError), e:
                 messages.error(request, e, fail_silently=True)
                 if not new_plugin.pk:
@@ -336,8 +340,6 @@ def plugin_manage(request, package_name):
         return plugin_unset_featured(request, package_name)
     if request.POST.get('delete'):
         return plugin_delete(request, package_name)
-    if request.POST.get('user_untrust'):
-        return user_untrust(request, username)
 
     return HttpResponseRedirect(reverse('user_details', args=[username]))
 
