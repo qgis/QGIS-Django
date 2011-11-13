@@ -2,7 +2,7 @@
 {% block content %}
     <h2>{% trans "Version" %}: {{ version }}</h2>
     <div class="details">
-        <p><strong>{% trans "Changelog" %}:</strong> {{ version.changelog }}</p>
+        {% if version.changelog %}<p><strong>{% trans "Changelog" %}:</strong> {{ version.changelog }}</p>{% endif %}
         <p><strong>{% trans "Approved" %}:</strong> {{ version.approved|yesno }}</p>
         <p><strong>{% trans "Author" %}:</strong> {{ version.created_by }}</p>
         <p><strong>{% trans "Uploaded" %}:</strong> {{ version.created_on }}</p>
