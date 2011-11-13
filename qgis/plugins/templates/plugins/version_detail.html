@@ -2,10 +2,11 @@
 {% block content %}
     <h2>{% trans "Version" %}: {{ version }}</h2>
     <div class="details">
-        <p><strong>{% trans "Changelog" %}:</strong> {{ version.changelog }}</p>
+        {% if version.changelog %}<p><strong>{% trans "Changelog" %}:</strong> {{ version.changelog }}</p>{% endif %}
         <p><strong>{% trans "Approved" %}:</strong> {{ version.approved|yesno }}</p>
         <p><strong>{% trans "Author" %}:</strong> {{ version.created_by }}</p>
         <p><strong>{% trans "Uploaded" %}:</strong> {{ version.created_on }}</p>
+        <p><strong>{% trans "Minimum QGIS version" %}:</strong> {{ version.min_qg_version }}</p>
         <p {% if version.experimental %}class="warning"{% endif %}><strong>{% trans "Experimental" %}:</strong> {{ version.experimental|yesno }}</p>
         {% if not version.created_by.is_active %}<p class="warning">{% trans "The plugin author has been blocked." %}</p>{% endif %}
     </div>

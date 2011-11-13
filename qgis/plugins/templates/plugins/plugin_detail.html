@@ -23,12 +23,13 @@
         <ul class="actions">
             <li><a href="{% url plugin_update object.package_name %}">{% trans "Edit" %}</a></li>
             <li><a href="{% url version_create object.package_name %}">{% trans "Add version" %}</a></li>
-            {% if user.is_staff or user in object.editors %}
-            <li><a class="delete" href="{% url plugin_delete object.package_name %}">{% trans "Delete" %}</a></li>{% endif %}
         {% if user.is_staff  %}
             {% if object.featured %}<li><input type="submit" name="unset_featured" id="unset_featured" value="{% trans "Unset featured" %}" /></li>
             {% else %}<li><input type="submit" name="set_featured" id="set_featured" value="{% trans "Set featured" %}" /></li>
             {% endif %}
+        {% endif %}
+        {% if user.is_staff or user in object.editors %}
+            <li><a class="delete" href="{% url plugin_delete object.package_name %}">{% trans "Delete" %}</a></li>
         {% endif %}
         </ul>
     </div>

@@ -16,6 +16,28 @@ from django.core.files.uploadedfile import SimpleUploadedFile
 PLUGIN_MAX_UPLOAD_SIZE= getattr(settings, 'PLUGIN_MAX_UPLOAD_SIZE', 1048576)
 PLUGIN_REQUIRED_METADATA=  getattr(settings, 'PLUGIN_REQUIRED_METADATA', ('name', 'description', 'version', 'qgisMinimumVersion'))
 
+PLUGIN_OPTIONAL_METADATA=  getattr(settings, 'PLUGIN_OPTIONAL_METADATA', ('homepage', 'changelog', 'tracker', 'repository', 'tags'))
+
+
+def _read_from_init(initcontent, initname):
+    """
+    Read metadata from __init__.py, raise ValidationError
+    """
+    metadata = []
+    metadata.extend(re.findall('def\s+([^c]\w+).*?return\s+["\'](.*?)["\']', initcontent , re.DOTALL))
+    if not metadata:
+        raise ValidationError(_('Cannot find valid metadata in %s') % initname)
+    return metadata
+
+def _check_required_metadata(metadata):
+    """
+    Checks if required metadata are in place, raise ValidationError if not found
+    """
+    for md in PLUGIN_REQUIRED_METADATA:
+        if not md in dict(metadata) or not dict(metadata)[md]:
+            raise ValidationError(_('Cannot find metadata "%s" in metadata source (%s).') % (md, dict(metadata).get('metadata_source')))
+
+
 def validator(package):
     """
     Analyzes a zipped file, returns metadata if success, False otherwise.
@@ -66,14 +88,14 @@ def validator(package):
             raise ValidationError(_('Cannot find __init__.py or metadata.txt in the compressed package: this does not seems a valid plugin (I searched for %s and )') % (initname, metadataname))
 
         # Checks metadata
-
+        metadata = []
         # First parse metadata.ini
         if metadataname in namelist:
             try:
                 parser = ConfigParser.ConfigParser()
                 parser.optionxform = str
                 parser.readfp(zip.open(metadataname))
-                metadata = parser.items('general')
+                metadata.extend(parser.items('general'))
             except ConfigParser.NoSectionError:
                 raise ValidationError(_("Cannot find a section named 'general' in %s") % metadataname)
             metadata.append(('metadata_source', 'metadata.txt'))
@@ -81,14 +103,12 @@ def validator(package):
             # Then parse __init__
             # Ugly RE: regexp guru wanted!
             initcontent = zip.read(initname)
-            metadata = re.findall('def\s+([^c]\w+).*?return\s+["\'](.*?)["\']', initcontent , re.DOTALL)
+            metadata.extend(_read_from_init(initcontent, initname))
             if not metadata:
                 raise ValidationError(_('Cannot find valid metadata in %s') % initname)
             metadata.append(('metadata_source', '__init__.py'))
 
-        for md in PLUGIN_REQUIRED_METADATA:
-            if not md in dict(metadata) or not dict(metadata)[md]:
-                raise ValidationError(_('Cannot find metadata %s') % md)
+        _check_required_metadata(metadata)
 
         # Process Icon
         try:
@@ -104,11 +124,29 @@ def validator(package):
 
         metadata.append(('icon_file', icon_file))
 
-        zip.close()
-        del zip
         # Adds package_name
         if not re.match(r'^[A-Za-z][A-Za-z0-9-_]+$', package_name):
             raise ValidationError(_("Package name must start with an ASCII letter and can contain ASCII letters, digits and the signs '-' and '_'."))
         metadata.append(('package_name', package_name))
+
+        # Version should be float
+        try:
+            min_qgs_version = float(dict(metadata).get('qgisMinimumVersion'))
+        except ValueError:
+            raise ValidationError(_("qgisMinimumVersion cannot be converted to float."))
+
+        # Last temporary rule, check if mandatory metadata are also in __init__.py
+        # fails if it is not
+        if min_qgs_version < 1.8 and metadataname in namelist:
+            initcontent = zip.read(initname)
+            try:
+                initmetadata = _read_from_init(initcontent, initname)
+                _check_required_metadata(initmetadata)
+            except ValidationError, e:
+                raise ValidationError(_("qgisMinimumVersion is set to less than  1.8 (%s) and there were errors reading metadata from the __init__.py file. This can lead to errors in versions of QGIS less than 1.8, please either set the qgisMinimumVersion to 1.8 or specify the metadata also in the __init__.py file. Reported error was: %s") % (min_qgs_version, ','.join(e.messages)))
+
+        zip.close()
+        del zip
+
     return metadata
 

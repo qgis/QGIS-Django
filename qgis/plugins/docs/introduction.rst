@@ -50,11 +50,67 @@ The validation takes place in the PluginVersions forms, at loading time, the com
     * `version`
     * `qgisMinimumVersion`
 
-* in case of version editing or addition, `name` metadata must be = to plugin's name
+* in case of version editing or addition, `name` metadata must be equal to plugin's name
 * `version` must be unique whithin a plugin
 * there must be one and only *last* versions in each plugin's branch
 
+At the time of plugin creation, the name of the folder inside the compressed file is stored in the variable `package_name`, this value must be unique and cannot be changed. `package_name` is also used to build SEF URLs, for example the plugin's page for the plugin *Hello World Plugin* with `package_name` *HelloWorld* is `<http://plugins.qgis.org/plugins/HelloWorld/>`_
 
+The `package_name` (and hence the first level folder inside the compressed zip file) cannot contain only ASCI letters (A-Z and a-z), digits and the characters underscore (_) and minus (-) and cannot start with a
+digit.
+
+Example from the `HelloWorld` plugin compressed zip file::
+
+    Archive:  plugins/tests/HelloWorld/HelloWorld_1.2.zip
+    Length      Date    Time    Name
+    ---------  ---------- -----   ----
+            0  2011-11-13 15:05   HelloWorld/
+        1304  2011-11-13 12:40   HelloWorld/icon.png
+        374  2011-11-13 15:05   HelloWorld/metadata.txt
+        1094  2011-11-13 12:40   HelloWorld/HelloWorld.py
+        396  2011-11-13 12:40   HelloWorld/__init__.py
+    ---------                     -------
+        3168                     5 files
+
+
+
+Metadata
+--------
+
+Plugins mandatory metadata [#] are read from both the old `__init__.py` functions format
+and (if present) the new `metadata.txt` file.
+
+The new `metadata.txt` file can contain other optional metadata which are read when the package is uploaded and are automatically imported.
+
+Example configuration file::
+
+        ; the next section is mandatory
+        [general]
+        name=HelloWorld
+        qgisMinimumVersion=1.8
+        description=This is a plugin for greeting the
+            (going multiline) world
+        version=version 1.2
+        ; end of mandatory metadata
+
+        ; start of optional metadata
+        changelog=this is a very
+            very
+            very
+            very
+            very
+            very long multiline changelog
+
+        ; tags are in comma separated value format, spaces are allowed
+        tags=wkt,raster,hello world
+
+        ; these metadata can be empty
+        ; in a future version of the web application it will
+        ; be probably possible to create a project on redmine
+        ; if those fields are not filled
+        homepage=http://www.itopen.it
+        tracker=http://bugs.itopen.it
+        repository=http://www.itopen.it/repo
 
 Configuration
 =============
@@ -68,5 +124,12 @@ PLUGINS_STORAGE_PATH       packages
 PLUGIN_MAX_UPLOAD_SIZE     1048576       in bytes
 PLUGINS_FRESH_DAYS         30            days
 MAIL_FROM_ADDRESS          -             used in email notifications
+PLUGIN_REQUIRED_METADATA   [#f1]_        used in validator
+PLUGIN_OPTIONAL_METADATA   [#f2]_        used in validator
 ========================== ============= =======================
 
+
+.. rubric:: Footnotes
+
+.. [#f1] 'name', 'description', 'version', 'qgisMinimumVersion'
+.. [#f2] Supported by metadata.txt only: 'homepage', 'changelog', 'tracker', 'repository', 'tags'

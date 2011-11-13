@@ -220,6 +220,10 @@ def plugin_upload(request):
                 if not request.user.has_perm('plugins.can_approve'):
                     msg = _("Your plugin is awaiting approval from a staff member and will be approved as soon as possible.")
                     messages.warning(request, msg, fail_silently=True)
+                if not  form.cleaned_data.get('metadata_source') == 'metadata.txt':
+                    msg = _("Your plugin does not contain a metadata.txt file, metadata have been read from the __init__.py file. This is deprecated and its support will eventually cease.")
+                    messages.warning(request, msg, fail_silently=True)
+
             except (IntegrityError, ValidationError), e:
                 messages.error(request, e, fail_silently=True)
                 if not new_plugin.pk:
@@ -336,8 +340,6 @@ def plugin_manage(request, package_name):
         return plugin_unset_featured(request, package_name)
     if request.POST.get('delete'):
         return plugin_delete(request, package_name)
-    if request.POST.get('user_untrust'):
-        return user_untrust(request, username)
 
     return HttpResponseRedirect(reverse('user_details', args=[username]))
 
@@ -466,10 +468,15 @@ def version_create(request, package_name):
                 new_object.approved = False
                 new_object.save()
                 messages.warning(request, _('You do not have approval permissions, plugin version has been set unapproved.'), fail_silently=True)
-            # Update plugin
+            # Update plugin from metadata
             plugin.icon = form.cleaned_data['icon_file']
             plugin.name = form.cleaned_data['name']
             plugin.description = form.cleaned_data['description']
+            if form.cleaned_data.get('tags'):
+                plugin.tags.set(*form.cleaned_data.get('tags').split(','))
+            if form.cleaned_data.get('homepage'):
+                plugin.homepage = form.cleaned_data.get('homepage')
+            # TODO: tacker, repository
             plugin.save()
             return HttpResponseRedirect(new_object.plugin.get_absolute_url())
     else:
@@ -586,7 +593,7 @@ def version_download(request, package_name, version):
     Update download counter(s)
     """
     plugin =  get_object_or_404(Plugin, package_name=package_name)
-    version = get_object_or_404(PluginVersion, version=version)
+    version = get_object_or_404(PluginVersion, plugin=plugin, version=version)
     version.downloads = version.downloads + 1
     version.save()
     plugin = version.plugin
@@ -603,7 +610,7 @@ def version_detail(request, package_name, version):
     Show version details
     """
     plugin =  get_object_or_404(Plugin, package_name=package_name)
-    version = get_object_or_404(PluginVersion, version=version)
+    version = get_object_or_404(PluginVersion, plugin=plugin, version=version)
     return render_to_response('plugins/version_detail.html', {'version' : version }, context_instance=RequestContext(request))
 
 
@@ -624,6 +631,6 @@ def xml_plugins(request):
         queryset = Plugin.approved_objects.filter(pluginversion__min_qg_version__lte=min_qg_version)
     else:
         queryset = Plugin.approved_objects.all()
-    return render_to_response('plugins/plugins.xml', {'object_list' : object_list}, mimetype='text/xml', context_instance=RequestContext(request))
+    return render_to_response('plugins/plugins.xml', {'object_list': queryset}, mimetype='text/xml', context_instance=RequestContext(request))
 
 
