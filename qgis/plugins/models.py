@@ -212,16 +212,16 @@ class Plugin (models.Model):
            raise ValidationError(unicode(_('Plugin package_name (which equals to the main plugin folder inside the zip file) must start with an ASCII letter and can contain only ASCII letters, digits and the - and _ signs.')))
 
         if self.pk:
-            qs = Plugins.objects.filter(name__iexact=self.name).exclude(pk=self.pk)
+            qs = Plugin.objects.filter(name__iexact=self.name).exclude(pk=self.pk)
         else:
-            qs = Plugins.objects.filter(name__iexact=self.name)
+            qs = Plugin.objects.filter(name__iexact=self.name)
         if qs.count():
             raise ValidationError(unicode(_('A plugin with a similar name (%s) already exists (the name only differs in case).') % qs.all()[0].name))
 
         if self.pk:
-            qs = Plugins.objects.filter(package_name__iexact=self.package_name).exclude(pk=self.pk)
+            qs = Plugin.objects.filter(package_name__iexact=self.package_name).exclude(pk=self.pk)
         else:
-            qs = Plugins.objects.filter(package_name__iexact=self.package_name)
+            qs = Plugin.objects.filter(package_name__iexact=self.package_name)
         if qs.count():
             raise ValidationError(unicode(_('A plugin with a similar package_name (%s) already exists (the package_name only differs in case).') % qs.all()[0].package_name))
 

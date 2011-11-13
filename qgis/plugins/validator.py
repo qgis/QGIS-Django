@@ -29,12 +29,13 @@ def validator(package):
         * package_name regexp: [A-Za-z][A-Za-z0-9-_]+
 
     """
+    try:
+        if package.size > PLUGIN_MAX_UPLOAD_SIZE:
+            raise ValidationError( _("File is too big. Max size is %s Bytes") % PLUGIN_MAX_UPLOAD_SIZE )
+    except:
+        if package.len  > PLUGIN_MAX_UPLOAD_SIZE:
+            raise ValidationError( _("File is too big. Max size is %s Bytes") % PLUGIN_MAX_UPLOAD_SIZE )
 
-    if package.size > PLUGIN_MAX_UPLOAD_SIZE:
-        raise ValidationError( _("File is too big. Max size is %s Bytes") % PLUGIN_MAX_UPLOAD_SIZE )
-
-    if False and package.content_type != 'application/zip':
-        raise forms.ValidationError( msg )
     else:
         try:
             zip = zipfile.ZipFile( package )

@@ -67,6 +67,8 @@ MIDDLEWARE_CLASSES = (
     'django_sorting.middleware.SortingMiddleware',
     'pagination.middleware.PaginationMiddleware',
     'django.contrib.flatpages.middleware.FlatpageFallbackMiddleware',
+    # Needed by rpc4django
+    'plugins.middleware.HttpAuthMiddleware',
     # Added by Tim for advanced loggin options
     'debug_toolbar.middleware.DebugToolbarMiddleware',
     'django.middleware.cache.FetchFromCacheMiddleware',
@@ -135,6 +137,7 @@ INSTALLED_APPS = (
     # For users app thumbs
     'sorl.thumbnail',
     # RPC
+    'rpc4django',
 )
 
 TEMPLATE_CONTEXT_PROCESSORS = (
