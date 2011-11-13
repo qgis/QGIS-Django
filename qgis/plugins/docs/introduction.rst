@@ -54,10 +54,25 @@ The validation takes place in the PluginVersions forms, at loading time, the com
 * `version` must be unique whithin a plugin
 * there must be one and only *last* versions in each plugin's branch
 
-At the time of plugin creation, the name of the folder inside the compressed file is stored in the variable `package_name`, this value must be unique and cannot be changed. `package_name` is also used to build SEF URLs, for example the plugin's page for the plugin *Closest Feature Finder* with `package_name` *ClosestFeatureFinder* is <http://plugins.qgis.org/plugins/ClosestFeatureFinder/>_
+At the time of plugin creation, the name of the folder inside the compressed file is stored in the variable `package_name`, this value must be unique and cannot be changed. `package_name` is also used to build SEF URLs, for example the plugin's page for the plugin *Hello World Plugin* with `package_name` *HelloWorld* is `<http://plugins.qgis.org/plugins/HelloWorld/>`_
 
 The `package_name` (and hence the first level folder inside the compressed zip file) cannot contain only ASCI letters (A-Z and a-z), digits and the characters underscore (_) and minus (-) and cannot start with a
 digit.
+
+Example from the `HelloWorld` plugin compressed zip file::
+
+    Archive:  plugins/tests/HelloWorld/HelloWorld_1.2.zip
+    Length      Date    Time    Name
+    ---------  ---------- -----   ----
+            0  2011-11-13 15:05   HelloWorld/
+        1304  2011-11-13 12:40   HelloWorld/icon.png
+        374  2011-11-13 15:05   HelloWorld/metadata.txt
+        1094  2011-11-13 12:40   HelloWorld/HelloWorld.py
+        396  2011-11-13 12:40   HelloWorld/__init__.py
+    ---------                     -------
+        3168                     5 files
+
+
 
 Metadata
 --------
@@ -78,7 +93,7 @@ Example configuration file::
         version=version 1.2
         ; end of mandatory metadata
 
-        ; optional metadata
+        ; start of optional metadata
         changelog=this is a very
             very
             very
