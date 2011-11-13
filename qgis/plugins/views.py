@@ -593,7 +593,7 @@ def version_download(request, package_name, version):
     Update download counter(s)
     """
     plugin =  get_object_or_404(Plugin, package_name=package_name)
-    version = get_object_or_404(PluginVersion, version=version)
+    version = get_object_or_404(PluginVersion, plugin=plugin, version=version)
     version.downloads = version.downloads + 1
     version.save()
     plugin = version.plugin
@@ -610,7 +610,7 @@ def version_detail(request, package_name, version):
     Show version details
     """
     plugin =  get_object_or_404(Plugin, package_name=package_name)
-    version = get_object_or_404(PluginVersion, version=version)
+    version = get_object_or_404(PluginVersion, plugin=plugin, version=version)
     return render_to_response('plugins/version_detail.html', {'version' : version }, context_instance=RequestContext(request))
 
 
