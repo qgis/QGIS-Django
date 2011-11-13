@@ -26,6 +26,10 @@ class PluginVersionForm(ModelForm):
     """
     Form for version upload on existing plugins
     """
+    changelog = forms.fields.CharField(label=_('Changelog'), required=False,
+                help_text=_('Insert here a short description of the changes that have been made in this version. This field is mandatory and can be automatically read from the metadata.txt file.'), widget=forms.Textarea)
+
+
     def __init__(self, *args, **kwargs):
         is_trusted = kwargs.pop('is_trusted')
         super(PluginVersionForm, self).__init__(*args, **kwargs)
@@ -39,16 +43,7 @@ class PluginVersionForm(ModelForm):
     class Meta:
         model = PluginVersion
         exclude = ('created_by', 'plugin', 'version', 'min_qg_version')
-
-
-    def clean_version(self):
-        """
-        Only accepts digits and dots, transform data
-        """
-        version         = self.cleaned_data.get('version')
-        version = re.sub(r'[^0-9\.]', '', version)
-        return version
-
+        fields = ('package', 'experimental', 'approved', 'changelog')
 
     def clean(self):
         package         = self.cleaned_data.get('package')
@@ -61,6 +56,9 @@ class PluginVersionForm(ModelForm):
         # Populate instance
         self.instance.min_qg_version = self.cleaned_data.get('qgisMinimumVersion')
         self.instance.version        = self.cleaned_data.get('version')
+        # Also set changelog from metadata
+        if self.cleaned_data.get('changelog'):
+           self.instance.changelog = self.cleaned_data.get('changelog')
         # Check plugin name
         if self.cleaned_data.get('package_name') and self.cleaned_data.get('package_name') != self.instance.plugin.package_name:
             raise ValidationError(_('Plugin name mismatch: the plugin main folder name in the compressed file (%s) is different from the original plugin package name (%s).') % (self.cleaned_data.get('package_name'), self.instance.plugin.package_name))

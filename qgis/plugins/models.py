@@ -264,7 +264,7 @@ class PluginVersion (models.Model):
     package         = models.FileField(_('Plugin package'), upload_to=PLUGINS_STORAGE_PATH)
     # Flags: checks on unique current/experimental are done in save() and possibly in the views
     experimental    = models.BooleanField(_('Experimental flag'), default=False, help_text=_("Check this box if this version is experimental, leave unchecked if it's stable"))
-    approved        = models.BooleanField(_('Approved'), default=True, help_text=_('Set to false if you wish to unapprova the plugin version.'))
+    approved        = models.BooleanField(_('Approved'), default=True, help_text=_('Set to false if you wish to unapprove the plugin version.'))
 
     @property
     def file_name(self):
@@ -275,6 +275,12 @@ class PluginVersion (models.Model):
         Soft triggers:
         * updates modified_on in parent
         """
+
+        # Transforms the version...
+        # Need to be done here too, because clean()
+        # is only called in forms.
+        if self.version.rfind(' ') > 0:
+            self.version = self.version.rsplit(' ')[-1]
 
         # Only change modified_on when a new version is created,
         # every download triggers a save to update the counter

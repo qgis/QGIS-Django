@@ -468,10 +468,15 @@ def version_create(request, package_name):
                 new_object.approved = False
                 new_object.save()
                 messages.warning(request, _('You do not have approval permissions, plugin version has been set unapproved.'), fail_silently=True)
-            # Update plugin
+            # Update plugin from metadata
             plugin.icon = form.cleaned_data['icon_file']
             plugin.name = form.cleaned_data['name']
             plugin.description = form.cleaned_data['description']
+            if form.cleaned_data.get('tags'):
+                plugin.tags.set(*form.cleaned_data.get('tags').split(','))
+            if form.cleaned_data.get('homepage'):
+                plugin.homepage = form.cleaned_data.get('homepage')
+            # TODO: tacker, repository
             plugin.save()
             return HttpResponseRedirect(new_object.plugin.get_absolute_url())
     else:

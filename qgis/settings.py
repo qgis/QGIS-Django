@@ -181,6 +181,9 @@ TINYMCE_DEFAULT_CONFIG = {
 TINYMCE_SPELLCHECKER = True
 TINYMCE_COMPRESSOR = True
 
+# Default number of items per page
+PAGINATION_DEFAULT_PAGINATION=20
+
 # auth overrids
 from settings_auth import *
 

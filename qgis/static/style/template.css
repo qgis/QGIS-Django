@@ -460,7 +460,7 @@ ul.actions a, a.button, input[type="submit"], input[type="file"] {
     border: solid 1px gray;
     background-color: #dedede;
     font-size: inherit;
-    padding: 0.3em;
+    padding: 0.2em;
     margin-right: 1em;
     text-decoration: none;
     color: black;
@@ -469,16 +469,16 @@ ul.actions a, a.button, input[type="submit"], input[type="file"] {
 ul.actions a:hover, a.button:hover, input[type="submit"]:hover, input[type="file"]:hover {
     background-color: #eee;
     border: solid 1px gray;
-    text-decoration: none;
-    color: black;
+    text-decoration: none !important;
+    color: black !important;
 }
 
 ul.actions a.delete:hover,
 input[type="submit"].delete:hover,
 a.delete:hover {
     background-color: red;
-    color: white;
-    text-decoration: none;
+    color: white !important;
+    text-decoration: none !important;
 }
 
 ul.actions, ul.messages, ul.form-messages {
