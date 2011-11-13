@@ -631,6 +631,6 @@ def xml_plugins(request):
         queryset = Plugin.approved_objects.filter(pluginversion__min_qg_version__lte=min_qg_version)
     else:
         queryset = Plugin.approved_objects.all()
-    return render_to_response('plugins/plugins.xml', {'object_list' : object_list}, mimetype='text/xml', context_instance=RequestContext(request))
+    return render_to_response('plugins/plugins.xml', {'object_list': queryset}, mimetype='text/xml', context_instance=RequestContext(request))
 
 

@@ -499,3 +499,15 @@ ul.actions li {
 tr.odd td {
     background-color: #EEE;
 }
+
+#list_commands {
+    padding: 0.5em 0;
+}
+
+.num_items {
+    float: left;
+}
+
+.toggle_desc {
+    float: right;
+}
