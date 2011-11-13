@@ -54,6 +54,13 @@ The validation takes place in the PluginVersions forms, at loading time, the com
 * `version` must be unique whithin a plugin
 * there must be one and only *last* versions in each plugin's branch
 
+Metadata
+--------
+
+Plugins mandatory metadata [#] are read from both the old `__init__.py` functions format
+and the new `metadata.txt` file.
+
+The new `metadata.txt` file can contain other optional metadata which are read when the package is uploaded and are automatically imported.
 
 
 Configuration
@@ -68,5 +75,12 @@ PLUGINS_STORAGE_PATH       packages
 PLUGIN_MAX_UPLOAD_SIZE     1048576       in bytes
 PLUGINS_FRESH_DAYS         30            days
 MAIL_FROM_ADDRESS          -             used in email notifications
+PLUGIN_REQUIRED_METADATA   [#f1]         used in validator
+PLUGIN_OPTIONAL_METADATA   [#f2]         used in validator
 ========================== ============= =======================
 
+
+.. rubric:: Footnotes
+
+.. [#f1] 'name', 'description', 'version', 'qgisMinimumVersion'
+.. [#f2] Supported by metadata.txt only: 'homepage', 'changelog', 'tracker', 'repository', 'tags'
