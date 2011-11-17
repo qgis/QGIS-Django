@@ -143,6 +143,8 @@ TEMPLATE_CONTEXT_PROCESSORS = (
     "django.core.context_processors.i18n",
     "django.core.context_processors.media",
     "django.core.context_processors.request",
+    # ABP: adds DEBUG and BASE_TEMPLATE vars
+    "qgis_context_processor.additions",
 )
 
 ACCOUNT_ACTIVATION_DAYS = 7 # One-week activation window; you may, of course, use a different value
