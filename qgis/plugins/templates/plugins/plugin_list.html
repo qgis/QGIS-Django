@@ -41,7 +41,7 @@
             <tr>
                 <th>&nbsp;</th>
                 <th>{% anchor name %}</th>
-                <th><img src="/static/images/tick_16.png" alt="{% trans "Approved" %}"/></th>
+                {% if not user.is_anonymous %}<th><img title="{% trans "Approved" %}" src="/static/images/tick_16.png" alt="{% trans "Approved" %}"/></th>{% endif %}
                 <th>{% anchor featured %}</th>
                 <th>{% anchor downloads %}</th>
                 <th>{% anchor created_by "Maintainer" %}</th>
@@ -56,7 +56,7 @@
             <tr class="pmain {% cycle "even" "odd" %}" id="pmain{{object.pk}}">
                 <td><a title="{% trans "Click here for plugin details" %}" href="{% url plugin_detail object.package_name %}"><img class="plugin-icon" src="{% if object.icon %}{{ object.icon.url }}{% else %}/static/images/qgis-icon-32x32.png{% endif %}" alt="{% trans "Plugin icon" %}" /></a></td>
                 <td><a title="{% trans "Click here for plugin details" %}"  href="{% url plugin_detail object.package_name %}">{{ object.name }}</a></td>
-                <td>{% if object.approved %}<img src="/static/images/tick_16.png" />{% else %}<img src="/static/images/delete_16.png" />{% endif %}</td>
+                {% if not user.is_anonymous %}<td>{% if object.approved %}<img src="/static/images/tick_16.png" />{% else %}<img src="/static/images/delete_16.png" />{% endif %}</td>{% endif %}
                 <td>{% if object.featured%}<img src="/static/images/tick_16.png" />{% else %}<img src="/static/images/delete_16.png" />{% endif %}</td>
                 <td>{{ object.downloads }}</td>
                 <td><a title="{{ object.created_by.get_full_name }}" href="{% url user_details object.created_by %}">{{ object.created_by }}</a></td>

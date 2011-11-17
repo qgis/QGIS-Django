@@ -1,4 +1,4 @@
-from plugins.models import Plugin, PluginVersion
+from plugins.models import Plugin, PluginVersion, PluginCrashReport
 from django.contrib.gis import admin
 
 
@@ -12,6 +12,10 @@ class PluginVersionAdmin (admin.ModelAdmin):
     list_display    = ('plugin', 'approved', 'version', 'experimental', 'created_on', 'downloads')
 
 
+class PluginCrashReportAdmin(admin.ModelAdmin):
+    pass
+
 
 admin.site.register(Plugin, PluginAdmin)
 admin.site.register(PluginVersion, PluginVersionAdmin)
+admin.site.register(PluginCrashReport, PluginCrashReportAdmin)
