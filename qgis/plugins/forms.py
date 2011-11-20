@@ -50,7 +50,7 @@ class PluginVersionForm(ModelForm):
         try:
             self.cleaned_data.update(validator(package))
         except ValidationError, e:
-            msg = unicode(_('File upload must be a valid QGIS Python plugin compressed archive.'))
+            msg = unicode(_("There were errors reading plugin package (please check also your plugin's metadata)."))
             raise ValidationError("%s %s" % (msg, ','.join(e.messages)))
 
         # Populate instance
@@ -78,11 +78,11 @@ class PackageUploadForm(forms.Form):
         try:
             self.cleaned_data.update(validator(package))
         except ValidationError, e:
-            msg = unicode(_("File upload must be a valid QGIS Python plugin compressed archive (please check also your plugin's metadata)."))
+            msg = unicode(_("There were errors reading plugin package (please check also your plugin's metadata)."))
             raise ValidationError("%s %s" % (msg, ','.join(e.messages)))
 
         if Plugin.objects.filter(package_name = self.cleaned_data['package_name']).count():
-            raise ValidationError(_('A plugin with this package name (%s) already exists.') % self.cleaned_data['package_name'])
+            raise ValidationError(_('A plugin with this package name (%s) already exists. To update an existing plugin, you should open the plugin\'s details view and add a new version from there.') % self.cleaned_data['package_name'])
 
         if Plugin.objects.filter(name = self.cleaned_data['name']).count():
             raise ValidationError(_('A plugin with this name (%s) already exists.') % self.cleaned_data['name'])
