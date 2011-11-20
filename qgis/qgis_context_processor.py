@@ -9,11 +9,14 @@ def additions(request):
     """
     if request.is_ajax() or request.GET.get('ajax'):
         base_template = 'ajax_base.html'
+        is_naked = True
     else:
         base_template = 'base.html'
+        is_naked = False
 
     additions = {
         'BASE_TEMPLATE': base_template,
+        'IS_NAKED': is_naked, 
         'DEBUG': settings.DEBUG,
     }
 
