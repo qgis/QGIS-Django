@@ -18,7 +18,9 @@
         <img src="/static/images/blue/top.png" alt="top" />
         <img src="/static/images/blue/logo.png" alt="logo" align="left" hspace="5" />
         <div id="logo_bg">
-            <a href="/" class="logo">{% trans "Quantum GIS Plugin Repository" %}</a>
+            {% block app_title %}
+            <a href="/" class="logo">{% trans "Quantum GIS" %}</a>
+            {% endblock %}
             {% block status %}
             <div id="user4">
                 {% if user.is_authenticated %}<div class="userinfo">{% trans "Welcome"%}: {{ user }}</div>{% endif %}

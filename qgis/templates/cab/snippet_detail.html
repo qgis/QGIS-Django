@@ -3,8 +3,14 @@
 {% load cache %}
 {% load ratings_tags %}
 {% load safe_markup %}
+{% load i18n %}
 
 {% block title %}{{ object.title }}{% endblock %}
+
+
+{% block app_title %}
+<a href="/" class="logo">{% trans "Quantum GIS Code Snippets" %}</a>
+{% endblock %}
 
 
 {% block content %}
