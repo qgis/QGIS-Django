@@ -1,4 +1,10 @@
 {% extends 'base.html' %}{% load i18n %}
+
+{% block app_title %}
+<a href="/" class="logo">{% trans "Quantum GIS Planet" %}</a>
+{% endblock %}
+
+
 {% block menu %}
 {{ block.super }}
 <div class="module_menu">
@@ -65,11 +71,11 @@ title="{{ feed.feed.title }}">{{ feed.name }}</a></li>
 </p>
 
   <div id="buttons">
-    <a href="{{ site.url }}/feed/rss/" title="RSS 2.0 feed"><img src="{{ media_url }}/img/button-rss.png"/></a> &bull;   
+    <a href="{{ site.url }}/feed/rss/" title="RSS 2.0 feed"><img src="{{ media_url }}/img/button-rss.png"/></a> &bull;
     <a href="http://www.djangoproject.com/"><img src="http://media.djangoproject.com/img/badges/djangosite80x15.gif" border="0" alt="A Django site." title="A Django site."></a> &bull;
     <img src="{{ media_url }}/img/button-hacker.png"/><br/>
-    <a href="{{ site.url }}/feed/atom/" title="Atom 1.0 feed"><img src="{{ media_url }}/img/button-atom.png"/></a> &bull; 
-    <a href="{{ site.url }}/opml/" title="OPML"><img src="{{ media_url }}/img/button-opml.png"/></a> &bull; 
+    <a href="{{ site.url }}/feed/atom/" title="Atom 1.0 feed"><img src="{{ media_url }}/img/button-atom.png"/></a> &bull;
+    <a href="{{ site.url }}/opml/" title="OPML"><img src="{{ media_url }}/img/button-opml.png"/></a> &bull;
     <a href="{{ site.url }}/foaf/" title="FOAF"><img src="{{ media_url }}/img/button-foaf.png"/></a>
   </div>
 
@@ -88,7 +94,7 @@ title="{{ feed.feed.title }}">{{ feed.name }}</a></li>
       {% endfor %}
       </ul>
   </div>
-  {% endif %}    
+  {% endif %}
 </div>
 {% endblock %}
 
@@ -107,7 +113,7 @@ title="{{ feed.feed.title }}">{{ feed.name }}</a></li>
   {% ifchanged %}
   <!-- {{ item.date_modified|date:"F j, Y" }} -->
   <div class="avatar">
-    <img 
+    <img
      src="{{ media_url }}/img/faces/{{ item.subscriber.shortname}}.png" alt="">
     <br/>
   </div>

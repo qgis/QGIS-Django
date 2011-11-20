@@ -7,6 +7,11 @@
 {% block title %}{{ object.title }}{% endblock %}
 
 
+{% block app_title %}
+<a href="/" class="logo">{% trans "Quantum GIS Code Snippets" %}</a>
+{% endblock %}
+
+
 {% block content %}
   <h2>{{ object.title }}</h2>
     <div class="cab">

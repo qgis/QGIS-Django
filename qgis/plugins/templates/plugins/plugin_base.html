@@ -1,5 +1,10 @@
 {% extends BASE_TEMPLATE %}{% load i18n plugins_tagcloud %}
 
+{% block app_title %}
+<a href="/" class="logo">{% trans "Quantum GIS Plugin Repository" %}</a>
+{% endblock %}
+
+
 {% block menu %}
 {{ block.super }}
 <div class="module_menu" id="new_plugin_button">

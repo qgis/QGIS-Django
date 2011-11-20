@@ -1,6 +1,11 @@
 {% extends BASE_TEMPLATE %}{% load i18n %}
 {% load thumbnail %}
 
+{% block app_title %}
+<a href="/" class="logo">{% trans "Quantum GIS User Map" %}</a>
+{% endblock %}
+
+
 {% block menu %}
 {{ block.super }}
 <div class="module_menu">
