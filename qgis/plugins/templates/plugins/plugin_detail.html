@@ -2,14 +2,17 @@
 {% block content %}
     <h2>{% trans "Plugin" %}: {{ object.name }}</h2>
     <div class="details">
+        {% if object.deprecated %}<p class="error"><strong>{% trans "This plugin is deprecated!" %}</p>{% endif %}
         <p>{% if object.icon %}<img class="plugin-icon" src="{{ object.icon.url }}" alt="{% trans "Plugin icon" %}" />{% endif %}<strong>{% trans "Description" %}:</strong> {{ object.description }}</p>
-	<p><strong>{% trans "Maintainer"%}:</strong> <a href="{% url user_details object.created_by %}">{{ object.created_by }}</a></p>
+	    <p><strong>{% trans "Maintainer"%}:</strong> <a href="{% url user_details object.created_by %}">{{ object.created_by }}</a></p>
 	{% if object.owners.count %}<p><strong>{% trans "Owners"%}:</strong>{% for owner in object.owners.all %}
 		<a href="{% url user_details owner.username %}">{{ owner.username }}</a>{% if not forloop.last %},{% endif %}{% endfor %}
-	</p>{% endif %}
+	    </p>{% endif %}
         {% if object.tags.count %}<p><strong>{% trans "Tags"%}:</strong>
         {% for tag in object.tags.all %}<a href="{% url tags_plugins tag.name %}">{{tag}}</a>{% if not forloop.last %},&nbsp;{% endif %}{% endfor %}</p>{% endif %}
         {% if object.homepage %}<p><strong>{% trans "Plugin home page"%}:</strong> <a href="{{ object.homepage }}">{{ object.homepage }}</a></p>{% endif %}
+        {% if object.tracker %}<p><strong>{% trans "Tracker" %}:</strong> <a href="{{ object.tracker }}">{% trans "Browse and report bugs" %}</a></p>{% endif %}
+        {% if object.repository %}<p><strong>{% trans "Code repository" %}:</strong> <a href="{{ object.repository }}">{{ object.repository }}</a></p>{% endif %}
         {% if object.stable %}<p><strong>{% trans "Latest stable version"%}:</strong> <a title="{% trans "Click to download" %}"  href="{% url version_detail object.package_name object.stable.version %}">{{ object.stable.version }}</a></p>{% endif %}
         {% if object.experimental %}<p><strong>{% trans "Latest experimental version"%}:</strong> <a title="{% trans "Click to download" %}" href="{% url version_detail object.package_name object.experimental.version %}">{{ object.experimental.version }}</a></p>{% endif %}
         {% if not object.experimental and not object.stable %}<p class="warning">{% trans "This plugin has no public version yet." %}</p>{% endif %}

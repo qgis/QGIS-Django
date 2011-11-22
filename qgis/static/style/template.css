@@ -511,3 +511,7 @@ tr.odd td {
 .toggle_desc {
     float: right;
 }
+
+p.error {
+    color: red;
+}

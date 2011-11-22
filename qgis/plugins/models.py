@@ -22,7 +22,7 @@ class ApprovedPlugins(models.Manager):
     and with at least one approved version ("stable" or "experimental")
     """
     def get_query_set(self):
-        return super(ApprovedPlugins, self).get_query_set().filter(pluginversion__approved=True).distinct()
+        return super(ApprovedPlugins, self).get_query_set().filter(deprecated=False, pluginversion__approved=True).distinct()
 
 class StablePlugins(models.Manager):
     """
@@ -30,7 +30,7 @@ class StablePlugins(models.Manager):
     and with one "stable" version
     """
     def get_query_set(self):
-        return super(StablePlugins, self).get_query_set().filter(pluginversion__approved=True, pluginversion__experimental=False).distinct()
+        return super(StablePlugins, self).get_query_set().filter(deprecated=False, pluginversion__approved=True, pluginversion__experimental=False).distinct()
 
 class ExperimentalPlugins(models.Manager):
     """
@@ -38,7 +38,7 @@ class ExperimentalPlugins(models.Manager):
     and with one "experimental" version
     """
     def get_query_set(self):
-        return super(ExperimentalPlugins, self).get_query_set().filter(pluginversion__approved=True, pluginversion__experimental=True).distinct()
+        return super(ExperimentalPlugins, self).get_query_set().filter(deprecated=False, pluginversion__approved=True, pluginversion__experimental=True).distinct()
 
 class FeaturedPlugins(models.Manager):
     """
@@ -46,7 +46,7 @@ class FeaturedPlugins(models.Manager):
     with one "stable" version and "featured" flag set
     """
     def get_query_set(self):
-        return super(FeaturedPlugins, self).get_query_set().filter(pluginversion__approved=True, featured=True, pluginversion__experimental=False).distinct()
+        return super(FeaturedPlugins, self).get_query_set().filter(deprecated=False, pluginversion__approved=True, featured=True, pluginversion__experimental=False).distinct()
 
 class FreshPlugins(models.Manager):
     """
@@ -59,14 +59,22 @@ class FreshPlugins(models.Manager):
         return super(FreshPlugins, self).__init__(*args, **kwargs)
 
     def get_query_set(self):
-        return super(FreshPlugins, self).get_query_set().filter(pluginversion__approved=True, modified_on__gte = datetime.datetime.now()- datetime.timedelta(days = self.days)).distinct()
+        return super(FreshPlugins, self).get_query_set().filter(deprecated=False, pluginversion__approved=True, modified_on__gte = datetime.datetime.now()- datetime.timedelta(days = self.days)).distinct()
 
 class UnapprovedPlugins(models.Manager):
     """
     Shows only unapproved plugins
     """
     def get_query_set(self):
-        return super(UnapprovedPlugins, self).get_query_set().filter(pluginversion__approved=False).distinct()
+        return super(UnapprovedPlugins, self).get_query_set().filter(deprecated=False, pluginversion__approved=False).distinct()
+
+
+class DeprecatedPlugins(models.Manager):
+    """
+    Shows only deprecated plugins
+    """
+    def get_query_set(self):
+        return super(DeprecatedPlugins, self).get_query_set().filter(deprecated=True).distinct()
 
 
 class PopularPlugins(ApprovedPlugins):
@@ -74,7 +82,7 @@ class PopularPlugins(ApprovedPlugins):
     Shows only unapproved plugins, sort by downloads
     """
     def get_query_set(self):
-        return super(PopularPlugins, self).get_query_set().order_by('-downloads').distinct()
+        return super(PopularPlugins, self).get_query_set().filter(deprecated=False ).order_by('-downloads').distinct()
 
 
 
@@ -84,7 +92,7 @@ class TaggablePlugins (TaggableManager):
     and with one "stable" version
     """
     def get_query_set(self):
-        return super(TaggablePlugnis, self).get_query_set().filter(pluginversion__approved=True, pluginversion__experimental=False).distinct()
+        return super(TaggablePlugnis, self).get_query_set().filter(deprecated=False, pluginversion__approved=True, pluginversion__experimental=False).distinct()
 
 class Plugin (models.Model):
     """
@@ -100,6 +108,10 @@ class Plugin (models.Model):
     # owners
     created_by      = models.ForeignKey(User, verbose_name=_('Created by'), related_name = 'plugins_created_by')
     homepage        = models.URLField(_('Plugin homepage'), verify_exists=False, blank=True, null=True)
+    # Support
+    repository      = models.URLField(_('Code repository'), verify_exists=False, blank=True, null=True)
+    tracker         = models.URLField(_('Tracker'), verify_exists=False, blank=True, null=True)
+
     owners          = models.ManyToManyField(User, null=True, blank=True)
 
     # name, desc etc.
@@ -114,6 +126,7 @@ class Plugin (models.Model):
 
     # Flags
     featured        = models.BooleanField(_('Featured'), default=False)
+    deprecated      = models.BooleanField(_('Deprecated'), default=False)
 
     # Managers
     objects                 = models.Manager()
@@ -123,6 +136,7 @@ class Plugin (models.Model):
     featured_objects        = FeaturedPlugins()
     fresh_objects           = FreshPlugins()
     unapproved_objects      = UnapprovedPlugins()
+    deprecated_objects      = DeprecatedPlugins()
     popular_objects         = PopularPlugins()
 
     tags                    = TaggableManager(blank=True)
@@ -308,7 +322,7 @@ class PluginVersion (models.Model):
             versions_to_check = versions_to_check.exclude(pk=self.pk)
         # Checks for unique_together
         if versions_to_check.filter(plugin=self.plugin, version=self.version).count() > 0:
-            raise ValidationError(unicode(_('Version value must be unique for this plugin.')))
+            raise ValidationError(unicode(_('Version value must be unique for this plugin: a version with same number already exists.')))
 
     class Meta:
         unique_together = ('plugin', 'version')

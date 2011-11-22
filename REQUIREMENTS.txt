@@ -49,3 +49,6 @@ django-tinymce
 
 
 git+git://github.com/qgis/qgis-snippets.git
+
+#Migrations
+south

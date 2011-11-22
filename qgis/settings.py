@@ -134,6 +134,7 @@ INSTALLED_APPS = (
     'feedjack',
     # For users app thumbs
     'sorl.thumbnail',
+    'south',
 )
 
 TEMPLATE_CONTEXT_PROCESSORS = (

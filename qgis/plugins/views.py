@@ -213,6 +213,20 @@ def plugin_upload(request):
                     'approved'          : request.user.has_perm('plugins.can_approve'),
                     'experimental'      : form.cleaned_data['experimental'],
                 }
+                # Other optional fields
+                if form.cleaned_data.get('homepage'):
+                    version_data['homepage'] = form.cleaned_data.get('homepage')
+                else:
+                    messages.warning(request, _('Homepage field is empty, this field is not required but is recommended, please consider adding it to metadata.'), fail_silently=True)
+                if form.cleaned_data.get('tracker'):
+                    version_data['tracker'] = form.cleaned_data.get('tracker')
+                else:
+                    messages.warning(request, _('Tracker field is empty, this field is not required but is recommended, please consider adding it to metadata.'), fail_silently=True)
+                if form.cleaned_data.get('repository'):
+                    version_data['repository'] = form.cleaned_data.get('repository')
+                else:
+                    messages.warning(request, _('Repository field is empty, this field is not required but is recommended, please consider adding it to metadata.'), fail_silently=True)
+
                 new_version = PluginVersion(**version_data)
                 new_version.save()
                 msg = _("The Plugin has been successfully created.")
@@ -241,6 +255,10 @@ def plugin_detail(request, package_name, **kwargs):
     Just a wrapper for clean urls
     """
     plugin = get_object_or_404(Plugin, package_name=package_name)
+    # Warnings for owners
+    if check_plugin_access(request.user, plugin) and not (plugin.homepage and plugin.tracker and plugin.repository):
+        msg = _("Some important informations are missing from the plugin metadata (homepage, tracker or repository). Please consider creating a project on <a href=\"http://hub.qgis.org\">hub.qgis.org</a> and filling the missing metadata.")
+        messages.warning(request, msg, fail_silently=True)
     return object_detail(request, object_id=plugin.pk, **kwargs)
 
 @login_required
@@ -278,6 +296,15 @@ def plugin_update(request, package_name):
                 new_object.owners.add(o)
             msg = _("The Plugin has been successfully updated.")
             messages.success(request, msg, fail_silently=True)
+
+            # Checks for optional metadata
+            if not form.cleaned_data.get('homepage'):
+                messages.warning(request, _('Homepage field is empty, this field is not required but is recommended, please consider adding it to metadata.'), fail_silently=True)
+            if not form.cleaned_data.get('tracker'):
+                messages.warning(request, _('Tracker field is empty, this field is not required but is recommended, please consider adding it to metadata.'), fail_silently=True)
+            if not form.cleaned_data.get('repository'):
+                messages.warning(request, _('Repository field is empty, this field is not required but is recommended, please consider adding it to metadata.'), fail_silently=True)
+
             return HttpResponseRedirect(new_object.get_absolute_url())
     else:
         form = PluginForm(instance = plugin)
@@ -476,7 +503,16 @@ def version_create(request, package_name):
                 plugin.tags.set(*form.cleaned_data.get('tags').split(','))
             if form.cleaned_data.get('homepage'):
                 plugin.homepage = form.cleaned_data.get('homepage')
-            # TODO: tacker, repository
+            else:
+                messages.warning(request, _('Homepage field is empty, this field is not required but is recommended, please consider adding it to metadata.'), fail_silently=True)
+            if form.cleaned_data.get('tracker'):
+                plugin.tracker = form.cleaned_data.get('tracker')
+            else:
+                messages.warning(request, _('Tracker field is empty, this field is not required but is recommended, please consider adding it to metadata.'), fail_silently=True)
+            if form.cleaned_data.get('repository'):
+                plugin.repository = form.cleaned_data.get('repository')
+            else:
+                messages.warning(request, _('Repository field is empty, this field is not required but is recommended, please consider adding it to metadata.'), fail_silently=True)
             plugin.save()
             return HttpResponseRedirect(new_object.plugin.get_absolute_url())
     else:
