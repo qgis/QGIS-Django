@@ -134,7 +134,6 @@ INSTALLED_APPS = (
     'feedjack',
     # For users app thumbs
     'sorl.thumbnail',
-    # RPC
 )
 
 TEMPLATE_CONTEXT_PROCESSORS = (
@@ -159,13 +158,16 @@ HAYSTACK_SEARCH_ENGINE = 'whoosh'
 # See http://docs.djangoproject.com/en/dev/topics/cache/
 CACHES = {
   'default': {
-  'BACKEND': 'django.core.cache.backends.dummy.DummyCache',
-  'LOCATION': 'cache_table',
+    'BACKEND': 'django.core.cache.backends.db.DatabaseCache',
+    #'BACKEND': 'django.core.cache.backends.dummy.DummyCache',
+    'LOCATION': 'cache_table',
   }
 }
-#CACHE_MIDDLEWARE_ALIAS = 'qgis'
-#CACHE_MIDDLEWARE_SECONDS = 600
-#CACHE_MIDDLEWARE_PREFIX = ''
+
+CACHE_MIDDLEWARE_SECONDS = 600
+CACHE_MIDDLEWARE_PREFIX = ''
+CACHE_MIDDLEWARE_ANONYMOUS_ONLY=True
+
 
 TAGGIT_TAGCLOUD_MIN=10
 TAGGIT_TAGCLOUD_MAX=30
