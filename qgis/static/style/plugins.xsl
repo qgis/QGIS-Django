@@ -123,6 +123,9 @@ Version: <xsl:value-of select="version" />
 <div class="branch">
 Experimental: <xsl:value-of select="experimental" />
 </div>
+<div class="branch">
+Deprecated: <xsl:value-of select="deprecated" />
+</div>
 <div class="author">
 Minimum QGIS Version: <xsl:value-of select="qgis_minimum_version" />
 </div>
@@ -135,6 +138,26 @@ Home page:
  <xsl:value-of select="homepage" />
 </xsl:element>
 </div>
+<div class="author">
+Tracker:
+<xsl:element name="a">
+ <xsl:attribute name="href">
+  <xsl:value-of select="tracker" />
+ </xsl:attribute>
+ <xsl:value-of select="tracker" />
+</xsl:element>
+</div>
+<div class="author">
+Repository:
+<xsl:element name="a">
+ <xsl:attribute name="href">
+  <xsl:value-of select="repository" />
+ </xsl:attribute>
+ <xsl:value-of select="repository" />
+</xsl:element>
+</div>
+
+
 </div>
 </xsl:for-each>
 </td>
