@@ -22,7 +22,8 @@ class ApprovedPlugins(models.Manager):
     and with at least one approved version ("stable" or "experimental")
     """
     def get_query_set(self):
-        return super(ApprovedPlugins, self).get_query_set().filter(deprecated=False, pluginversion__approved=True).distinct()
+        return super(ApprovedPlugins, self).get_query_set().filter(pluginversion__approved=True).distinct()
+
 
 class StablePlugins(models.Manager):
     """
@@ -30,7 +31,7 @@ class StablePlugins(models.Manager):
     and with one "stable" version
     """
     def get_query_set(self):
-        return super(StablePlugins, self).get_query_set().filter(deprecated=False, pluginversion__approved=True, pluginversion__experimental=False).distinct()
+        return super(StablePlugins, self).get_query_set().filter(pluginversion__approved=True, pluginversion__experimental=False).distinct()
 
 class ExperimentalPlugins(models.Manager):
     """
@@ -38,7 +39,7 @@ class ExperimentalPlugins(models.Manager):
     and with one "experimental" version
     """
     def get_query_set(self):
-        return super(ExperimentalPlugins, self).get_query_set().filter(deprecated=False, pluginversion__approved=True, pluginversion__experimental=True).distinct()
+        return super(ExperimentalPlugins, self).get_query_set().filter(pluginversion__approved=True, pluginversion__experimental=True).distinct()
 
 class FeaturedPlugins(models.Manager):
     """
@@ -46,7 +47,7 @@ class FeaturedPlugins(models.Manager):
     with one "stable" version and "featured" flag set
     """
     def get_query_set(self):
-        return super(FeaturedPlugins, self).get_query_set().filter(deprecated=False, pluginversion__approved=True, featured=True, pluginversion__experimental=False).distinct()
+        return super(FeaturedPlugins, self).get_query_set().filter(pluginversion__approved=True, featured=True, pluginversion__experimental=False).distinct()
 
 class FreshPlugins(models.Manager):
     """
@@ -59,14 +60,14 @@ class FreshPlugins(models.Manager):
         return super(FreshPlugins, self).__init__(*args, **kwargs)
 
     def get_query_set(self):
-        return super(FreshPlugins, self).get_query_set().filter(deprecated=False, pluginversion__approved=True, modified_on__gte = datetime.datetime.now()- datetime.timedelta(days = self.days)).distinct()
+        return super(FreshPlugins, self).get_query_set().filter(pluginversion__approved=True, modified_on__gte = datetime.datetime.now()- datetime.timedelta(days = self.days)).distinct()
 
 class UnapprovedPlugins(models.Manager):
     """
     Shows only unapproved plugins
     """
     def get_query_set(self):
-        return super(UnapprovedPlugins, self).get_query_set().filter(deprecated=False, pluginversion__approved=False).distinct()
+        return super(UnapprovedPlugins, self).get_query_set().filter(pluginversion__approved=False).distinct()
 
 
 class DeprecatedPlugins(models.Manager):
@@ -98,7 +99,6 @@ class Plugin (models.Model):
     """
     Plugins model
     # TODO: category, MPTT?
-    # TODO: links to Plugin's page, trac etc.
     """
 
     # dates

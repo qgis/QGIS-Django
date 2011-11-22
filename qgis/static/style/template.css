@@ -515,3 +515,8 @@ tr.odd td {
 p.error {
     color: red;
 }
+
+
+table.plugins tr.deprecated a{
+    color: red;
+}

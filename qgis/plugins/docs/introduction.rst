@@ -62,15 +62,15 @@ digit.
 Example from the `HelloWorld` plugin compressed zip file::
 
     Archive:  plugins/tests/HelloWorld/HelloWorld_1.2.zip
-    Length      Date    Time    Name
+    Length     Date       Time    Name
     ---------  ---------- -----   ----
-            0  2011-11-13 15:05   HelloWorld/
-        1304  2011-11-13 12:40   HelloWorld/icon.png
-        374  2011-11-13 15:05   HelloWorld/metadata.txt
-        1094  2011-11-13 12:40   HelloWorld/HelloWorld.py
-        396  2011-11-13 12:40   HelloWorld/__init__.py
+        0      2011-11-13 15:05   HelloWorld/
+        1304   2011-11-13 12:40   HelloWorld/icon.png
+        374    2011-11-13 15:05   HelloWorld/metadata.txt
+        1094   2011-11-13 12:40   HelloWorld/HelloWorld.py
+        396    2011-11-13 12:40   HelloWorld/__init__.py
     ---------                     -------
-        3168                     5 files
+        3168                      5 files
 
 
 
@@ -107,10 +107,13 @@ Example configuration file::
         ; these metadata can be empty
         ; in a future version of the web application it will
         ; be probably possible to create a project on redmine
-        ; if those fields are not filled
+        ; if they are not filled
         homepage=http://www.itopen.it
         tracker=http://bugs.itopen.it
         repository=http://www.itopen.it/repo
+
+        ; deprecated flag
+        deprecated=False
 
 Configuration
 =============
