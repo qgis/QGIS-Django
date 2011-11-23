@@ -636,9 +636,8 @@ def version_download(request, package_name, version):
     plugin.downloads = plugin.downloads + 1
     plugin.save(keep_date=True)
     response = HttpResponse(version.package.file, mimetype='application/zip')
-    response['Content-Disposition'] = 'attachment; filename=%s' % version.plugin.package_name
+    response['Content-Disposition'] = 'attachment; filename=%s-%s.zip' % (version.plugin.package_name, version.version)
     return response
-    #return HttpResponseRedirect(version.package.url)
 
 
 def version_detail(request, package_name, version):
