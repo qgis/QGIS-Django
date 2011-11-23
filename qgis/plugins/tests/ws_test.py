@@ -36,10 +36,11 @@ True
 
 """
 
-import xmlrpclib
-server = xmlrpclib.ServerProxy('http://admin:admin@localhost:8000/plugins/RPC2/')
+import xmlrpclib, sys
 
-print server.plugin.upload(xmlrpclib.Binary(open("/home/ale/public_html/qgis/HelloWorld.zip").read()))
+server = xmlrpclib.ServerProxy('http://admin:admin@localhost:8000/plugins/RPC2/', verbose=True)
+
+print server.plugin.upload(xmlrpclib.Binary(open(sys.argv[1]).read()))
 
 
-#print server.plugin.auth_test()
+#print server.plugin.test()

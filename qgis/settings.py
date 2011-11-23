@@ -192,7 +192,12 @@ TINYMCE_SPELLCHECKER = True
 TINYMCE_COMPRESSOR = True
 
 # Default number of items per page
-PAGINATION_DEFAULT_PAGINATION=20
+PAGINATION_DEFAULT_PAGINATION = 20
+
+# rpc4django
+RPC4DJANGO_LOG_REQUESTS_RESPONSES = False
+
+
 
 # auth overrids
 from settings_auth import *

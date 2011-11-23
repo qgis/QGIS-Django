@@ -347,28 +347,28 @@ class PluginVersion (models.Model):
         return self.__unicode__()
 
 
-class PluginCrashReport(models.Model):
-    """
-    Plugin crash report
-    Input:
-    IP
-    package_name
-    version
-    backtrace
-    qg_version
-    SO
-    """
+#class PluginCrashReport(models.Model):
+    #"""
+    #Plugin crash report
+    #Input:
+    #IP
+    #package_name
+    #version
+    #backtrace
+    #qg_version
+    #SO
+    #"""
 
-    # link to parent
-    plugin_version  = models.ForeignKey ( PluginVersion )
-    # dates
-    created_on      = models.DateTimeField(_('Created on'),  auto_now_add=True, editable=False )
-    created_by      = models.ForeignKey(User, blank=True, null=True, verbose_name=_('Created by'))
-    # version info, the first should be read from plugin
-    qg_version      = models.CharField(_('QGIS version'), max_length=32)
-    operating_system= models.CharField(_('Operating system'), max_length=15)
-    ip_address      = models.CharField(_('IP Address'), max_length=15)
-    backtrace       = models.TextField(_('Python backtrace'))
+    ## link to parent
+    #plugin_version  = models.ForeignKey ( PluginVersion )
+    ## dates
+    #created_on      = models.DateTimeField(_('Created on'),  auto_now_add=True, editable=False )
+    #created_by      = models.ForeignKey(User, blank=True, null=True, verbose_name=_('Created by'))
+    ## version info, the first should be read from plugin
+    #qg_version      = models.CharField(_('QGIS version'), max_length=32)
+    #operating_system= models.CharField(_('Operating system'), max_length=15)
+    #ip_address      = models.CharField(_('IP Address'), max_length=15)
+    #backtrace       = models.TextField(_('Python backtrace'))
 
 
 def delete_version_package(sender, instance, **kw):

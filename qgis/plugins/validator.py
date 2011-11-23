@@ -59,97 +59,96 @@ def validator(package):
         if package.len  > PLUGIN_MAX_UPLOAD_SIZE:
             raise ValidationError( _("File is too big. Max size is %s Bytes") % PLUGIN_MAX_UPLOAD_SIZE )
 
-    else:
-        try:
-            zip = zipfile.ZipFile( package )
-        except:
-            raise ValidationError( _("Could not unzip file.") )
-        for zname in zip.namelist():
-            if zname.find('..') != -1 or zname.find(os.path.sep) == 0 :
-                raise ValidationError( _("For security reasons, zip file cannot contain path informations") )
-        bad_file = zip.testzip()
-        if bad_file:
-            zip.close()
-            del zip
-            raise ValidationError( msg )
-
-        # Checks that package_name  exists
-        namelist = zip.namelist()
-        try:
-            package_name = namelist[0][:namelist[0].index('/')]
-        except:
-            raise ValidationError( _("Cannot find a folder inside the compressed package: this does not seems a valid plugin") )
-
-        # Cuts the trailing slash
-        if package_name.endswith('/'):
-            package_name = package_name[:-1]
-        initname = package_name + '/__init__.py'
-        metadataname = package_name + '/metadata.txt'
-        if not initname in namelist and not metadataname in namelist:
-            raise ValidationError(_('Cannot find __init__.py or metadata.txt in the compressed package: this does not seems a valid plugin (I searched for %s and )') % (initname, metadataname))
-
-        # Checks for __init__.py presence
-        if not initname in namelist:
-           raise ValidationError(_("Cannot find __init__.py in plugin package."))
-
-        # Checks metadata
-        metadata = []
-        # First parse metadata.ini
-        if metadataname in namelist:
-            try:
-                parser = ConfigParser.ConfigParser()
-                parser.optionxform = str
-                parser.readfp(StringIO.StringIO(zip.read(metadataname)))
-                if not parser.has_section('general'):
-                    raise ValidationError(_("Cannot find a section named 'general' in %s") % metadataname)
-                metadata.extend(parser.items('general'))
-            except Exception, e:
-                raise ValidationError(_("Errors parsing %s. %s") % (metadataname, e))
-            metadata.append(('metadata_source', 'metadata.txt'))
-        else:
-            # Then parse __init__
-            # Ugly RE: regexp guru wanted!
-            initcontent = zip.read(initname)
-            metadata.extend(_read_from_init(initcontent, initname))
-            if not metadata:
-                raise ValidationError(_('Cannot find valid metadata in %s') % initname)
-            metadata.append(('metadata_source', '__init__.py'))
-
-        _check_required_metadata(metadata)
-
-        # Process Icon
-        try:
-            # Strip leading dir for ccrook plugins
-            if dict(metadata)['icon'].startswith('./'):
-                icon_path = dict(metadata)['icon'][2:]
-            else:
-                icon_path = dict(metadata)['icon']
-            icon = zip.read(package_name + '/' + icon_path)
-            icon_file = SimpleUploadedFile(dict(metadata)['icon'], icon, mimetypes.guess_type(dict(metadata)['icon']))
-        except:
-            icon_file = None
-
-        metadata.append(('icon_file', icon_file))
-
-        # Adds package_name
-        if not re.match(r'^[A-Za-z][A-Za-z0-9-_]+$', package_name):
-            raise ValidationError(_("Package name must start with an ASCII letter and can contain ASCII letters, digits and the signs '-' and '_'."))
-        metadata.append(('package_name', package_name))
-
-        # Last temporary rule, check if mandatory metadata are also in __init__.py
-        # fails if it is not
-        min_qgs_version = dict(metadata).get('qgisMinimumVersion')
-        if tuple(min_qgs_version.split('.')) < tuple('1.8'.split('.')) and metadataname in namelist:
-            initcontent = zip.read(initname)
-            try:
-                initmetadata = _read_from_init(initcontent, initname)
-                initmetadata.append(('metadata_source', '__init__.py'))
-                _check_required_metadata(initmetadata)
-            except ValidationError, e:
-                raise ValidationError(_("qgisMinimumVersion is set to less than  1.8 (%s) and there were errors reading metadata from the __init__.py file. This can lead to errors in versions of QGIS less than 1.8, please either set the qgisMinimumVersion to 1.8 or specify the metadata also in the __init__.py file. Reported error was: %s") % (min_qgs_version, ','.join(e.messages)))
-
+    try:
+        zip = zipfile.ZipFile( package )
+    except:
+        raise ValidationError( _("Could not unzip file.") )
+    for zname in zip.namelist():
+        if zname.find('..') != -1 or zname.find(os.path.sep) == 0 :
+            raise ValidationError( _("For security reasons, zip file cannot contain path informations") )
+    bad_file = zip.testzip()
+    if bad_file:
         zip.close()
         del zip
+        raise ValidationError( msg )
+
+    # Checks that package_name  exists
+    namelist = zip.namelist()
+    try:
+        package_name = namelist[0][:namelist[0].index('/')]
+    except:
+        raise ValidationError( _("Cannot find a folder inside the compressed package: this does not seems a valid plugin") )
+
+    # Cuts the trailing slash
+    if package_name.endswith('/'):
+        package_name = package_name[:-1]
+    initname = package_name + '/__init__.py'
+    metadataname = package_name + '/metadata.txt'
+    if not initname in namelist and not metadataname in namelist:
+        raise ValidationError(_('Cannot find __init__.py or metadata.txt in the compressed package: this does not seems a valid plugin (I searched for %s and )') % (initname, metadataname))
+
+    # Checks for __init__.py presence
+    if not initname in namelist:
+        raise ValidationError(_("Cannot find __init__.py in plugin package."))
+
+    # Checks metadata
+    metadata = []
+    # First parse metadata.ini
+    if metadataname in namelist:
+        try:
+            parser = ConfigParser.ConfigParser()
+            parser.optionxform = str
+            parser.readfp(StringIO.StringIO(zip.read(metadataname)))
+            if not parser.has_section('general'):
+                raise ValidationError(_("Cannot find a section named 'general' in %s") % metadataname)
+            metadata.extend(parser.items('general'))
+        except Exception, e:
+            raise ValidationError(_("Errors parsing %s. %s") % (metadataname, e))
+        metadata.append(('metadata_source', 'metadata.txt'))
+    else:
+        # Then parse __init__
+        # Ugly RE: regexp guru wanted!
+        initcontent = zip.read(initname)
+        metadata.extend(_read_from_init(initcontent, initname))
+        if not metadata:
+            raise ValidationError(_('Cannot find valid metadata in %s') % initname)
+        metadata.append(('metadata_source', '__init__.py'))
+
+    _check_required_metadata(metadata)
+
+    # Process Icon
+    try:
+        # Strip leading dir for ccrook plugins
+        if dict(metadata)['icon'].startswith('./'):
+            icon_path = dict(metadata)['icon'][2:]
+        else:
+            icon_path = dict(metadata)['icon']
+        icon = zip.read(package_name + '/' + icon_path)
+        icon_file = SimpleUploadedFile(dict(metadata)['icon'], icon, mimetypes.guess_type(dict(metadata)['icon']))
+    except:
+        icon_file = None
+
+    metadata.append(('icon_file', icon_file))
+
+    # Adds package_name
+    if not re.match(r'^[A-Za-z][A-Za-z0-9-_]+$', package_name):
+        raise ValidationError(_("Package name must start with an ASCII letter and can contain ASCII letters, digits and the signs '-' and '_'."))
+    metadata.append(('package_name', package_name))
+
+    # Last temporary rule, check if mandatory metadata are also in __init__.py
+    # fails if it is not
+    min_qgs_version = dict(metadata).get('qgisMinimumVersion')
+    if tuple(min_qgs_version.split('.')) < tuple('1.8'.split('.')) and metadataname in namelist:
+        initcontent = zip.read(initname)
+        try:
+            initmetadata = _read_from_init(initcontent, initname)
+            initmetadata.append(('metadata_source', '__init__.py'))
+            _check_required_metadata(initmetadata)
+        except ValidationError, e:
+            raise ValidationError(_("qgisMinimumVersion is set to less than  1.8 (%s) and there were errors reading metadata from the __init__.py file. This can lead to errors in versions of QGIS less than 1.8, please either set the qgisMinimumVersion to 1.8 or specify the metadata also in the __init__.py file. Reported error was: %s") % (min_qgs_version, ','.join(e.messages)))
+
+    zip.close()
+    del zip
 
     return metadata
 
