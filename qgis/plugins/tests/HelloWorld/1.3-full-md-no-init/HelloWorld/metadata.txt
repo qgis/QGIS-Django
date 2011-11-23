@@ -1,0 +1,23 @@
+[general]
+name=HelloWorld
+qgisMinimumVersion=1.8
+description=This is a plugin for greeting the
+    (going multiline) world
+version=version 1.3
+
+
+changelog=this is a very
+    very<br/>
+    very
+    very
+    very
+    very long multiline changelog
+
+
+tags=wkt,raster,hello world
+
+tracker=http://bugs.itopen.it
+homepage=http://www.itopen.it
+repository=http://www.itopen.it/repo
+
+icon=icon.png

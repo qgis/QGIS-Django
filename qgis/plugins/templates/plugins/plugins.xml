@@ -14,6 +14,9 @@
         <create_date>{{ plugin.created_on.isoformat }}</create_date>
         <update_date>{{ plugin.stable.created_on.isoformat }}</update_date>
         <experimental>False</experimental>
+        <deprecated>{{ plugin.deprecated }}</deprecated>
+        <tracker>{{ plugin.tracker }}</tracker>
+        <repository>{{ plugin.repository }}</repository>
         <tags>{% for tag in plugin.tags.all %}{{ tag }}{% if not forloop.last %},{% endif %}{% endfor %}</tags>
     </pyqgis_plugin>{% endif %}{% if plugin.experimental %}
     <pyqgis_plugin name="{{plugin.name}}" version="{{ plugin.experimental.version }}">
@@ -30,5 +33,8 @@
         <update_date>{{ plugin.experimental.created_on.isoformat }}</update_date>
         <experimental>True</experimental>
         <tags>{% for tag in plugin.tags.all %}{{ tag }}{% if not forloop.last %},{% endif %}{% endfor %}</tags>
+        <deprecated>{{ plugin.deprecated }}</deprecated>
+        <tracker>{{ plugin.tracker }}</tracker>
+        <repository>{{ plugin.repository }}</repository>
     </pyqgis_plugin>{% endif %}{% endfor %}
 </plugins>
