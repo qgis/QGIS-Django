@@ -1,5 +1,8 @@
-# Custom middleware
+# Custom middleware to handle HTTP_AUTHORIZATION
+# Author: A. Pasotti
+
 from django.contrib.auth.models import User
+from django.contrib import auth
 
 
 class HttpAuthMiddleware:
@@ -10,11 +13,12 @@ class HttpAuthMiddleware:
         auth_basic = request.META.get('HTTP_AUTHORIZATION')
         if auth_basic:
             import base64
-            try:
-                username , dummy,  password = base64.decodestring(auth_basic[6:]).partition(':')
-                user = User.objects.get(username=username)
-                if user.check_password(password):
-                   request.user = user
-            except User.DoesNotExist:
-                pass
-        return None
+            username , dummy,  password = base64.decodestring(auth_basic[6:]).partition(':')
+
+            user = auth.authenticate(username=username, password=password)
+            if user:
+                # User is valid.  Set request.user and persist user in the session
+                # by logging the user in.
+                request.user = user
+                auth.login(request, user)
+

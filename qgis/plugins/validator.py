@@ -36,7 +36,7 @@ def _check_required_metadata(metadata):
     """
     for md in PLUGIN_REQUIRED_METADATA:
         if not md in dict(metadata) or not dict(metadata)[md]:
-            raise ValidationError(_('Cannot find metadata "%s" in metadata source (%s). Please bear in mind that the current implementation of the __init__.py validator is base on regular expressions, check that your metadata functions directly return metadata values as strings.') % (md, dict(metadata).get('metadata_source')))
+            raise ValidationError(_('Cannot find metadata "%s" in metadata source (%s). Please bear in mind that the current implementation of the __init__.py validator is based on regular expressions, check that your metadata functions directly return metadata values as strings.') % (md, dict(metadata).get('metadata_source')))
 
 
 def validator(package):

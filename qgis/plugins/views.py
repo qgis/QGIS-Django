@@ -200,6 +200,21 @@ def plugin_upload(request):
                     'created_by'        : request.user,
                     'icon'              : form.cleaned_data['icon_file'],
                 }
+
+                # Other optional fields
+                if form.cleaned_data.get('homepage'):
+                    plugin_data['homepage'] = form.cleaned_data.get('homepage')
+                else:
+                    messages.warning(request, _('Homepage field is empty, this field is not required but is recommended, please consider adding it to metadata.'), fail_silently=True)
+                if form.cleaned_data.get('tracker'):
+                    plugin_data['tracker'] = form.cleaned_data.get('tracker')
+                else:
+                    messages.warning(request, _('Tracker field is empty, this field is not required but is recommended, please consider adding it to metadata.'), fail_silently=True)
+                if form.cleaned_data.get('repository'):
+                    plugin_data['repository'] = form.cleaned_data.get('repository')
+                else:
+                    messages.warning(request, _('Repository field is empty, this field is not required but is recommended, please consider adding it to metadata.'), fail_silently=True)
+
                 new_plugin = Plugin(**plugin_data)
                 new_plugin.save()
                 plugin_notify(new_plugin)
@@ -213,19 +228,6 @@ def plugin_upload(request):
                     'approved'          : request.user.has_perm('plugins.can_approve'),
                     'experimental'      : form.cleaned_data['experimental'],
                 }
-                # Other optional fields
-                if form.cleaned_data.get('homepage'):
-                    version_data['homepage'] = form.cleaned_data.get('homepage')
-                else:
-                    messages.warning(request, _('Homepage field is empty, this field is not required but is recommended, please consider adding it to metadata.'), fail_silently=True)
-                if form.cleaned_data.get('tracker'):
-                    version_data['tracker'] = form.cleaned_data.get('tracker')
-                else:
-                    messages.warning(request, _('Tracker field is empty, this field is not required but is recommended, please consider adding it to metadata.'), fail_silently=True)
-                if form.cleaned_data.get('repository'):
-                    version_data['repository'] = form.cleaned_data.get('repository')
-                else:
-                    messages.warning(request, _('Repository field is empty, this field is not required but is recommended, please consider adding it to metadata.'), fail_silently=True)
 
                 new_version = PluginVersion(**version_data)
                 new_version.save()

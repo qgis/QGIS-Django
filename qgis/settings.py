@@ -63,12 +63,13 @@ MIDDLEWARE_CLASSES = (
     'django.middleware.csrf.CsrfResponseMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
+    # Needed by rpc4django
+    'plugins.middleware.HttpAuthMiddleware',
+    'django.contrib.auth.middleware.RemoteUserMiddleware',
     # ABP:
     'django_sorting.middleware.SortingMiddleware',
     'pagination.middleware.PaginationMiddleware',
     'django.contrib.flatpages.middleware.FlatpageFallbackMiddleware',
-    # Needed by rpc4django
-    'plugins.middleware.HttpAuthMiddleware',
     # Added by Tim for advanced loggin options
     'debug_toolbar.middleware.DebugToolbarMiddleware',
     'django.middleware.cache.FetchFromCacheMiddleware',
