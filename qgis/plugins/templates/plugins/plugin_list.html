@@ -30,8 +30,6 @@
     {# Filtered views menu #}
 
     {% if object_list.count %}
-    {% autosort object_list %}
-    {% autopaginate object_list per_page %}
     <div id="list_commands">
         <div class="num_items">{% blocktrans with records_count=paginator.count %}{{ records_count }} records found{% endblocktrans %}</div>
         <div class="toggle_desc"><a href="javascript:void(0);" onclick="jQuery('.plugin-description').toggle('slow');return false;">{% trans "Click to toggle descriptions." %}</a></div>
@@ -52,6 +50,8 @@
             </tr>
         </thead>
         <tbody>
+            {% autosort object_list %}
+            {% autopaginate object_list per_page %}
             {% for object in object_list %}
             <tr class="pmain {% cycle "even" "odd" %}{% if object.deprecated %} deprecated{% endif %}" id="pmain{{object.pk}}">
                 <td><a title="{% if object.deprecated %} [DEPRECATED] {% endif %}{% trans "Click here for plugin details" %}" href="{% url plugin_detail object.package_name %}"><img class="plugin-icon" src="{% if object.icon %}{{ object.icon.url }}{% else %}/static/images/qgis-icon-32x32.png{% endif %}" alt="{% trans "Plugin icon" %}" /></a></td>
@@ -71,10 +71,10 @@
         </tbody>
     </table>
     {% smart_paginate %}
+    <p>{% trans "Deprecated plugins are printed in red." %}</p>
     {% else %}
     {% block plugins_message %}
     <p>{% trans "This list is empty!" %}</p>
     {% endblock %}
     {% endif %}
-    <p>{% trans "Deprecated plugins are printed in red." %}</p>
 {% endblock %}
