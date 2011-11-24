@@ -35,12 +35,3 @@ True
 
 
 """
-
-import xmlrpclib, sys
-
-server = xmlrpclib.ServerProxy('http://admin:admin@localhost:8000/plugins/RPC2/', verbose=True)
-
-print server.plugin.upload(xmlrpclib.Binary(open(sys.argv[1]).read()))
-
-
-#print server.plugin.test()
