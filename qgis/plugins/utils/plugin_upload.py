@@ -7,8 +7,8 @@ import xmlrpclib, sys, os
 
 # Configuration
 PROTOCOL='http'
-SERVER='localhost'
-PORT='8000'
+SERVER='plugins.qgis.org'
+PORT='80'
 ENDPOINT='/plugins/RPC2/'
 VERBOSE=True
 
@@ -24,8 +24,9 @@ USERNAME=sys.argv[2]
 PASSWORD=sys.argv[3] 
 ADDRESS="%s://%s:%s@%s:%s%s" % (PROTOCOL, USERNAME, PASSWORD, SERVER, PORT, ENDPOINT)
 
+print "Connecting to: %s" % ADDRESS
 
-server = xmlrpclib.ServerProxy('http://admin:admin@localhost:8000/plugins/RPC2/', verbose=VERBOSE)
+server = xmlrpclib.ServerProxy(ADDRESS, verbose=VERBOSE)
 
 try:
     plugin_id, version_id = server.plugin.upload(xmlrpclib.Binary(open(sys.argv[1]).read()))
