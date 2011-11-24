@@ -52,3 +52,7 @@ git+git://github.com/qgis/qgis-snippets.git
 
 #Migrations
 south
+
+# RPC API
+rpc4django
+
