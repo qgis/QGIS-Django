@@ -31,7 +31,7 @@
 
     {% if object_list.count %}
     <div id="list_commands">
-        <div class="num_items">{% blocktrans with records_count=paginator.count %}{{ records_count }} records found{% endblocktrans %}</div>
+        <div class="num_items">{% blocktrans with records_count=object_list.count %}{{ records_count }} records found{% endblocktrans %}</div>
         <div class="toggle_desc"><a href="javascript:void(0);" onclick="jQuery('.plugin-description').toggle('slow');return false;">{% trans "Click to toggle descriptions." %}</a></div>
     </div>
     <table class="plugins">
