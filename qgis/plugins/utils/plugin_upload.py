@@ -14,11 +14,15 @@ VERBOSE=True
 
 # Do not edit below this line
 
-if len(sys.argv) != 4:
-    print "Usage: %s compressed_package username password" % os.path.basename(sys.argv[0])
+if len(sys.argv) < 4:
+    print "Usage: %s compressed_package username password [server port]" % os.path.basename(sys.argv[0])
     print ''
     print 'Uploads a QGIS plugin compressed package on the server'
     sys.exit()
+
+if len(sys.argv) == 6:
+    SERVER=sys.argv[4]
+    PORT=sys.argv[5]
 
 USERNAME=sys.argv[2]
 PASSWORD=sys.argv[3] 

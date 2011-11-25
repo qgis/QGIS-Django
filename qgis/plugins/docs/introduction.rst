@@ -50,7 +50,7 @@ The validation takes place in the PluginVersions forms, at loading time, the com
     * `version`
     * `qgisMinimumVersion`
 
-* in case of version editing or addition, `name` metadata must be equal to plugin's name
+
 * `version` must be unique whithin a plugin
 * there must be one and only *last* versions in each plugin's branch
 
@@ -111,8 +111,12 @@ Example configuration file::
         homepage=http://www.itopen.it
         tracker=http://bugs.itopen.it
         repository=http://www.itopen.it/repo
+        icon=icon.png
 
-        ; deprecated flag
+        ; experimental flag
+        experimental=True
+
+        ; deprecated flag (applies to the whole plugin and not only to the uploaded version)
         deprecated=False
 
 Configuration

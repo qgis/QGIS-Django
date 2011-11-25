@@ -15,10 +15,13 @@ from django.db import connection
 
 
 
-@rpcmethod(name='plugin.upload', signature=['struct', 'binary'], permission='plugins.add_plugin')
+@rpcmethod(name='plugin.upload', signature=['struct', 'array'], permission='plugins.add_plugin')
 def plugin_upload(package, **kwargs):
     """
     Creates a new plugin or updates an existing one
+
+    Returns an array containing the ID (primary key) of the plugin and the ID of the version.
+
     """
 
     try:
@@ -46,7 +49,7 @@ def plugin_upload(package, **kwargs):
             plugin.description  = plugin_data['description']
             plugin.icon         = plugin_data['icon']
             is_new = False
-        except Plugin.DoesNotExists:
+        except Plugin.DoesNotExist:
             plugin = Plugin(**plugin_data)
             is_new = True
 
@@ -57,6 +60,8 @@ def plugin_upload(package, **kwargs):
             plugin.tracker = cleaned_data.get('tracker')
         if cleaned_data.get('repository'):
             plugin.repository = cleaned_data.get('repository')
+        if cleaned_data.get('deprecated'):
+            plugin.deprecated = cleaned_data.get('deprecated')
 
         plugin.save()
 
@@ -67,7 +72,6 @@ def plugin_upload(package, **kwargs):
         if cleaned_data.get('tags'):
             plugin.tags.set(*cleaned_data.get('tags').split(','))
 
-        #import ipy; ipy.shell()
 
         version_data =  {
             'plugin'            : plugin,
@@ -78,8 +82,14 @@ def plugin_upload(package, **kwargs):
                                     "%s.zip" % plugin.package_name, 'application/zip',
                                     package.len, 'UTF-8'),
             'approved'          : request.user.has_perm('plugins.can_approve'),
-            'experimental'      : getattr(cleaned_data, 'experimental', False),
         }
+
+        # Optional version metadata
+        if cleaned_data.get('experimental'):
+            version_data['experimental'] = cleaned_data.get('experimental')
+        if cleaned_data.get('changelog'):
+            version_data['changelog'] = cleaned_data.get('changelog')
+
         new_version = PluginVersion(**version_data)
         new_version.save()
     except IntegrityError:

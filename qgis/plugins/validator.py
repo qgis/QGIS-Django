@@ -14,10 +14,12 @@ from django.utils.translation import ugettext_lazy as _
 from django.forms import ValidationError
 from django.core.files.uploadedfile import SimpleUploadedFile
 
-PLUGIN_MAX_UPLOAD_SIZE= getattr(settings, 'PLUGIN_MAX_UPLOAD_SIZE', 1048576)
-PLUGIN_REQUIRED_METADATA=  getattr(settings, 'PLUGIN_REQUIRED_METADATA', ('name', 'description', 'version', 'qgisMinimumVersion'))
+PLUGIN_MAX_UPLOAD_SIZE=getattr(settings, 'PLUGIN_MAX_UPLOAD_SIZE', 1048576)
+PLUGIN_REQUIRED_METADATA=getattr(settings, 'PLUGIN_REQUIRED_METADATA', ('name', 'description', 'version', 'qgisMinimumVersion'))
 
-PLUGIN_OPTIONAL_METADATA=  getattr(settings, 'PLUGIN_OPTIONAL_METADATA', ('homepage', 'changelog', 'tracker', 'repository', 'tags'))
+PLUGIN_OPTIONAL_METADATA=getattr(settings, 'PLUGIN_OPTIONAL_METADATA', ('homepage', 'changelog', 'tracker', 'repository', 'tags', 'deprecated', 'experimental'))
+PLUGIN_BOOLEAN_METADATA=getattr(settings, 'PLUGIN_BOOLEAN_METADATA', ('experimental', 'deprecated'))
+
 
 
 def _read_from_init(initcontent, initname):
@@ -129,6 +131,11 @@ def validator(package):
         icon_file = None
 
     metadata.append(('icon_file', icon_file))
+
+    # Transforms booleans flags (experimental and deprecated)
+    for flag in PLUGIN_BOOLEAN_METADATA:
+        if flag in dict(metadata):
+            metadata[metadata.index((flag, dict(metadata)[flag]))] = (flag, dict(metadata)[flag].lower() == 'true' or dict(metadata)[flag].lower() == '1')
 
     # Adds package_name
     if not re.match(r'^[A-Za-z][A-Za-z0-9-_]+$', package_name):
