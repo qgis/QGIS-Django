@@ -27,10 +27,13 @@
     <script type="text/javascript">
         function set_per_page(n){
             if(window.location.href.search('per_page') >= 0){
-                 window.location.href = window.location.href.replace(/per_page=\d+/, 'per_page=' + n);
+                 new_page = window.location.href.replace(/per_page=\d+/, 'per_page=' + n);
             } else {
-                window.location.href = -1 == window.location.href.search('\\?') ? window.location.href + '?' + 'per_page=' + n : window.location.href + '&' + 'per_page=' + n;
+                new_page = -1 == window.location.href.search('\\?') ? window.location.href + '?' + 'per_page=' + n : window.location.href + '&' + 'per_page=' + n;
             }
+            // Reset page
+            new_page = new_page.replace(/page=\d+/, 'page=1');
+            window.location.href = new_page;
         }
     </script>
     <div id="pagination_per_page">{% trans "Elements per page:" %}&nbsp;
