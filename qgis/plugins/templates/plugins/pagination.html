@@ -32,7 +32,8 @@
                 new_page = -1 == window.location.href.search('\\?') ? window.location.href + '?' + 'per_page=' + n : window.location.href + '&' + 'per_page=' + n;
             }
             // Reset page
-            new_page = new_page.replace(/page=\d+/, 'page=1');
+            new_page = new_page.replace(/&page=\d+/, '&page=1');
+            new_page = new_page.replace(/\?page=\d+/, '?page=1');
             window.location.href = new_page;
         }
     </script>
