@@ -2,28 +2,25 @@ from rpc4django import rpcmethod
 from xmlrpclib import Fault
 from plugins.models import *
 from validator import validator
-from django.contrib.auth.decorators import login_required, user_passes_test
 from django.db import IntegrityError
 from plugins.views import plugin_notify
 import StringIO
 
-from django.core.exceptions import ValidationError
+from django.core.exceptions import ValidationError, PermissionDenied
 from django.core.files.uploadedfile import InMemoryUploadedFile
 
 # Transaction
 from django.db import connection
 
-
-
-@rpcmethod(name='plugin.upload', signature=['struct', 'array'], permission='plugins.add_plugin')
+@rpcmethod(name='plugin.upload', signature=['array', 'base64'], login_required=True)
 def plugin_upload(package, **kwargs):
     """
+
     Creates a new plugin or updates an existing one
 
     Returns an array containing the ID (primary key) of the plugin and the ID of the version.
 
     """
-
     try:
         request = kwargs.get('request')
         package = StringIO.StringIO(package.data)
@@ -72,7 +69,6 @@ def plugin_upload(package, **kwargs):
         if cleaned_data.get('tags'):
             plugin.tags.set(*cleaned_data.get('tags').split(','))
 
-
         version_data =  {
             'plugin'            : plugin,
             'min_qg_version'    : cleaned_data['qgisMinimumVersion'],
@@ -81,7 +77,7 @@ def plugin_upload(package, **kwargs):
             'package'           : InMemoryUploadedFile(package, 'package',
                                     "%s.zip" % plugin.package_name, 'application/zip',
                                     package.len, 'UTF-8'),
-            'approved'          : request.user.has_perm('plugins.can_approve'),
+            'approved'          : request.user.has_perm('plugins.can_approve') or plugin.approved,
         }
 
         # Optional version metadata

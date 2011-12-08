@@ -54,5 +54,6 @@ git+git://github.com/qgis/qgis-snippets.git
 south
 
 # RPC API
-rpc4django
+# Use my fork of rpc4django to support login_required for methods
+git+git://github.com/elpaso/rpc4django.git
 

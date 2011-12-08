@@ -65,6 +65,12 @@ urlpatterns += patterns('',
     (r'^tinymce/', include('tinymce.urls')),
 )
 
+
+# Home
+urlpatterns += patterns('homepage',
+    (r'^$', 'homepage'),
+)
+
 simplemenu.register(
     '/admin/',
     '/planet/',

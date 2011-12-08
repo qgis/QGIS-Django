@@ -7,11 +7,6 @@
   <link type="text/css" href="/static/style/style.css" rel="stylesheet" />
   {% block extrajs %}{% endblock %}
   {% block extracss %}{% endblock %}
-  <script type="text/javascript">
-  /* <![CDATA[ */
-
-  /* ]]> */
-  </script>
 </head>
 <body id="page_bg" {% block onload %}{% endblock %}>
     <div id="main_bg">
@@ -44,9 +39,22 @@
                     {% endblock %}
                 </ul>
             </div>
+            <div id="search-div">
+            <form id="search-form" method="get" action="/search/">
+                <table>
+                <tr>
+                    <td><label for="id_q">Search:</label></td>
+                    <td><input type="text" name="q" id="id_q" style="width: 110px;" value="{{ request.GET.q }}" /></td>
+                    <td><input type="submit" value="Go" /></td>
+                </tr>
+                </table>
+            </form>
+            </div>
         </div>
         {% endblock %}
+        {% block leftbar %}
         <div id="leftcolumn">{% block menu %}&nbsp;{% endblock %}</div>
+        {% endblock %}
         <div id="maincolumn">
             {% if messages %}
             <ul class="messages">
@@ -60,7 +68,9 @@
             {% endblock %}
             </div>
         </div>
+        {% block rightbar %}
         <div id="rightcolumn"></div>
+        {% endblock %}
         <br clear="all" />
         <img id="main_bottom" src="/static/images/blue/bottom.png" alt="bottom" align="bottom" /></div>
 <p id="power_by" align="center">

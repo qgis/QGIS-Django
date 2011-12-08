@@ -19,7 +19,7 @@ These rules have been implemented:
 * every registered user can add a new plugin
 * *staff* users can approve or disapprove all plugin versions
 * users which have the special permission `plugins.can_approve` can approve their own plugins versions
-* users which have the special permission `plugins.can_approve` can approve versions in the plugins they own
+* users which have the special permission `plugins.can_approve` can approve versions of the plugins they own
 * a particular plugin can be deleted and edited only by *staff* users and owners
 * if a user without `plugins.can_approve` permission uploads a new version, the plugin version is unapproved.
 
@@ -77,7 +77,7 @@ Example from the `HelloWorld` plugin compressed zip file::
 Metadata
 --------
 
-Plugins mandatory metadata [#] are read from both the old `__init__.py` functions format
+Plugins mandatory metadata [#f1]_ are read from both the old `__init__.py` functions format
 and (if present) the new `metadata.txt` file.
 
 The new `metadata.txt` file can contain other optional metadata which are read when the package is uploaded and are automatically imported.

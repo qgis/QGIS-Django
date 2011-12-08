@@ -23,6 +23,21 @@
      }
      $('tr > th > a:contains("Featured")').html('<img src="/static/images/star_16.png" />');
    });
+
+    function toggle_desc(){
+        jQuery('.plugin-description').toggle('slow', function(){
+            jQuery.cookie('plugin-description-visible', jQuery('.plugin-description').is(':visible'));
+        });
+        return false;
+    }
+
+    // Start with descriptions visible
+    jQuery(function(){
+        if (jQuery.cookie('plugin-description-visible') == 'true'){
+            toggle_desc();
+        }
+    });
+
   </script>
 {% endblock %}
 {% block content %}
@@ -32,7 +47,7 @@
     {% if object_list.count %}
     <div id="list_commands">
         <div class="num_items">{% blocktrans with records_count=object_list.count %}{{ records_count }} records found{% endblocktrans %}</div>
-        <div class="toggle_desc"><a href="javascript:void(0);" onclick="jQuery('.plugin-description').toggle('slow');return false;">{% trans "Click to toggle descriptions." %}</a></div>
+        <div class="toggle_desc"><a href="javascript:void(0);" onclick="return toggle_desc()">{% trans "Click to toggle descriptions." %}</a></div>
     </div>
     <table class="plugins">
         <thead>

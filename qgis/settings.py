@@ -159,6 +159,8 @@ LOGIN_REDIRECT_URL='/'
 # Added by Tim for snippets (and possibly other site search support)
 HAYSTACK_SITECONF = 'search_sites'
 HAYSTACK_SEARCH_ENGINE = 'whoosh'
+HAYSTACK_WHOOSH_PATH = SITE_ROOT + '/search-index'
+
 
 # Added by Tim for database based caching
 # See http://docs.djangoproject.com/en/dev/topics/cache/

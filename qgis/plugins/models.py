@@ -272,12 +272,12 @@ class PluginVersion (models.Model):
     # version info, the first should be read from plugin
     min_qg_version  = models.CharField(_('Minimum QGIS version'), max_length=32)
     version         = models.CharField(_('Version'), max_length=32)
-    changelog       = models.TextField(_('Changelog'))
+    changelog       = models.TextField(_('Changelog'), null=True, blank=True)
 
     # the file!
     package         = models.FileField(_('Plugin package'), upload_to=PLUGINS_STORAGE_PATH)
     # Flags: checks on unique current/experimental are done in save() and possibly in the views
-    experimental    = models.BooleanField(_('Experimental flag'), default=False, help_text=_("Check this box if this version is experimental, leave unchecked if it's stable"))
+    experimental    = models.BooleanField(_('Experimental flag'), default=False, help_text=_("Check this box if this version is experimental, leave unchecked if it's stable."))
     approved        = models.BooleanField(_('Approved'), default=True, help_text=_('Set to false if you wish to unapprove the plugin version.'))
 
     @property
@@ -314,15 +314,23 @@ class PluginVersion (models.Model):
         from django.core.exceptions import ValidationError
 
         # Transforms the version
-        if self.version.rfind(' ') > 0:
-            self.version = self.version.rsplit(' ')[-1]
+        self.version = PluginVersion.clean_version(self.version)
 
         versions_to_check=PluginVersion.objects.filter(plugin=self.plugin, version=self.version)
         if self.pk:
             versions_to_check = versions_to_check.exclude(pk=self.pk)
         # Checks for unique_together
         if versions_to_check.filter(plugin=self.plugin, version=self.version).count() > 0:
-            raise ValidationError(unicode(_('Version value must be unique for this plugin: a version with same number already exists.')))
+            raise ValidationError(unicode(_('Version value must be unique among each plugin: a version with same number already exists.')))
+
+    @staticmethod
+    def clean_version(version):
+        """
+        Strips blanks and Version string
+        """
+        if version.rfind(' ') > 0:
+            version = version.rsplit(' ')[-1]
+        return version
 
     class Meta:
         unique_together = ('plugin', 'version')

@@ -1,6 +1,7 @@
 # Create your views here.
 from django.core.exceptions import NON_FIELD_ERRORS
 from django.db import IntegrityError
+from django.db import connection
 from django.db.models import Q
 from django.shortcuts import get_object_or_404, render_to_response
 from django.template import RequestContext
@@ -201,31 +202,49 @@ def plugin_upload(request):
                     'icon'              : form.cleaned_data['icon_file'],
                 }
 
+                # Gets existing plugin
+                try:
+                    plugin = Plugin.objects.get(package_name=plugin_data['package_name'])
+                    # Apply new values
+                    plugin.name         = plugin_data['name']
+                    plugin.description  = plugin_data['description']
+                    plugin.icon         = plugin_data['icon']
+                    is_new = False
+                except Plugin.DoesNotExist:
+                    plugin = Plugin(**plugin_data)
+                    is_new = True
+
                 # Other optional fields
                 if form.cleaned_data.get('homepage'):
-                    plugin_data['homepage'] = form.cleaned_data.get('homepage')
-                else:
+                    plugin.homepage = form.cleaned_data.get('homepage')
+                elif not plugin.homepage:
                     messages.warning(request, _('Homepage field is empty, this field is not required but is recommended, please consider adding it to metadata.'), fail_silently=True)
                 if form.cleaned_data.get('tracker'):
-                    plugin_data['tracker'] = form.cleaned_data.get('tracker')
-                else:
+                    plugin.tracker = form.cleaned_data.get('tracker')
+                elif not plugin.tracker:
                     messages.warning(request, _('Tracker field is empty, this field is not required but is recommended, please consider adding it to metadata.'), fail_silently=True)
                 if form.cleaned_data.get('repository'):
-                    plugin_data['repository'] = form.cleaned_data.get('repository')
-                else:
+                    plugin.repository = form.cleaned_data.get('repository')
+                elif not plugin.repository:
                     messages.warning(request, _('Repository field is empty, this field is not required but is recommended, please consider adding it to metadata.'), fail_silently=True)
 
-                new_plugin = Plugin(**plugin_data)
-                new_plugin.save()
-                plugin_notify(new_plugin)
+                plugin.save()
+
+                if is_new:
+                    plugin_notify(plugin)
+
+                # Takes care of tags
+                if form.cleaned_data.get('tags'):
+                    plugin.tags.set(*form.cleaned_data.get('tags').split(','))
+
 
                 version_data =  {
-                    'plugin'            : new_plugin,
+                    'plugin'            : plugin,
                     'min_qg_version'    : form.cleaned_data['qgisMinimumVersion'],
                     'version'           : form.cleaned_data['version'],
                     'created_by'        : request.user,
                     'package'           : form.cleaned_data['package'],
-                    'approved'          : request.user.has_perm('plugins.can_approve'),
+                    'approved'          : request.user.has_perm('plugins.can_approve') or plugin.approved,
                     'experimental'      : form.cleaned_data['experimental'],
                 }
 
@@ -241,10 +260,11 @@ def plugin_upload(request):
                     messages.warning(request, msg, fail_silently=True)
 
             except (IntegrityError, ValidationError), e:
+                connection.close()
                 messages.error(request, e, fail_silently=True)
-                if not new_plugin.pk:
+                if not plugin.pk:
                     return render_to_response('plugins/plugin_upload.html', { 'form' : form }, context_instance=RequestContext(request))
-            return HttpResponseRedirect(new_plugin.get_absolute_url())
+            return HttpResponseRedirect(plugin.get_absolute_url())
     else:
         form = PackageUploadForm()
 

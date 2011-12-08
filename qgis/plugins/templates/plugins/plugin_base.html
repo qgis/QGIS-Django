@@ -8,54 +8,44 @@
 {% block menu %}
 {{ block.super }}
 <div class="module_menu" id="new_plugin_button">
-    <div>
-        <div>
-            <h3><a href="{% url plugin_upload %}">{% trans "Share a plugin" %}</a></h3>
-        </div>
-    </div>
+    <h3><a href="{% url plugin_upload %}">{% trans "Share a plugin" %}</a></h3>
 </div>
 <div class="module_menu">
-    <div>
-        <div>
-            <h3>{% trans "Plugins" %}</h3>
-            <form method="get" action="/search/">
-              <table>
-                <tr>
-                  <td><label for="id_q">Search:</label></td>
-                  <td><input type="text" name="q" id="id_q" style="width: 110px;" value="{{ request.GET.q }}" /><input type="hidden" id="models" name="models" value="plugins.plugin" /></td>
-                  <td><input type="submit" value="Go" /></td>
-                </tr>
-              </table>
-            </form>
+    <h3>{% trans "Plugins" %}</h3>
+    <form method="get" action="/search/">
+        <table>
+        <tr>
+            <td><label for="id_q">Search:</label></td>
+            <td><input type="text" name="q" id="id_q" style="width: 110px;" value="{{ request.GET.q }}" /><input type="hidden" id="models" name="models" value="plugins.plugin" /></td>
+            <td><input type="submit" value="Go" /></td>
+        </tr>
+        </table>
+    </form>
 
-            <ul class="menu">
-                {% if user.is_authenticated %}
-                {% if user.plugin_set_count %}<li><a href="{% url my_plugins user %}">{% trans "My plugins" %}</a></li>{% endif %}
-                {% endif %}
-                {% if user.is_authenticated %}
-                <li class="authenticated"><a href="{% url my_plugins %}">{% trans "My plugins"%}</a></li>
-                {% endif %}
-                {% if user.is_staff %}
-                <li class="staff"><a href="{% url unapproved_plugins %}">{% trans "Unapproved"%}</a></li>
-                <li class="staff"><a href="{% url deprecated_plugins %}">{% trans "Deprecated"%}</a></li>
-                {% endif %}
-                <li><a href="{% url featured_plugins %}">{% trans "Featured "%}</a></li>
-                <li><a href="{% url approved_plugins %}">{% trans "All"%}</a></li>
-                <li><a href="{% url stable_plugins %}">{% trans "Stable"%}</a></li>
-                <li><a href="{% url experimental_plugins %}">{% trans "Experimental"%}</a></li>
-                <li><a href="{% url popular_plugins %}">{% trans "Popular" %}</a></li>
-            </ul>
-        </div>
-        <div>
-            <h3>{% trans "Plugin tags" %}</h3>
-            {% include_plugins_tagcloud 'plugins.plugin' %}
-        </div>
-         <div>
-            <h3>{% trans "About" %}</h3>
-            <ul><li>{% trans "This web application was developed by:" %}<a href="http://www.itopen.it"> Alessandro Pasotti</a></li></ul>
-        </div>
-   </div>
+    <ul class="menu">
+        {% if user.is_authenticated %}
+        {% if user.plugin_set_count %}<li><a href="{% url my_plugins user %}">{% trans "My plugins" %}</a></li>{% endif %}
+        {% endif %}
+        {% if user.is_authenticated %}
+        <li class="authenticated"><a href="{% url my_plugins %}">{% trans "My plugins"%}</a></li>
+        {% endif %}
+        {% if user.is_staff %}
+        <li class="staff"><a href="{% url unapproved_plugins %}">{% trans "Unapproved"%}</a></li>
+        <li class="staff"><a href="{% url deprecated_plugins %}">{% trans "Deprecated"%}</a></li>
+        {% endif %}
+        <li><a href="{% url featured_plugins %}">{% trans "Featured "%}</a></li>
+        <li><a href="{% url approved_plugins %}">{% trans "All"%}</a></li>
+        <li><a href="{% url stable_plugins %}">{% trans "Stable"%}</a></li>
+        <li><a href="{% url experimental_plugins %}">{% trans "Experimental"%}</a></li>
+        <li><a href="{% url popular_plugins %}">{% trans "Popular" %}</a></li>
+    </ul>
 </div>
-
-
+<div class="module_menu">
+    <h3>{% trans "Plugin tags" %}</h3>
+    {% include_plugins_tagcloud 'plugins.plugin' %}
+</div>
+<div class="module_menu">
+    <h3>{% trans "About" %}</h3>
+    <div class="menu">{% trans "This web application was developed by:" %}<a href="http://www.itopen.it"> Alessandro Pasotti</a></div>
+</div>
 {% endblock %}

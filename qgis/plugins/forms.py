@@ -27,7 +27,7 @@ class PluginVersionForm(ModelForm):
     Form for version upload on existing plugins
     """
     changelog = forms.fields.CharField(label=_('Changelog'), required=False,
-                help_text=_('Insert here a short description of the changes that have been made in this version. This field is mandatory and can be automatically read from the metadata.txt file.'), widget=forms.Textarea)
+                help_text=_('Insert here a short description of the changes that have been made in this version. This field is not mandatory and can be automatically read from the metadata.txt file.'), widget=forms.Textarea)
 
 
     def __init__(self, *args, **kwargs):
@@ -55,7 +55,7 @@ class PluginVersionForm(ModelForm):
 
         # Populate instance
         self.instance.min_qg_version = self.cleaned_data.get('qgisMinimumVersion')
-        self.instance.version        = self.cleaned_data.get('version')
+        self.instance.version        = PluginVersion.clean_version(self.cleaned_data.get('version'))
         # Also set changelog from metadata
         if self.cleaned_data.get('changelog'):
            self.instance.changelog = self.cleaned_data.get('changelog')
@@ -69,7 +69,7 @@ class PackageUploadForm(forms.Form):
     """
     Single step upload for new plugins
     """
-    package = forms.FileField(_('QGIS compressed plugin package'), label=_('Plugin package'), help_text=_('Please select the zipped file of the new plugin.'))
+    package = forms.FileField(_('QGIS compressed plugin package'), label=_('Plugin package'), help_text=_('Please select the zipped file of the plugin.'))
     experimental = forms.BooleanField(required=False, label=_('Experimental'), help_text=_('Please check this box if the plugin is experimental.'))
 
     def clean_package(self):
@@ -81,11 +81,18 @@ class PackageUploadForm(forms.Form):
             msg = unicode(_("There were errors reading plugin package (please check also your plugin's metadata)."))
             raise ValidationError("%s %s" % (msg, ','.join(e.messages)))
 
-        if Plugin.objects.filter(package_name = self.cleaned_data['package_name']).count():
-            raise ValidationError(_('A plugin with this package name (%s) already exists. To update an existing plugin, you should open the plugin\'s details view and add a new version from there.') % self.cleaned_data['package_name'])
+        # Disabled: now the PackageUploadForm also accepts updates
+        #if Plugin.objects.filter(package_name = self.cleaned_data['package_name']).count():
+        #    raise ValidationError(_('A plugin with this package name (%s) already exists. To update an existing plugin, you should open the plugin\'s details view and add a new version from there.') % self.cleaned_data['package_name'])
 
-        if Plugin.objects.filter(name = self.cleaned_data['name']).count():
-            raise ValidationError(_('A plugin with this name (%s) already exists.') % self.cleaned_data['name'])
+        #if Plugin.objects.filter(name = self.cleaned_data['name']).count():
+        #    raise ValidationError(_('A plugin with this name (%s) already exists.') % self.cleaned_data['name'])
+
+        self.cleaned_data['version'] = PluginVersion.clean_version(self.cleaned_data['version'])
+
+        # Checks for version
+        if Plugin.objects.filter(package_name=self.cleaned_data['package_name'], pluginversion__version=self.cleaned_data['version']).count():
+            raise ValidationError(_('A plugin with this name (%s) and version number (%s) already exists.') % (self.cleaned_data['name'], self.cleaned_data['version']))
 
         return package
 

@@ -94,12 +94,21 @@ table.highlighttable td.linenos {
 
 .centered, .wp-caption-text { text-align: center; }
 
-pre, .wp-caption-text { 
-      background: #f8f2f0; 
-      border 1px solid daccc8;
+pre, .wp-caption-text {
+      background: #f8f2f0;
+      border: 1px solid #daccc8;
       padding-bottom: 0.5em;
     }
 
 #pagination_per_page {
  display: inline;
+}
+
+.plugin-description {
+    display: none;
+}
+
+#search-div {
+    float:right;
+    margin-top: 7px;
 }

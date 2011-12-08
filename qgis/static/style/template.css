@@ -169,17 +169,17 @@ div#user4{
 	padding-left:3px;
 	width: 199px;
 	float:left;
-#	background:url(../images/left_shadow.png) top right no-repeat;
+	/*background:url(../images/left_shadow.png) top right no-repeat;*/
 }
 
 
 #rightcolumn{
 	margin: 0px;
-	padding: 0px;
+	padding: 7px;
 	padding-left:5px;
-	width: 197px;
+	width: 191px;
 	float:right;
-#	background:url(../images/right_shadow.png) top left no-repeat;
+	/*background:url(../images/right_shadow.png) top left no-repeat;*/
 }
 
 /*change to 2-column layout*/
@@ -333,7 +333,7 @@ ul.newsfeed li a{
         padding:0px 10px 0px 10px;
 }
 
-ul.menu {
+ul.menu, div.module_menu div.menu, div.tag_cloud{
 	padding:10px 0px 10px 15px;
 	margin:0px;
 	background-color:#fff;
@@ -520,3 +520,4 @@ p.error {
 table.plugins tr.deprecated a{
     color: red;
 }
+
