@@ -1,6 +1,7 @@
 {% extends 'plugins/plugin_base.html' %}{% load i18n sorting_tags pagination_tags humanize smart_paginate %}
 {% block extrajs %}
   <script type="text/javascript" src="/static/js/jquery-1.5.1.min.js"></script>
+  <script type="text/javascript" src="/static/js/jquery.cookie.js"></script>
   <script language="javascript">
    $(document).ready(function () {
      if ($('tr > th > a:contains("Downloads ↓")'))
