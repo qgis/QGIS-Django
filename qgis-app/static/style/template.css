@@ -97,11 +97,8 @@ div#user4{
 	border: 1px solid #D3D3D3;
 }
 
-.advancedsearch {
-	text-align:center;
-	padding-right:45px;
-	margin-top:-15px;
-	font-size:10px;
+.advancedsearch ul li {
+    display: inline;
 }
 
 #user3{

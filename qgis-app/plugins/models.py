@@ -334,7 +334,7 @@ class PluginVersion (models.Model):
 
     class Meta:
         unique_together = ('plugin', 'version')
-        ordering = ('plugin',  'version', '-created_on' , 'experimental')
+        ordering = ('plugin',  '-version', 'experimental')
 
     def get_absolute_url(self):
         return reverse('version_detail', args=(self.plugin.package_name, self.version,))
