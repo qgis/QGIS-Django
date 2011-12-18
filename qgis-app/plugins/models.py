@@ -47,7 +47,7 @@ class FeaturedPlugins(models.Manager):
     with one "stable" version and "featured" flag set
     """
     def get_query_set(self):
-        return super(FeaturedPlugins, self).get_query_set().filter(pluginversion__approved=True, featured=True, pluginversion__experimental=False).distinct()
+        return super(FeaturedPlugins, self).get_query_set().filter(pluginversion__approved=True, featured=True, pluginversion__experimental=False).order_by('-created_on').distinct()
 
 class FreshPlugins(models.Manager):
     """
@@ -60,7 +60,7 @@ class FreshPlugins(models.Manager):
         return super(FreshPlugins, self).__init__(*args, **kwargs)
 
     def get_query_set(self):
-        return super(FreshPlugins, self).get_query_set().filter(pluginversion__approved=True, modified_on__gte = datetime.datetime.now()- datetime.timedelta(days = self.days)).distinct()
+        return super(FreshPlugins, self).get_query_set().filter(pluginversion__approved=True, modified_on__gte = datetime.datetime.now()- datetime.timedelta(days = self.days)).order_by('-created_on').distinct()
 
 class UnapprovedPlugins(models.Manager):
     """
@@ -194,7 +194,7 @@ class Plugin (models.Model):
         return [l for l in self.editors if l.has_perm('plugins.can_approve')]
 
     class Meta:
-        ordering = ('featured', 'name' , 'modified_on')
+        ordering = ('name',)
         # ABP: Note: this permission should belong to the
         # PluginVersion class. I left it here because it
         # doesn't really matters where it is. Just be
