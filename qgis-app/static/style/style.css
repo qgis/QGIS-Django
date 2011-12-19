@@ -112,3 +112,7 @@ pre, .wp-caption-text {
     float:right;
     margin-top: 7px;
 }
+
+.fieldWrapper input[type=text] {
+    width: 100%;
+}
