@@ -189,6 +189,7 @@ def plugin_upload(request):
     """
     This is the "single step" way to create new plugins:
     uploads a package and creates a new Plugin with a new PluginVersion
+    can also update an existing plugin
     """
     if request.method == 'POST':
         form = PackageUploadForm(request.POST, request.FILES)
@@ -237,15 +238,15 @@ def plugin_upload(request):
                 if form.cleaned_data.get('tags'):
                     plugin.tags.set(*form.cleaned_data.get('tags').split(','))
 
-
                 version_data =  {
                     'plugin'            : plugin,
-                    'min_qg_version'    : form.cleaned_data['qgisMinimumVersion'],
-                    'version'           : form.cleaned_data['version'],
+                    'min_qg_version'    : form.cleaned_data.get('qgisMinimumVersion'),
+                    'version'           : form.cleaned_data.get('version'),
                     'created_by'        : request.user,
-                    'package'           : form.cleaned_data['package'],
+                    'package'           : form.cleaned_data.get('package'),
                     'approved'          : request.user.has_perm('plugins.can_approve') or plugin.approved,
-                    'experimental'      : form.cleaned_data['experimental'],
+                    'experimental'      : form.cleaned_data.get('experimental'),
+                    'changelog'         : form.cleaned_data.get('changelog', ''),
                 }
 
                 new_version = PluginVersion(**version_data)

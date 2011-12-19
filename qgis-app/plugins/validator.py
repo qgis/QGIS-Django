@@ -156,6 +156,5 @@ def validator(package):
 
     zip.close()
     del zip
-
     return metadata
 
