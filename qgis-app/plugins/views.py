@@ -658,7 +658,7 @@ def version_download(request, package_name, version):
     plugin = version.plugin
     plugin.downloads = plugin.downloads + 1
     plugin.save(keep_date=True)
-    if version.package.file.file.closed:
+    if not version.package.file.file.closed:
         version.package.file.file.close()
     zipfile = open(version.package.file.name, 'rb')
     file_content = zipfile.read()
