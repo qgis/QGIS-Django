@@ -46,22 +46,33 @@ class PluginVersionForm(ModelForm):
         fields = ('package', 'experimental', 'approved', 'changelog')
 
     def clean(self):
-        package         = self.cleaned_data.get('package')
-        try:
-            self.cleaned_data.update(validator(package))
-        except ValidationError, e:
-            msg = unicode(_("There were errors reading plugin package (please check also your plugin's metadata)."))
-            raise ValidationError("%s %s" % (msg, ','.join(e.messages)))
+        """
+        Only read package if uploaded
+        """
 
-        # Populate instance
-        self.instance.min_qg_version = self.cleaned_data.get('qgisMinimumVersion')
-        self.instance.version        = PluginVersion.clean_version(self.cleaned_data.get('version'))
+        # Override package
+        changelog = self.cleaned_data.get('changelog')
+
+        if self.files:
+            package         = self.cleaned_data.get('package')
+            try:
+                self.cleaned_data.update(validator(package))
+            except ValidationError, e:
+                msg = unicode(_("There were errors reading plugin package (please check also your plugin's metadata)."))
+                raise ValidationError("%s %s" % (msg, ','.join(e.messages)))
+            # Populate instance
+            self.instance.min_qg_version = self.cleaned_data.get('qgisMinimumVersion')
+            self.instance.version        = PluginVersion.clean_version(self.cleaned_data.get('version'))
+            # Check plugin name
+            if self.cleaned_data.get('package_name') and self.cleaned_data.get('package_name') != self.instance.plugin.package_name:
+                raise ValidationError(_('Plugin name mismatch: the plugin main folder name in the compressed file (%s) is different from the original plugin package name (%s).') % (self.cleaned_data.get('package_name'), self.instance.plugin.package_name))
+
         # Also set changelog from metadata
-        if self.cleaned_data.get('changelog'):
-           self.instance.changelog = self.cleaned_data.get('changelog')
-        # Check plugin name
-        if self.cleaned_data.get('package_name') and self.cleaned_data.get('package_name') != self.instance.plugin.package_name:
-            raise ValidationError(_('Plugin name mismatch: the plugin main folder name in the compressed file (%s) is different from the original plugin package name (%s).') % (self.cleaned_data.get('package_name'), self.instance.plugin.package_name))
+        if changelog:
+            self.cleaned_data['changelog'] = changelog
+
+        self.instance.changelog = self.cleaned_data.get('changelog')
+
         return super(PluginVersionForm, self).clean()
 
 
