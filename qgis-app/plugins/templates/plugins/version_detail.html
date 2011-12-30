@@ -17,15 +17,35 @@
         <li><a class="delete" href="{% url version_delete version.plugin.package_name version.version %}">{% trans "Delete" %}</a></li>
         {% endif %}
         <li><a href="{% url plugin_detail version.plugin.package_name %}">{% trans "Plugin details" %}</a></li>
-        {% if user.is_staff and not version.plugin.trusted and not version.plugin.created_by.is_staff %}<li><a href="{% url user_trust version.plugin.pk %}">{% trans "Trust author" %}</a></li>{% endif %}
-        {% if user.is_staff and version.plugin.trusted and not version.plugin.created_by.is_staff %}<li><a href="{% url user_untrust version.plugin.pk %}">{% trans "Untrust author" %}</a></li>{% endif %}
-        {% if user.is_staff and not version.created_by.is_staff and version.created_by.is_active %}
-        <li><a href="{% url user_block version.created_by %}">{% trans "Block author" %}</a></li>
-        {% endif %}
         {% if user.is_staff or user in version.plugin.approvers %}
         {% if not version.approved %}<li><a href="{% url version_approve version.plugin.package_name version.version %}">{% trans "Approve" %}</a></li>{% endif %}
         {% if version.approved %}<li><a href="{% url version_unapprove version.plugin.package_name version.version %}">{% trans "Unapprove" %}</a>
         </li>{% endif %}
         {% endif %}
     </ul>
+    {% if user.is_staff or user in version.plugin.approvers %}
+    <h3>{% trans "Admin actions" %}</h3>
+    <div>
+        <form method="post" action="{% url version_manage version.plugin.package_name version.version %}">
+            <ul class="actions">
+                <li>{% if not version.approved %}<input type="submit" name="version_approve" id="version_approve" value="{% trans "Approve this version" %}" />&nbsp;{% else %}<input type="submit" name="version_unapprove" id="version_unapprove" value="{% trans "Unapprove this version" %}" />{% endif %}</li>
+            </ul>
+        </form>
+        {% if user.is_staff %}
+        <form method="post" action="{% url user_permissions_manage version.plugin.created_by.username %}">
+            <ul class="actions">
+                {% if version.created_by.is_active %}
+                <li><input type="submit" id="user_block" name="user_block" value="{% trans "Block author" %}" /></li>{% else %}
+                    <li><input type="submit" id="user_unblock" name="user_unblock" value="{% trans "Unblock author" %}" /></li>
+                {% endif %}
+                {% if version.created_by.is_active %}
+                {% if not version.plugin.trusted %}<li><input type="submit" id="user_trust" name="user_trust" value="{% trans "Trust author" %}" /></li>{% else %}
+                <li><input type="submit" id="user_untrust" name="user_untrust" value="{% trans "Untrust author" %}" /></li>{% endif %}
+                {% endif %}
+            </ul>
+        </form>
+        {% endif %}
+    </div>
+
+    {% endif %}
 {% endblock %}
