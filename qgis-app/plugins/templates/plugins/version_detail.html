@@ -17,11 +17,6 @@
         <li><a class="delete" href="{% url version_delete version.plugin.package_name version.version %}">{% trans "Delete" %}</a></li>
         {% endif %}
         <li><a href="{% url plugin_detail version.plugin.package_name %}">{% trans "Plugin details" %}</a></li>
-        {% if user.is_staff or user in version.plugin.approvers %}
-        {% if not version.approved %}<li><a href="{% url version_approve version.plugin.package_name version.version %}">{% trans "Approve" %}</a></li>{% endif %}
-        {% if version.approved %}<li><a href="{% url version_unapprove version.plugin.package_name version.version %}">{% trans "Unapprove" %}</a>
-        </li>{% endif %}
-        {% endif %}
     </ul>
     {% if user.is_staff or user in version.plugin.approvers %}
     <h3>{% trans "Admin actions" %}</h3>
