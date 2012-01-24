@@ -6,6 +6,8 @@ from django.db import IntegrityError
 from plugins.views import plugin_notify
 import StringIO
 
+
+from django.utils.translation import ugettext_lazy as _
 from django.core.exceptions import ValidationError, PermissionDenied
 from django.core.files.uploadedfile import InMemoryUploadedFile
 
