@@ -9,7 +9,7 @@ The Plugin model
 
 The plugin model represents a QGIS plugin and holds general informations such as title and description and icon.
 
-The plugin can have zero or more owners, owners have the same permissions of the original creator.
+The plugin can have zero or more *owners*, *owners* have the same permissions of the original plugin creator.
 
 Permissions
 -----------
@@ -18,10 +18,10 @@ These rules have been implemented:
 
 * every registered user can add a new plugin
 * *staff* users can approve or disapprove all plugin versions
-* users which have the special permission `plugins.can_approve` can approve their own plugins versions
-* users which have the special permission `plugins.can_approve` can approve versions of the plugins they own
-* a particular plugin can be deleted and edited only by *staff* users and owners
-* if a user without `plugins.can_approve` permission uploads a new version, the plugin version is unapproved.
+* users which have the special permission `plugins.can_approve` get the versions they upload automatically approved
+* users which have the special permission `plugins.can_approve` can approve versions uploaded by others as long as they are in the list of the plugin *owners*
+* a particular plugin can be deleted and edited only by *staff* users and plugin *owners*
+* if a user without `plugins.can_approve` permission uploads a new version, the plugin version is automatically unapproved.
 
 
 Trust management
@@ -29,7 +29,7 @@ Trust management
 
 Staff members can grant *trust* to selected plugin creators setting `plugins.can_approve` permission through the front-end application.
 
-The plugin details view offers direct links to grant trust to the plugin creator or the plugin owners.
+The plugin details view offers direct links to grant trust to the plugin creator or the plugin *owners*.
 
 
 The PluginVersion model
@@ -79,6 +79,8 @@ Metadata
 
 Plugins mandatory metadata [#f1]_ are read from both the old `__init__.py` functions format
 and (if present) the new `metadata.txt` file.
+
+To avoid direct execution of python code (which would be a security issue), metadata are read from the `__init__.py` file with a simple regular expression parser which extracts the string values returned by the functions inside the `__init__.py` file, this means that if the functions do not return strings (enclosed in single or double quotes), the metadata entry for that function will not be extracted and if the metadata is mandatory the plugin will be considered invalid.
 
 The new `metadata.txt` file can contain other optional metadata which are read when the package is uploaded and are automatically imported.
 
