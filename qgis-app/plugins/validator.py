@@ -57,7 +57,7 @@ def validator(package):
     try:
         if package.size > PLUGIN_MAX_UPLOAD_SIZE:
             raise ValidationError( _("File is too big. Max size is %s Bytes") % PLUGIN_MAX_UPLOAD_SIZE )
-    except:
+    except AttributeError:
         if package.len  > PLUGIN_MAX_UPLOAD_SIZE:
             raise ValidationError( _("File is too big. Max size is %s Bytes") % PLUGIN_MAX_UPLOAD_SIZE )
 
