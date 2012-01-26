@@ -44,10 +44,10 @@ class ExperimentalPlugins(models.Manager):
 class FeaturedPlugins(models.Manager):
     """
     Shows only public featured stable plugins: i.e. those with "approved" flag set
-    with one "stable" version and "featured" flag set
+    and "featured" flag set
     """
     def get_query_set(self):
-        return super(FeaturedPlugins, self).get_query_set().filter(pluginversion__approved=True, featured=True, pluginversion__experimental=False).order_by('-created_on').distinct()
+        return super(FeaturedPlugins, self).get_query_set().filter(pluginversion__approved=True, featured=True).order_by('-created_on').distinct()
 
 class FreshPlugins(models.Manager):
     """
@@ -90,10 +90,9 @@ class PopularPlugins(ApprovedPlugins):
 class TaggablePlugins (TaggableManager):
     """
     Shows only public plugins: i.e. those with "approved" flag set
-    and with one "stable" version
     """
     def get_query_set(self):
-        return super(TaggablePlugnis, self).get_query_set().filter(deprecated=False, pluginversion__approved=True, pluginversion__experimental=False).distinct()
+        return super(TaggablePlugnis, self).get_query_set().filter(deprecated=False, pluginversion__approved=True).distinct()
 
 class Plugin (models.Model):
     """
