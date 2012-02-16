@@ -216,18 +216,19 @@ def plugin_upload(request):
                     is_new = True
 
                 # Other optional fields
+                warnings = []
                 if form.cleaned_data.get('homepage'):
                     plugin.homepage = form.cleaned_data.get('homepage')
                 elif not plugin.homepage:
-                    messages.warning(request, _('Homepage field is empty, this field is not required but is recommended, please consider adding it to metadata.'), fail_silently=True)
+                    warnings.append(_('<strong>homepage</strong> field is empty, this field is not required but is recommended, please consider adding it to metadata.'))
                 if form.cleaned_data.get('tracker'):
                     plugin.tracker = form.cleaned_data.get('tracker')
                 elif not plugin.tracker:
-                    messages.warning(request, _('Tracker field is empty, this field is not required but is recommended, please consider adding it to metadata.'), fail_silently=True)
+                    warnings.append(_('<strong>tracker</strong> field is empty, this field is not required but is recommended, please consider adding it to metadata.'))
                 if form.cleaned_data.get('repository'):
                     plugin.repository = form.cleaned_data.get('repository')
                 elif not plugin.repository:
-                    messages.warning(request, _('Repository field is empty, this field is not required but is recommended, please consider adding it to metadata.'), fail_silently=True)
+                    warnings.append(_('<strong>repository</strong> field is empty, this field is not required but is recommended, please consider adding it to metadata.'))
 
                 plugin.save()
 
@@ -255,10 +256,15 @@ def plugin_upload(request):
                 messages.success(request, msg, fail_silently=True)
                 if not request.user.has_perm('plugins.can_approve'):
                     msg = _("Your plugin is awaiting approval from a staff member and will be approved as soon as possible.")
-                    messages.warning(request, msg, fail_silently=True)
+                    warnings.append(msg)
                 if not  form.cleaned_data.get('metadata_source') == 'metadata.txt':
                     msg = _("Your plugin does not contain a metadata.txt file, metadata have been read from the __init__.py file. This is deprecated and its support will eventually cease.")
-                    messages.warning(request, msg, fail_silently=True)
+                    warnings.append(msg)
+
+                # Grouped messages:
+                if warnings:
+                    messages.warning(request, _('<p><strong>Warnings:</strong></p>') + '\n'.join(["<p>%s</p>" % unicode(w) for w in warnings]), fail_silently=True)
+
 
             except (IntegrityError, ValidationError), e:
                 connection.close()

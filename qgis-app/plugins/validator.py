@@ -27,10 +27,10 @@ def _read_from_init(initcontent, initname):
     Read metadata from __init__.py, raise ValidationError
     """
     metadata = []
-    metadata.extend(re.findall('def\s+([^c]\w+).*?return\s+["\'](.*?)["\']', initcontent , re.DOTALL))
+    metadata.extend(re.findall('def\s+([^c]\w+).*?return\s+.*?(?P<quote>["\'])(.*?)(?P=quote)', initcontent , re.DOTALL))
     if not metadata:
         raise ValidationError(_('Cannot find valid metadata in %s') % initname)
-    return metadata
+    return [(md[0], md[2]) for md in metadata]
 
 def _check_required_metadata(metadata):
     """
