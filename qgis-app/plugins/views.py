@@ -61,7 +61,7 @@ def plugin_approve_notify(plugin, msg):
         approval_state = 'approval'
         approved_state = 'approved'
     else:
-        approval_state = 'disapproval'
+        approval_state = 'unapproval'
         approved_state = 'unapproved'
 
     if len(recipients):
@@ -384,11 +384,11 @@ def tags_plugins(request, tags):
     return plugins_list(request, queryset, extra_context = { 'title' : _('Plugins with tag "%s"') % tags})
 
 
-@staff_required
+@login_required
 @require_POST
 def plugin_manage(request, package_name):
     """
-    Entry point for the user management functions
+    Entry point for the plugin management functions
     """
     if request.POST.get('set_featured'):
         return plugin_set_featured(request, package_name)
@@ -589,7 +589,7 @@ def version_delete(request, package_name, version):
 
 
 
-@staff_required
+@login_required
 @require_POST
 def version_approve(request, package_name, version):
     """
@@ -613,7 +613,7 @@ def version_approve(request, package_name, version):
     return HttpResponseRedirect(redirect_to)
 
 
-@staff_required
+@login_required
 @require_POST
 def version_unapprove(request, package_name, version):
     """
@@ -638,7 +638,7 @@ def version_unapprove(request, package_name, version):
 
 
 
-@staff_required
+@login_required
 @require_POST
 def version_manage(request, package_name, version):
     """
