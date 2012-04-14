@@ -1,4 +1,5 @@
-django>=1.2
+#django>=1.2
+django==1.3
 #django-registration
 django-debug-toolbar
 django-extensions
@@ -56,4 +57,10 @@ south
 # RPC API
 # Use my fork of rpc4django to support login_required for methods
 git+git://github.com/elpaso/rpc4django.git
+
+# For Pootle
+http://sourceforge.net/projects/translate/files/Translate%20Toolkit/1.9.0/translate-toolkit-1.9.0.tar.bz2/download
+lxml
+
+
 

@@ -1,0 +1,3 @@
+[submodule "pootle"]
+	path = pootle
+	url = git@github.com:capooti/pootle.git

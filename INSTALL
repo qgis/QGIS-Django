@@ -27,7 +27,6 @@ For a readonly checkout do:
   sudo easy_install virtualenv
   virtualenv --no-site-packages python
   source python/bin/activate
-  easy_install pip
   pip install -r REQUIREMENTS.txt
 
 
@@ -172,7 +171,30 @@ To install as a cron, use the following (adjust the paths for your site):
 
     */2 * * * * /home/web/qgis-django/update_planet.sh 1>>/tmp/planet_update.log 2>>/tmp/planet_update.err
 
+  6. Pootle Installation
+  ======================
+  
+Pootle is included in the qgis-django project as a git submodule.
+To replicate the structure, we can include it in the same manner in the git 
+project::
 
+   git submodule add git@github.com:capooti/pootle.git pootle
+   git submodule
+   git submodule init pootle
+   git submodule update pootle
+   git status
+   git commit -m "Import pootle as a git submodule" -a
+   git push
+
+To obtain updates to the pootle submodule, the procedure is:
+
+   cd <your sphinx project>/pootle
+   git pull
+   cd ..
+
+Then commit the fact that the submodule now tracks a different SHA1::
+
+   git commit -am "Updates pootle to latest version"
 
 
 
