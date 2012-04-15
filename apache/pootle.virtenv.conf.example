@@ -1,0 +1,34 @@
+<VirtualHost *>
+  ServerAdmin tim@linfiniti.com 
+  ServerName translation.localhost
+  ServerAlias www.translation.localhost
+  DocumentRoot /var/www
+  CustomLog /var/log/apache2/translation.access.log combined
+  # Possible values include: debug, info, notice, warn, error, crit,
+  # alert, emerg.
+  LogLevel debug 
+  #warn
+  ErrorLog /var/log/apache2/translation.error.log
+  ServerSignature Off
+  WSGIScriptAlias / /home/web/qgis-django/apache/pootle.wsgi
+  WSGIDaemonProcess pootle user=timlinux group=timlinux processes=1 threads=10 python-path=/home/web/qgis-django/python/lib/python2.6/site-packages
+  WSGIProcessGroup qgis-django
+  <Directory /home/web/qgis-django/apache>
+    Order deny,allow
+    Allow from all
+  </Directory>
+
+  Alias /media /home/web/qgis-django/python/lib/python2.6/site-packages/django/contrib/admin/media/
+  <Location /media>
+    Order deny,allow
+    Allow from all
+    SetHandler None
+  </Location>
+
+  Alias /static /home/web/qgis-django/qgis/static
+  <Location /static>
+    Order deny,allow
+    Allow from all
+    SetHandler None
+  </Location>
+</VirtualHost>
