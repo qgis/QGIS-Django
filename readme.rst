@@ -27,7 +27,8 @@ For the terminally lazy
 
 For a readonly checkout do::
 
-  sudo apt-get install libldap2-dev libsasl2-dev python-gdal
+  sudo apt-get install libldap2-dev libsasl2-dev python-gdal libxml2-dev \
+      libxslt-dev
   git clone git@github.com:qgis/qgis-django.git
   cd qgis-django
   sudo easy_install virtualenv
@@ -86,7 +87,7 @@ Then run the createdb script::
 Modify settings_local.py to include the correct username and pwd for the
 db connection and then sync the database::
 
-  cd qgis
+  cd qgis-app
   python manage.py syncdb
 
 Then run the project using the embedded test server::
