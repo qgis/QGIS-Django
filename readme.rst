@@ -179,6 +179,13 @@ To obtain updates to the pootle submodule, the procedure is:
    git pull
    cd ..
 
+Create a virtual env, activate it and install requirements::
+
+    virtualenv --no-site-packages --python=python2.5 pootle_env
+    . pootle_env/bin/activate
+    sudo apt-get install libxml2-dev libxslt-dev
+    pip install -r REQUIREMENTS.txt
+
 Then commit the fact that the submodule now tracks a different SHA1::
 
    git commit -am "Updates pootle to latest version"
