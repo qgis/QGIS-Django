@@ -196,7 +196,7 @@ command (note that the first time that the Pootle server will be started the
 database will be synced)::
 
   cd pootle
-  ./PootleServer --port=8000
+  ./manage runserver
 
 Then point your browser at::
 
