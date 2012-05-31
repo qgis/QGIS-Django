@@ -1,0 +1,16 @@
+import os
+import sys
+
+ROOT_DIR = '/home/capooti/git/github/qgis/qgis-django'
+APP_DIR = '/home/capooti/git/github/qgis/qgis-django/pootle'
+sys.path.insert(0, ROOT_DIR)
+sys.path.insert(0, APP_DIR)
+
+import site
+VE_DIR = '/home/capooti/git/github/qgis/qgis-django/pootle/pootle_env/lib/python2.6/site-packages'
+site.addsitedir(VE_DIR)
+
+import django.core.handlers.wsgi
+os.environ['DJANGO_SETTINGS_MODULE'] = 'pootle.settings'
+application = django.core.handlers.wsgi.WSGIHandler()
+

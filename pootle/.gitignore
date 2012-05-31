@@ -1,0 +1,4 @@
+*.pyc
+dbs/pootle.db
+pootle_env
+

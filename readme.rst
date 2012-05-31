@@ -160,35 +160,12 @@ Pootle
 Installation
 ------------
 
-Pootle is included in the qgis-django project as a git submodule and is a
-Django project.
-To replicate the structure, we can include it in the same manner in the git 
-project::
-
-   git submodule add git@github.com:capooti/pootle.git pootle
-   git submodule
-   git submodule init pootle
-   git submodule update pootle
-   git status
-   git commit -m "Import pootle as a git submodule" -a
-   git push
-
-To obtain updates to the pootle submodule, the procedure is:
-
-   cd <your sphinx project>/pootle
-   git pull
-   cd ..
-
 Create a virtual env, activate it and install requirements::
 
     virtualenv --no-site-packages --python=python2.5 pootle_env
     . pootle_env/bin/activate
     sudo apt-get install libxml2-dev libxslt-dev
     pip install -r REQUIREMENTS.txt
-
-Then commit the fact that the submodule now tracks a different SHA1::
-
-   git commit -am "Updates pootle to latest version"
    
 Modify pootle/settings.py to include the correct username and pwd for the
 db connection and then stat the Pootle server with the ./PootleServer
@@ -208,7 +185,7 @@ Deploying a live site using wsgi
 We need to configure Apache for having wsgi support::
 
   cd /etc/apache/sites-available
-  sudo cp <path to qgis-django>/apache/pootle.virtenv.conf.example 
+  sudo cp <path to qgis-django>/pootle/pootle.virtenv.conf.example 
     pootle.conf
 
 Now modify pootle.conf to your needs (making sure paths and web url are 

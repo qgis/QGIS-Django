@@ -1,0 +1,34 @@
+{% extends "admin_profile_base.html" %}
+{% load i18n baseurl %}
+
+{% block title %}
+{{ block.super }} » {% trans "General Settings" %}
+{% endblock %}
+
+{% block bodyclass %}admingeneral{% endblock %}
+
+{% block breadcrumb_content %}
+{{ block.super }} » {% trans "General Settings" %}
+{% endblock %}
+
+{% block section_description %}{% trans "Configure here the general settings for your site." %}{% endblock %}
+
+{% block section_body %}
+<div id="settings">
+<form action="" method="post">
+  {{ form.non_field_errors }}
+    {% for field in form %}
+    <p> {{ field.errors }}
+        {{ field.label_tag }}
+        {{ field }}
+        {% if field.help_text %}
+        <span class="help_text">{{ field.help_text }}</span>
+        {% endif %}
+    </p>
+    {% endfor %}
+    <p class="admin-buttons-block">
+      <input type="submit" class="save" value='{% trans "Save" %}' />
+    </p>
+</form>
+</div>
+{% endblock %}
