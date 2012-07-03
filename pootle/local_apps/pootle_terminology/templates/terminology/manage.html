@@ -1,0 +1,68 @@
+{% extends "tp_base_terminology.html" %}
+{% load i18n render_pager baseurl store_tags terminology_tags %}
+{% get_current_language as LANGUAGE_CODE %}
+{% get_current_language_bidi as LANGUAGE_BIDI %}
+
+{% block css %}
+{{ block.super }}
+<link rel="stylesheet" type="text/css" href='{{ "translate.css"|m }}' />
+{% endblock css %}
+
+{% block extra_head %}
+<script src='{{ "js/jquery/jquery.textarea-expander.js"|m }}' type="text/javascript"></script>
+<script type="text/javascript">
+  $(document).ready (function() {
+     $('textarea.expanding').TextAreaExpander('10', '100');
+  });
+</script>
+{% endblock extra_head %}
+
+{% block content %}
+{% if formset %}
+<div class="settings-container centered">
+  <p class="message"><a href='{{ "terminology_extract.html"|l }}'>{% trans "You can regenerate the glossary from scratch." %}</a></p>
+
+  <div class="translation-nav">
+  {{ objects|render_pager }}
+  </div>
+
+  <div class="translate-form">
+    <form action="" method="post">
+      {{ formset.management_form }}
+      <table cellpadding="0" cellspacing="0" class="translate-table" dir="{% if LANGUAGE_BIDI %}rtl{% else %}ltr{% endif %}">
+      <tr lang="{{ LANGUAGE_CODE }}">
+        <th colspan="1" rowspan="1" class="translate-table-title translate-original">{% trans "Term" %}</th>
+        <th colspan="1" rowspan="1" class="translate-table-title translate-translation">{% trans "Translation" %}</th>
+        <th colspan="1" rowspan="1" class="translate-table-title translate-edit">{% trans "Delete" %}</th>
+      </tr>
+      {% for form in formset.forms %}
+      <tr class="{% cycle 'even' 'odd' %}">
+        {% render_term_edit form %}
+        <td class="translate-delete-terminology">{% for hidden_field in form.hidden_fields %}{{ hidden_field }}{% endfor %}
+          {{ form.DELETE }}
+        </td>
+      </tr>
+      {% endfor %}
+      </table>
+      <p class="common-buttons-block">
+        <input type="submit" class="save" name="submit" value="{% trans "Save Changes" %}" />
+      </p>
+    </form>
+  </div>
+
+  <div class="translation-nav">
+  {{ objects|render_pager }}
+  </div>
+</div>
+{% else %}
+<div class="general-message" lang="{{ LANGUAGE_CODE }}">
+  <h2>{% trans "Glossary is Empty" %}</h2>
+  <p><a href="{{ "terminology_extract.html"|l }}">{% trans "Generate Glossary" %}</a></p>
+</div>
+{% endif %}
+{% endblock content %}
+
+{% block scripts_extra %}
+{{ block.super }}
+<script src="{{ "js/translatepage.js"|m }}" type="text/javascript"></script>
+{% endblock %}

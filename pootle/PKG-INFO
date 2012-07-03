@@ -1,0 +1,25 @@
+Metadata-Version: 1.0
+Name: Pootle
+Version: 2.1.6
+Summary: An online collaborative localization tool.
+Home-page: http://translate.sourceforge.net/wiki/pootle/index
+Author: Translate.org.za
+Author-email: translate-devel@lists.sourceforge.net
+License: GNU General Public License (GPL)
+Download-URL: http://sourceforge.net/projects/translate/files/Pootle/
+Description: Pootle is used to create program translations.
+        
+        It uses the Translate Toolkit to get access to translation files and therefore
+        can edit a variety of files (including PO and XLIFF files).
+Platform: any
+Classifier: Development Status :: 5 - Production/Stable
+Classifier: Environment :: Web Environment
+Classifier: Intended Audience :: Developers
+Classifier: Intended Audience :: End Users/Desktop
+Classifier: Intended Audience :: Information Technology
+Classifier: License :: OSI Approved :: GNU General Public License (GPL)
+Classifier: Programming Language :: Python
+Classifier: Topic :: Software Development :: Localization
+Classifier: Topic :: Text Processing :: LinguisticOperating System :: OS Independent
+Classifier: Operating System :: Microsoft :: Windows
+Classifier: Operating System :: Unix

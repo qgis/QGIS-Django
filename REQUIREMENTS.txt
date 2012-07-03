@@ -22,7 +22,7 @@ django-simple-ratings
 django-taggit
 django-taggit-templatetags
 django-haystack
-whoosh
+whoosh==1.8.4 # with latest version there is an error (in production we have 1.4.1)
 # pip install django-amazon-resources <-- no such package have to manual install
 # Dont's use this - see INSTALL notes
 #git+git://github.com/coleifer/djangosnippets.org.git

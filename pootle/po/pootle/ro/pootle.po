@@ -1,0 +1,3082 @@
+# Romanian translation of pootle.
+# Copyright (C) 2007 Zuza Software Foundation (Translate.org.za)
+# This file is distributed under the same license as the Pootle package.
+# Alexandru Szasz <alexxed@gmail.com>, 2007.
+# 
+# 
+msgid ""
+msgstr ""
+"Project-Id-Version: Pootle 0.11\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2010-08-03 02:17+0200\n"
+"PO-Revision-Date: 2011-02-26 21:18+0200\n"
+"Last-Translator: BMN <bmn_antyc@yahoo.com>\n"
+"Language-Team: Romanian\n"
+"Language: ro\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=3; plural=(n==1 ? 0 : (n==0 || (n%100 > 0 && n%100 < "
+"20)) ? 1 : 2);\n"
+"X-Generator: Pootle 2.1.5\n"
+
+#: strings.py:8
+msgid ""
+"Hold down \"Control\", or \"Command\" on a Mac, to select more than one."
+msgstr ""
+"Țineți apăsată tasta \"Control\", sau \"Command\" la un calculator Mac, pentru a "
+"selecta mai mult de unul."
+
+#: strings.py:9
+msgid "Enter a valid e-mail address."
+msgstr "Introduceți o adresă de e-mail validă."
+
+#: strings.py:10
+msgid ""
+"That e-mail address doesn't have an associated user account. Are you sure "
+"you've registered?"
+msgstr ""
+"Adresa de e-mail nu are asociată un cont de utilizator. Sunteți sigur că "
+"v-ați înregistrat?"
+
+#: strings.py:11
+msgid "This field is required."
+msgstr "Acest câmp este obligatoriu."
+
+#: strings.py:12
+#, python-format
+msgid "Ensure this value has at most %(max)d characters (it has %(length)d)."
+msgstr ""
+"Asigurați-vă că această valoare are cel mult %(max)d caractere (are %"
+"(length)d ."
+
+#: strings.py:13
+msgid "Save and add another"
+msgstr "Salvează și adaugă încă unul"
+
+#: strings.py:14
+msgid "Save and continue editing"
+msgstr "Salvează și continuă redactarea"
+
+#: strings.py:15
+msgid "Add"
+msgstr "Adaugă"
+
+#: strings.py:16
+msgid "Change"
+msgstr "Modifică"
+
+#. l10n: This is a constructed string that might end up saying "Add language" or "Add project". If you need to translate that differently, you might want to try to translate it as "Add an entry to the %(name)s table" or "Add an object of type "%(name)s".
+#: strings.py:19
+#, python-format
+msgid "Add %(name)s"
+msgstr "Adaugă %(name)s"
+
+#. l10n: This link takes the user to the page where the currently configured option is displayed (such as a project or language)
+#: strings.py:22
+msgid "View on site"
+msgstr "Vizualizează pe pagină"
+
+#: strings.py:24
+msgid "first name"
+msgstr "prenumele"
+
+#: strings.py:25
+msgid "last name"
+msgstr "numele (de familie)"
+
+#: strings.py:26
+msgid "e-mail address"
+msgstr "Adresă e-mail"
+
+#: strings.py:27
+msgid "active"
+msgstr "activ"
+
+#. l10n: Please translate this simply as "Administrator". This string is needed by Django, but 'superuser' is very technical and should be avoided.
+#: strings.py:30
+msgid "superuser status"
+msgstr "starea contului de Administrator"
+
+#. l10n: The language from which translation will happen
+#: strings.py:33 local_apps/pootle_app/views/admin/adminprojects.py:43
+#: local_apps/pootle_project/models.py:64
+msgid "Source Language"
+msgstr "Limba sursă"
+
+#: strings.py:35
+msgid "Android strings"
+msgstr "Șiruri de caractere Android"
+
+#: external_apps/contact_form_i18n/forms.py:143
+msgid "Your name"
+msgstr "Numele dumneavoastră"
+
+#: external_apps/contact_form_i18n/forms.py:146
+msgid "Your email address"
+msgstr "Adresa dumneavoastră de e-mail"
+
+#: external_apps/contact_form_i18n/forms.py:148
+msgid "Your message"
+msgstr "Mesajul dumneavoastră"
+
+#: external_apps/djblets/siteconfig/templates/siteconfig/settings.html:17
+msgid "Please correct the error below."
+msgid_plural "Please correct the errors below."
+msgstr[0] "Vă rugăm să corectaţi eroarea de mai jos."
+msgstr[1] "Vă rugăm să corectaţi erorile de mai jos."
+msgstr[2] ""
+
+#: external_apps/djblets/siteconfig/templates/siteconfig/settings.html:23
+msgid "The settings have been saved."
+msgstr "Configurările au fost salvate."
+
+#: external_apps/djblets/siteconfig/templates/siteconfig/settings.html:54
+#: local_apps/pootle_app/templates/admin/admin_general_settings.html:29
+#: templates/profiles/edit_personal.html:34
+#: templates/profiles/edit_profile.html:25
+msgid "Save"
+msgstr "Salvează"
+
+#: external_apps/registration/forms.py:36
+msgid "username"
+msgstr "utilizator"
+
+#: external_apps/registration/forms.py:39
+msgid "email address"
+msgstr "adresă e-mail"
+
+#: external_apps/registration/forms.py:41
+msgid "password"
+msgstr "parola"
+
+#: external_apps/registration/forms.py:43
+msgid "password (again)"
+msgstr "parola (încă o dată)"
+
+#: external_apps/registration/forms.py:55
+msgid "This username is already taken. Please choose another."
+msgstr "Acest nume de utilizator este deja folosit. Vă să alegeți altul."
+
+#: external_apps/registration/forms.py:67
+msgid "You must type the same password each time"
+msgstr "Trebuie să introduceți aceeași parolă de fiecare dată"
+
+#: external_apps/registration/forms.py:90
+msgid "I have read and agree to the Terms of Service"
+msgstr "Am citit și sunt de acord cu Termenii de folosire ai Serviciului"
+
+#: external_apps/registration/forms.py:107
+msgid ""
+"This email address is already in use. Please supply a different email "
+"address."
+msgstr ""
+"Această adresă de e-mail este deja folosită. Vă rog să furnizați o adresă de "
+"e-mail diferită."
+
+#: external_apps/registration/forms.py:133
+msgid ""
+"Registration using free email addresses is prohibited. Please supply a "
+"different email address."
+msgstr ""
+"Înregistrarea prin intermediul unei adrese de e-mail gratis este interzisă. "
+"Vă rog să furnizați o adresă de e-mail diferită."
+
+#: external_apps/registration/models.py:218
+msgid "user"
+msgstr "utilizator"
+
+#: external_apps/registration/models.py:219
+msgid "activation key"
+msgstr "cheia de activare"
+
+#: external_apps/registration/models.py:224
+msgid "registration profile"
+msgstr "profilul înregistrat"
+
+#: external_apps/registration/models.py:225
+msgid "registration profiles"
+msgstr "profilele înregistrate"
+
+#: local_apps/pootle_app/admin.py:41
+msgid "Language code does not follow the ISO convention"
+msgstr "Codurile de limbă nu urmează convenția ISO"
+
+#: local_apps/pootle_app/admin.py:67
+msgid "Project code may only contain letters, numbers and _"
+msgstr "Codul proiectului poate să conțină numai litere, cifre și _"
+
+#: local_apps/pootle_app/admin.py:79
+msgid "Advanced Options"
+msgstr "Opțiuni avansate"
+
+#: local_apps/pootle_app/forms.py:28
+msgid "Title"
+msgstr "Titlu"
+
+#: local_apps/pootle_app/forms.py:29
+msgid "The name for this Pootle server"
+msgstr "Denumirea acestui server Pootle"
+
+#: local_apps/pootle_app/forms.py:34
+msgid "Description"
+msgstr "Descriere"
+
+#: local_apps/pootle_app/forms.py:35
+msgid ""
+"The description and instructions shown on the front page and about page. Be "
+"sure to use valid HTML."
+msgstr ""
+"Descrierea și instrucțiunile care sunt afișate pe prima pagină și pe pagina "
+"\"Despre\".  Asigurați-vă că folosiți cod HTML valabil."
+
+#: local_apps/pootle_app/management/__init__.py:72
+msgid "Can view a translation project"
+msgstr "Poate afișa un proiect de traducere"
+
+#: local_apps/pootle_app/management/__init__.py:74
+msgid "Can make a suggestion for a translation"
+msgstr "Poate face o sugestie pentru traducere"
+
+#: local_apps/pootle_app/management/__init__.py:76
+msgid "Can submit a translation"
+msgstr "Poate prezenta o traducere"
+
+#: local_apps/pootle_app/management/__init__.py:78
+msgid "Can overwrite translations on uploading files"
+msgstr "Poate suprascrie traducerile în fișierele de încărcat"
+
+#: local_apps/pootle_app/management/__init__.py:80
+msgid "Can review translations"
+msgstr "Poate revizui traducerile"
+
+#: local_apps/pootle_app/management/__init__.py:82
+msgid "Can download archives of translation projects"
+msgstr "Poate descărca arhive ale proiectelor de traducere"
+
+#: local_apps/pootle_app/management/__init__.py:84
+msgid "Can administrate a translation project"
+msgstr "Poate administra un proiect de traducere"
+
+#: local_apps/pootle_app/management/__init__.py:86
+msgid "Can commit to version control"
+msgstr "Poate conduce către controlul versiunii"
+
+#: local_apps/pootle_app/models/suggestion.py:33
+msgid "Pending"
+msgstr "În așteptare"
+
+#: local_apps/pootle_app/models/suggestion.py:34
+msgid "Accepted"
+msgstr "Acceptat"
+
+#: local_apps/pootle_app/models/suggestion.py:35
+msgid "Rejected"
+msgstr "Respins"
+
+#: local_apps/pootle_app/templates/top_contributers_table.html:7
+msgid "Top Contributors"
+msgstr "Clasamentul colaboratorilor"
+
+#: local_apps/pootle_app/templates/translation_summary_legend.html:6
+#: local_apps/pootle_app/views/language/view.py:39
+msgid "Translated"
+msgstr "Tradus"
+
+#: local_apps/pootle_app/templates/translation_summary_legend.html:7
+msgid "Needs review"
+msgstr "Necesită revizuire"
+
+#: local_apps/pootle_app/templates/translation_summary_legend.html:8
+#: local_apps/pootle_app/views/index/index.py:114
+#: local_apps/pootle_app/views/language/view.py:45
+#: local_apps/pootle_project/views.py:111
+#: local_apps/pootle_project/views.py:198
+msgid "Untranslated"
+msgstr "Netradus"
+
+#: local_apps/pootle_app/templates/admin/admin_general_languages.html:5
+#: local_apps/pootle_app/templates/admin/admin_general_languages.html:11
+#: local_apps/pootle_app/views/admin/adminlanguages.py:30
+#: local_apps/pootle_app/views/index/index.py:106
+#: local_apps/pootle_profile/models.py:66 templates/admin_profile_menu.html:8
+msgid "Languages"
+msgstr "Limbi"
+
+#: local_apps/pootle_app/templates/admin/admin_general_languages.html:14
+msgid ""
+"Here you can add, edit, and delete all the available languages in this "
+"Pootle server."
+msgstr ""
+"Aici puteți să adăugați, redactați sau să ștergeți toate limbile disponibile "
+"din cadrul acestui server Pootle."
+
+#: local_apps/pootle_app/templates/admin/admin_general_permissions.html:5
+#: local_apps/pootle_app/templates/admin/admin_general_permissions.html:11
+#: local_apps/pootle_app/views/admin/permissions.py:64
+#: local_apps/pootle_language/templates/language/language_admin.html:6
+#: local_apps/pootle_project/templates/project/admin_permissions.html:8
+#: local_apps/pootle_translationproject/templates/translation_project/tp_admin_permissions.html:6
+#: templates/admin_profile_menu.html:10 templates/language_menu.html:10
+#: templates/project_menu.html:11 templates/tp_menu.html:12
+#: templates/profiles/profile_detail.html:44
+msgid "Permissions"
+msgstr "Permisiuni"
+
+#: local_apps/pootle_app/templates/admin/admin_general_permissions.html:14
+msgid ""
+"Here you can add, edit, and delete the default permissions in this Pootle "
+"server."
+msgstr ""
+"Aici puteți să adăugați, redactați sau să ștergeți permisiunile implicite "
+"din cadrul acestui server Pootle."
+
+#: local_apps/pootle_app/templates/admin/admin_general_permissions.html:18
+#: local_apps/pootle_language/templates/language/language_admin.html:16
+#: local_apps/pootle_project/templates/project/admin_permissions.html:21
+#: local_apps/pootle_translationproject/templates/translation_project/tp_admin_permissions.html:15
+msgid ""
+"The user “nobody” refers to any user that is not logged in (an anonymous, "
+"unidentified user). The user “default” refers to the rights that all logged "
+"in users will have by default, unless other specific rights were assigned to "
+"them."
+msgstr ""
+"Utilizatorul *nobody* face referință la orice utilizator care nu este "
+"autentificat (un utilizator anonim sau neidentificat). Utilizatorul "
+"*default* face referință la drepturile pe care toți utilizatorii "
+"autentificați le au în mod implicit, dacă nu le sunt alocate alte drepturi."
+
+#: local_apps/pootle_app/templates/admin/admin_general_projects.html:5
+#: local_apps/pootle_app/templates/admin/admin_general_projects.html:11
+#: local_apps/pootle_app/views/admin/adminprojects.py:47
+#: local_apps/pootle_app/views/index/index.py:108
+#: local_apps/pootle_profile/models.py:67
+#: local_apps/pootle_project/views.py:192
+#: local_apps/pootle_project/templates/project/projects.html:9
+#: templates/admin_profile_menu.html:9 templates/project_base.html:6
+msgid "Projects"
+msgstr "Proiecte"
+
+#: local_apps/pootle_app/templates/admin/admin_general_projects.html:14
+msgid ""
+"Here you can add, edit, and delete all the available projects in this Pootle "
+"server."
+msgstr ""
+"Aici puteți să adăugați, redactați sau să ștergeți toate proiectele "
+"disponibile în acest server Pootle."
+
+#: local_apps/pootle_app/templates/admin/admin_general_settings.html:5
+#: local_apps/pootle_app/templates/admin/admin_general_settings.html:11
+msgid "General Settings"
+msgstr "Configurări generale"
+
+#: local_apps/pootle_app/templates/admin/admin_general_settings.html:14
+msgid "Configure here the general settings for your site."
+msgstr ""
+"Puteți modifica aici configurările generale pentru pagina dumneavoastră."
+
+#: local_apps/pootle_app/templates/admin/admin_general_users.html:5
+#: local_apps/pootle_app/templates/admin/admin_general_users.html:11
+#: local_apps/pootle_app/templates/admin/dashboard.html:29
+#: local_apps/pootle_app/views/admin/adminusers.py:32
+#: templates/admin_profile_menu.html:7
+#: templates/profiles/profile_detail.html:8
+msgid "Users"
+msgstr "Utilizatori"
+
+#: local_apps/pootle_app/templates/admin/admin_general_users.html:14
+msgid ""
+"Here you can add, edit, and delete all the available users in this Pootle "
+"server."
+msgstr ""
+"Aici puteți să adăugați, redactați sau să ștergeți toate conturile de "
+"utilizatori disponibile pe acest server Pootle."
+
+#: local_apps/pootle_app/templates/admin/dashboard.html:5
+#: local_apps/pootle_app/templates/admin/dashboard.html:11
+#: templates/user_profile_menu.html:6 templates/user_profile_menu.html:16
+#: templates/profiles/profile_detail.html:6
+#: templates/profiles/profile_detail.html:16
+msgid "Dashboard"
+msgstr "Tablou de bord"
+
+#: local_apps/pootle_app/templates/admin/dashboard.html:17
+msgid "Server Statistics"
+msgstr "Statisticile Serverului"
+
+#: local_apps/pootle_app/templates/admin/dashboard.html:23
+#: local_apps/pootle_app/views/language/view.py:41
+msgid "Translated words"
+msgstr "Cuvinte traduse"
+
+#: local_apps/pootle_app/templates/admin/dashboard.html:26
+msgid "Pending suggestions"
+msgstr "Sugestii în așteptare"
+
+#: local_apps/pootle_app/templates/admin/dashboard.html:34
+msgid "Active users"
+msgstr "Utilizatori activi"
+
+#: local_apps/pootle_app/templates/admin/dashboard.html:37
+msgid "Active projects"
+msgstr "Proiecte active"
+
+#: local_apps/pootle_app/templates/admin/dashboard.html:40
+msgid "Active languages"
+msgstr "Limbi active"
+
+#: local_apps/pootle_app/templates/admin/dashboard.html:43
+#: local_apps/pootle_translationproject/views.py:175
+#: local_apps/pootle_translationproject/templates/translation_project/tp_admin_files.html:6
+#: templates/tp_menu.html:13 templates/profiles/profile_detail.html:44
+msgid "Files"
+msgstr "Fișiere"
+
+#: local_apps/pootle_app/templates/admin/dashboard.html:46
+msgid "Translated strings"
+msgstr "Șiruri traduse"
+
+#: local_apps/pootle_app/templates/admin/dashboard.html:49
+#: local_apps/pootle_app/views/top_stats.py:43
+#: local_apps/pootle_app/views/top_stats.py:66
+#: local_apps/pootle_app/views/top_stats.py:89
+#: local_apps/pootle_app/views/top_stats.py:112
+msgid "Submissions"
+msgstr "Aduceri la cunoștință"
+
+#: local_apps/pootle_app/templates/admin/dashboard.html:54
+msgid "More..."
+msgstr "Mai mult..."
+
+#: local_apps/pootle_app/templates/admin/dashboard.html:62
+msgid "Support"
+msgstr "Sprijin"
+
+#: local_apps/pootle_app/templates/admin/dashboard.html:65
+msgid ""
+"Pootle is developed by Translate.org.za and a community of passionate "
+"localization experts. We want Pootle to help your localization work reach "
+"its full potential."
+msgstr ""
+"Pootle este dezvoltat de către Translate.org.za și de o comunitate de "
+"experți pasionați de localizare. Ne dorim ca Pootle să ajute ca munca "
+"dumneavoastră pentru localizare să atingă potențialul maxim."
+
+#: local_apps/pootle_app/templates/admin/dashboard.html:66
+msgid "You will find the following helpful for support:"
+msgstr "Următorul lucru vă va fi util pentru ajutor:"
+
+#: local_apps/pootle_app/templates/admin/dashboard.html:68
+msgid "The Pootle documentation"
+msgstr "Documentația Pootle"
+
+#: local_apps/pootle_app/templates/admin/dashboard.html:69
+msgid "The Pootle mailing list"
+msgstr "Lista de distribuție poștală Pootle"
+
+#: local_apps/pootle_app/templates/admin/dashboard.html:70
+msgid "(commercial support)"
+msgstr "(sprijin comercial)"
+
+#: local_apps/pootle_app/templates/admin/dashboard.html:78
+msgid "Dependency Checks"
+msgstr "Verificări dependențe"
+
+#: local_apps/pootle_app/templates/admin/dashboard.html:87
+msgid "Optional"
+msgstr "Facultativ"
+
+#: local_apps/pootle_app/templates/admin/dashboard.html:95
+msgid "Optimizations"
+msgstr "Optimizări"
+
+#: local_apps/pootle_app/templates/admin/rss_widget.html:5
+msgid "Pootle Alerts"
+msgstr "Alerte Pootle"
+
+#: local_apps/pootle_app/templates/index/about.html:7
+msgid "About"
+msgstr "Despre"
+
+#: local_apps/pootle_app/templates/index/about.html:18
+msgid "About Pootle"
+msgstr "Despre Pootle"
+
+#: local_apps/pootle_app/templates/index/about.html:19
+msgid ""
+"This site is running Pootle &mdash; powerful web software to empower teams "
+"to do translation and translation management. This community tool is Free "
+"Software, and any team can use it and contribute to the Pootle community. "
+"Read more on the <a href=\"http://translate.sourceforge.net/\">project "
+"website</a>."
+msgstr ""
+"Acest spațiu rulează Pootle - software web puternic pentru a sprijini "
+"echipele să facă traduceri și organizarea traducerilor. Această unealtă a "
+"comunității este Software Liber, și poate fi folosit de orice echipă pentru "
+"a contribui la comunitatea Pootle. Pentru a citi mai multe, accesați <a "
+"href=\"http://translate.sourceforge.net/\">pagina proiectului</a>."
+
+#: local_apps/pootle_app/templates/index/index.html:26
+#: local_apps/pootle_project/views.py:144
+msgid "Language"
+msgstr "Limba"
+
+#: local_apps/pootle_app/templates/index/index.html:27
+#: local_apps/pootle_app/templates/index/index.html:62
+#: local_apps/pootle_project/templates/project/projects.html:23
+msgid "Overall Completion"
+msgstr "Stadiul completării"
+
+#: local_apps/pootle_app/templates/index/index.html:28
+#: local_apps/pootle_app/templates/index/index.html:63
+#: local_apps/pootle_language/templates/language/language_index.html:23
+#: local_apps/pootle_project/templates/project/project.html:36
+#: local_apps/pootle_project/templates/project/projects.html:24
+msgid "Last Activity"
+msgstr "Ultima activitate"
+
+#: local_apps/pootle_app/templates/index/index.html:61
+#: local_apps/pootle_project/templates/project/projects.html:22
+msgid "Project"
+msgstr "Proiect"
+
+#: local_apps/pootle_app/templates/index/index.html:90
+#: local_apps/pootle_notifications/templates/notices.html:80
+msgid "Latest News"
+msgstr "Ultimele noutăți"
+
+#: local_apps/pootle_app/templates/index/index.html:93
+msgid "Subscribe to the RSS feed."
+msgstr "Abonați-vă la RSS feed."
+
+#: local_apps/pootle_app/templates/index/login.html:5
+#: local_apps/pootle_app/templates/index/login.html:22
+msgid "Login"
+msgstr "Autentificare"
+
+#: local_apps/pootle_app/templates/index/login.html:10
+msgid "Login to Pootle"
+msgstr "Autentificare la Pootle"
+
+#: local_apps/pootle_app/templates/index/login.html:16
+msgid "Your username and password didn't match. Please try again."
+msgstr ""
+"Numele utilizatorului și parola nu se potrivesc. Vă rugăm să încercați din "
+"nou."
+
+#: local_apps/pootle_app/templates/index/login.html:26
+msgid "Lost your Password?"
+msgstr "Ați uitat parola?"
+
+#: local_apps/pootle_app/templates/index/login.html:30
+msgid "Don't have an account yet?"
+msgstr "Nu aveți cont de utilizator?"
+
+#: local_apps/pootle_app/templates/index/login.html:31
+msgid "Register."
+msgstr "Înregistrare."
+
+#: local_apps/pootle_app/templates/language/item_block.html:12
+#: local_apps/pootle_app/templates/language/item_summary.html:9
+msgid "Error"
+msgstr "Eroare"
+
+#: local_apps/pootle_app/templates/language/item_summary.html:32
+msgid "Complete"
+msgstr "Finalizare"
+
+#: local_apps/pootle_app/views/top_stats.py:41
+#: local_apps/pootle_app/views/top_stats.py:64
+#: local_apps/pootle_app/views/top_stats.py:87
+#: local_apps/pootle_app/views/top_stats.py:110
+msgid "Suggestions"
+msgstr "Sugestii"
+
+#: local_apps/pootle_app/views/top_stats.py:42
+#: local_apps/pootle_app/views/top_stats.py:65
+#: local_apps/pootle_app/views/top_stats.py:88
+#: local_apps/pootle_app/views/top_stats.py:111
+msgid "Reviews"
+msgstr "Revizuiri"
+
+#: local_apps/pootle_app/views/admin/adminusers.py:52
+#: templates/user_profile_menu.html:9 templates/user_profile_menu.html:19
+#: templates/registration/registration_form.html:25
+msgid "Password"
+msgstr "Parola"
+
+#: local_apps/pootle_app/views/admin/dashboard.py:45
+#, python-format
+msgid "Translate Toolkit version %s installed."
+msgstr "Ansamblul cu unelte de tradus instalat are versiunea %s."
+
+#: local_apps/pootle_app/views/admin/dashboard.py:48
+#, python-format
+msgid ""
+"Translate Toolkit version %(installed)s installed. Pootle requires version %"
+"(required)s."
+msgstr ""
+"Ansamblul cu unelte de tradus instalat are versiunea %(installed)s. Pentru "
+"Pootle este necesară versiunea %(required)s."
+
+#: local_apps/pootle_app/views/admin/dashboard.py:54
+#, python-format
+msgid "Django version %s is installed."
+msgstr "Versiunea de Django instalată este %s."
+
+#: local_apps/pootle_app/views/admin/dashboard.py:57
+#, python-format
+msgid ""
+"Django version %s is installed, but a higher version is highly recommended."
+msgstr ""
+"Versiunea de Django instalată este %s, dar este recomandată folosirea unei "
+"versiuni mai recentă."
+
+#: local_apps/pootle_app/views/admin/dashboard.py:63
+#, python-format
+msgid "lxml version %s is installed."
+msgstr "Versiunea lxml instalată este %s."
+
+#: local_apps/pootle_app/views/admin/dashboard.py:66
+#, python-format
+msgid ""
+"lxml version %(installed)s is installed. Pootle requires version %(required)"
+"s for XML format support."
+msgstr ""
+"Versiunea lxml instalată este %(installed)s. Pentru ca Pootle să suporte "
+"formatul XML, este necesară versiunea %(required)s."
+
+#: local_apps/pootle_app/views/admin/dashboard.py:69
+msgid "lxml is not installed. Pootle requires lxml for XML format support."
+msgstr ""
+"lxml nu este instalat. Pentru Pootle este nevoie de lxml pentru a suporta "
+"formatul XML."
+
+#: local_apps/pootle_app/views/admin/dashboard.py:80
+msgid ""
+"Can't find the unzip command. Uploading archives is faster if \"unzip\" is "
+"available."
+msgstr ""
+"Comanda unzip nu este disponibilă. Încărcarea arhivelor ar fi mai rapidă "
+"dacă ar exista comanda \"unzip\"."
+
+#: local_apps/pootle_app/views/admin/dashboard.py:84
+msgid ""
+"Can't find the ISO codes package. Pootle uses ISO codes to translate "
+"language names."
+msgstr ""
+"Pachetul cu coduri ISO nu este disponibil. Pootle folosește coduri ISO "
+"pentru a traduce numele limbilor."
+
+#: local_apps/pootle_app/views/admin/dashboard.py:88
+msgid ""
+"Can't find the aeidon package. Pootle requires Gaupol or aeidon to support "
+"subtitle formats."
+msgstr ""
+"Pachetul aeidon nu este disponibil. Pootle are nevoie de Gaupol sau aeidon "
+"pentru a suporta formate de subtitrări."
+
+#: local_apps/pootle_app/views/admin/dashboard.py:92
+msgid ""
+"Can't find python-levenshtein package. Updating from templates is faster "
+"with python-levenshtein."
+msgstr ""
+"Nu poate găsi pachetul python-levenshtein. Actualizând de la şabloane este "
+"mai rapid cu python-levenshtein."
+
+#: local_apps/pootle_app/views/admin/dashboard.py:96
+msgid ""
+"No text indexing engine found. Searching is faster if an indexing engine "
+"like Xapian or Lucene is installed."
+msgstr ""
+"Nici un motor de indexare text gasit. Căutarea este mai rapidă în cazul în "
+"care un motor de indexare ca Xapian sau Lucene este instalat."
+
+#: local_apps/pootle_app/views/admin/dashboard.py:106
+msgid ""
+"Using the default sqlite3 database engine. SQLite is only suitable for small "
+"installations with a small number of users. Pootle will perform better with "
+"the MySQL database engine."
+msgstr ""
+"Utilizarea implicită a motorului bazei de date sqlite3. SQLite este adecvat "
+"numai pentru instalații mici, cu un număr mic de utilizatori. Pootle va "
+"funcționa mai bine cu motorul bazei de date MySQL."
+
+#: local_apps/pootle_app/views/admin/dashboard.py:108
+msgid ""
+"Using the default sqlite3 database engine. SQLite is only suitable for small "
+"installations with a small number of users. Pootle will perform better with "
+"the MySQL database engine, but you need to install python-MySQLdb first."
+msgstr ""
+"Utilizarea implicită a motorului bazei de date sqlite3. SQLite este adecvat "
+"numai pentru instalații mici, cu un număr mic de utilizatori. Pootle va "
+"funcționa mai bine cu motorul bazei de date MySQL, dar trebuie să instalați "
+"mai întâi python-MySQLdb."
+
+#: local_apps/pootle_app/views/admin/dashboard.py:116
+msgid ""
+"Pootle is configured to use memcached as a caching backend, but can't "
+"connect to the memcached server. Caching is currently disabled."
+msgstr ""
+"Pootle este configurat să utilizeze memcached ca backend cache, dar nu se "
+"poate conecta la serverul memcached. Caching este în prezent dezactivată."
+
+#: local_apps/pootle_app/views/admin/dashboard.py:120
+msgid ""
+"For optimal performance, use django.contrib.sessions.backends.cached_db as "
+"the session engine."
+msgstr ""
+"Pentru performanţe optime, utilizaţi "
+"django.contrib.sessions.backends.cached_db ca motorul sesiune."
+
+#: local_apps/pootle_app/views/admin/dashboard.py:122
+msgid ""
+"For optimal performance, use django.contrib.sessions.backends.cache as the "
+"session engine."
+msgstr ""
+"Pentru performanţe optime, utilizaţi django.contrib.sessions.backends.cached "
+"ca motorul sesiune."
+
+#: local_apps/pootle_app/views/admin/dashboard.py:126
+msgid ""
+"Pootle is configured to use memcached as caching backend, but Python support "
+"for memcached is not installed. Caching is currently disabled."
+msgstr ""
+"Pootle este configurat să utilizeze memcached ca backend cache, dar suportul "
+"Python pentru memcached nu este instalat. Caching este în prezent "
+"dezactivată."
+
+#: local_apps/pootle_app/views/admin/dashboard.py:129
+msgid "For optimal performance, use memcached as the caching backend."
+msgstr "Pentru performanţe optime, utilizaţi memcached ca backend cache."
+
+#: local_apps/pootle_app/views/admin/dashboard.py:133
+msgid "For optimal performance, use Apache as the webserver."
+msgstr "Pentru performanţe optime, utilizaţi Apache ca server de web."
+
+#: local_apps/pootle_app/views/admin/dashboard.py:136
+msgid ""
+"The \"from\" address used to send registration emails is not specified. Also "
+"review the mail server settings."
+msgstr ""
+"Adresa \"de la\" folosită pentru a trimite e-mailuri de înregistrare nu este "
+"specificată. Reexaminează, de asemenea setările de server de mail."
+
+#: local_apps/pootle_app/views/admin/dashboard.py:139
+msgid ""
+"No contact address is specified. The contact form will allow users to "
+"contact the server administrators."
+msgstr ""
+"Adresa de contact nu este specificată. Formularul de contact va permite "
+"utilizatorilor să contacteze administratorii de servere."
+
+#: local_apps/pootle_app/views/admin/dashboard.py:143
+msgid ""
+"Running in debug mode. Debug mode is only needed when developing Pootle. For "
+"optimal performance, disable debugging mode."
+msgstr ""
+"Rulează în modul de depanare. Modul de depanare este necesar doar atunci "
+"când se dezvoltă Pootle. Pentru o performanţă optimă, dezactivați modul de "
+"depanare."
+
+#: local_apps/pootle_app/views/admin/dashboard.py:147
+msgid ""
+"Running in live translation mode. Live translation is useful as a tool to "
+"learn about Pootle and localization, but has high impact on performance."
+msgstr ""
+"Rulează în modul de traducere live. Traducerea live este utilă ca instrument "
+"pentru a afla despre Pootle şi localizare, dar are un impact mare asupra "
+"performanţei."
+
+#: local_apps/pootle_app/views/admin/permissions.py:49
+#: local_apps/pootle_app/views/admin/permissions.py:51
+msgid "Project Members"
+msgstr "Membri proiect"
+
+#: local_apps/pootle_app/views/admin/permissions.py:53
+msgid "Language Members"
+msgstr "Limba membrilor"
+
+#: local_apps/pootle_app/views/admin/permissions.py:54
+msgid "All Users"
+msgstr "Toţi utilizatorii"
+
+#: local_apps/pootle_app/views/admin/util.py:38
+msgid "You do not have rights to administer Pootle."
+msgstr "Nu aveţi dreptul de a administra Pootle."
+
+#: local_apps/pootle_app/views/admin/util.py:50
+#, python-format
+msgid "You do not have rights to administer %s."
+msgstr "Nu aveţi dreptul de a administra %s."
+
+#: local_apps/pootle_app/views/admin/util.py:129
+msgid "No files in this project."
+msgstr "Nici un fişier în acest proiect."
+
+#: local_apps/pootle_app/views/admin/util.py:164
+msgid "There are errors in the form. Please review the problems below."
+msgstr "Există erori în formular. Vă rugăm să analizaţi problemele de mai jos."
+
+#: local_apps/pootle_app/views/admin/util.py:184 templates/base.html:51
+#: templates/base.html.py:56
+msgid "Home"
+msgstr "Acasă"
+
+#: local_apps/pootle_app/views/admin/util.py:186
+msgid "Save Changes"
+msgstr "Salvează schimbările"
+
+#: local_apps/pootle_app/views/index/about.py:48
+#, python-format
+msgid "Pootle %(pootle_ver)s is powered by Translate Toolkit %(toolkit_ver)s"
+msgstr ""
+"Pootle %(pootle_ver)s este propulsat de Translate Toolkit %(toolkit_ver)s"
+
+#: local_apps/pootle_app/views/index/index.py:64
+#: local_apps/pootle_app/views/language/item_dict.py:268
+#: local_apps/pootle_language/views.py:62
+#: local_apps/pootle_project/views.py:69
+#, python-format
+msgid "%(percentage)d%% complete"
+msgstr "%(percentage)d%% complet"
+
+#: local_apps/pootle_app/views/index/index.py:112
+#: local_apps/pootle_project/views.py:109
+#: local_apps/pootle_project/views.py:196
+msgid "Translations are complete"
+msgstr "Traducerile sunt finalizate"
+
+#: local_apps/pootle_app/views/index/index.py:113
+#: local_apps/pootle_project/views.py:110
+#: local_apps/pootle_project/views.py:197
+msgid "Translations need to be checked (they are marked fuzzy)"
+msgstr "Traducerile trebuie să fie verificate (acestea sunt marcate fuzzy)"
+
+#: local_apps/pootle_app/views/language/item_dict.py:38
+#, python-format, python-format
+msgid "%d file"
+msgid_plural "%d files"
+msgstr[0] "%d fişier"
+msgstr[1] "%d fişiere"
+msgstr[2] "%d fișierele"
+
+#: local_apps/pootle_app/views/language/item_dict.py:40
+#, python-format
+msgid "%(translated)d/%(total)d words (%(translatedpercent)d%%) translated"
+msgstr "%(translated)d%(total)d cuvinte%(translatedpercent)d%% traduse"
+
+#: local_apps/pootle_app/views/language/item_dict.py:46
+#, python-format
+msgid "%(translated)d/%(total)d strings"
+msgstr "%(translated)d%(total)d șiruri"
+
+#: local_apps/pootle_app/views/language/item_dict.py:76
+#, python-format
+msgid "%(checks)d string (%(checkspercent)d%%) failed"
+msgid_plural "%(checks)d strings (%(checkspercent)d%%) failed"
+msgstr[0] "%(checks)d șir %(checkspercent)d%% a eșuat"
+msgstr[1] "%(checks)d șiruri %(checkspercent)d%% au eșuat"
+msgstr[2] ""
+
+#: local_apps/pootle_app/views/language/item_dict.py:94
+msgid "Review Suggestions"
+msgstr "Recenzie sugestii"
+
+#: local_apps/pootle_app/views/language/item_dict.py:96
+msgid "View Suggestions"
+msgstr "Arată sugestiile"
+
+#: local_apps/pootle_app/views/language/item_dict.py:107
+msgid "Quick Translate"
+msgstr "Traducere rapidă"
+
+#: local_apps/pootle_app/views/language/item_dict.py:109
+msgid "View Untranslated"
+msgstr "Vezi netradus"
+
+#: local_apps/pootle_app/views/language/item_dict.py:120
+msgid "Translate All"
+msgstr "Tradu tot"
+
+#: local_apps/pootle_app/views/language/item_dict.py:124
+msgid "Manage Glossary"
+msgstr "Administrează dicționar"
+
+#: local_apps/pootle_app/views/language/item_dict.py:133
+msgid "ZIP of directory"
+msgstr "ZIP de director"
+
+#: local_apps/pootle_app/views/language/item_dict.py:142
+msgid "Translate offline"
+msgstr "Traduce offline"
+
+#: local_apps/pootle_app/views/language/item_dict.py:143
+#: local_apps/pootle_app/views/language/item_dict.py:146
+msgid "Download XLIFF file for offline translation"
+msgstr "Descarcă fişierul XLIFF pentru traducere offline"
+
+#: local_apps/pootle_app/views/language/item_dict.py:145
+msgid "Download XLIFF"
+msgstr "Descărcaţi XLIFF"
+
+#: local_apps/pootle_app/views/language/item_dict.py:157
+msgid "Export"
+msgstr "Export"
+
+#: local_apps/pootle_app/views/language/item_dict.py:158
+msgid "Export translations"
+msgstr "Exportă traducerile"
+
+#: local_apps/pootle_app/views/language/item_dict.py:160
+msgid "Download"
+msgstr "Descarcă"
+
+#: local_apps/pootle_app/views/language/item_dict.py:161
+msgid "Download file"
+msgstr "Descarcă fişierul"
+
+#: local_apps/pootle_app/views/language/item_dict.py:172
+msgid "Commit to VCS"
+msgstr "Aderarea la VCS"
+
+#: local_apps/pootle_app/views/language/item_dict.py:182
+msgid "Update from VCS"
+msgstr "Actualizare de la VCS"
+
+#: local_apps/pootle_app/views/language/item_dict.py:244
+#, python-format
+msgid "%d word needs attention"
+msgid_plural "%d words need attention"
+msgstr[0] "%d cuvânt necesită atenție"
+msgstr[1] "%d cuvinte necesită atenție"
+msgstr[2] ""
+
+#: local_apps/pootle_app/views/language/item_dict.py:248
+#, python-format
+msgid "%d word untranslated"
+msgid_plural "%d words untranslated"
+msgstr[0] "%d cuvânt netradus"
+msgstr[1] "%d cuvinte netraduse"
+msgstr[2] ""
+
+#: local_apps/pootle_app/views/language/item_dict.py:249
+#, python-format
+msgid "%d word needs review"
+msgid_plural "%d words need review"
+msgstr[0] "%d cuvânt are nevoie de revizuire"
+msgstr[1] "%d cuvinte au nevoie de revizuire"
+msgstr[2] ""
+
+#: local_apps/pootle_app/views/language/item_dict.py:275
+#: local_apps/pootle_language/views.py:67
+#: local_apps/pootle_project/views.py:74
+#, python-format
+msgid "Error reading %d file"
+msgid_plural "Error reading %d files"
+msgstr[0] "Eroare la citirea fișierului %d"
+msgstr[1] "Eroare la citirea fișierelor %d"
+msgstr[2] ""
+
+#: local_apps/pootle_app/views/language/navbar_dict.py:53
+#: local_apps/pootle_project/views.py:104 templates/base.html:59
+#: templates/profiles/profile_detail.html:35
+msgid "Admin"
+msgstr "Admin"
+
+#: local_apps/pootle_app/views/language/view.py:38
+msgid "Name"
+msgstr "Nume"
+
+#: local_apps/pootle_app/views/language/view.py:40
+msgid "Translated percentage"
+msgstr "Tradus în procente"
+
+#: local_apps/pootle_app/views/language/view.py:42
+#: local_apps/pootle_store/forms.py:164
+msgid "Fuzzy"
+msgstr "Fuzzy"
+
+#: local_apps/pootle_app/views/language/view.py:43
+msgid "Fuzzy percentage"
+msgstr "Procentaj fuzzy"
+
+#: local_apps/pootle_app/views/language/view.py:44
+msgid "Fuzzy words"
+msgstr "Cuvinte fuzzy"
+
+#: local_apps/pootle_app/views/language/view.py:46
+msgid "Untranslated percentage"
+msgstr "Netradus în procente"
+
+#: local_apps/pootle_app/views/language/view.py:47
+msgid "Untranslated words"
+msgstr "Cuvinte netraduse"
+
+#: local_apps/pootle_app/views/language/view.py:48
+msgid "Total"
+msgstr "Total"
+
+#: local_apps/pootle_app/views/language/view.py:49
+msgid "Total Words"
+msgstr "Total cuvinte"
+
+#. l10n: noun. The graphical representation of translation status
+#: local_apps/pootle_app/views/language/view.py:51
+msgid "Progress"
+msgstr "Progres"
+
+#: local_apps/pootle_app/views/language/view.py:52
+msgid "Summary"
+msgstr "Sumar"
+
+#: local_apps/pootle_app/views/language/view.py:84
+#: local_apps/pootle_translationproject/models.py:363
+msgid "You do not have rights to commit files here"
+msgstr "Nu aveţi dreptul să comiteţi fişiere aici"
+
+#: local_apps/pootle_app/views/language/view.py:94
+msgid "You do not have rights to update files here"
+msgstr "Nu aveţi dreptul să actualizaţi fişiere aici"
+
+#: local_apps/pootle_language/models.py:39
+msgid ""
+"ISO 639 language code for the language, possibly followed by an underscore "
+"(_) and an ISO 3166 country code. <a href=\"http://www.w3.org/International/"
+"articles/language-tags/\">More information</a>"
+msgstr ""
+"ISO 639 codul de limbă pentru limba, eventual urmat de o subliniere (_) și "
+"un cod de țară ISO 3166. <a href=\"http://www.w3.org/International/articles"
+"/language-tags/\">Mai multe informații</a>"
+
+#: local_apps/pootle_language/models.py:40
+#: local_apps/pootle_project/models.py:58
+msgid "Code"
+msgstr "Cod"
+
+#: local_apps/pootle_language/models.py:41
+#: local_apps/pootle_project/models.py:59
+msgid "Full Name"
+msgstr "Nume întreg"
+
+#: local_apps/pootle_language/models.py:43
+msgid "Enter any special characters that users might find difficult to type"
+msgstr ""
+"Introduceţi caractere speciale pe care utilizatorii le-ar putea găsi dificil "
+"de scris"
+
+#: local_apps/pootle_language/models.py:44
+msgid "Special Characters"
+msgstr "Caractere speciale"
+
+#: local_apps/pootle_language/models.py:46
+msgid ""
+"For more information, visit <a href=\"http://translate.sourceforge.net/wiki/"
+"l10n/pluralforms\">our wiki page</a> on plural forms."
+msgstr ""
+"Pentru mai multe informaţii, vizitaţi <a "
+"href=\"http://translate.sourceforge.net/wiki/l10n/pluralforms\">pagina noastră "
+"wiki</a> pe forme de plural."
+
+#: local_apps/pootle_language/models.py:47
+msgid "Unknown"
+msgstr "Necunoscut"
+
+#: local_apps/pootle_language/models.py:48
+msgid "Number of Plurals"
+msgstr "Număr de plurale"
+
+#: local_apps/pootle_language/models.py:50
+msgid "Plural Equation"
+msgstr "Ecuaţie plural"
+
+#: local_apps/pootle_language/views.py:90
+#, python-format
+msgid "%(projects)d project, %(average)d%% translated"
+msgid_plural "%(projects)d projects, %(average)d%% translated"
+msgstr[0] "%(projects)d proiect, %(average)d%% tradus"
+msgstr[1] "%(projects)d proiecte %(average)d%% tradus"
+msgstr[2] ""
+
+#: local_apps/pootle_language/views.py:108
+msgid "You do not have rights to administer this language."
+msgstr "Nu aveţi drepturi de administrare asupra acestei limbi."
+
+#: local_apps/pootle_language/templates/language/language_admin.html:13
+msgid "Below you can add, edit, and delete the permissions for this language."
+msgstr ""
+"Mai jos puteţi adăuga, edita şi şterge permisiunile pentru această limbă."
+
+#: local_apps/pootle_misc/dbinit.py:68
+msgid "Pootle: Install"
+msgstr "Pootle: Instalaţi"
+
+#: local_apps/pootle_misc/dbinit.py:69
+#, python-format
+msgid ""
+"Error: \"%s\" while attempting to access the Pootle database, will try to "
+"initialize database."
+msgstr ""
+"Eroare: \"%s\" în timp ce încerca să acceseze baza de date Pootle, va încerca "
+"să inițieze baza de date."
+
+#: local_apps/pootle_misc/dbinit.py:75
+msgid "Creating database tables..."
+msgstr "Crearea tabelelor bazei de date..."
+
+#: local_apps/pootle_misc/dbinit.py:82
+msgid "Creating default languages, projects and admin user"
+msgstr "Crearea de limbi implicite, proiecte și utilizatorul admin"
+
+#: local_apps/pootle_misc/dbinit.py:90
+msgid "Calculating translation statistics, this will take a few minutes"
+msgstr ""
+"Calcularea statisticilor de traducere, acest lucru va dura câteva minute"
+
+#: local_apps/pootle_misc/dbinit.py:96
+#, python-format
+msgid "%(language)s is %(percent)d%% complete"
+msgstr "%(language)s este%(percent)d%% complet"
+
+#: local_apps/pootle_misc/dbinit.py:103
+#, python-format
+msgid "Project %(project)s is %(percent)d%% complete"
+msgstr "Proiectul %(project)s este %(percent)d%% complet"
+
+#: local_apps/pootle_misc/dbinit.py:111
+msgid "Done calculating statistics for default languages and projects"
+msgstr "Calcul statistic făcut pentru limbile implicite și proiecte"
+
+#: local_apps/pootle_misc/dbinit.py:119
+msgid ""
+"Initialized database, you will be redirected to the front page in 10 seconds"
+msgstr ""
+"Iniţializată baza de date, vei fi redirecţionat către pagina de faţă în 10 "
+"de secunde"
+
+#: local_apps/pootle_misc/dbupdate.py:71
+msgid "Pootle: Update"
+msgstr "Pootle: Actualizare"
+
+#: local_apps/pootle_misc/dbupdate.py:72
+#, python-format
+msgid ""
+"Database tables are currently at build version %d. Pootle will now update "
+"the database."
+msgstr ""
+"Tabelele bazei de date sunt în prezent construite la versiunea %d. Pootle va "
+"actualiza acum baza de date."
+
+#: local_apps/pootle_misc/dbupdate.py:78
+msgid "Creating missing database tables..."
+msgstr "Crearea tabelelor care lipsesc din baza de date..."
+
+#: local_apps/pootle_misc/dbupdate.py:86
+msgid "Fixing permission table..."
+msgstr "Fixarea tabelului de permisiuni..."
+
+#: local_apps/pootle_misc/dbupdate.py:101
+msgid "Updating existing database tables..."
+msgstr "Actualizarea tabelelor existente în baza de date..."
+
+#: local_apps/pootle_misc/dbupdate.py:130
+msgid ""
+"Pootle will now import all the translations into the database. It could take "
+"a long time."
+msgstr ""
+"Pootle va importa acum toate traducerile în baza de date. Ar putea dura mult "
+"timp."
+
+#: local_apps/pootle_misc/dbupdate.py:141
+#, python-format
+msgid "Imported %(count)d suggestion from %(store)s"
+msgid_plural "Imported %(count)d suggestions from %(store)s"
+msgstr[0] "Importat %(count)d sugestie de la %(store)s"
+msgstr[1] "Importat %(count)d sugestii de la %(store)s"
+msgstr[2] ""
+
+#: local_apps/pootle_misc/dbupdate.py:149
+#, python-format
+msgid "Failed to import suggestions from %s"
+msgstr "Nu a reuşit să importe sugestiile de la %s"
+
+#: local_apps/pootle_misc/dbupdate.py:159
+#, python-format
+msgid "Imported %(count)d unit from %(store)s"
+msgid_plural "Imported %(count)d units from %(store)s"
+msgstr[0] "Importat %(count)d unitate de la %(store)s"
+msgstr[1] "Importat %(count)d unități de la %(store)s"
+msgstr[2] ""
+
+#: local_apps/pootle_misc/dbupdate.py:165
+#, python-format
+msgid "Failed to import units from %s"
+msgstr "Nu a reișit să importe unitațile de la %s"
+
+#: local_apps/pootle_misc/dbupdate.py:172
+msgid "All translations are now imported."
+msgstr "Toate traducerile sunt acum importate."
+
+#: local_apps/pootle_misc/dbupdate.py:180
+msgid ""
+"Pootle initialized the database. You will be redirected to the front page in "
+"10 seconds."
+msgstr ""
+"Pootle iniţializează baza de date. Vei fi redirecţionat către pagina de faţă "
+"în 10 de secunde."
+
+#: local_apps/pootle_misc/middleware/errorpages.py:47
+#, python-format
+msgid "You need to <a href=\"%(login_link)s\">login</a> to access this page."
+msgstr ""
+"Ai nevoie de a <a href=\"%(login_link)s\">autentificare</a> pentru a accesa "
+"această pagină."
+
+#: local_apps/pootle_misc/middleware/errorpages.py:63
+#, python-format
+msgid "Error accessing %(filename)s, Filesystem sent error: %(errormsg)s"
+msgstr ""
+"Eroare la accesarea %(filename)s, Sistemul de fişiere a trimis eroarea: %"
+"(errormsg)s"
+
+#: local_apps/pootle_misc/templatetags/render_pager.py:32
+msgid "First"
+msgstr "Primul"
+
+#: local_apps/pootle_misc/templatetags/render_pager.py:33
+#: local_apps/pootle_store/templates/unit/edit.html:111
+msgid "Previous"
+msgstr "Anterior"
+
+#: local_apps/pootle_misc/templatetags/render_pager.py:48
+#: local_apps/pootle_store/templates/unit/edit.html:112
+msgid "Next"
+msgstr "Următorul"
+
+#: local_apps/pootle_misc/templatetags/render_pager.py:49
+#, python-format
+msgid "Last (%d)"
+msgstr "Ultimul (%d)"
+
+#: local_apps/pootle_notifications/models.py:28
+msgid "Message"
+msgstr "Mesaj"
+
+#. l10n: The date that the news item was written
+#: local_apps/pootle_notifications/models.py:30
+msgid "Added"
+msgstr "Adăugat"
+
+#: local_apps/pootle_notifications/views.py:81
+#, python-format
+msgid "News for %(language)s"
+msgstr "Știri pentru %(language)s"
+
+#: local_apps/pootle_notifications/views.py:83
+#, python-format
+msgid "News for %(project)s"
+msgstr "Știri pentru %(project)s"
+
+#: local_apps/pootle_notifications/views.py:89
+#, python-format
+msgid "News for the %(project)s project in %(language)s"
+msgstr "Știri pentru %(project)s proiect în %(language)s"
+
+#: local_apps/pootle_notifications/views.py:90
+#, python-format
+msgid "News for %(path)s"
+msgstr "Știri pentru %(path)s"
+
+#: local_apps/pootle_notifications/views.py:116
+msgid "View News Item"
+msgstr "Vezi articolul știri"
+
+#: local_apps/pootle_notifications/templates/latest_news_snippet.html:9
+#: local_apps/pootle_notifications/templates/notices.html:88
+msgid "No news yet."
+msgstr "Încă nici o știre."
+
+#: local_apps/pootle_notifications/templates/notices.html:21
+#: local_apps/pootle_notifications/templates/notices.html:24
+#: templates/language_menu.html:8 templates/project_menu.html:8
+#: templates/tp_menu.html:8
+msgid "News"
+msgstr "Știri"
+
+#: local_apps/pootle_notifications/templates/notices.html:75
+msgid "Publish"
+msgstr "Publicat"
+
+#: local_apps/pootle_profile/models.py:64
+msgid "Number of Rows"
+msgstr "Numărul de rânduri"
+
+#: local_apps/pootle_profile/models.py:68
+#: local_apps/pootle_profile/views.py:76
+msgid "Interface Language"
+msgstr "Limba interfeţei"
+
+#: local_apps/pootle_profile/models.py:69
+msgid "Alternative Source Languages"
+msgstr "Sursă alternativă de limbi"
+
+#: local_apps/pootle_profile/models.py:96
+msgid "Suggestions Accepted"
+msgstr "Sugestii acceptate"
+
+#: local_apps/pootle_profile/models.py:97
+msgid "Suggestions Pending"
+msgstr "Sugestii în aşteptare"
+
+#: local_apps/pootle_profile/models.py:98
+msgid "Suggestions Reviewed"
+msgstr "Sugestii revizuite"
+
+#: local_apps/pootle_profile/models.py:99
+msgid "Submissions Made"
+msgstr "Subscrieri realizate"
+
+#: local_apps/pootle_profile/views.py:66
+msgid "Default"
+msgstr "Implicit"
+
+#: local_apps/pootle_project/models.py:43
+msgid ""
+"A short code for the project. This should only contain ASCII characters, "
+"numbers, and the underscore (_) character."
+msgstr ""
+"Un cod scurt pentru proiect. Aceasta ar trebui să conţină numai caractere "
+"ASCII, numere, și caracterul de subliniere (_)."
+
+#: local_apps/pootle_project/models.py:44
+msgid ""
+"A description of this project. This is useful to give more information or "
+"instructions. This field should be valid HTML."
+msgstr ""
+"O descriere a acestui proiect. Acest lucru este util pentru a oferi mai "
+"multe informaţii sau instrucţiuni. Acest câmp trebuie să fie HTML valid."
+
+#: local_apps/pootle_project/models.py:53
+msgid "Automatic detection (slower)"
+msgstr "Detecție automată (mai lent)"
+
+#: local_apps/pootle_project/models.py:54
+msgid "GNU style: files named by language code"
+msgstr "Stil GNU: fișierele denumite de cudul de limbă"
+
+#: local_apps/pootle_project/models.py:55
+msgid "Non-GNU: Each language in its own directory"
+msgstr "Non-GNU: Fiecare limbă în directorul propriu"
+
+#: local_apps/pootle_project/models.py:61
+msgid "Quality Checks"
+msgstr "Controale de calitate"
+
+#: local_apps/pootle_project/models.py:62
+msgid "File Type"
+msgstr "Tip fişier"
+
+#: local_apps/pootle_project/models.py:63
+msgid "Project Tree Style"
+msgstr "Proiect stil arbore"
+
+#: local_apps/pootle_project/models.py:65
+msgid "Ignore Files"
+msgstr "Ignoră fişierele"
+
+#: local_apps/pootle_project/views.py:99
+#, python-format
+msgid "%(languages)d language, %(average)d%% translated"
+msgid_plural "%(languages)d languages, %(average)d%% translated"
+msgstr[0] "%(languages)d limbă, %(average)d%% tradus"
+msgstr[1] "%(languages)d limbi, %(average)d%% tradus"
+msgstr[2] ""
+
+#: local_apps/pootle_project/views.py:132
+#: local_apps/pootle_project/views.py:174
+msgid "You do not have rights to administer this project."
+msgstr "Nu aveţi drepturi de administrare asupra acestui proiect."
+
+#: local_apps/pootle_project/views.py:138
+msgid "Update from templates"
+msgstr "Actualizează din modele"
+
+#: local_apps/pootle_project/views.py:141
+msgid "Initialize"
+msgstr "Iniţializaţi"
+
+#: local_apps/pootle_project/templates/project/admin_permissions.html:19
+msgid "Below you can add, edit, and delete the permissions for this project."
+msgstr ""
+"Mai jos puteţi adăuga, edita şi şterge permisiunile pentru acest proiect."
+
+#: local_apps/pootle_project/templates/project/project_admin.html:8
+#: templates/project_menu.html:10 templates/tp_base_admin.html:8
+msgid "Administrate"
+msgstr "Administrează"
+
+#: local_apps/pootle_project/templates/project/project_admin.html:19
+msgid "Here you can add, edit, or delete the languages for this project."
+msgstr "Aici puteți adăuga, edita, sau șterge limbile pentru acest proiect."
+
+#: local_apps/pootle_store/filetypes.py:29
+msgid "Gettext PO"
+msgstr "Obține text PO"
+
+#: local_apps/pootle_store/filetypes.py:32
+msgid "XLIFF"
+msgstr "XLIFF"
+
+#: local_apps/pootle_store/filetypes.py:37
+msgid "Qt ts"
+msgstr "Qt ts"
+
+#: local_apps/pootle_store/filetypes.py:42
+msgid "TMX"
+msgstr "TMX"
+
+#: local_apps/pootle_store/filetypes.py:47
+msgid "TBX"
+msgstr "TBX"
+
+#: local_apps/pootle_store/filetypes.py:52
+msgid "Haiku catkeys"
+msgstr "Haiku catkeys"
+
+#: local_apps/pootle_store/filetypes.py:58
+msgid "Java Properties"
+msgstr "Propietățile Java"
+
+#. l10n: Don't translate "strings" unless you are sure these files have
+#. another name in your language
+#: local_apps/pootle_store/filetypes.py:63
+msgid "OS X Strings"
+msgstr "OS X Strings"
+
+#: local_apps/pootle_store/filetypes.py:67
+msgid "PHP arrays"
+msgstr "matrice PHP"
+
+#: local_apps/pootle_store/filetypes.py:70
+msgid "Subtitles: srt"
+msgstr "Subtitrări: srt"
+
+#: local_apps/pootle_store/filetypes.py:71
+msgid "Subtitles: sub"
+msgstr "Subtitrări: sub"
+
+#: local_apps/pootle_store/filetypes.py:72
+msgid "Subtitles: ssa"
+msgstr "Subtitrări: ssa"
+
+#: local_apps/pootle_store/filetypes.py:73
+msgid "Subtitles: ass"
+msgstr "Subtitrări: ass"
+
+#: local_apps/pootle_store/forms.py:82
+#: local_apps/pootle_store/templatetags/store_tags.py:119
+#: local_apps/pootle_store/templatetags/store_tags.py:126
+#: local_apps/pootle_store/templatetags/store_tags.py:138
+#: local_apps/pootle_store/templatetags/store_tags.py:140
+#, python-format
+msgid "Plural Form %d"
+msgstr "Formă plural %d"
+
+#: local_apps/pootle_store/forms.py:168
+msgid "Translator comment"
+msgstr "Comentariile traducătorului"
+
+#: local_apps/pootle_store/models.py:558
+msgid "Path"
+msgstr "Cale"
+
+#: local_apps/pootle_store/views.py:245
+msgid "No more matching strings to review."
+msgstr "Nu mai sunt șiruri potrivite de revizuit."
+
+#: local_apps/pootle_store/views.py:247
+msgid "No more matching strings to translate."
+msgstr "Nu mai sunt șiruri potrivite de tradus."
+
+#: local_apps/pootle_store/views.py:250
+msgid "No matching strings to review."
+msgstr "Nu mai sunt șiruri de revizuit."
+
+#: local_apps/pootle_store/views.py:252
+msgid "No matching strings to translate."
+msgstr "Nu mai sunt șiruri potrivite de tradus."
+
+#: local_apps/pootle_store/views.py:387
+#, python-format
+msgid "checking %s"
+msgstr "se verifică %s"
+
+#: local_apps/pootle_store/templates/store/translate.html:7
+#: local_apps/pootle_store/templates/store/translate_end.html:7
+#: local_apps/pootle_translationproject/templates/translation_project/tp_translate.html:6
+#: templates/tp_menu.html:9
+msgid "Translate"
+msgstr "Tradu"
+
+#: local_apps/pootle_store/templates/store/translate_table.html:11
+msgid "Original"
+msgstr "Original"
+
+#: local_apps/pootle_store/templates/store/translate_table.html:12
+#: local_apps/pootle_terminology/templates/terminology/manage.html:21
+msgid "Translation"
+msgstr "Traducere"
+
+#: local_apps/pootle_store/templates/store/translate_table.html:17
+msgid "Edit translation"
+msgstr "Editare traducere"
+
+#: local_apps/pootle_store/templates/unit/edit.html:15
+msgid "Terminology"
+msgstr "Terminologie"
+
+#: local_apps/pootle_store/templates/unit/edit.html:30
+msgid "Possible issues with the translation"
+msgstr "Posibile probleme cu traducerea"
+
+#: local_apps/pootle_store/templates/unit/edit.html:30
+msgid "Failing Checks"
+msgstr "Controale eșuate"
+
+#: local_apps/pootle_store/templates/unit/edit.html:37
+msgid "Remove quality check"
+msgstr "Elimină controlul calităţii"
+
+#: local_apps/pootle_store/templates/unit/edit.html:73
+#: local_apps/pootle_store/templates/unit/edit.html:87
+msgid "Copy into translation"
+msgstr "Copie în traducere"
+
+#: local_apps/pootle_store/templates/unit/edit.html:94
+#: local_apps/pootle_terminology/templates/terminology/manage.html:33
+msgid "Submit"
+msgstr "Postează"
+
+#: local_apps/pootle_store/templates/unit/edit.html:97
+msgid "Suggest"
+msgstr "Sugerează"
+
+#: local_apps/pootle_store/templates/unit/edit.html:111
+msgid "Go to the previous unit"
+msgstr "Mergi la unitatea precedentă"
+
+#: local_apps/pootle_store/templates/unit/edit.html:112
+msgid "Go to the next unit"
+msgstr "Mergi la unitatea următoare"
+
+#: local_apps/pootle_store/templates/unit/edit.html:130
+msgid "Add Comment"
+msgstr "Adaugă comentariu"
+
+#: local_apps/pootle_store/templates/unit/edit.html:148
+msgid "Accept suggestion"
+msgstr "Accept sugestie"
+
+#: local_apps/pootle_store/templates/unit/edit.html:149
+msgid "Reject suggestion"
+msgstr "Respinge sugestie"
+
+#: local_apps/pootle_store/templates/unit/edit.html:154
+msgid "Remove suggestion"
+msgstr "Eliminaţi sugestie"
+
+#: local_apps/pootle_store/templates/unit/view.html:38
+#: local_apps/pootle_terminology/templates/terminology/term_edit.html:27
+msgid "Translator Comments"
+msgstr "Comentariile traducătorului"
+
+#: local_apps/pootle_store/templatetags/store_tags.py:73
+#, python-format
+msgid "Suggestion %(i)d by %(user)s:"
+msgstr "Sugestie %(i)d de către %(user)s:"
+
+#: local_apps/pootle_store/templatetags/store_tags.py:77
+#, python-format
+msgid "Suggestion by %(user)s"
+msgstr "Sugestie de către %(user)s"
+
+#: local_apps/pootle_store/templatetags/store_tags.py:85
+#, python-format
+msgid "Words Translated: %(translated)d/%(total)d - %(translatedpercent)d%%"
+msgstr "Cuvinte traduse: %(translated)d%(total)d - %(translatedpercent)d%%"
+
+#: local_apps/pootle_store/templatetags/store_tags.py:93
+#, python-format
+msgid "Strings Translated: %(translated)d/%(total)d - %(translatedpercent)d%%"
+msgstr "Șiruri traduse: %(translated)d%(total)d - %(translatedpercent)d%%"
+
+#: local_apps/pootle_store/templatetags/store_tags.py:104
+msgid "Singular"
+msgstr "Singular"
+
+#: local_apps/pootle_store/templatetags/store_tags.py:104
+msgid "Plural"
+msgstr "Plural"
+
+#: local_apps/pootle_terminology/templates/terminology/extract.html:6
+msgid "Regenerate Glossary"
+msgstr "Regenerare dicționar"
+
+#: local_apps/pootle_terminology/templates/terminology/extract.html:7
+msgid ""
+"Are you sure you want to regenerate the glossary? Any existing terms and "
+"their translations will be deleted."
+msgstr ""
+"Sunteţi sigur că doriţi să regeneraţi dicționarul? Orice termeni existenți "
+"şi traducerile acestora vor fi şterse."
+
+#: local_apps/pootle_terminology/templates/terminology/extract.html:8
+msgid "Extract"
+msgstr "Extrage"
+
+#: local_apps/pootle_terminology/templates/terminology/manage.html:9
+msgid "You can regenerate the glossary from scratch."
+msgstr "Puteți regenera dicționarul de la zero."
+
+#: local_apps/pootle_terminology/templates/terminology/manage.html:20
+msgid "Term"
+msgstr "Termen"
+
+#: local_apps/pootle_terminology/templates/terminology/manage.html:22
+msgid "Delete"
+msgstr "Şterge"
+
+#: local_apps/pootle_terminology/templates/terminology/manage.html:43
+msgid "Glossary is Empty"
+msgstr "Dicționarul este gol"
+
+#: local_apps/pootle_terminology/templates/terminology/manage.html:44
+msgid "Generate Glossary"
+msgstr "Generați dicționar"
+
+#: local_apps/pootle_terminology/templates/terminology/term_edit.html:10
+msgid "Description..."
+msgstr "Descriere..."
+
+#: local_apps/pootle_terminology/templates/terminology/term_edit.html:15
+msgid "Details..."
+msgstr "Detalii..."
+
+#: local_apps/pootle_translationproject/forms.py:28
+msgid "Source Text"
+msgstr "Text sursă"
+
+#: local_apps/pootle_translationproject/forms.py:29
+msgid "Target Text"
+msgstr "Text țintă"
+
+#: local_apps/pootle_translationproject/forms.py:30
+msgid "Comments"
+msgstr "Comentarii"
+
+#: local_apps/pootle_translationproject/forms.py:31
+msgid "Locations"
+msgstr "Locații"
+
+#: local_apps/pootle_translationproject/models.py:320
+#: local_apps/pootle_translationproject/models.py:346
+msgid "You do not have rights to update from version control here"
+msgstr "Nu aveți dreptul să actualizați de la versiunea de control aici"
+
+#: local_apps/pootle_translationproject/models.py:335
+#, python-format
+msgid "Updated project \"%s\" from version control"
+msgstr "Actualizare proiect \"%s\" de la versiunea de control"
+
+#: local_apps/pootle_translationproject/models.py:350
+#, python-format
+msgid "Updated file %s from version control"
+msgstr "Fișier actualizat %s de la versiunea de control"
+
+#: local_apps/pootle_translationproject/models.py:356
+#, python-format
+msgid "Failed to update %s from version control"
+msgstr "Nu a reușit actualizarea %s de la versiunea de control"
+
+#: local_apps/pootle_translationproject/views.py:83
+msgid "You do not have rights to access translation mode."
+msgstr "Nu aveţi dreptul să modificaţi traduceri aici."
+
+#: local_apps/pootle_translationproject/views.py:119
+msgid "You do not have rights to access review mode."
+msgstr "Nu aveţi dreptul să modificaţi traduceri aici."
+
+#: local_apps/pootle_translationproject/views.py:218
+msgid "You do not have rights to access this translation project."
+msgstr "Nu aveţi dreptul să accesati acest proiect de traducere."
+
+#: local_apps/pootle_translationproject/views.py:230
+msgid "You do not have the right to create ZIP archives."
+msgstr "Nu aveţi dreptul de a crea arhive ZIP."
+
+#: local_apps/pootle_translationproject/views.py:273
+#, python-format
+msgid "Invalid/insecure file name: %s"
+msgstr "Invalid/nume de fişier nesigur: %s"
+
+#: local_apps/pootle_translationproject/views.py:279
+#, python-format
+msgid ""
+"Invalid GNU-style file name: %(local_filename)s. It must match '%(langcode)s."
+"%(filetype)s'."
+msgstr ""
+"Nume de fișier invalid GNU-stil: %(local_filename)s. Trebuie să se "
+"potrivească '%(langcode)s.%(filetype)s'."
+
+#: local_apps/pootle_translationproject/views.py:300
+msgid "Error while extracting archive"
+msgstr "Eroare în timpul extragerii arhivei"
+
+#: local_apps/pootle_translationproject/views.py:438
+msgid "You do not have rights to overwrite files here."
+msgstr "Nu aveţi dreptul să comiteţi fişiere aici."
+
+#: local_apps/pootle_translationproject/views.py:440
+msgid "You do not have rights to upload new files here."
+msgstr "Nu aveţi dreptul să încărcaţi fişiere noi aici."
+
+#: local_apps/pootle_translationproject/views.py:442
+#: local_apps/pootle_translationproject/views.py:444
+msgid "You do not have rights to upload files here."
+msgstr "Nu aveţi dreptul de a încărca fişiere aici."
+
+#: local_apps/pootle_translationproject/views.py:463
+msgid "Update all from version control"
+msgstr "Actualizați toate de la versiunea de control"
+
+#: local_apps/pootle_translationproject/views.py:478
+msgid "Upload"
+msgstr "Încărcaţi"
+
+#: local_apps/pootle_translationproject/views.py:485
+msgid ""
+"Merge the file with the current file and turn conflicts into suggestions"
+msgstr ""
+"Uneşte fişierul cu fişierul curent şi transformă conflictele în sugestii"
+
+#: local_apps/pootle_translationproject/views.py:486
+msgid "Add all new translations as suggestions"
+msgstr "Adaugă toate traducerile noi ca sugestii"
+
+#: local_apps/pootle_translationproject/views.py:488
+msgid "Overwrite the current file if it exists"
+msgstr "Suprascrie fişierul curent dacă există"
+
+#: local_apps/pootle_translationproject/views.py:492
+msgid "File"
+msgstr "Fișierul"
+
+#: local_apps/pootle_translationproject/views.py:495
+msgid "Upload to"
+msgstr "Încărcaţi în"
+
+#: local_apps/pootle_translationproject/views.py:496
+msgid ""
+"Optionally select the file you want to merge with. If not specified, the "
+"uploaded file's name is used."
+msgstr ""
+"Opțional selectați fișierul cu care doriți să fuzioneze. Dacă nu este "
+"specificat, numele fișierului încărcat este folosit."
+
+#: local_apps/pootle_translationproject/views.py:501
+msgid "Upload File"
+msgstr "Încarcă fişier"
+
+#: local_apps/pootle_translationproject/templates/translation_project/search.html:8
+msgid "Search"
+msgstr "Căutare"
+
+#: local_apps/pootle_translationproject/templates/translation_project/tp_admin_files.html:11
+msgid "Here you can manage the files in this translation project."
+msgstr "Aici puteţi administra fişierele din acest proiect de de traducere."
+
+#: local_apps/pootle_translationproject/templates/translation_project/tp_admin_files.html:14
+msgid "Update files from templates"
+msgstr "Actualizează din modele"
+
+#: local_apps/pootle_translationproject/templates/translation_project/tp_admin_files.html:15
+msgid "Rescan project files"
+msgstr "Rescanează fișierele proiectului"
+
+#: local_apps/pootle_translationproject/templates/translation_project/tp_admin_permissions.html:13
+msgid ""
+"Below you can add, edit, and delete the permissions for this translation "
+"project."
+msgstr ""
+"Mai jos puteţi adăuga, edita şi şterge permisiunile pentru acest proiect de "
+"traducere."
+
+#: local_apps/pootle_translationproject/templates/translation_project/tp_review.html:6
+#: templates/tp_menu.html:10
+msgid "Review"
+msgstr "Recenzie"
+
+#: local_apps/pootle_translationproject/templatetags/translation_project_tags.py:40
+msgid "Advanced search"
+msgstr "Căutare avansată"
+
+#: pootle/settings.py:42
+msgid "Pootle Demo"
+msgstr "Demo Pootle"
+
+#. l10n: Change the language code (en) to your language code, and replace ltr with rtl if you language is written from right to left.
+#: pootle/settings.py:45
+msgid ""
+"<div dir=\"ltr\" lang=\"en\">\n"
+"<h2 class=\"title\">This is a demo installation of Pootle.</h2>\n"
+"<p class=\"about\">You can also visit the official <a href=\"http://pootle."
+"locamotion.org\">Pootle server</a>. The server administrator has not "
+"provided contact information or a description of this server. If you are the "
+"administrator for this server, edit this description in your preference file "
+"or in the administration interface.</p>\n"
+"</div>"
+msgstr ""
+"<div dir=\"ltr\" lang=\"ro\">\n"
+"<h2 class=\"title\">Aceasta este o instalare demonstrativă Pootle.</h2>\n"
+"<p class=\"about\">Puteţi vizita de asemenea oficialul <a "
+"href=\"http://pootle.locamotion.org\">server Pootle</a>. Administratorul "
+"serverului nu a furnizat informații de contact sau o descriere a acestui "
+"server. Daca sunteți administrator pentru acest server, editați această "
+"descriere în fișierul dumneavoastră de preferințe sau în interfața de "
+"administrare.</p>\n"
+"</div>"
+
+#: pootle/middleware/captcha.py:123
+msgid "Time to answer has expired"
+msgstr "Timpul de răspuns a expirat"
+
+#: pootle/middleware/captcha.py:141
+msgid "Enter a number"
+msgstr "Introduceţi un număr"
+
+#: pootle/middleware/captcha.py:156
+msgid "Incorrect"
+msgstr "Incorect"
+
+#: templates/403.html:5 templates/403.html.py:10
+msgid "Permission Denied"
+msgstr "Permisiune refuzată"
+
+#: templates/403.html:14
+msgid "You don't have permission to access this page."
+msgstr "Nu aveţi permisiunea de a accesa această pagină."
+
+#: templates/404.html:5 templates/404.html.py:10
+msgid "Page Not Found"
+msgstr "Pagina nu a fost găsită"
+
+#: templates/404.html:11
+msgid "We're sorry, but the requested page could not be found."
+msgstr "Ne pare rău, dar pagina solicitată nu a putut fi găsită."
+
+#: templates/500.html:5 templates/500.html.py:10
+msgid "Server Error"
+msgstr "Eroare de server"
+
+#: templates/500.html:11
+msgid "An error has occurred. Thank you for your patience."
+msgstr "A apărut o eroare. Vă mulţumim pentru răbdare."
+
+#: templates/admin_profile_base.html:5 templates/admin_profile_base.html:10
+msgid "Administration"
+msgstr "Administrația"
+
+#: templates/admin_profile_menu.html:5
+msgid "Information and statistics about this Pootle server"
+msgstr "Informaţii şi statistici despre acest server Pootle"
+
+#: templates/admin_profile_menu.html:5
+msgid "Info"
+msgstr "Info"
+
+#: templates/admin_profile_menu.html:6
+msgid "Configure the general settings for your site"
+msgstr "Configuraţi setările generale pentru site-ul dvs."
+
+#: templates/admin_profile_menu.html:6
+msgid "General"
+msgstr "General"
+
+#: templates/admin_profile_menu.html:7
+msgid "Manage the users"
+msgstr "Administrează utilizatorii"
+
+#: templates/admin_profile_menu.html:8
+msgid "Manage the languages"
+msgstr "Administrează limbile"
+
+#: templates/admin_profile_menu.html:9
+msgid "Manage the projects"
+msgstr "Administrează proiectele"
+
+#: templates/admin_profile_menu.html:10
+msgid "Manage the default permissions"
+msgstr "Administrează permisiunile implicite"
+
+#: templates/base.html:49
+msgid "skip to navigation"
+msgstr "treci la navigare"
+
+#: templates/base.html:57 templates/base.html.py:117 templates/docs.html:5
+msgid "Help"
+msgstr "Ajutor"
+
+#: templates/base.html:62 templates/user_profile_base.html:5
+#: templates/user_profile_base.html:10
+msgid "My Account"
+msgstr "Contul meu"
+
+#: templates/base.html:63
+msgid "Log Out"
+msgstr "Ieşire"
+
+#: templates/base.html:66 templates/registration/registration_form.html:4
+#: templates/registration/registration_form.html:35
+msgid "Register"
+msgstr "Înregistrare"
+
+#: templates/base.html:68
+msgid "Log In"
+msgstr "Autentificare"
+
+#: templates/base.html:119 templates/contact_form/contact_form.html:4
+#: templates/contact_form/contact_form.html:8
+msgid "Contact Us"
+msgstr "Contactați-ne"
+
+#: templates/base.html:121
+msgid "About this Pootle Server"
+msgstr "Despre acest server Pootle"
+
+#: templates/captcha.html:5 templates/captcha.html.py:14
+msgid "Are You Human?"
+msgstr "Sunteți om?"
+
+#: templates/captcha.html:15
+msgid ""
+"To protect the server against attacks we have to verify that submissions are "
+"made by human users."
+msgstr ""
+"Pentru a proteja serverul împotriva atacurilor trebuie să verificăm că "
+"observațiile sunt făcute de către utilizatori umani."
+
+#: templates/captcha.html:16
+msgid "Please answer this question:"
+msgstr "Vă rugăm să răspundeţi la această întrebare:"
+
+#: templates/captcha.html:20
+msgid "Confirm"
+msgstr "Confirmați"
+
+#: templates/language_menu.html:7
+msgid "Language main page"
+msgstr "Pagina principală a limbii"
+
+#: templates/language_menu.html:7 templates/project_menu.html:7
+#: templates/tp_menu.html:7
+msgid "Overview"
+msgstr "Prezentare generală"
+
+#: templates/language_menu.html:8
+msgid "Language news"
+msgstr "Știrile limbii"
+
+#: templates/language_menu.html:10
+msgid "Administrate your language permissions"
+msgstr "Administrați permisiunile limbii dumneavoastră"
+
+#: templates/project_menu.html:7
+msgid "Project main page"
+msgstr "Pagina principală a proiectului"
+
+#: templates/project_menu.html:8
+msgid "Project news"
+msgstr "Știri proiect"
+
+#: templates/project_menu.html:10
+msgid "Administrate your project"
+msgstr "Administrați proiectul dumneavoastră"
+
+#: templates/project_menu.html:11
+msgid "Manage project permissions"
+msgstr "Administrează permisiunile proiectului"
+
+#: templates/tp_base_terminology.html:5
+msgid "Manage Terminology"
+msgstr "Administrează terminologie"
+
+#: templates/tp_menu.html:7
+msgid "Translation project main page"
+msgstr "Pagina principală a proiectului de traducere"
+
+#: templates/tp_menu.html:8
+msgid "Translation project news"
+msgstr "Știrile proiectului de traducere"
+
+#: templates/tp_menu.html:9
+msgid "Translate this project"
+msgstr "Traduceţi acest proiect"
+
+#: templates/tp_menu.html:10
+msgid "Quality checks and review suggestions"
+msgstr "Controale de calitate și revizuirea sugestiilor"
+
+#: templates/tp_menu.html:12
+msgid "Administrate your project permissions"
+msgstr "Administrați permisiunile proiectului dumneavoastră"
+
+#: templates/tp_menu.html:13
+msgid "Administrate your project files"
+msgstr "Administrați fișierele proiectului dumneavoastră"
+
+#: templates/user_profile_menu.html:6 templates/user_profile_menu.html:16
+msgid "Overview of your account"
+msgstr "Privire de ansamblu asupra contului dumneavoastră"
+
+#: templates/user_profile_menu.html:7 templates/user_profile_menu.html:17
+msgid "Configure your translation preferences"
+msgstr "Configurați preferințele dumneavoastră de traducere"
+
+#: templates/user_profile_menu.html:7 templates/user_profile_menu.html:17
+msgid "Settings"
+msgstr "Setări"
+
+#: templates/user_profile_menu.html:8 templates/user_profile_menu.html:18
+msgid "Change your personal information"
+msgstr "Modificați informațiile dumneavoastră personale"
+
+#: templates/user_profile_menu.html:8 templates/user_profile_menu.html:18
+#: templates/profiles/edit_personal.html:5
+#: templates/profiles/edit_personal.html:11
+msgid "Profile"
+msgstr "Profil"
+
+#: templates/user_profile_menu.html:9 templates/user_profile_menu.html:19
+msgid "Change your password"
+msgstr "Schimbaţi-vă parola"
+
+#: templates/admin/base_site.html:4 templates/admin/base_site.html.py:7
+msgid "Django administration"
+msgstr "Administrația Django"
+
+#: templates/contact_form/contact_form.html:12
+msgid "Send"
+msgstr "Trimite"
+
+#: templates/contact_form/contact_form_sent.html:5
+#: templates/contact_form/contact_form_sent.html:9
+msgid "Message Sent"
+msgstr "Mesaj trimis"
+
+#: templates/contact_form/contact_form_subject.txt:2
+#, python-format
+msgid " message by %(name)s"
+msgstr " mesaj prin %(name)s"
+
+#: templates/profiles/edit_personal.html:14
+msgid ""
+"Here you can change your personal details. This information will be used in "
+"the header of the translation files."
+msgstr ""
+"Aici puteţi modifica detaliile personale. Aceste informaţii vor fi utilizate "
+"în antetul fișierelor de traducere."
+
+#: templates/profiles/edit_personal.html:19
+msgid "First Name"
+msgstr "Prenumele"
+
+#: templates/profiles/edit_personal.html:24
+msgid "Last Name"
+msgstr "Numele"
+
+#: templates/profiles/edit_personal.html:29
+msgid "Email address"
+msgstr "Adresă e-mail"
+
+#: templates/profiles/edit_profile.html:5
+#: templates/profiles/edit_profile.html:11
+msgid "Translation Settings"
+msgstr "Setări traducere"
+
+#: templates/profiles/edit_profile.html:14
+msgid ""
+"Here you can configure the settings related to the translation interface as "
+"well as your language preferences."
+msgstr ""
+"Aici puteţi configura setările referitoare la interfaţa de traducere precum "
+"şi preferinţele dumneavoastră de limbă."
+
+#: templates/profiles/profile_detail.html:25
+msgid "Quick Links"
+msgstr "Legături rapide"
+
+#: templates/profiles/profile_detail.html:53
+msgid "No languages or projects selected. Choose yours now."
+msgstr "Nu există limbi sau proiecte selectate. Alegeți acum."
+
+#: templates/profiles/profile_detail.html:55
+msgid "This user has not selected languages or projects yet."
+msgstr "Acest utilizator nu a selectat limbi sau proiecte încă."
+
+#: templates/profiles/profile_detail.html:65
+msgid "User Statistics"
+msgstr "Statistici utilizator"
+
+#: templates/profiles/profile_list.html:7
+msgid "Profiles list"
+msgstr "Listă profile"
+
+#: templates/profiles/profile_list.html:11
+#: templates/registration/registration_form.html:15
+msgid "Username"
+msgstr "Nume de utilizator"
+
+#: templates/profiles/profile_list.html:12
+msgid "First name"
+msgstr "Prenumele"
+
+#: templates/profiles/profile_list.html:13
+msgid "Last name"
+msgstr "Numele"
+
+#: templates/registration/activate.html:5
+#: templates/registration/activate.html:9
+msgid "Account Activated"
+msgstr "Cont activat"
+
+#: templates/registration/activate.html:10
+#, python-format
+msgid ""
+"The account has been activated for username \"%(account)s\". You can now "
+"proceed to log in."
+msgstr ""
+"Contul a fost activat pentru numele de utilizator \"%(account)s\". Puteți "
+"continua acum pentru autentificare."
+
+#: templates/registration/activation_email.txt:2
+msgid "A Pootle account has been created for you using this email address."
+msgstr "S-a creat un cont Pootle pentru dvs folosind această adresă de e-mail.\n"
+
+#: templates/registration/activation_email.txt:3
+msgid "To activate your account, follow this link:"
+msgstr "Pentru a activa contul dvs urmaţi acest link:\n"
+
+#: templates/registration/activation_email.txt:6
+msgid "Your activation code is:"
+msgstr "Codul dvs de activare este:"
+
+#: templates/registration/activation_email.txt:9
+msgid ""
+"This message is sent to verify that the email address is in fact correct. If "
+"you did not want to register an account, you may simply ignore the message."
+msgstr "Acest mesaj este trimis pentru a verifica că adresa de e-mail este corectă. "
+"Dacă nu doriţi să înregistraţi un cont, puteţi pur şi simplu să ignoraţi "
+"mesajul.\n"
+
+#: templates/registration/activation_email_subject.txt:2
+msgid "Pootle registration"
+msgstr "Înregistrare Pootle"
+
+#: templates/registration/password_change_done.html:5
+#: templates/registration/password_change_done.html:15
+msgid "Password Changed"
+msgstr "Parolă schimbată"
+
+#: templates/registration/password_change_done.html:16
+msgid "Your password was changed successfully."
+msgstr "Parola dumneavoastră a fost schimbată cu succes."
+
+#: templates/registration/password_change_form.html:5
+#: templates/registration/password_change_form.html:11
+msgid "Change Password"
+msgstr "Schimbaţi-vă parola "
+
+#: templates/registration/password_change_form.html:15
+msgid ""
+"Please enter your old password, for security's sake, and then enter your new "
+"password twice so we can verify you typed it in correctly."
+msgstr ""
+"Vă rugăm să introduceţi parola dumneavoastră veche, pentru motive de "
+"securitate, şi apoi introduceţi parola nouă de două ori astfel încât să "
+"putem verifica că aţi tastat-o în mod corect."
+
+#: templates/registration/password_change_form.html:23
+msgid "Old password"
+msgstr "Parolă veche"
+
+#: templates/registration/password_change_form.html:28
+msgid "New password"
+msgstr "Parolă nouă"
+
+#: templates/registration/password_change_form.html:33
+msgid "Confirm password"
+msgstr "Confirmaţi parola"
+
+#: templates/registration/password_change_form.html:38
+msgid "Change My Password"
+msgstr "Schimbă parola"
+
+#: templates/registration/password_reset_complete.html:4
+msgid "Password Reset"
+msgstr "Resetare parolă"
+
+#: templates/registration/password_reset_complete.html:8
+msgid "Password Reset Complete."
+msgstr "Resetarea parolei finalizată."
+
+#: templates/registration/password_reset_complete.html:10
+#, python-format
+msgid ""
+"Your password has been set. You may go ahead and <a href=\"%(login_url)s"
+"\">log in</a> now."
+msgstr ""
+"Parola dumneavoastră a fost stabilită. Puteți merge mai departe și <a href=\""
+"%(login_url)s\">conectați</a> acum."
+
+#: templates/registration/password_reset_confirm.html:5
+#: templates/registration/password_reset_done.html:5
+#: templates/registration/password_reset_done.html:9
+#: templates/registration/password_reset_form.html:5
+#: templates/registration/password_reset_form.html:9
+msgid "Reset Password"
+msgstr "Resetare parolă"
+
+#: templates/registration/password_reset_confirm.html:10
+msgid "Enter New Password."
+msgstr "Introduceţi noua parolă."
+
+#: templates/registration/password_reset_confirm.html:12
+msgid ""
+"Please enter your new password twice so we can verify you typed it in "
+"correctly."
+msgstr ""
+"Vă rugăm să introduceţi parola nouă de două ori astfel încât să putem "
+"verifica că aţi tastat-o în mod corect."
+
+#: templates/registration/password_reset_confirm.html:16
+msgid "New Password"
+msgstr "Parolă nouă"
+
+#: templates/registration/password_reset_confirm.html:21
+msgid "Confirm Password"
+msgstr "Confirmaţi parola"
+
+#: templates/registration/password_reset_confirm.html:26
+#: templates/registration/password_reset_form.html:20
+msgid "Reset My Password"
+msgstr "Resetează parola mea"
+
+#: templates/registration/password_reset_confirm.html:30
+msgid "Password Reset Failed."
+msgstr "Resetarea parolei a eşuat."
+
+#: templates/registration/password_reset_confirm.html:32
+msgid ""
+"The password reset link was invalid, possibly because it has already been "
+"used. Please request a new password reset."
+msgstr ""
+"Link-ul de resetare a parolei a fost invalid, posibil din cauza că a fost "
+"deja folosit. Vă rugăm să solicitați o resetare nouă a parolei."
+
+#: templates/registration/password_reset_done.html:11
+msgid ""
+"We've e-mailed you instructions for setting your password to the e-mail "
+"address you submitted. You should receive it shortly."
+msgstr ""
+"V-am trimis un e-mail cu instrucțiuni pentru setarea parolei la adresa de "
+"e-mail selectată. Ar trebui să îl primiți în scurt timp."
+
+#: templates/registration/password_reset_email.html:2
+#, python-format
+msgid ""
+"You're receiving this e-mail because you requested a password reset for your "
+"user account at %(site_name)s."
+msgstr ""
+"Ați primit acest mesaj pentru că ați cerut schimbarea parolei pentru contul "
+"utilizatorului al %(site_name)s."
+
+#: templates/registration/password_reset_email.html:4
+msgid "Please go to the following page and choose a new password:"
+msgstr "Vă rugăm să accesați pagina următoare și să alegeți o parolă nouă:"
+
+#: templates/registration/password_reset_email.html:8
+#, python-format
+msgid "Your username is %(user)s."
+msgstr "Numele contului dumneavoastră este %(user)s."
+
+#: templates/registration/password_reset_email.html:10
+msgid "Thank you for using Pootle!"
+msgstr "Vă mulțumim că folosiți Pootle!"
+
+#: templates/registration/password_reset_form.html:11
+msgid ""
+"Forgotten your password? Enter your e-mail address below, and we'll e-mail "
+"instructions for setting a new one."
+msgstr ""
+"Ați uitat parola? Introduceți adresa dumneavoastră de e-mail dedesubt, și vă "
+"vom trimite pentru configurarea unei noi parole."
+
+#: templates/registration/password_reset_form.html:15
+#: templates/registration/registration_form.html:20
+msgid "Email Address"
+msgstr "Adresă e-mail"
+
+#: templates/registration/registration_complete.html:5
+#: templates/registration/registration_complete.html:9
+msgid "Registration Complete"
+msgstr "Înscriere finalizată"
+
+#: templates/registration/registration_complete.html:10
+msgid "Please check your email to activate your account."
+msgstr "Vă rugăm să vă verificați căsuța de e-mail pentru activarea contului."
+
+#: templates/registration/registration_form.html:8
+msgid "Register a New Pootle Account"
+msgstr "Creați un cont nou Pootle"
+
+#: templates/registration/registration_form.html:9
+msgid "Fill in the following form to get started translating."
+msgstr "Completați căsuța următoare pentru a începe traducerea."
+
+#: templates/registration/registration_form.html:30
+msgid "Password (again)"
+msgstr "Parola (din nou)"
+
+#: templates/registration/registration_form.html:40
+msgid "Already have an account?"
+msgstr "Dețineți deja un cont?"
+
+#: templates/registration/registration_form.html:41
+msgid "Log In."
+msgstr "Autentificare."
+
+#~ msgid "You do not have rights to suggest changes here"
+#~ msgstr "Nu aveţi dreptul să sugeraţi schimbări aici"
+
+#~ msgid "You do not have rights to change translations here"
+#~ msgstr "Nu aveţi dreptul să modificaţi traduceri aici"
+
+#~ msgid "You do not have rights to review suggestions here"
+#~ msgstr "Nu aveţi dreptul să recenziaţi sugestii aici"
+
+#~ msgid "Update Rights"
+#~ msgstr "Actualizare drepturi"
+
+#~ msgid "Copy"
+#~ msgstr "Copiază"
+
+#~ msgid "Skip"
+#~ msgstr "Sari"
+
+#~ msgid "Back"
+#~ msgstr "Înapoi"
+
+#~ msgid "This is a standard style project (one directory per language)."
+#~ msgstr "Acesta este un proiect în stil standard (un director per limbă)."
+
+#~ msgid "User Permissions"
+#~ msgstr "Permisiuni utilizator"
+
+#~ msgid "(select to add user)"
+#~ msgstr "(selectaţi pentru adăugare utilizator)"
+
+#~ msgid "Start"
+#~ msgstr "Start"
+
+#, python-format
+#~ msgid "Previous %d"
+#~ msgstr "Precedentele %d"
+
+#, python-format
+#~ msgid "Next %d"
+#~ msgstr "Următoarele %d"
+
+#~ msgid "End"
+#~ msgstr "Capăt"
+
+#~ msgid ""
+#~ "Translation not possible because plural information for your language is not "
+#~ "available. Please contact the site administrator."
+#~ msgstr ""
+#~ "Traducerea nu este posibilă deoarece informaţia despre pluralul folosit în "
+#~ "limba dvs nu este disponibilă. Vă rugăm contactaţi administratorul saitului."
+
+#~ msgid "Current Translation:"
+#~ msgstr "Traducerea curentă:"
+
+#, python-format
+#~ msgid "Suggestion %d:"
+#~ msgstr "Sugestia %d:"
+
+#, python-format
+#~ msgid "Suggestion by %s:"
+#~ msgstr "Sugestie de %s:"
+
+#~ msgid "Suggestion:"
+#~ msgstr "Sugestie:"
+
+#~ msgid "Related"
+#~ msgstr "Asociate"
+
+#~ msgid "Accept"
+#~ msgstr "Acceptă"
+
+#~ msgid "Reject"
+#~ msgstr "Respinge"
+
+#~ msgid "My Languages"
+#~ msgstr "Limbile mele"
+
+#~ msgid "My Projects"
+#~ msgstr "Proiectele mele"
+
+#~ msgid "General options"
+#~ msgstr "Opţiuni generale"
+
+#~ msgid "Current value"
+#~ msgstr "Valoare curentă"
+
+#~ msgid "Base URL"
+#~ msgstr "URL de bază"
+
+#~ msgid "Home Page"
+#~ msgstr "Pagina de acasă"
+
+#~ msgid "Main admin page"
+#~ msgstr "Pagina principală de admin"
+
+#~ msgid "ISO Code"
+#~ msgstr "Cod ISO"
+
+#~ msgid "(add language here)"
+#~ msgstr "(adaugă limbă aici)"
+
+#~ msgid "Special Chars"
+#~ msgstr "Caractere speciale"
+
+#~ msgid "(number of plurals)"
+#~ msgstr "(numărul pluralelor)"
+
+#~ msgid "(plural equation)"
+#~ msgstr "(ecuaţia pluralului)"
+
+#~ msgid "Remove Language"
+#~ msgstr "Eliminare limbă"
+
+#, python-format
+#~ msgid "Remove %s"
+#~ msgstr "Eliminare %s"
+
+#~ msgid "Standard"
+#~ msgstr "Standard"
+
+#~ msgid "Project Code"
+#~ msgstr "Cod proiect"
+
+#~ msgid "(add project here)"
+#~ msgstr "(adaugă proiect aici)"
+
+#~ msgid "Project Description"
+#~ msgstr "Descriere proiect"
+
+#~ msgid "(project description)"
+#~ msgstr "(descrierea proiectului)"
+
+#~ msgid "Checker Style"
+#~ msgstr "Verficator de stil"
+
+#~ msgid "Create MO Files"
+#~ msgstr "Creează fişiere MO"
+
+#~ msgid "Remove Project"
+#~ msgstr "Elimină proiect"
+
+#~ msgid "(add full name here)"
+#~ msgstr "(adaugă numele complet aici)"
+
+#~ msgid "(add email here)"
+#~ msgstr "(adaugă adresa e-mail aici)"
+
+#~ msgid "(add password here)"
+#~ msgstr "(adaugă parola aici)"
+
+#~ msgid "Activated"
+#~ msgstr "Activat"
+
+#~ msgid "Activate New User"
+#~ msgstr "Activare utilizator nou"
+
+#~ msgid "Remove User"
+#~ msgstr "Eliminare utilizator"
+
+#~ msgid "Back to main page"
+#~ msgstr "Înapoi la pagina principală"
+
+#~ msgid "Existing languages"
+#~ msgstr "Limbi existente"
+
+#~ msgid "Update Languages"
+#~ msgstr "Actualizează limbi"
+
+#, python-format
+#~ msgid "Pootle Admin: %s"
+#~ msgstr "Adminul Pootle: %s"
+
+#~ msgid "Add Language"
+#~ msgstr "Adaugă limbă"
+
+#, python-format
+#~ msgid "Pootle Admin: %s %s"
+#~ msgstr "Admin Pootle: %s %s"
+
+#, python-format
+#~ msgid "Cannot set rights for username %s - user does not exist"
+#~ msgstr ""
+#~ "Nu se pot seta drepturile pentru utilizatorul %s - utilizatorul nu există"
+
+#~ msgid "This is a GNU-style project (one directory, files named per language)."
+#~ msgstr ""
+#~ "Acesta este un proiect în stil GNU (un director, fişiere numite per limbă)."
+
+#~ msgid "Rights"
+#~ msgstr "Drepturi"
+
+#~ msgid "Remove"
+#~ msgstr "Eliminare"
+
+#~ msgid ""
+#~ "<strong>Pootle</strong> is a simple web portal that should allow you to "
+#~ "<strong>translate</strong>! Since Pootle is <strong>Free Software</strong>, "
+#~ "you can download it and run your own copy if you like. You can also help "
+#~ "participate in the development in many ways (you don't have to be able to "
+#~ "program)."
+#~ msgstr ""
+#~ "<strong>Pootle</strong> este un simplu portal web care ar trebui să vă "
+#~ "permită să <strong>traduceţi</strong>! Pentru că Pootle este "
+#~ "<strong>Software Liber</strong>, puteţi să-l descărcaţi şi să rulaţi propria "
+#~ "copie dacă doriţi. Puteţi de asemenea să ajutaţi participând la dezvoltarea "
+#~ "lui în multe feluri (nu trebuie să ştiţi programare)."
+
+#~ msgid ""
+#~ "The Pootle project itself is hosted at <a href=\"http://translate."
+#~ "sourceforge.net/\">translate.sourceforge.net</a> where you can find the "
+#~ "details about source code, mailing lists etc."
+#~ msgstr ""
+#~ "Proiectul Pootle este găzduit la <a "
+#~ "href=\"http://translate.sourceforge.net/\">translate.sourceforge.net</a> unde "
+#~ "puteţi găsi detalii despre codul sursă, listele de mail etc."
+
+#~ msgid ""
+#~ "The name stands for <b>PO</b>-based <b>O</b>nline <b>T</b>ranslation / <b>L</"
+#~ "b>ocalization <b>E</b>ngine, but you may need to read <a href=\"http://www."
+#~ "thechestnut.com/flumps.htm\">this</a>."
+#~ msgstr ""
+#~ "Numele provine de la „<b>PO</b>-based <b>O</b>nline <b>T</b>ranslation / "
+#~ "<b>L</b>ocalization <b>E</b>ngine”, dar aţi putea citi <a "
+#~ "href=\"http://www.thechestnut.com/flumps.htm\">asta</a>."
+
+#~ msgid "Versions"
+#~ msgstr "Versiuni"
+
+#, python-format
+#~ msgid ""
+#~ "This site is running:<br />Pootle %s<br />Translate Toolkit %s<br />jToolkit "
+#~ "%s<br />Kid %s<br />ElementTree %s<br />Python %s (on %s/%s)"
+#~ msgstr ""
+#~ "Acest sait rulează:<br />Pootle %s<br />Translate Toolkit %s<br />jToolkit "
+#~ "%s<br />Kid %s<br />ElementTree %s<br />Python %s (pe %s/%s)"
+
+#, python-format
+#~ msgid "User Page for: %s"
+#~ msgstr "Pagina utilizatorului pentru: %s"
+
+#~ msgid "Change options"
+#~ msgstr "Schimbare opţiuni"
+
+#~ msgid "Admin page"
+#~ msgstr "Pagină admin"
+
+#~ msgid "Please click on 'Change options' and select some languages and projects"
+#~ msgstr ""
+#~ "Vă rugăm clicaţi pe 'Schimbare opţiuni' şi alegeţi nişte limbi şi proiecte"
+
+#, python-format
+#~ msgid "%d project, average %d%% translated"
+#~ msgid_plural "%d projects, average %d%% translated"
+#~ msgstr[0] "%d proiect, tradus aproximativ %d%%"
+#~ msgstr[1] "%d proiecte, tradus aproximativ %d%%"
+#~ msgstr[2] "%d proiecte, tradus aproximativ %d%%"
+
+#, python-format
+#~ msgid "%s: %s"
+#~ msgstr "%s: %s"
+
+#~ msgid "Language Code"
+#~ msgstr "Codul limbii"
+
+#~ msgid "Language Name"
+#~ msgstr "Numele limbii"
+
+#, python-format
+#~ msgid "%d language, average %d%% translated"
+#~ msgid_plural "%d languages, average %d%% translated"
+#~ msgstr[0] "%d limbă, tradus în medie %d%%"
+#~ msgstr[1] "%d limbi, traduse în medie %d%%"
+#~ msgstr[2] "%d limbi, traduse în medie %d%%"
+
+#, python-format
+#~ msgid "%s: Project %s, Language %s"
+#~ msgstr "%s: Proiectul %s, Limba %s"
+
+#~ msgid "Cannot upload file, no file attached"
+#~ msgstr "Nu se poate încărca fişierul, niciun fişier ataşat"
+
+#~ msgid "Can only upload PO files and zips of PO files"
+#~ msgstr "Se pot încărca doar fişiere PO şi arhive zip cu fişiere PO"
+
+#~ msgid "Assign Strings"
+#~ msgstr "Atribuie texte"
+
+#~ msgid "Assign Action"
+#~ msgstr "Atribuie acţiune"
+
+#~ msgid "Assign to User"
+#~ msgstr "Atribuie utilizatorului"
+
+#~ msgid "goals"
+#~ msgstr "obiective"
+
+#~ msgid "Enter goal name"
+#~ msgstr "Introduceţi numele obiectivului"
+
+#~ msgid "Add Goal"
+#~ msgstr "Adăugare obiectiv"
+
+#~ msgid "Select file to upload"
+#~ msgstr "Alegeţi fişierul de încărcat"
+
+#~ msgid "Overwrite"
+#~ msgstr "Suprascrie"
+
+#~ msgid "Merge"
+#~ msgstr "Uneşte"
+
+#~ msgid "Not in a goal"
+#~ msgstr "Nu într-un obiectiv"
+
+#~ msgid "Add User"
+#~ msgstr "Adaugă utilizator"
+
+#~ msgid "PO file"
+#~ msgstr "Fişier PO"
+
+#~ msgid "XLIFF file"
+#~ msgstr "Fişier XLIFF"
+
+#~ msgid "Qt .ts file"
+#~ msgstr "Fişier Qt .ts"
+
+#~ msgid "CSV file"
+#~ msgstr "Fişier CSV"
+
+#~ msgid "MO file"
+#~ msgstr "Fişier MO"
+
+#~ msgid "Update"
+#~ msgstr "Actualizează"
+
+#~ msgid "Commit"
+#~ msgstr "Comite"
+
+#~ msgid "All Strings"
+#~ msgstr "Toate textele"
+
+#~ msgid "Unassigned"
+#~ msgstr "Neatribuite"
+
+#~ msgid "Unassigned and Untranslated"
+#~ msgstr "Neatribuite şi netraduse"
+
+#~ msgid "Set Goal"
+#~ msgstr "Setare Obiectiv"
+
+#~ msgid "Select Multiple"
+#~ msgstr "Selecţie multiplă"
+
+#~ msgid "Assign To"
+#~ msgstr "Atribuie către"
+
+#~ msgid "Show Editing Functions"
+#~ msgstr "Arată funcţiile de editare"
+
+#~ msgid "Show Statistics"
+#~ msgstr "Arată statistici"
+
+#~ msgid "Show Tracks"
+#~ msgstr "Arată urmele"
+
+#~ msgid "Hide Tracks"
+#~ msgstr "Ascunde urmele"
+
+#~ msgid "Show Checks"
+#~ msgstr "Arată verificările"
+
+#~ msgid "Hide Checks"
+#~ msgstr "Ascunde verificările"
+
+#~ msgid "Show Goals"
+#~ msgstr "Arată obiectivele"
+
+#~ msgid "Hide Goals"
+#~ msgstr "Ascunde obiectivele"
+
+#~ msgid "Show Assigns"
+#~ msgstr "Arată atribuirile"
+
+#~ msgid "Hide Assigns"
+#~ msgstr "Ascunde atribuirile"
+
+#, python-format
+#~ msgid "All Goals: %s"
+#~ msgstr "Toate obiectivele: %s"
+
+#~ msgid "View My Strings"
+#~ msgstr "Arată textele mele"
+
+#~ msgid "No strings assigned to you"
+#~ msgstr "Niciun text atribuit dvs"
+
+#~ msgid "Quick Translate My Strings"
+#~ msgstr "Tradu rapid textele mele"
+
+#~ msgid "No untranslated strings assigned to you"
+#~ msgstr "Niciun text netradus atribuit dvs"
+
+#~ msgid "No untranslated items"
+#~ msgstr "Niciun obiect netradus"
+
+#~ msgid "ZIP of goal"
+#~ msgstr "ZIP obiectiv"
+
+#~ msgid "ZIP of folder"
+#~ msgstr "ZIP dosar"
+
+#~ msgid "Generate SDF"
+#~ msgstr "Generează SDF"
+
+#, python-format
+#~ msgid "%d string (%d%%) failed"
+#~ msgid_plural "%d strings (%d%%) failed"
+#~ msgstr[0] "%d text (%d%%) a eşuat"
+#~ msgstr[1] "%d texte (%d%%) au eşuat"
+#~ msgstr[2] ""
+
+#, python-format
+#~ msgid "%d/%d words (%d%%) assigned"
+#~ msgstr "%d/%d cuvinte (%d%%) atribuite"
+
+#, python-format
+#~ msgid "[%d/%d strings]"
+#~ msgstr "[%d/%d texte]"
+
+#, python-format
+#~ msgid "%d/%d words (%d%%) translated"
+#~ msgstr "%d cuvinte din %d (%d%%) traduse"
+
+#~ msgid "All projects"
+#~ msgstr "Toate proiectele"
+
+#~ msgid "All languages"
+#~ msgstr "Toate limbile"
+
+#~ msgid "Docs & help"
+#~ msgstr "Ajutor"
+
+#~ msgid "Activate"
+#~ msgstr "Activare"
+
+#~ msgid "Pootle Logo"
+#~ msgstr "Sigla Pootle"
+
+#~ msgid "All goals"
+#~ msgstr "Toate scopurile"
+
+#, python-format
+#~ msgid "%d/%d files"
+#~ msgstr "%d fişiere din %d"
+
+#, python-format
+#~ msgid "%d/%d strings"
+#~ msgstr "%d texte din %d"
+
+#~ msgid "Graph"
+#~ msgstr "Grafic"
+
+#~ msgid "Login failed"
+#~ msgstr "Autentificare eşuată"
+
+#~ msgid "Redirecting to login..."
+#~ msgstr "Redirectare către login..."
+
+#~ msgid "Need to log in to access home page"
+#~ msgstr "Este necesară autentificarea pentru a accesa pagina de acasă"
+
+#~ msgid "Personal details updated"
+#~ msgstr "S-au actualizat detaliile personale"
+
+#~ msgid "Need to log in to access admin page"
+#~ msgstr "Este necesară autentificarea pentru a accesa pagina de admin"
+
+#~ msgid "Redirecting to home..."
+#~ msgstr "Mergem acasă..."
+
+#~ msgid "View"
+#~ msgstr "Vedere"
+
+#~ msgid "Archive"
+#~ msgstr "Arhivează"
+
+#~ msgid "Compile PO files"
+#~ msgstr "Compilează fişiere PO"
+
+#~ msgid "Assign"
+#~ msgstr "Atribuie"
+
+#~ msgid "You cannot remove the \"nobody\" or \"default\" user"
+#~ msgstr "Nu puteţi elimina utilizatorul \"nobody\" sau \"default\""
+
+#~ msgid "You do not have rights to alter goals here"
+#~ msgstr "Nu aveţi drepturi să alteraţi ţelurile aici"
+
+#~ msgid "You do not have rights to alter assignments here"
+#~ msgstr "Nu aveţi dreptul să alteraţi atribuţii aici"
+
+#, python-format
+#~ msgid "%s: translating %s into %s: %s"
+#~ msgstr "%s: traducere %s în %s: %s"
+
+#~ msgid "End of batch"
+#~ msgstr "Sfârşitul seriei"
+
+#~ msgid "Click here to return to the index"
+#~ msgstr "Clicaţi aici pentru a vă întoarce la index"
+
+#, python-format
+#~ msgid "Items %d to %d of %d"
+#~ msgstr "Obiecte de la %d la %d din %d"
+
+#, python-format
+#~ msgid "There are no items matching that search ('%s')"
+#~ msgstr "Nu există rezultate pentru această căutare ('%s')"
+
+#~ msgid "You have finished going through the items you selected"
+#~ msgstr "Aţi terminat de parcurs obiectele pe care le-aţi selectat"
+
+#~ msgid "Edit"
+#~ msgstr "Editare"
+
+#~ msgid "Grow"
+#~ msgstr "Mărire"
+
+#~ msgid "Shrink"
+#~ msgstr "Micşorare"
+
+#, python-format
+#~ msgid "Suggestion %d by %s:"
+#~ msgstr "Sugestia %d de %s:"
+
+#, python-format
+#~ msgid "You must supply a valid password of at least %d characters."
+#~ msgstr "Trebuie să furnizaţi o parolă validă de cel puţin %d caractere."
+
+#~ msgid "The password is not the same as the confirmation."
+#~ msgstr "Parola nu este aceeaşi cu confirmarea parolei."
+
+#~ msgid "Username:"
+#~ msgstr "Utilizator:"
+
+#~ msgid "Password:"
+#~ msgstr "Parolă:"
+
+#~ msgid "Language:"
+#~ msgstr "Limbă:"
+
+#~ msgid "Please enter your registration details"
+#~ msgstr "Vă rugăm introduceţi datele dvs de înregistrare"
+
+#~ msgid "Your requested username"
+#~ msgstr "Numele de utilizator cerut de dvs"
+
+#~ msgid "You must supply a valid email address"
+#~ msgstr "Trebuie să furnizaţi o adresă validă de e-mail"
+
+#~ msgid "Your full name"
+#~ msgstr "Numele dvs complet"
+
+#~ msgid "Your desired password"
+#~ msgstr "Parola pe care o doriţi"
+
+#~ msgid "Type your password again to ensure it is entered correctly"
+#~ msgstr "Tastaţi parola din nou pentru a vă asigura că e introdusă corect"
+
+#~ msgid "Register Account"
+#~ msgstr "Înregistrare cont"
+
+#~ msgid "Please enter your activation details"
+#~ msgstr "Vă rugăm introduceţi datele dvs de activare"
+
+#~ msgid "Pootle Account Activation"
+#~ msgstr "Activare cont Pootle"
+
+#~ msgid "Activation Code"
+#~ msgstr "Cod de activare"
+
+#~ msgid "The activation code you received"
+#~ msgstr "Codul de activare pe care l-aţi primit"
+
+#~ msgid "Activate Account"
+#~ msgstr "Activare cont"
+
+#, python-format
+#~ msgid "Options for: %s"
+#~ msgstr "Opţiuni pentru: %s"
+
+#~ msgid "Personal Details"
+#~ msgstr "Detalii personale"
+
+#~ msgid "Email"
+#~ msgstr "E-mail"
+
+#~ msgid "Translation Interface Configuration"
+#~ msgstr "Configurarea interfeţei de traducere"
+
+#~ msgid "User Interface language"
+#~ msgstr "Limba intefeţei"
+
+#~ msgid "Home page"
+#~ msgstr "Pagina de acasă"
+
+#~ msgid "Input Height (in lines)"
+#~ msgstr "Înălţimea căsuţelor (în linii)"
+
+#~ msgid "Number of rows in view mode"
+#~ msgstr "Numărul de rânduri la vizualizare"
+
+#~ msgid "Number of rows in translate mode"
+#~ msgstr "Numărul de rânduri la traducere"
+
+#~ msgid "You need to be siteadmin to change users"
+#~ msgstr "Trebuie să fiţi admin de sait pentru a schimba utilizatorii"
+
+#~ msgid ""
+#~ "Username must be alphanumeric, and must start with an alphabetic character."
+#~ msgstr ""
+#~ "Numele de utilizator trebuie să fie alfanumeric şi să înceapă cu o literă."
+
+#~ msgid ""
+#~ "You (or someone else) attempted to register an account with your username.\n"
+#~ msgstr "S-a încercat înregistrarea unui cont cu numele dvs de utilizator de către "
+#~ "dvs (sau de către altcineva).\n"
+
+#~ msgid "We don't store your actual password but only a hash of it.\n"
+#~ msgstr "Nu vom stoca parola dvs, ci doar o încurcătură a ei.\n"
+
+#, python-format
+#~ msgid "If you have a problem with registration, please contact %s.\n"
+#~ msgstr "Dacă aveţi probleme cu înregistrarea, vă rugăm contactaţi %s.\n"
+
+#~ msgid ""
+#~ "If you have a problem with registration, please contact the site "
+#~ "administrator.\n"
+#~ msgstr "Dacă aveţi probleme cu înregistrarea, vă rugăm contactaţi administratorul "
+#~ "saitului.\n"
+
+#~ msgid ""
+#~ "That username already exists. An email will be sent to the registered email "
+#~ "address.\n"
+#~ msgstr "Numele de utilizator există deja. Va fi trimis un e-mail către adresa de "
+#~ "e-mail înregistrată cu acest nume.\n"
+
+#, python-format
+#~ msgid "Proceeding to <a href='%s'>login</a>\n"
+#~ msgstr "Mergem la <a href='%s'>autentificare</a>\n"
+
+#~ msgid ""
+#~ "If you are unable to follow the link, please enter the above code at the "
+#~ "activation page.\n"
+#~ msgstr "Dacă nu puteţi urma legătura, vă rugăm introduceţi codul de mai sus în "
+#~ "pagina de activare.\n"
+
+#, python-format
+#~ msgid ""
+#~ "Account created. You will be emailed login details and an activation code. "
+#~ "Please enter your activation code on the <a href='%s'>activation page</a>."
+#~ msgstr ""
+#~ "Cont creat. Veţi primi un e-mail cu datele de autentificare şi codul de "
+#~ "activare. Vă rugăm introduceţi codul dvs de activare pe <a href='%s'>pagina "
+#~ "de activare</a>."
+
+#~ msgid "(Or simply click on the activation link in the email)"
+#~ msgstr "(Sau pur şi simplu clicaţi pe legătura de activare din e-mail)"
+
+#, python-format
+#~ msgid "Your user name is: %s\n"
+#~ msgstr "Numele dvs de utilizator este: %s\n"
+
+#, python-format
+#~ msgid "Your password is: %s\n"
+#~ msgstr "Parola dvs este: %s\n"
+
+#, python-format
+#~ msgid "Your registered email address is: %s\n"
+#~ msgstr "Adresa dvs de e-mail înregistrată este: %s\n"
+
+#~ msgid "Redirecting to Registration Page..."
+#~ msgstr "Redirectare la pagina de înregistrare..."
+
+#~ msgid "Redirecting to login Page..."
+#~ msgstr "Redirectare la pagina de autentificare..."
+
+#~ msgid "Your account has been activated! Redirecting to login..."
+#~ msgstr "Contul dvs a fost activat! Mergem la autentificare..."
+
+#~ msgid "The activation information was not valid."
+#~ msgstr "Informaţia pentru activare nu a fost validă."
+
+#~ msgid "Activation Failed"
+#~ msgstr "Activarea a eşuat"
+
+#~ msgid "Input height must be numeric"
+#~ msgstr "Înălţimea căsuţelor trebuie să fie un număr"
+
+#~ msgid "Input width must be numeric"
+#~ msgstr "Lăţimea căsuţelor trebuie să fie un număr"
+
+#~ msgid "The number of rows displayed in view mode must be numeric"
+#~ msgstr "Numărul de rânduri afişate la vizualizare trebuie să fie numeric"
+
+#~ msgid "The number of rows displayed in translate mode must be numeric"
+#~ msgstr "Numărul de rânduri afişate la traducere trebuie să fie numeric"
+
+#~ msgid "WordForge Translation Project"
+#~ msgstr "Proiectul de traducere WordForge"
+
+#~ msgid "Broaden"
+#~ msgstr "Lăţire"
+
+#~ msgid "Narrow"
+#~ msgstr "Îngustare"
+
+#~ msgid "Reset"
+#~ msgstr "Resetare"
+
+#~ msgid "Must be a valid email address"
+#~ msgstr "Trebuie să fie o adresă e-mail validă"
+
+#~ msgid "Input Width (in characters)"
+#~ msgstr "Lăţimea căsuţelor (în caractere)"
