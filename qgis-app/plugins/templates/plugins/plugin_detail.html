@@ -4,6 +4,12 @@
     <div class="details">
         {% if object.deprecated %}<p class="error"><strong>{% trans "This plugin is deprecated!" %}</strong></p>{% endif %}
         <p>{% if object.icon %}<img class="plugin-icon" src="{{ object.icon.url }}" alt="{% trans "Plugin icon" %}" />{% endif %}<strong>{% trans "Description" %}:</strong> {{ object.description }}</p>
+        {% if object.author %}
+        <p><strong>{% trans "Author"%}:</strong> {{ object.author }}</p>
+        {% endif %}
+        {% if object.email %}
+        <p><strong>{% trans "Author's email"%}:</strong> <a href="mailto:{{ object.email }}">{{ object.email }}</a></p>
+        {% endif %}
 	    <p><strong>{% trans "Maintainer"%}:</strong> <a href="{% url user_details object.created_by %}">{{ object.created_by }}</a></p>
 	{% if object.owners.count %}<p><strong>{% trans "Owners"%}:</strong>{% for owner in object.owners.all %}
 		<a href="{% url user_details owner.username %}">{{ owner.username }}</a>{% if not forloop.last %},{% endif %}{% endfor %}

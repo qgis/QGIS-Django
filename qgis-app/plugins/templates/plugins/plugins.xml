@@ -8,7 +8,7 @@
         <homepage>{{ plugin.homepage|default_if_none:"" }}</homepage>
         <file_name>{{ plugin.stable.download_file_name }}</file_name>
         <icon>{% if plugin.icon %}{{ plugin.icon.url }}{% endif %}</icon>
-        <author_name>{{ plugin.created_by }}</author_name>
+        <author_name>{% firstof plugin.author plugin.created_by %}</author_name>
         <download_url>{% if request.is_secure %}https{% else %}http{% endif %}://{{ request.get_host }}{{ plugin.stable.get_download_url }}</download_url>
         <uploaded_by>{{ plugin.stable.created_by }}</uploaded_by>
         <create_date>{{ plugin.created_on.isoformat }}</create_date>
@@ -26,7 +26,7 @@
         <homepage>{{ plugin.homepage|default_if_none:"" }}</homepage>
         <file_name>{{ plugin.experimental.download_file_name }}</file_name>
         <icon>{% if plugin.icon %}{{ plugin.icon.url }}{% endif %}</icon>
-        <author_name>{{ plugin.created_by }}</author_name>
+        <author_name>{% firstof plugin.author plugin.created_by %}</author_name>
         <download_url>{% if request.is_secure %}https{% else %}http{% endif %}://{{ request.get_host }}{{ plugin.experimental.get_download_url }}</download_url>
         <uploaded_by>{{ plugin.experimental.created_by }}</uploaded_by>
         <create_date>{{ plugin.created_on.isoformat }}</create_date>

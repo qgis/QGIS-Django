@@ -4,6 +4,8 @@ qgisMinimumVersion=1.8
 description=This is a plugin for greeting the
     (going multiline) world
 version=version 1.3
+author=Alessandro Secondo
+email=email2@email.com
 
 
 changelog=this is a very
@@ -20,4 +22,5 @@ tracker=http://bugs.itopen.it
 homepage=http://www.itopen.it
 repository=http://www.itopen.it/repo
 
-icon=icon.png
+; change icon...
+icon=icon2.png

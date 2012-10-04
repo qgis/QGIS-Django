@@ -20,3 +20,10 @@ def icon():
     Icon
     """
     return "icon.png"
+
+
+def author():
+    return "Alessandro Secondo"
+
+def email():
+    return "email2@email.com"

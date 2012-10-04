@@ -22,3 +22,10 @@ def deprecated():
     return True
 def experimental():
     return True
+
+def author():
+    return "Alessandro Secondo"
+
+def email():
+    return "email2@email.com"
+

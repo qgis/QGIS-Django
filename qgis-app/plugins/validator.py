@@ -15,16 +15,37 @@ from django.forms import ValidationError
 from django.core.files.uploadedfile import SimpleUploadedFile
 
 PLUGIN_MAX_UPLOAD_SIZE=getattr(settings, 'PLUGIN_MAX_UPLOAD_SIZE', 1048576)
-PLUGIN_REQUIRED_METADATA=getattr(settings, 'PLUGIN_REQUIRED_METADATA', ('name', 'description', 'version', 'qgisMinimumVersion'))
+PLUGIN_REQUIRED_METADATA=getattr(settings, 'PLUGIN_REQUIRED_METADATA', ('name', 'description', 'version', 'qgisMinimumVersion', 'author', 'email'))
 
 PLUGIN_OPTIONAL_METADATA=getattr(settings, 'PLUGIN_OPTIONAL_METADATA', ('homepage', 'changelog', 'tracker', 'repository', 'tags', 'deprecated', 'experimental'))
 PLUGIN_BOOLEAN_METADATA=getattr(settings, 'PLUGIN_BOOLEAN_METADATA', ('experimental', 'deprecated'))
 
 
+def _read_from_init2(initcontent, initname):
+    """
+    Read metadata from __init__.py, raise ValidationError
+    """
+    metadata = []
+    i=0
+    lines=initcontent.split('\n')
+    while i < len(lines):
+        if re.search('def\s+([^\(]+)', lines[i]):
+            k=re.search('def\s+([^\(]+)', lines[i]).groups()[0]
+            i+=1
+            while i < len(lines) and lines[i] != '':
+                if re.search('return\s+["\']?([^"\']+)["\']?', lines[i]):
+                    metadata.append((k, re.search('return\s+["\']?([^"\']+)["\']?', lines[i]).groups()[0]))
+                    break
+                i+=1
+        i+=1
+    if not len(metadata):
+        raise ValidationError(_('Cannot find valid metadata in %s') % initname)
+    return metadata
 
 def _read_from_init(initcontent, initname):
     """
     Read metadata from __init__.py, raise ValidationError
+    DEPRECATED: the _read_from_init2 has better support for metadata
     """
     metadata = []
     metadata.extend(re.findall('def\s+([^c]\w+).*?return\s+.*?(?P<quote>["\'])(.*?)(?P=quote)', initcontent , re.DOTALL))
@@ -50,7 +71,7 @@ def validator(package):
 
         * size <= PLUGIN_MAX_UPLOAD_SIZE
         * zip contains __init__.py in first level dir
-        * mandatory metadata: ('name', 'description', 'version', 'qgisMinimumVersion')
+        * mandatory metadata: ('name', 'description', 'version', 'qgisMinimumVersion', 'author', 'email')
         * package_name regexp: [A-Za-z][A-Za-z0-9-_]+
 
     """
@@ -148,7 +169,7 @@ def validator(package):
     if tuple(min_qgs_version.split('.')) < tuple('1.8'.split('.')) and metadataname in namelist:
         initcontent = zip.read(initname)
         try:
-            initmetadata = _read_from_init(initcontent, initname)
+            initmetadata = _read_from_init2(initcontent, initname)
             initmetadata.append(('metadata_source', '__init__.py'))
             _check_required_metadata(initmetadata)
         except ValidationError, e:

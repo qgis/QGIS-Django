@@ -49,6 +49,8 @@ The validation takes place in the PluginVersions forms, at loading time, the com
     * `description`
     * `version`
     * `qgisMinimumVersion`
+    * `email`
+    * `author`
 
 
 * `version` must be unique whithin a plugin
@@ -93,6 +95,8 @@ Example configuration file::
         description=This is a plugin for greeting the
             (going multiline) world
         version=version 1.2
+        author=Alessandro Pasotti
+        email=email@email.com
         ; end of mandatory metadata
 
         ; start of optional metadata

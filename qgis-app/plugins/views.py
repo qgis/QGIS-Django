@@ -200,6 +200,9 @@ def plugin_upload(request):
                     'package_name'      : form.cleaned_data['package_name'],
                     'description'       : form.cleaned_data['description'],
                     'created_by'        : request.user,
+                    'author'            : form.cleaned_data['author'],
+                    'email'             : form.cleaned_data['email'],
+                    'created_by'        : request.user,
                     'icon'              : form.cleaned_data['icon_file'],
                 }
 
@@ -527,6 +530,8 @@ def version_create(request, package_name):
             # Update plugin from metadata
             plugin.icon = form.cleaned_data['icon_file']
             plugin.name = form.cleaned_data['name']
+            plugin.author = form.cleaned_data['author']
+            plugin.email = form.cleaned_data['email']
             plugin.description = form.cleaned_data['description']
             if form.cleaned_data.get('tags'):
                 plugin.tags.set(*form.cleaned_data.get('tags').split(','))

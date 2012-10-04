@@ -96,8 +96,7 @@ class TaggablePlugins (TaggableManager):
 
 class Plugin (models.Model):
     """
-    Plugins model
-    # TODO: category, MPTT?
+    Plugins model    
     """
 
     # dates
@@ -106,6 +105,8 @@ class Plugin (models.Model):
 
     # owners
     created_by      = models.ForeignKey(User, verbose_name=_('Created by'), related_name = 'plugins_created_by')
+    author          = models.CharField(_('Author'), help_text=_('This is the plugin\'s original author, if different from the uploader, this field will appear in the XML and in the web GUI'), max_length=256, null=True, blank=True)
+    email           = models.EmailField(_('Author email'), null=True, blank=True)
     homepage        = models.URLField(_('Plugin homepage'), verify_exists=False, blank=True, null=True)
     # Support
     repository      = models.URLField(_('Code repository'), verify_exists=False, blank=True, null=True)
