@@ -18,6 +18,28 @@ To avoid direct execution of python code (which would be a security issue), meta
 
 The new `metadata.txt` file can contain other optional metadata which are read when the package is uploaded and are automatically imported.
 
+Mandatory metadata
+==================
+
+    * `name`    
+    * `qgisMinimumVersion`
+    * `description`
+    * `version`
+    * `author`
+    * `email`
+
+Optional metadata
+=================
+
+    * `changelog`
+    * `experimental`
+    * `tags`
+    * `homepage`
+    * `repository`
+    * `tracker`
+    * `icon`
+
+
 Example configuration file::
 
         ; the next section is mandatory

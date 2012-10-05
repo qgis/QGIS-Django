@@ -1,11 +1,11 @@
 [general]
 name=HelloWorld
 qgisMinimumVersion=1.8
-description=This is a plugin for greeting the
+description=This is a test plugin for greeting the
     (going multiline) world
 version=version 1.5
-author=Alessandro Quarto
-email=email4@email.com
+author=Alessandro Pasotti
+email=apasotti@gmail.com
 
 
 changelog=this is a very
