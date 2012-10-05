@@ -19,7 +19,7 @@ class PluginForm(ModelForm):
 
     class Meta:
         model = Plugin
-        fields = ('description', 'deprecated', 'homepage', 'tracker', 'repository', 'owners', 'tags')
+        fields = ('description', 'author', 'email', 'icon', 'deprecated', 'homepage', 'tracker', 'repository', 'owners', 'tags')
 
 
 class PluginVersionForm(ModelForm):
@@ -80,11 +80,13 @@ class PackageUploadForm(forms.Form):
     """
     Single step upload for new plugins
     """
+    experimental = forms.BooleanField(required=False, label=_('Experimental'), help_text=_('Please check this box if the plugin is experimental. Please note that this field might be overridden by metadata (if present).'))
     package = forms.FileField(_('QGIS compressed plugin package'), label=_('Plugin package'), help_text=_('Please select the zipped file of the plugin.'))
-    experimental = forms.BooleanField(required=False, label=_('Experimental'), help_text=_('Please check this box if the plugin is experimental.'))
 
     def clean_package(self):
-        cleaned_data    = self.cleaned_data
+        """
+        Populates cleaned_data with metadata from the zip package
+        """
         package         = self.cleaned_data.get('package')
         try:
             self.cleaned_data.update(validator(package))

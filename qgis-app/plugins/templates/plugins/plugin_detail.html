@@ -3,11 +3,11 @@
     <h2>{% trans "Plugin" %}: {{ object.name }}</h2>
     <div class="details">
         {% if object.deprecated %}<p class="error"><strong>{% trans "This plugin is deprecated!" %}</strong></p>{% endif %}
-        <p>{% if object.icon %}<img class="plugin-icon" src="{{ object.icon.url }}" alt="{% trans "Plugin icon" %}" />{% endif %}<strong>{% trans "Description" %}:</strong> {{ object.description }}</p>
+        <p>{% if object.icon %}<img class="plugin-icon" src="{{ object.icon.url }}" alt="{% trans "Plugin icon" %}" />{% endif %}<strong>{% trans "Description" %}:</strong> {{ object.description }}</p>       
         {% if object.author %}
         <p><strong>{% trans "Author"%}:</strong> {{ object.author }}</p>
-        {% endif %}
-        {% if object.email %}
+        {% endif %}        
+        {% if object.email and not user.is_anonymous %}
         <p><strong>{% trans "Author's email"%}:</strong> <a href="mailto:{{ object.email }}">{{ object.email }}</a></p>
         {% endif %}
 	    <p><strong>{% trans "Maintainer"%}:</strong> <a href="{% url user_details object.created_by %}">{{ object.created_by }}</a></p>

@@ -3,9 +3,9 @@ name=HelloWorld
 qgisMinimumVersion=1.8
 description=This is a plugin for greeting the
     (going multiline) world
-version=version 1.3
-author=Alessandro Secondo
-email=email2@email.com
+version=version 1.5
+author=Alessandro Quarto
+email=email4@email.com
 
 
 changelog=this is a very
@@ -21,6 +21,11 @@ tags=wkt,raster,hello world
 tracker=http://bugs.itopen.it
 homepage=http://www.itopen.it
 repository=http://www.itopen.it/repo
+
+
+
+experimental=True   
+
 
 ; change icon...
 icon=icon.png

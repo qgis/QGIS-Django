@@ -20,6 +20,7 @@ from plugins.forms import *
 
 from django.views.generic.list_detail import object_list, object_detail
 from django.views.decorators.http import require_POST
+from django.views.decorators.cache import never_cache
 
 from django.core.mail import send_mail
 from django.contrib.sites.models import Site
@@ -212,6 +213,8 @@ def plugin_upload(request):
                     # Apply new values
                     plugin.name         = plugin_data['name']
                     plugin.description  = plugin_data['description']
+                    plugin.author       = plugin_data['author']
+                    plugin.email        = plugin_data['email']
                     plugin.icon         = plugin_data['icon']
                     is_new = False
                 except Plugin.DoesNotExist:
@@ -344,6 +347,7 @@ def plugin_update(request, package_name):
 
     return render_to_response('plugins/plugin_form.html', { 'form' : form , 'form_title' : _('Edit plugin')}, context_instance=RequestContext(request))
 
+
 def plugins_list(request, queryset, template_name=None, extra_context=None):
     """
     Supports per_page
@@ -368,6 +372,7 @@ def my_plugins(request):
     """
     queryset = Plugin.objects.filter(owners=request.user).distinct() | Plugin.objects.filter(created_by=request.user).distinct()
     return plugins_list(request, queryset, template_name = 'plugins/plugin_list_my.html', extra_context = { 'title' : _('My plugins')})
+
 
 def user_plugins(request, username):
     """
@@ -694,7 +699,7 @@ def version_detail(request, package_name, version):
 ###############################################
 
 
-
+@never_cache
 def xml_plugins(request):
     """
     The XML file
