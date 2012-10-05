@@ -2,7 +2,7 @@
 Metadata
 --------
 
-Plugins mandatory metadata [#f1]_ are read from both the old `__init__.py` functions format
+Plugins mandatory metadata are read from both the old `__init__.py` functions format
 and (if present) the new `metadata.txt` file.
 
 Valid metadata for the `__init__` file are:
@@ -78,9 +78,3 @@ Example configuration file::
         repository=http://www.itopen.it/repo
         icon=icon.png
 
-
-
-.. rubric:: Footnotes
-
-.. [#f1] 'name', 'description', 'version', 'qgisMinimumVersion', 'author', 'email'
-.. [#f2] Supported by metadata.txt only: 'homepage', 'changelog', 'tracker', 'repository', 'tags'

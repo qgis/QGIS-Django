@@ -5,7 +5,7 @@
         {% if object.deprecated %}<p class="error"><strong>{% trans "This plugin is deprecated!" %}</strong></p>{% endif %}
         <p>{% if object.icon %}<img class="plugin-icon" src="{{ object.icon.url }}" alt="{% trans "Plugin icon" %}" />{% endif %}<strong>{% trans "Description" %}:</strong> {{ object.description }}</p>       
         {% if object.author %}
-        <p><strong>{% trans "Author"%}:</strong> {{ object.author }}</p>
+        <p><strong>{% trans "Author"%}:</strong> <a title="{% trans "Plugins by"%} {{ object.author }}" href="{% url author_plugins object.author|urlencode %}">{{ object.author }}</a></p>
         {% endif %}        
         {% if object.email and not user.is_anonymous %}
         <p><strong>{% trans "Author's email"%}:</strong> <a href="mailto:{{ object.email }}">{{ object.email }}</a></p>

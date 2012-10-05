@@ -408,6 +408,22 @@ def plugin_manage(request, package_name):
     return HttpResponseRedirect(reverse('user_details', args=[username]))
 
 
+  
+###############################################
+
+# Author functions
+
+###############################################
+
+def author_plugins(request, author):
+    """
+    List plugins from author
+    """
+    queryset = Plugin.approved_objects.filter(author=author)
+    return plugins_list(request, queryset, template_name = 'plugins/plugin_list.html', extra_context = { 'title' : _('Plugins by %s') % author})
+
+
+
 ###############################################
 
 # User management functions

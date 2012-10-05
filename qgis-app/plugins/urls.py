@@ -31,6 +31,9 @@ urlpatterns = patterns('plugins.views',
     url(r'^stable/$', 'plugins_list', {'queryset' : Plugin.stable_objects.all(), 'extra_context' : {'title' : _('Stable plugins')}}, name='stable_plugins'),
     url(r'^experimental/$', 'plugins_list', {'queryset' : Plugin.experimental_objects.all(), 'extra_context' : {'title' : _('Experimental plugins')}}, name='experimental_plugins'),
     url(r'^popular/$', 'plugins_list', {'queryset' : Plugin.popular_objects.all(), 'extra_context' : {'title' : _('Popular plugins')}}, name='popular_plugins'),
+
+    url(r'^author/(?P<author>[\sa-zA-Z0-9_%.-]+)/$', 'author_plugins', {}, name='author_plugins'),
+
 )
 
 
