@@ -21,23 +21,23 @@ The new `metadata.txt` file can contain other optional metadata which are read w
 Mandatory metadata
 ==================
 
-    * `name`    
-    * `qgisMinimumVersion`
-    * `description`
-    * `version`
-    * `author`
-    * `email`
+* `name`: a short string  containing the name of the plugin
+* `qgisMinimumVersion`: dotted notation of minimum QGIS version
+* `description`: longer text which describes the plugin
+* `version`: short string with the version dotted notation
+* `author`: author name
+* `email`: email of the author, will *not* be shown on the web site
 
 Optional metadata
 =================
 
-    * `changelog`
-    * `experimental`
-    * `tags`
-    * `homepage`
-    * `repository`
-    * `tracker`
-    * `icon`
+* `changelog`: string, can be multiline, no HTML allowed
+* `experimental`: boolean flag, `True` or `False`
+* `tags`: comma separated list, spaces are allowe inside individual tags
+* `homepage`: a valid URL
+* `repository`: a valid URL for the source code repository
+* `tracker`: a valid URL for tickets and bug reports
+* `icon`: a file name or a relative path (relative to the base folder of the compressed package)
 
 
 Example configuration file::
