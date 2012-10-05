@@ -16,7 +16,7 @@ changelog=this is a very
     very long multiline changelog
 
 
-tags=wkt,raster,hello world
+tags=  wkt, raster,hello world, spaced tag , tag
 
 tracker=http://bugs.itopen.it
 homepage=http://www.itopen.it

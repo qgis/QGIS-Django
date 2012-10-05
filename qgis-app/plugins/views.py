@@ -242,7 +242,7 @@ def plugin_upload(request):
 
                 # Takes care of tags
                 if form.cleaned_data.get('tags'):
-                    plugin.tags.set(*form.cleaned_data.get('tags').split(','))
+                    plugin.tags.set(*[t.strip() for t in form.cleaned_data.get('tags').split(',')])
 
                 version_data =  {
                     'plugin'            : plugin,
@@ -533,7 +533,7 @@ def _main_plugin_update(plugin, form):
     plugin.email = form.cleaned_data['email']
     plugin.description = form.cleaned_data['description']
     if form.cleaned_data.get('tags'):
-        plugin.tags.set(*form.cleaned_data.get('tags').split(','))
+        plugin.tags.set(*[strip(t) for t in form.cleaned_data.get('tags').split(',')])
     if form.cleaned_data.get('homepage'):
         plugin.homepage = form.cleaned_data.get('homepage')
     else:
