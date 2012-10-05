@@ -7,7 +7,7 @@
         {% endfor %}
     </ul>
     {% endif %}
-   <form action="" method="post" class="horizontal">{% csrf_token %}
+   <form action="" method="post" class="horizontal" enctype="multipart/form-data">{% csrf_token %}
         {% for field in form %}
             <div class="fieldWrapper">
                 {{ field.errors }}

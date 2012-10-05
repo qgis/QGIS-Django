@@ -308,6 +308,18 @@ def plugin_delete(request, package_name):
     return render_to_response('plugins/plugin_delete_confirm.html', { 'plugin' : plugin }, context_instance=RequestContext(request))
 
 
+def _check_optional_metadata(form, request):
+    """
+    Checks for the presence of optional metadata
+    """
+    if not form.cleaned_data.get('homepage'):
+        messages.warning(request, _('Homepage field is empty, this field is not required but is recommended, please consider adding it to metadata.'), fail_silently=True)
+    if not form.cleaned_data.get('tracker'):
+        messages.warning(request, _('Tracker field is empty, this field is not required but is  recommended, please consider adding it to metadata.'), fail_silently=True)
+    if not form.cleaned_data.get('repository'):
+        messages.warning(request, _('Repository field is empty, this field is not required but is recommended, please consider adding it to metadata.'), fail_silently=True)
+
+
 @login_required
 def plugin_update(request, package_name):
     """
@@ -332,12 +344,7 @@ def plugin_update(request, package_name):
             messages.success(request, msg, fail_silently=True)
 
             # Checks for optional metadata
-            if not form.cleaned_data.get('homepage'):
-                messages.warning(request, _('Homepage field is empty, this field is not required but is recommended, please consider adding it to metadata.'), fail_silently=True)
-            if not form.cleaned_data.get('tracker'):
-                messages.warning(request, _('Tracker field is empty, this field is not required but is recommended, please consider adding it to metadata.'), fail_silently=True)
-            if not form.cleaned_data.get('repository'):
-                messages.warning(request, _('Repository field is empty, this field is not required but is recommended, please consider adding it to metadata.'), fail_silently=True)
+            _check_optional_metadata(form, request)
 
             return HttpResponseRedirect(new_object.get_absolute_url())
     else:
@@ -522,30 +529,16 @@ def user_permissions_manage(request, username):
 ###############################################
 
 
-def _main_plugin_update(plugin, form):
+def _main_plugin_update(request, plugin, form):
     """
     Updates the main plugin object from version metadata
     """
     # Update plugin from metadata
-    plugin.icon = form.cleaned_data['icon_file']
-    plugin.name = form.cleaned_data['name']
-    plugin.author = form.cleaned_data['author']
-    plugin.email = form.cleaned_data['email']
-    plugin.description = form.cleaned_data['description']
+    for f in ['icon', 'name', 'author', 'email', 'description', 'homepage', 'tracker']:
+        if form.cleaned_data.get(f):
+            setattr(plugin, f, form.cleaned_data.get(f))
     if form.cleaned_data.get('tags'):
-        plugin.tags.set(*[strip(t) for t in form.cleaned_data.get('tags').split(',')])
-    if form.cleaned_data.get('homepage'):
-        plugin.homepage = form.cleaned_data.get('homepage')
-    else:
-        messages.warning(request, _('Homepage field is empty, this field is not required but is recommended, please consider adding it to metadata.'), fail_silently=True)
-    if form.cleaned_data.get('tracker'):
-        plugin.tracker = form.cleaned_data.get('tracker')
-    else:
-        messages.warning(request, _('Tracker field is empty, this field is not required but is recommended, please consider adding it to metadata.'), fail_silently=True)
-    if form.cleaned_data.get('repository'):
-        plugin.repository = form.cleaned_data.get('repository')
-    else:
-        messages.warning(request, _('Repository field is empty, this field is not required but is recommended, please consider adding it to metadata.'), fail_silently=True)
+        plugin.tags.set(*[t.strip() for t in form.cleaned_data.get('tags').split(',')])
     plugin.save()
 
     
@@ -574,7 +567,10 @@ def version_create(request, package_name):
                 new_object.approved = False
                 new_object.save()
                 messages.warning(request, _('You do not have approval permissions, plugin version has been set unapproved.'), fail_silently=True)
-            _main_plugin_update(new_object.plugin, form)
+            if form.cleaned_data.get('icon_file'):
+                form.cleaned_data['icon'] = form.cleaned_data.get('icon_file')
+            _main_plugin_update(request, new_object.plugin, form)
+            _check_optional_metadata(form, request)
             return HttpResponseRedirect(new_object.plugin.get_absolute_url())
     else:
         form = PluginVersionForm(is_trusted=request.user.has_perm('plugins.can_approve'))
@@ -597,7 +593,7 @@ def version_update(request, package_name, version):
         if form.is_valid():
             new_object = form.save()
             # update metadata for the main plugin object
-            _main_plugin_update(new_object.plugin, form)
+            _main_plugin_update(request, new_object.plugin, form)
             msg = _("The Plugin Version has been successfully updated.")
             messages.success(request, msg, fail_silently=True)
             return HttpResponseRedirect(new_object.plugin.get_absolute_url())
