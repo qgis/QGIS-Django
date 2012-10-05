@@ -72,6 +72,7 @@ class PluginVersionForm(ModelForm):
             self.cleaned_data['changelog'] = changelog
 
         self.instance.changelog = self.cleaned_data.get('changelog')
+        
 
         return super(PluginVersionForm, self).clean()
 

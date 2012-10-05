@@ -2,7 +2,7 @@
 name=HelloWorld
 qgisMinimumVersion=1.8
 description=This is a test plugin for greeting the
-    (going multiline) world
+    (going multiline) world, version is 1.5
 version=version 1.5
 author=Alessandro Pasotti
 email=apasotti@gmail.com

@@ -507,6 +507,33 @@ def user_permissions_manage(request, username):
 ###############################################
 
 
+def _main_plugin_update(plugin, form):
+    """
+    Updates the main plugin object from version metadata
+    """
+    # Update plugin from metadata
+    plugin.icon = form.cleaned_data['icon_file']
+    plugin.name = form.cleaned_data['name']
+    plugin.author = form.cleaned_data['author']
+    plugin.email = form.cleaned_data['email']
+    plugin.description = form.cleaned_data['description']
+    if form.cleaned_data.get('tags'):
+        plugin.tags.set(*form.cleaned_data.get('tags').split(','))
+    if form.cleaned_data.get('homepage'):
+        plugin.homepage = form.cleaned_data.get('homepage')
+    else:
+        messages.warning(request, _('Homepage field is empty, this field is not required but is recommended, please consider adding it to metadata.'), fail_silently=True)
+    if form.cleaned_data.get('tracker'):
+        plugin.tracker = form.cleaned_data.get('tracker')
+    else:
+        messages.warning(request, _('Tracker field is empty, this field is not required but is recommended, please consider adding it to metadata.'), fail_silently=True)
+    if form.cleaned_data.get('repository'):
+        plugin.repository = form.cleaned_data.get('repository')
+    else:
+        messages.warning(request, _('Repository field is empty, this field is not required but is recommended, please consider adding it to metadata.'), fail_silently=True)
+    plugin.save()
+
+    
 @login_required
 def version_create(request, package_name):
     """
@@ -532,27 +559,7 @@ def version_create(request, package_name):
                 new_object.approved = False
                 new_object.save()
                 messages.warning(request, _('You do not have approval permissions, plugin version has been set unapproved.'), fail_silently=True)
-            # Update plugin from metadata
-            plugin.icon = form.cleaned_data['icon_file']
-            plugin.name = form.cleaned_data['name']
-            plugin.author = form.cleaned_data['author']
-            plugin.email = form.cleaned_data['email']
-            plugin.description = form.cleaned_data['description']
-            if form.cleaned_data.get('tags'):
-                plugin.tags.set(*form.cleaned_data.get('tags').split(','))
-            if form.cleaned_data.get('homepage'):
-                plugin.homepage = form.cleaned_data.get('homepage')
-            else:
-                messages.warning(request, _('Homepage field is empty, this field is not required but is recommended, please consider adding it to metadata.'), fail_silently=True)
-            if form.cleaned_data.get('tracker'):
-                plugin.tracker = form.cleaned_data.get('tracker')
-            else:
-                messages.warning(request, _('Tracker field is empty, this field is not required but is recommended, please consider adding it to metadata.'), fail_silently=True)
-            if form.cleaned_data.get('repository'):
-                plugin.repository = form.cleaned_data.get('repository')
-            else:
-                messages.warning(request, _('Repository field is empty, this field is not required but is recommended, please consider adding it to metadata.'), fail_silently=True)
-            plugin.save()
+            _main_plugin_update(new_object.plugin, form)
             return HttpResponseRedirect(new_object.plugin.get_absolute_url())
     else:
         form = PluginVersionForm(is_trusted=request.user.has_perm('plugins.can_approve'))
@@ -574,6 +581,8 @@ def version_update(request, package_name, version):
         form = PluginVersionForm(request.POST, request.FILES, instance=version, is_trusted=request.user.has_perm('plugins.can_approve'))
         if form.is_valid():
             new_object = form.save()
+            # update metadata for the main plugin object
+            _main_plugin_update(new_object.plugin, form)
             msg = _("The Plugin Version has been successfully updated.")
             messages.success(request, msg, fail_silently=True)
             return HttpResponseRedirect(new_object.plugin.get_absolute_url())
