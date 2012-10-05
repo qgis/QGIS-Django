@@ -20,7 +20,6 @@ from plugins.forms import *
 
 from django.views.generic.list_detail import object_list, object_detail
 from django.views.decorators.http import require_POST
-from django.views.decorators.cache import never_cache
 
 from django.core.mail import send_mail
 from django.contrib.sites.models import Site
@@ -724,7 +723,6 @@ def version_detail(request, package_name, version):
 ###############################################
 
 
-@never_cache
 def xml_plugins(request):
     """
     The XML file
