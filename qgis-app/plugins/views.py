@@ -242,7 +242,7 @@ def plugin_upload(request):
 
                 # Takes care of tags
                 if form.cleaned_data.get('tags'):
-                    plugin.tags.set(*[t.strip() for t in form.cleaned_data.get('tags').split(',')])
+                    plugin.tags.set(*[t.strip().lower() for t in form.cleaned_data.get('tags').split(',')])
 
                 version_data =  {
                     'plugin'            : plugin,
@@ -393,7 +393,7 @@ def tags_plugins(request, tags):
     """
     List plugins with given tags
     """
-    tag_list = tags.split(',')
+    tag_list = [t.strip().lower() for t in tags.split(',')]
     queryset = Plugin.approved_objects.filter(tags__name__in=tag_list)
     return plugins_list(request, queryset, extra_context = { 'title' : _('Plugins with tag "%s"') % tags})
 
@@ -538,7 +538,7 @@ def _main_plugin_update(request, plugin, form):
         if form.cleaned_data.get(f):
             setattr(plugin, f, form.cleaned_data.get(f))
     if form.cleaned_data.get('tags'):
-        plugin.tags.set(*[t.strip() for t in form.cleaned_data.get('tags').split(',')])
+        plugin.tags.set(*[t.strip().lower() for t in form.cleaned_data.get('tags').split(',')])
     plugin.save()
 
     
