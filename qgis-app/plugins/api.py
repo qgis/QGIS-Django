@@ -5,7 +5,7 @@ from validator import validator
 from django.db import IntegrityError
 from plugins.views import plugin_notify
 import StringIO
-
+from taggit.models import Tag
 
 from django.utils.translation import ugettext_lazy as _
 from django.core.exceptions import ValidationError, PermissionDenied
@@ -97,3 +97,14 @@ def plugin_upload(package, **kwargs):
         raise
 
     return (plugin.pk, new_version.pk)
+
+
+@rpcmethod(name='plugin.tags', signature=['array'], login_required=False)
+def plugin_tags(**kwargs):
+    """
+    Returns a list of current tags, in alphabetical order
+    
+    """
+    return [t.name for t in Tag.objects.all().order_by('name')]
+ 
+
