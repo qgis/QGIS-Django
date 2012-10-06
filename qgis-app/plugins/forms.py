@@ -59,8 +59,8 @@ class PluginVersionForm(ModelForm):
             try:
                 self.cleaned_data.update(validator(package))
             except ValidationError, e:
-                msg = unicode(_("There were errors reading plugin package (please check also your plugin's metadata)."))
-                raise ValidationError("%s %s" % (msg, ','.join(e.messages)))
+                msg = unicode(_("There were errors reading plugin package (please check also your plugin's metadata).<br />"))
+                raise ValidationError(mark_safe("%s %s" % (msg, '<br />'.join(e.messages))))
             # Populate instance
             self.instance.min_qg_version = self.cleaned_data.get('qgisMinimumVersion')
             self.instance.version        = PluginVersion.clean_version(self.cleaned_data.get('version'))
