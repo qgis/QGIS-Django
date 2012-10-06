@@ -10,7 +10,6 @@ from django.conf import settings
 import datetime, os, re
 
 # Tagging
-#from taggit.managers import TaggableManager
 from taggit_autosuggest.managers import TaggableManager
 
 PLUGINS_STORAGE_PATH = getattr(settings, 'PLUGINS_STORAGE_PATH', 'packages')
@@ -33,6 +32,7 @@ class StablePlugins(models.Manager):
     def get_query_set(self):
         return super(StablePlugins, self).get_query_set().filter(pluginversion__approved=True, pluginversion__experimental=False).distinct()
 
+
 class ExperimentalPlugins(models.Manager):
     """
     Shows only public plugins: i.e. those with "approved" flag set
@@ -41,6 +41,7 @@ class ExperimentalPlugins(models.Manager):
     def get_query_set(self):
         return super(ExperimentalPlugins, self).get_query_set().filter(pluginversion__approved=True, pluginversion__experimental=True).distinct()
 
+
 class FeaturedPlugins(models.Manager):
     """
     Shows only public featured stable plugins: i.e. those with "approved" flag set
@@ -48,6 +49,7 @@ class FeaturedPlugins(models.Manager):
     """
     def get_query_set(self):
         return super(FeaturedPlugins, self).get_query_set().filter(pluginversion__approved=True, featured=True).order_by('-created_on').distinct()
+
 
 class FreshPlugins(models.Manager):
     """
@@ -61,6 +63,7 @@ class FreshPlugins(models.Manager):
 
     def get_query_set(self):
         return super(FreshPlugins, self).get_query_set().filter(pluginversion__approved=True, modified_on__gte = datetime.datetime.now()- datetime.timedelta(days = self.days)).order_by('-created_on').distinct()
+
 
 class UnapprovedPlugins(models.Manager):
     """
@@ -86,13 +89,13 @@ class PopularPlugins(ApprovedPlugins):
         return super(PopularPlugins, self).get_query_set().filter(deprecated=False ).order_by('-downloads').distinct()
 
 
-
 class TaggablePlugins (TaggableManager):
     """
     Shows only public plugins: i.e. those with "approved" flag set
     """
     def get_query_set(self):
         return super(TaggablePlugnis, self).get_query_set().filter(deprecated=False, pluginversion__approved=True).distinct()
+
 
 class Plugin (models.Model):
     """
