@@ -1,4 +1,5 @@
 {{ object.name }}
 {{ object.description }}
 {{ object.created_by.username }}
-{% for tag in object.tag.all %}{{ tag }}{% endfor %}
+{{ object.author }}
+{% for tag in object.tags.all %}{{ tag }} {% endfor %}
