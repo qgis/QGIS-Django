@@ -10,9 +10,9 @@ def homepage(request):
     """
     Renders the home page
     """
-    fresh = Plugin.fresh_objects.all()[:5]
-    featured = Plugin.featured_objects.all() #.exclude(pk__in=[p.pk for p in fresh])[:5]
-    popular = Plugin.popular_objects.all() #.exclude(pk__in=[p.pk for p in fresh]).exclude(pk__in=[p.pk for p in featured])[:5]
+    fresh = Plugin.fresh_objects.all()[:10]
+    featured = Plugin.featured_objects.all()[:10] #.exclude(pk__in=[p.pk for p in fresh])[:5]
+    popular = Plugin.popular_objects.all()[:10] #.exclude(pk__in=[p.pk for p in fresh]).exclude(pk__in=[p.pk for p in featured])[:5]
     posts = Post.objects.all()[:5]
     try:
         content = FlatPage.objects.get(url='/').content
