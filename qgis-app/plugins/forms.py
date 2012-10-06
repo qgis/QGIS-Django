@@ -3,6 +3,7 @@ from django.utils.translation import ugettext_lazy as _
 from django.contrib.auth.models import User
 from django.forms import ModelForm, ValidationError
 from django import forms
+from django.utils.safestring import mark_safe
 
 from plugins.validator import validator
 from plugins.models import *
@@ -93,7 +94,7 @@ class PackageUploadForm(forms.Form):
             self.cleaned_data.update(validator(package))
         except ValidationError, e:
             msg = unicode(_("There were errors reading plugin package (please check also your plugin's metadata)."))
-            raise ValidationError("%s %s" % (msg, ','.join(e.messages)))
+            raise ValidationError(mark_safe("%s %s" % (msg, ','.join(e.messages))))
 
         # Disabled: now the PackageUploadForm also accepts updates
         #if Plugin.objects.filter(package_name = self.cleaned_data['package_name']).count():

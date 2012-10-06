@@ -5,7 +5,7 @@
     <p>{% trans "Alternatively, to update an existing plugin, you can also open the plugin's details view and add a new version from there." %}</p>
     {% if form.non_field_errors %}
     <ul class="form-messages">{% for error in form.non_field_errors %}
-        <li class="error">{{ error }} </li>
+        <li class="error">{{ error }}</li>
         {% endfor %}
     </ul>
     {% endif %}

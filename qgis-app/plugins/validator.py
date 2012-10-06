@@ -14,6 +14,7 @@ from django.utils.translation import ugettext_lazy as _
 from django.forms import ValidationError
 from django.core.files.uploadedfile import SimpleUploadedFile
 
+
 PLUGIN_MAX_UPLOAD_SIZE=getattr(settings, 'PLUGIN_MAX_UPLOAD_SIZE', 1048576)
 PLUGIN_REQUIRED_METADATA=getattr(settings, 'PLUGIN_REQUIRED_METADATA', ('name', 'description', 'version', 'qgisMinimumVersion', 'author', 'email'))
 
@@ -59,7 +60,7 @@ def _check_required_metadata(metadata):
     """
     for md in PLUGIN_REQUIRED_METADATA:
         if not md in dict(metadata) or not dict(metadata)[md]:
-            raise ValidationError(_('Cannot find metadata "%s" in metadata source (%s). Please bear in mind that the current implementation of the __init__.py validator is based on regular expressions, check that your metadata functions directly return metadata values as strings.') % (md, dict(metadata).get('metadata_source')))
+            raise ValidationError(_('Cannot find metadata <strong>%s</strong> in metadata source (%s). Please bear in mind that the current implementation of the <tt>__init__.py</tt> validator is based on regular expressions, check that your metadata functions directly return metadata values as strings.<br/>For further informations about metadata parsing in this application, please see: <a target="_blank"  href="https://github.com/qgis/qgis-django/blob/master/qgis-app/plugins/docs/metadata.rst">metadata documentation</a>') % (md, dict(metadata).get('metadata_source')))
 
 
 def validator(package):
