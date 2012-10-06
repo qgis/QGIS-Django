@@ -52,11 +52,13 @@ def plugin_notify(plugin):
 
 
 
-def plugin_approve_notify(plugin, msg):
+def plugin_approve_notify(plugin, msg, user):
     """
     Sends a message when a plugin is approved or unapproved.
     """
     recipients = [u.email for u in plugin.editors if u.email]
+    if settings.QGIS_DEV_MAILING_LIST_ADDRESS:
+        recipients.append(settings.QGIS_DEV_MAILING_LIST_ADDRESS)
     if plugin.approved:
         approval_state = 'approval'
         approved_state = 'approved'
@@ -70,7 +72,7 @@ def plugin_approve_notify(plugin, msg):
         logging.debug('Sending email %s notification for %s plugin, recipients:  %s' % (approval_state, plugin, recipients))
         send_mail(
           _('Plugin %s %s notification.') % (plugin, approval_state),
-          _('\r\nPlugin %s %s.\r\n%s\r\nLink: http://%s%s\r\n') % (plugin.name, approval_state, msg, domain, plugin.get_absolute_url()),
+          _('\r\nPlugin %s %s by %s.\r\n%s\r\nLink: http://%s%s\r\n') % (plugin.name, approval_state, user, msg, domain, plugin.get_absolute_url()),
           mail_from,
           recipients,
           fail_silently=True)
@@ -635,7 +637,7 @@ def version_approve(request, package_name, version):
     version.save()
     msg = _("The plugin version \"%s\" is now approved" % version)
     messages.success(request, msg, fail_silently=True)
-    plugin_approve_notify(version.plugin, msg)
+    plugin_approve_notify(version.plugin, msg, request.user)
     try:
         redirect_to = request.META['HTTP_REFERER']
     except:
@@ -659,7 +661,7 @@ def version_unapprove(request, package_name, version):
     version.save()
     msg = _("The plugin version \"%s\" is now unapproved" % version)
     messages.success(request, msg, fail_silently=True)
-    plugin_approve_notify(version.plugin, msg)
+    plugin_approve_notify(version.plugin, msg, request.user)
     try:
         redirect_to = request.META['HTTP_REFERER']
     except:

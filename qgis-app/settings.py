@@ -5,9 +5,6 @@ SITE_ROOT = os.path.dirname(os.path.realpath(__file__))
 
 TEMPLATE_DEBUG = False
 
-
-
-
 # Local time zone for this installation. Choices can be found here:
 # http://en.wikipedia.org/wiki/List_of_tz_zones_by_name
 # although not all choices may be available on all operating systems.
@@ -118,6 +115,7 @@ INSTALLED_APPS = (
     'django.contrib.syndication',
     'ratings',
     'taggit',
+    'taggit_autosuggest', 
     'taggit_templatetags',
     'haystack',
     'django.contrib.flatpages',
@@ -199,7 +197,11 @@ PAGINATION_DEFAULT_PAGINATION = 20
 # rpc4django
 RPC4DJANGO_LOG_REQUESTS_RESPONSES = False
 
+#QGIS dev list email address for plugins approval notifications
+QGIS_DEV_MAILING_LIST_ADDRESS=''
 
+# Media URL for taggit autocomplete
+TAGGIT_AUTOCOMPLETE_JS_BASE_URL=MEDIA_ROOT + '/taggit-autocomplete'
 
 # auth overrids
 from settings_auth import *

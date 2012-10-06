@@ -39,6 +39,8 @@ urlpatterns = patterns('',
     # Tim: Feedjack feed aggregator / planet
     (r'^planet/', include('feedjack.urls')),
 
+    (r'^taggit_autosuggest/', include('taggit_autosuggest.urls')),
+
 )
 
 # ABP: temporary home page
