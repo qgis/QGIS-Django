@@ -17,7 +17,7 @@ body {
 
 body, td{
 	font-family: Helvetica,Arial,sans-serif;
-	font-size: 12px;
+	font-size: 80%;
 	color: #333;
 	line-height: 1.6em;
 }
@@ -189,7 +189,9 @@ div#user4{
 
 #maincolumn h2{
 	font-size: 200%;
+/*
 	padding-bottom:20px;
+*/
 }
 
 div.path{

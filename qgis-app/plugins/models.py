@@ -8,6 +8,7 @@ from django.utils.translation import ugettext_lazy as _
 from django.core.urlresolvers import reverse
 from django.conf import settings
 import datetime, os, re
+from djangoratings.fields import AnonymousRatingField
 
 # Tagging
 from taggit_autosuggest.managers import TaggableManager
@@ -86,7 +87,11 @@ class PopularPlugins(ApprovedPlugins):
     Shows only unapproved plugins, sort by downloads
     """
     def get_query_set(self):
-        return super(PopularPlugins, self).get_query_set().filter(deprecated=False ).order_by('-downloads').distinct()
+        return super(PopularPlugins, self).get_query_set().filter(deprecated=False).extra(
+            select={
+                'popularity': 'SELECT downloads * (1 + (rating_score/(rating_votes+0.01)/3)) FROM plugins_plugin AS pp WHERE pp.id = plugins_plugin.id'
+            }
+        ).order_by('-popularity').distinct()
 
 
 class TaggablePlugins (TaggableManager):
@@ -141,6 +146,8 @@ class Plugin (models.Model):
     unapproved_objects      = UnapprovedPlugins()
     deprecated_objects      = DeprecatedPlugins()
     popular_objects         = PopularPlugins()
+
+    rating                  = AnonymousRatingField(range=5, use_cookies=True, can_change_vote=True, allow_delete=True)
 
     tags                    = TaggableManager(blank=True)
 

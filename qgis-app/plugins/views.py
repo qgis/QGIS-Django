@@ -20,6 +20,7 @@ from plugins.forms import *
 
 from django.views.generic.list_detail import object_list, object_detail
 from django.views.decorators.http import require_POST
+from django.views.decorators.csrf import csrf_protect
 
 from django.core.mail import send_mail
 from django.contrib.sites.models import Site
@@ -285,7 +286,7 @@ def plugin_upload(request):
     return render_to_response('plugins/plugin_upload.html', { 'form' : form }, context_instance=RequestContext(request))
 
 
-
+@csrf_protect
 def plugin_detail(request, package_name, **kwargs):
     """
     Just a wrapper for clean urls
@@ -295,6 +296,13 @@ def plugin_detail(request, package_name, **kwargs):
     if check_plugin_access(request.user, plugin) and not (plugin.homepage and plugin.tracker and plugin.repository):
         msg = _("Some important informations are missing from the plugin metadata (homepage, tracker or repository). Please consider creating a project on <a href=\"http://hub.qgis.org\">hub.qgis.org</a> and filling the missing metadata.")
         messages.warning(request, msg, fail_silently=True)
+    # add rating to context
+    if not kwargs:
+        kwargs = {}
+    kwargs['extra_context'] = {
+        'rating': int(plugin.rating.get_rating()),
+        'votes': plugin.rating.votes,
+    }
     return object_detail(request, object_id=plugin.pk, **kwargs)
 
 @login_required
@@ -414,8 +422,7 @@ def plugin_manage(request, package_name):
         return plugin_delete(request, package_name)
 
     return HttpResponseRedirect(reverse('user_details', args=[username]))
-
-
+    
   
 ###############################################
 

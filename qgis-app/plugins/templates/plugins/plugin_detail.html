@@ -1,9 +1,51 @@
 {% extends 'plugins/plugin_base.html' %}{% load i18n %}
+{% block extrajs %}
+{{ block.super }}
+<script type="text/javascript" src="/static/js/jquery-1.5.1.min.js"></script>
+<script type="text/javascript" src="/static/js/jquery.cookie.js"></script>
+<script type="text/javascript" src="/static/jquery-ratings/jquery.ratings.js"></script>
+<script type="text/javascript">
+
+    function csrfSafeMethod(method) {
+        // these HTTP methods do not require CSRF protection
+        return (/^(GET|HEAD|OPTIONS|TRACE)$/.test(method));
+    }
+    
+    // Rating
+    jQuery(function(){
+        var csrftoken = jQuery.cookie('csrftoken');
+        jQuery.ajaxSetup({
+            crossDomain: false, // obviates need for sameOrigin test
+            beforeSend: function(xhr, settings) {
+                if (!csrfSafeMethod(settings.type)) {
+                    xhr.setRequestHeader("X-CSRFToken", csrftoken);
+                }
+            }
+        });
+        var has_voted = false;
+        jQuery('#rating').ratings(5, {% firstof rating '0' %}).bind('ratingchanged', function(event, data) {
+            jQuery.post('{% url plugin_rate object.pk '0' %}'.replace('/0', '/' + data.rating),  function(data){
+                if(!has_voted){
+                    has_voted = true;
+                    jQuery('#votes').html(parseInt(jQuery('#votes').html())+1);
+                }
+                jQuery('#vote-message').html(data).fadeIn('slow', function(){jQuery(this).fadeOut('slow');});
+            });
+        });
+    });
+</script>
+{% endblock %}
+{% block extracss %}
+<link type="text/css" href="/static/jquery-ratings/jquery.ratings.css" rel="stylesheet" />
+{{ block.super }}
+{% endblock %}
 {% block content %}
-    <h2>{% trans "Plugin" %}: {{ object.name }}</h2>
-    <div class="details">
+   
+   <h2>{% trans "Plugin" %}: {{ object.name }}</h2>
+    <div class="plugin-details">
         {% if object.deprecated %}<p class="error"><strong>{% trans "This plugin is deprecated!" %}</strong></p>{% endif %}
-        <p>{% if object.icon %}<img class="plugin-icon" src="{{ object.icon.url }}" alt="{% trans "Plugin icon" %}" />{% endif %}<strong>{% trans "Description" %}:</strong> {{ object.description }}</p>       
+        <p class="plugin-description">{% if object.icon %}<img class="plugin-icon" src="{{ object.icon.url }}" alt="{% trans "Plugin icon" %}" />{% endif %}<strong>{% trans "Description" %}:</strong> {{ object.description }}</p>
+        <div id="rating"> (<span id="votes">{% firstof rating '0' %}</span>) {% trans "votes" %}&nbsp;<span id="vote-message" style="display:none"></span></div>     
         {% if object.author %}
         <p><strong>{% trans "Author"%}:</strong> <a title="{% trans "Plugins by"%} {{ object.author }}" href="{% url author_plugins object.author|urlencode %}">{{ object.author }}</a></p>
         {% endif %}        

@@ -113,7 +113,7 @@ INSTALLED_APPS = (
     'django.contrib.comments',
     'django.contrib.markup',
     'django.contrib.syndication',
-    'ratings',
+    #'ratings',
     'taggit',
     'taggit_autosuggest', 
     'taggit_templatetags',
@@ -122,7 +122,7 @@ INSTALLED_APPS = (
     'simplemenu',
     'tinymce',
     # Tim for django snippets app support
-    'cab', #the django snippets app itself
+    #'cab', #the django snippets app itself
     # Tim for Debug toolbar
     'debug_toolbar',
     # Tim for command extensions so we can run feedjack cron using python manage.py runscript
@@ -138,6 +138,7 @@ INSTALLED_APPS = (
     # RPC
     'rpc4django',
     'south',
+    'djangoratings',
 )
 
 TEMPLATE_CONTEXT_PROCESSORS = (
@@ -202,6 +203,9 @@ QGIS_DEV_MAILING_LIST_ADDRESS=''
 
 # Media URL for taggit autocomplete
 TAGGIT_AUTOCOMPLETE_JS_BASE_URL=MEDIA_ROOT + '/taggit-autocomplete'
+
+# ratings
+RATINGS_VOTES_PER_IP=10000
 
 # auth overrids
 from settings_auth import *

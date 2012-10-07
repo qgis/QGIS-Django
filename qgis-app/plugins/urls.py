@@ -61,6 +61,18 @@ urlpatterns += patterns('',
     (r'^RPC2/$', 'rpc4django.views.serve_rpc_request'),
 )
 
+
+# plugin rating
+from djangoratings.views import AddRatingFromModel
+
+urlpatterns += patterns('',
+    url(r'rate/(?P<object_id>\d+)/(?P<score>\d+)/', AddRatingFromModel(), {
+        'app_label': 'plugins',
+        'model': 'plugin',
+        'field_name': 'rating',
+    }, name='plugin_rate'),
+)
+
 # Plugin detail (keep last)
 urlpatterns += patterns('plugins.views',
     url(r'^(?P<package_name>[A-Za-z][A-Za-z0-9-_]+)/$', 'plugin_detail', { 'queryset' : Plugin.objects.all() }, name='plugin_detail'),

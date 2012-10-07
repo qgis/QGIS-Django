@@ -46,7 +46,7 @@ table.plugins th {
     padding: 0.25em;
     border-top: solid 2px #ddd;
     border-bottom: solid 2px #ddd;
-    font-size: 110%;
+    font-size: 100%;
     background: url("../images/bg_menu.png") repeat-x scroll center top transparent;
     line-height: 1.4em;
 }
@@ -112,4 +112,18 @@ pre, .wp-caption-text {
 
 .fieldWrapper input[type=text] {
     width: 100%;
+}
+
+
+div.plugin-details {
+    clear: both;
+}
+
+img.plugin-icon {
+    float: right;
+}
+
+div.plugin-details #rating {
+    margin-bottom: 1em;
+    height: 18px;
 }

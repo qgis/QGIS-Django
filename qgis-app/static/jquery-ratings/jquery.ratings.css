@@ -1,0 +1,13 @@
+.jquery-ratings-star {
+  width: 16px;
+  height: 16px;
+  background-image: url('empty-star-16.png');
+  background-repeat: no-repeat;
+  position: relative;
+  float: left;
+  margin-right: 2px;
+}
+
+.jquery-ratings-full {
+  background-image: url('full-star-16.png');
+}
