@@ -1,5 +1,7 @@
 {% extends 'base.html' %}{% load i18n %}
-
+{% block extracss %}
+<link type="text/css" href="/static/style/planet.css" rel="stylesheet" />
+{% endblock %}
 {% block app_title %}
 <a href="/" class="logo">{% trans "Quantum GIS Planet" %}</a>
 {% endblock %}

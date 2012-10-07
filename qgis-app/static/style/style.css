@@ -1,8 +1,5 @@
 @import url('template.css');
 @import url('blue.css');
-@import url('pygments.css');
-@import url('planet.css');
-@import url('feedjack.css');
 #map {
  width: 700px;
  height: 400px;
