@@ -22,6 +22,12 @@ body, td{
 	line-height: 1.6em;
 }
 
+td{
+	font-family: Helvetica,Arial,sans-serif;
+	color: #333;
+	line-height: 1.6em;
+}
+
 a:link, a:visited {
 	text-decoration: none;
 	/*font-weight: normal;*/
