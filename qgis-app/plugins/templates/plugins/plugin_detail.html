@@ -44,8 +44,8 @@
    <h2>{% trans "Plugin" %}: {{ object.name }}</h2>
     <div class="plugin-details">
         {% if object.deprecated %}<p class="error"><strong>{% trans "This plugin is deprecated!" %}</strong></p>{% endif %}
-        <p class="plugin-description">{% if object.icon %}<img class="plugin-icon" src="{{ object.icon.url }}" alt="{% trans "Plugin icon" %}" />{% endif %}<strong>{% trans "Description" %}:</strong> {{ object.description }}</p>
-        <div id="rating"> (<span id="votes">{% firstof votes '0' %}</span>) {% trans "votes" %}&nbsp;<span id="vote-message" style="display:none"></span></div>     
+        <div id="rating"> (<span id="votes">{% firstof votes '0' %}</span>) {% trans "votes" %}&nbsp;<span id="vote-message" style="display:none"></span></div>
+        <p class="plugin-details-description">{% if object.icon %}<img class="plugin-icon" src="{{ object.icon.url }}" alt="{% trans "Plugin icon" %}" />{% endif %}{{ object.description }}</p>
         {% if object.author %}
         <p><strong>{% trans "Author"%}:</strong> <a title="{% trans "Plugins by"%} {{ object.author }}" href="{% url author_plugins object.author|urlencode %}">{{ object.author }}</a></p>
         {% endif %}        

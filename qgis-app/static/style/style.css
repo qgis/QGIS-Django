@@ -125,5 +125,14 @@ img.plugin-icon {
 
 div.plugin-details #rating {
     margin-bottom: 1em;
-    height: 18px;
+    height: 20px;
+}
+
+div.plugin-details .plugin-details-description{
+    border: solid 1px gray;
+    background-color: #f0f3f8;
+    padding: 0.5em;
+    font-size: 120%;
+    -moz-border-radius: 10px;
+    border-radius: 10px;    
 }
