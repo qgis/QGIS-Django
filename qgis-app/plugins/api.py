@@ -108,3 +108,24 @@ def plugin_tags(**kwargs):
     return [t.name for t in Tag.objects.all().order_by('name')]
  
 
+@rpcmethod(name='plugin.vote', signature=['array', 'integer', 'integer'], login_required=False)
+def plugin_tags(plugin_id, vote, **kwargs):
+    """
+    Vote a plugin
+    """
+    try:
+        request = kwargs.get('request')
+    except:
+        msg = unicode(_('Invalid request.'))
+        raise ValidationError(msg)
+    try:
+        plugin = Plugin.objects.get(pk=plugin_id)
+    except Plugin.DoesNotExist:
+        msg = unicode(_('Plugin with id %s does not exists') % plugin_id)
+        raise ValidationError(msg)
+    if not int(vote) in range(1, 6):
+        msg = unicode(_('%s is not a valid vote (1-5)') % vote)
+        raise ValidationError(msg)
+    return [plugin.rating.add(score=int(vote), user=request.user, ip_address=request.META['REMOTE_ADDR'])]
+ 
+
