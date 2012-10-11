@@ -14,7 +14,7 @@ from django.core.urlresolvers import reverse
 from django.conf import settings
 from django.contrib.auth.models import User, Permission
 from django.contrib.contenttypes.models import ContentType
-
+from django.utils.encoding import DjangoUnicodeDecodeError
 from plugins.models import Plugin, PluginVersion
 from plugins.forms import *
 
@@ -238,6 +238,7 @@ def plugin_upload(request):
                 elif not plugin.repository:
                     warnings.append(_('<strong>repository</strong> field is empty, this field is not required but is recommended, please consider adding it to metadata.'))
 
+            
                 plugin.save()
 
                 if is_new:
@@ -274,7 +275,7 @@ def plugin_upload(request):
                     messages.warning(request, _('<p><strong>Warnings:</strong></p>') + '\n'.join(["<p>%s</p>" % unicode(w) for w in warnings]), fail_silently=True)
 
 
-            except (IntegrityError, ValidationError), e:
+            except (IntegrityError, ValidationError, DjangoUnicodeDecodeError), e:
                 connection.close()
                 messages.error(request, e, fail_silently=True)
                 if not plugin.pk:

@@ -114,6 +114,7 @@ pre, .wp-caption-text {
     width: 100%;
 }
 
+/* plugins */
 
 div.plugin-details {
     clear: both;
@@ -135,4 +136,16 @@ div.plugin-details .plugin-details-description{
     font-size: 120%;
     -moz-border-radius: 10px;
     border-radius: 10px;    
+}
+
+#loading {
+    background: url(../images/loading.gif) top left no-repeat;
+    padding-left: 20px;
+}
+
+span.small-star {
+    background: url(../images/star_16.png) center bottom no-repeat;
+    width: 17px;
+    height: 17px;
+    display: inline-block;
 }

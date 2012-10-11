@@ -1,3 +1,7 @@
+"""
+XML-RPC webservices for the plugin web application
+"""
+
 from rpc4django import rpcmethod
 from xmlrpclib import Fault
 from plugins.models import *
@@ -103,7 +107,6 @@ def plugin_upload(package, **kwargs):
 def plugin_tags(**kwargs):
     """
     Returns a list of current tags, in alphabetical order
-    
     """
     return [t.name for t in Tag.objects.all().order_by('name')]
  
@@ -111,7 +114,7 @@ def plugin_tags(**kwargs):
 @rpcmethod(name='plugin.vote', signature=['array', 'integer', 'integer'], login_required=False)
 def plugin_tags(plugin_id, vote, **kwargs):
     """
-    Vote a plugin
+    Vote a plugin, valid values are 1-5
     """
     try:
         request = kwargs.get('request')
@@ -121,11 +124,10 @@ def plugin_tags(plugin_id, vote, **kwargs):
     try:
         plugin = Plugin.objects.get(pk=plugin_id)
     except Plugin.DoesNotExist:
-        msg = unicode(_('Plugin with id %s does not exists') % plugin_id)
+        msg = unicode(_('Plugin with id %s does not exists.') % plugin_id)
         raise ValidationError(msg)
     if not int(vote) in range(1, 6):
-        msg = unicode(_('%s is not a valid vote (1-5)') % vote)
+        msg = unicode(_('%s is not a valid vote (1-5).') % vote)
         raise ValidationError(msg)
     return [plugin.rating.add(score=int(vote), user=request.user, ip_address=request.META['REMOTE_ADDR'])]
  
-

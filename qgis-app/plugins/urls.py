@@ -31,6 +31,10 @@ urlpatterns = patterns('plugins.views',
     url(r'^stable/$', 'plugins_list', {'queryset' : Plugin.stable_objects.all(), 'extra_context' : {'title' : _('Stable plugins')}}, name='stable_plugins'),
     url(r'^experimental/$', 'plugins_list', {'queryset' : Plugin.experimental_objects.all(), 'extra_context' : {'title' : _('Experimental plugins')}}, name='experimental_plugins'),
     url(r'^popular/$', 'plugins_list', {'queryset' : Plugin.popular_objects.all(), 'extra_context' : {'title' : _('Popular plugins')}}, name='popular_plugins'),
+    url(r'^most_voted/$', 'plugins_list', {'queryset' : Plugin.most_voted_objects.all(), 'extra_context' : {'title' : _('Most voted plugins')}}, name='most_voted_plugins'),
+    url(r'^most_downloaded/$', 'plugins_list', {'queryset' : Plugin.most_downloaded_objects.all(), 'extra_context' : {'title' : _('Most downloaded plugins')}}, name='most_downloaded_plugins'),
+    url(r'^most_voted/$', 'plugins_list', {'queryset' : Plugin.most_voted_objects.all(), 'extra_context' : {'title' : _('Most voted plugins')}}, name='most_voted_plugins'),
+    url(r'^most_rated/$', 'plugins_list', {'queryset' : Plugin.most_rated_objects.all(), 'extra_context' : {'title' : _('Most rated plugins')}}, name='most_rated_plugins'),
 
     url(r'^author/(?P<author>[^/]+)/$', 'author_plugins', {}, name='author_plugins'),
 

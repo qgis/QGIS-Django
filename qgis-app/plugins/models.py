@@ -16,7 +16,17 @@ from taggit_autosuggest.managers import TaggableManager
 PLUGINS_STORAGE_PATH = getattr(settings, 'PLUGINS_STORAGE_PATH', 'packages')
 PLUGINS_FRESH_DAYS   = getattr(settings, 'PLUGINS_FRESH_DAYS', 30)
 
-class ApprovedPlugins(models.Manager):
+class BasePluginManager(models.Manager):
+    """
+    Adds a score
+    """
+    def get_query_set(self):
+        return super(BasePluginManager, self).get_query_set().extra(
+            select={
+                'average_vote': 'rating_score/(rating_votes+0.001)'
+            })
+
+class ApprovedPlugins(BasePluginManager):
     """
     Shows only public plugins: i.e. those with
     and with at least one approved version ("stable" or "experimental")
@@ -25,7 +35,7 @@ class ApprovedPlugins(models.Manager):
         return super(ApprovedPlugins, self).get_query_set().filter(pluginversion__approved=True).distinct()
 
 
-class StablePlugins(models.Manager):
+class StablePlugins(BasePluginManager):
     """
     Shows only public plugins: i.e. those with "approved" flag set
     and with one "stable" version
@@ -34,7 +44,7 @@ class StablePlugins(models.Manager):
         return super(StablePlugins, self).get_query_set().filter(pluginversion__approved=True, pluginversion__experimental=False).distinct()
 
 
-class ExperimentalPlugins(models.Manager):
+class ExperimentalPlugins(BasePluginManager):
     """
     Shows only public plugins: i.e. those with "approved" flag set
     and with one "experimental" version
@@ -43,7 +53,7 @@ class ExperimentalPlugins(models.Manager):
         return super(ExperimentalPlugins, self).get_query_set().filter(pluginversion__approved=True, pluginversion__experimental=True).distinct()
 
 
-class FeaturedPlugins(models.Manager):
+class FeaturedPlugins(BasePluginManager):
     """
     Shows only public featured stable plugins: i.e. those with "approved" flag set
     and "featured" flag set
@@ -52,7 +62,7 @@ class FeaturedPlugins(models.Manager):
         return super(FeaturedPlugins, self).get_query_set().filter(pluginversion__approved=True, featured=True).order_by('-created_on').distinct()
 
 
-class FreshPlugins(models.Manager):
+class FreshPlugins(BasePluginManager):
     """
     Shows only approved plugins: i.e. those with "approved" version flag set
     and modified less than "days" ago.
@@ -66,7 +76,7 @@ class FreshPlugins(models.Manager):
         return super(FreshPlugins, self).get_query_set().filter(pluginversion__approved=True, modified_on__gte = datetime.datetime.now()- datetime.timedelta(days = self.days)).order_by('-created_on').distinct()
 
 
-class UnapprovedPlugins(models.Manager):
+class UnapprovedPlugins(BasePluginManager):
     """
     Shows only unapproved plugins
     """
@@ -74,7 +84,7 @@ class UnapprovedPlugins(models.Manager):
         return super(UnapprovedPlugins, self).get_query_set().filter(pluginversion__approved=False).distinct()
 
 
-class DeprecatedPlugins(models.Manager):
+class DeprecatedPlugins(BasePluginManager):
     """
     Shows only deprecated plugins
     """
@@ -82,19 +92,44 @@ class DeprecatedPlugins(models.Manager):
         return super(DeprecatedPlugins, self).get_query_set().filter(deprecated=True).distinct()
 
 
+
 class PopularPlugins(ApprovedPlugins):
     """
-    Shows only unapproved plugins, sort by downloads
+    Shows only approved plugins, sort by popularity algorithm
     """
     def get_query_set(self):
         return super(PopularPlugins, self).get_query_set().filter(deprecated=False).extra(
             select={
-                'popularity': 'SELECT downloads * (1 + (rating_score/(rating_votes+0.01)/3)) FROM plugins_plugin AS pp WHERE pp.id = plugins_plugin.id'
+                'popularity': 'plugins_plugin.downloads * (1 + (rating_score/(rating_votes+0.01)/3))'
             }
         ).order_by('-popularity').distinct()
 
 
-class TaggablePlugins (TaggableManager):
+class MostDownloadedPlugins(ApprovedPlugins):
+    """
+    Shows only approved plugins, sort by downloads
+    """
+    def get_query_set(self):
+        return super(MostDownloadedPlugins, self).get_query_set().filter(deprecated=False).order_by('-downloads').distinct()
+
+
+class MostVotedPlugins(ApprovedPlugins):
+    """
+    Shows only approved plugins, sort by vote number
+    """
+    def get_query_set(self):
+        return super(MostVotedPlugins, self).get_query_set().filter(deprecated=False).order_by('-rating_votes').distinct()
+
+
+class MostRatedPlugins(ApprovedPlugins):
+    """
+    Shows only approved plugins, sort by vote/number of votes number
+    """
+    def get_query_set(self):
+        return super(ApprovedPlugins, self).get_query_set().filter(deprecated=False).order_by('-average_vote').distinct()
+
+
+class TaggablePlugins(TaggableManager):
     """
     Shows only public plugins: i.e. those with "approved" flag set
     """
@@ -146,6 +181,9 @@ class Plugin (models.Model):
     unapproved_objects      = UnapprovedPlugins()
     deprecated_objects      = DeprecatedPlugins()
     popular_objects         = PopularPlugins()
+    most_downloaded_objects = MostDownloadedPlugins()
+    most_voted_objects      = MostVotedPlugins()
+    most_rated_objects      = MostRatedPlugins()
 
     rating                  = AnonymousRatingField(range=5, use_cookies=True, can_change_vote=True, allow_delete=True)
 
