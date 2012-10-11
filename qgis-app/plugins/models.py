@@ -173,6 +173,7 @@ class Plugin (models.Model):
 
     # Managers
     objects                 = models.Manager()
+    base_objects            = BasePluginManager()
     approved_objects        = ApprovedPlugins()
     stable_objects          = StablePlugins()
     experimental_objects    = ExperimentalPlugins()

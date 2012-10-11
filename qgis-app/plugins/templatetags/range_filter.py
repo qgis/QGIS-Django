@@ -21,4 +21,6 @@ def get_range( value ):
 
     Instead of 3 one may use the variable set in the views
   """
+  if not value:
+      value = 0
   return range( value )

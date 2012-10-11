@@ -387,7 +387,7 @@ def my_plugins(request):
     """
     Shows user's plugins (plugins where user is in owners or user is author)
     """
-    queryset = Plugin.objects.filter(owners=request.user).distinct() | Plugin.objects.filter(created_by=request.user).distinct()
+    queryset = Plugin.base_objects.filter(owners=request.user).distinct() | Plugin.objects.filter(created_by=request.user).distinct()
     return plugins_list(request, queryset, template_name = 'plugins/plugin_list_my.html', extra_context = { 'title' : _('My plugins')})
 
 
