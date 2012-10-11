@@ -2,6 +2,9 @@
 Metadata
 --------
 
+.. important::
+    All metadata must be in UTF-8 encoding.
+
 Plugins mandatory metadata are read from both the old `__init__.py` functions format
 and (if present) the new `metadata.txt` file.
 
