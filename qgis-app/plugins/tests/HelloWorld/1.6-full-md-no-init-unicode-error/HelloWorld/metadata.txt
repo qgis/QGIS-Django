@@ -1,0 +1,31 @@
+[general]
+name=HelloWorld
+qgisMinimumVersion=1.8
+description=This is a test plugin for greeting the
+    (going multiline) world, version is 1.6
+version=version 1.6
+author=Alessandrò Pasottì
+email=apasotti@gmail.com
+
+
+changelog=this is a very
+    very<br/>
+    very
+    very
+    very
+    very long multiline changelog
+
+
+tags=  wkt, raster,hello world, spaced tag , tag
+
+tracker=http://bugs.itopen.it
+homepage=http://www.itopen.it
+repository=http://www.itopen.it/repo
+
+
+
+experimental=True
+
+
+; change icon...
+icon=icon.png

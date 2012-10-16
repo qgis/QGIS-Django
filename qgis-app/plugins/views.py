@@ -217,12 +217,15 @@ def plugin_upload(request):
                     plugin.description  = plugin_data['description']
                     plugin.author       = plugin_data['author']
                     plugin.email        = plugin_data['email']
-                    plugin.icon         = plugin_data['icon']
                     is_new = False
                 except Plugin.DoesNotExist:
                     plugin = Plugin(**plugin_data)
                     is_new = True
 
+                # Check icon, don't change if not valid
+                if plugin_data['icon']:
+                    plugin.icon         = plugin_data['icon']
+                    
                 # Other optional fields
                 warnings = []
                 if form.cleaned_data.get('homepage'):
@@ -238,7 +241,8 @@ def plugin_upload(request):
                 elif not plugin.repository:
                     warnings.append(_('<strong>repository</strong> field is empty, this field is not required but is recommended, please consider adding it to metadata.'))
 
-            
+
+                # Save main Plugin object
                 plugin.save()
 
                 if is_new:
@@ -544,9 +548,13 @@ def _main_plugin_update(request, plugin, form):
     Updates the main plugin object from version metadata
     """
     # Update plugin from metadata
-    for f in ['icon', 'name', 'author', 'email', 'description', 'homepage', 'tracker']:
+    for f in ['name', 'author', 'email', 'description', 'homepage', 'tracker']:
         if form.cleaned_data.get(f):
             setattr(plugin, f, form.cleaned_data.get(f))
+
+    # Icon has a special treatment
+    if form.cleaned_data.get('icon_file'):
+        setattr(plugin, 'icon', form.cleaned_data.get('icon_file'))
     if form.cleaned_data.get('tags'):
         plugin.tags.set(*[t.strip().lower() for t in form.cleaned_data.get('tags').split(',')])
     plugin.save()
@@ -568,20 +576,26 @@ def version_create(request, package_name):
 
         form = PluginVersionForm(request.POST, request.FILES, instance=version, is_trusted=request.user.has_perm('plugins.can_approve'))
         if form.is_valid():
-            new_object = form.save()
-            msg = _("The Plugin Version has been successfully created.")
-            messages.success(request, msg, fail_silently=True)
-            # The approved flag is also controlled in the form, but we
-            # are checking it here in any case for additional security
-            if not request.user.has_perm('plugins.can_approve'):
-                new_object.approved = False
-                new_object.save()
-                messages.warning(request, _('You do not have approval permissions, plugin version has been set unapproved.'), fail_silently=True)
-            if form.cleaned_data.get('icon_file'):
-                form.cleaned_data['icon'] = form.cleaned_data.get('icon_file')
-            _main_plugin_update(request, new_object.plugin, form)
-            _check_optional_metadata(form, request)
-            return HttpResponseRedirect(new_object.plugin.get_absolute_url())
+            try:
+                new_object = form.save()
+                msg = _("The Plugin Version has been successfully created.")
+                messages.success(request, msg, fail_silently=True)
+                # The approved flag is also controlled in the form, but we
+                # are checking it here in any case for additional security
+                if not request.user.has_perm('plugins.can_approve'):
+                    new_object.approved = False
+                    new_object.save()
+                    messages.warning(request, _('You do not have approval permissions, plugin version has been set unapproved.'), fail_silently=True)
+                if form.cleaned_data.get('icon_file'):
+                    form.cleaned_data['icon'] = form.cleaned_data.get('icon_file')
+                _main_plugin_update(request, new_object.plugin, form)
+                _check_optional_metadata(form, request)            
+                return HttpResponseRedirect(new_object.plugin.get_absolute_url())
+            except (IntegrityError, ValidationError, DjangoUnicodeDecodeError), e:
+                messages.error(request, e, fail_silently=True)
+                transaction.rollback()
+                connection.close()
+            return HttpResponseRedirect(plugin.get_absolute_url())
     else:
         form = PluginVersionForm(is_trusted=request.user.has_perm('plugins.can_approve'))
 
@@ -601,12 +615,17 @@ def version_update(request, package_name, version):
     if request.method == 'POST':
         form = PluginVersionForm(request.POST, request.FILES, instance=version, is_trusted=request.user.has_perm('plugins.can_approve'))
         if form.is_valid():
-            new_object = form.save()
-            # update metadata for the main plugin object
-            _main_plugin_update(request, new_object.plugin, form)
-            msg = _("The Plugin Version has been successfully updated.")
-            messages.success(request, msg, fail_silently=True)
-            return HttpResponseRedirect(new_object.plugin.get_absolute_url())
+            try:
+                new_object = form.save()
+                # update metadata for the main plugin object
+                _main_plugin_update(request, new_object.plugin, form)
+                msg = _("The Plugin Version has been successfully updated.")
+                messages.success(request, msg, fail_silently=True)
+            except (IntegrityError, ValidationError, DjangoUnicodeDecodeError), e:
+                messages.error(request, e, fail_silently=True)
+                transaction.rollback()
+                connection.close()
+            return HttpResponseRedirect(plugin.get_absolute_url())
     else:
         form = PluginVersionForm(instance=version, is_trusted=request.user.has_perm('plugins.can_approve'))
 
