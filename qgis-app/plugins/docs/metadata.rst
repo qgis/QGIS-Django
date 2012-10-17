@@ -17,9 +17,17 @@ Valid metadata for the `__init__` file are:
     * `author`
     * `experimental`
 
-To avoid direct execution of python code (which would be a security issue), metadata are read from the `__init__.py` file with a simple regular expression parser which extracts the string values returned by the functions inside the `__init__.py` file, this means that if the functions do not return strings (enclosed in single or double quotes) or a boolean value (for the `experimental` entry), the metadata entry for that function will not be extracted and if the metadata is mandatory the plugin will be considered invalid.
+To avoid direct execution of python code (which would be a security issue),
+metadata are read from the `__init__.py` file with a simple regular expression
+parser which extracts the string values returned by the functions inside the
+`__init__.py` file, this means that if the functions do not return strings
+(enclosed in single or double quotes) or a boolean value (for the
+`experimental` entry), the metadata entry for that function will not be
+extracted and if the metadata is mandatory the plugin will be considered
+invalid.
 
-The new `metadata.txt` file can contain other optional metadata which are read when the package is uploaded and are automatically imported.
+The new `metadata.txt` file can contain other optional metadata which are read
+when the package is uploaded and are automatically imported.
 
 Mandatory metadata
 ==================
