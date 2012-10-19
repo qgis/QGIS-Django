@@ -46,7 +46,7 @@ def _read_from_init2(initcontent, initname):
 def _read_from_init(initcontent, initname):
     """
     Read metadata from __init__.py, raise ValidationError
-    DEPRECATED: the _read_from_init2 has better support for metadata
+    DEPRECATED: _read_from_init2 has better support for metadata
     """
     metadata = []
     metadata.extend(re.findall('def\s+([^c]\w+).*?return\s+.*?(?P<quote>["\'])(.*?)(?P=quote)', initcontent , re.DOTALL))
@@ -178,5 +178,16 @@ def validator(package):
 
     zip.close()
     del zip
-    return metadata
+    # strip and check
+    checked_metadata = []
+    for k,v in metadata:
+        try:
+            if not (k in PLUGIN_BOOLEAN_METADATA or k == 'icon_file'):
+                v.decode('UTF-8')
+                checked_metadata.append((k, v.strip()))
+            else:
+                checked_metadata.append((k, v))
+        except UnicodeDecodeError, e:
+            raise ValidationError(_("There was an error converting metadata '%s' to UTF-8 . Reported error was: %s") % (k, e))
+    return checked_metadata
 

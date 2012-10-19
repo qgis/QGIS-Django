@@ -21,7 +21,7 @@ from plugins.forms import *
 from django.views.generic.list_detail import object_list, object_detail
 from django.views.decorators.http import require_POST
 from django.views.decorators.csrf import csrf_protect
-from django.db import transaction
+
 
 from django.core.mail import send_mail
 from django.contrib.sites.models import Site
@@ -594,7 +594,6 @@ def version_create(request, package_name):
                 return HttpResponseRedirect(new_object.plugin.get_absolute_url())
             except (IntegrityError, ValidationError, DjangoUnicodeDecodeError), e:
                 messages.error(request, e, fail_silently=True)
-                transaction.rollback()
                 connection.close()
             return HttpResponseRedirect(plugin.get_absolute_url())
     else:
@@ -624,7 +623,6 @@ def version_update(request, package_name, version):
                 messages.success(request, msg, fail_silently=True)
             except (IntegrityError, ValidationError, DjangoUnicodeDecodeError), e:
                 messages.error(request, e, fail_silently=True)
-                transaction.rollback()
                 connection.close()
             return HttpResponseRedirect(plugin.get_absolute_url())
     else:

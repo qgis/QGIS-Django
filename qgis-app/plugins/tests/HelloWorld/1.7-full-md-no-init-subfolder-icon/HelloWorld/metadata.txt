@@ -4,7 +4,7 @@ qgisMinimumVersion=1.8
 description=This is a test plugin for greeting the
     (going multiline) world, version is 1.7
 version=version 1.7
-author=Alessandro Pasotti
+author=Alessandro Pasotti èàò
 email=apasotti@gmail.com
 
 
