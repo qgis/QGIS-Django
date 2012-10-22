@@ -82,7 +82,9 @@ var olwidget = {
                     ],
                     { numZoomLevels: 19 });
         },
+        // Osmarender has been discontinued in March 2012 !!!
         osmarender: function() {
+            return alert('Osmarender has been discontinued in March 2012 !!! Fix your olwidget configuration.');
             return new OpenLayers.Layer.OSM.Osmarender(
                     'OpenStreetMap (Osmarender)');
         }

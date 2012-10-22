@@ -13,9 +13,9 @@
         <div>
             <h3>{% trans "QGIS Users Map" %}</h3>
             <ul class="menu">
-              <li><a href="/community-map/view_users.html">{% trans "Community map"%}</a></li>
-              <li><a href="/community-map/create_user_form.html">{% trans "Add yourself!"%}</a></li>
-              <li><a href="/community-map/update_user.html">{% trans "Update your details"%}</a></li>
+              <li><a href="{% url show_map %}">{% trans "Community map"%}</a></li>
+              <li><a href="{% url create_user %}">{% trans "Add yourself!"%}</a></li>
+              <li><a href="{% url email_update_user_link %}">{% trans "Update your details"%}</a></li>
             </ul>
             <p class="centered">{{ myUserCount }} {% trans "users mapped" %}</p>
         </div>

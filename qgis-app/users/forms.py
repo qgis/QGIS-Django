@@ -39,7 +39,7 @@ class QgisUserForm(MapModelForm):
   geometry = forms.CharField(label="User location:",
                required=True,
                widget=EditableMap(
-                 options = { 'layers': ['osm.mapnik', 'osm.osmarender'] }
+                 options = { 'layers': ['osm.mapnik'] }
                ),
                help_text="To add your location: click 'Edit' on the top-right corner of the map, and then the pencil icon",
                error_messages={'required':
