@@ -178,3 +178,34 @@ a:hover {
 	text-decoration: underline !important;
 	color: blue !important;
 }
+
+#leftcolumn ul {
+    padding-left: 1em;
+}
+
+div.date {
+    font-weight: bold;
+}
+
+div.post {
+    margin-bottom: 2em;
+    clear: both;
+}
+
+div.post-title {
+    font-size: 200%;
+    margin: 0.5em;
+}
+
+div.avatar {
+    float: right;
+}
+
+#paginate ul {
+    list-style-type: none;
+}
+
+#paginate ul li {
+    display: inline;
+    margin: 0 1em;
+}
