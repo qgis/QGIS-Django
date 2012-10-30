@@ -107,10 +107,6 @@ title="{{ feed.feed.title }}">{{ feed.name }}</a></li>
 
 {% for item in object_list %}
 
-  {% ifchanged %}
-  <div class="date">{{ item.date_modified|date:"F j, Y" }}</div>
-  {% endifchanged %}
-
   <div class="post">
   {% ifchanged %}
   <!-- {{ item.date_modified|date:"F j, Y" }} -->
@@ -118,8 +114,7 @@ title="{{ feed.feed.title }}">{{ feed.name }}</a></li>
     <img
      src="{{ media_url }}/img/faces/{{ item.subscriber.shortname}}.png" alt="">
     <br/>
-  </div>
-    <span class="name">{{ item.subscriber.name }}</span><br/>
+  </div>    
   {% endifchanged %}
 
   {% if item.title %}
@@ -127,6 +122,9 @@ title="{{ feed.feed.title }}">{{ feed.name }}</a></li>
   {% else %}
   <div class="post-title"> {{ item.subscriber.name }}</div>
   {% endif %}
+  {% ifchanged %}
+  <div class="post-meta"> <span class="date">{{ item.date_modified|date:"F j, Y" }}</span> <span class="name">{{ item.subscriber.name }}</span><br/></div>
+  {% endifchanged %}
   <div class="post-content">
     <p>{{ item.content|safe }}</p>
     <div class="post-meta">

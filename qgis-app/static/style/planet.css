@@ -183,8 +183,12 @@ a:hover {
     padding-left: 1em;
 }
 
-div.date {
+div.post-meta span.date {
     font-weight: bold;
+}
+
+div.post-meta span.name {
+    font-style: italic;
 }
 
 div.post {
@@ -194,7 +198,8 @@ div.post {
 
 div.post-title {
     font-size: 200%;
-    margin: 0.5em;
+    margin: 0.5em 0;
+    line-height: 1.4em;
 }
 
 div.avatar {
