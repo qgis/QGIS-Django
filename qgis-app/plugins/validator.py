@@ -74,6 +74,7 @@ def validator(package):
         * zip contains __init__.py in first level dir
         * mandatory metadata: ('name', 'description', 'version', 'qgisMinimumVersion', 'author', 'email')
         * package_name regexp: [A-Za-z][A-Za-z0-9-_]+
+        * author regexp: [^/]+
 
     """
     try:
@@ -178,6 +179,12 @@ def validator(package):
 
     zip.close()
     del zip
+
+    # Check author
+    if 'author' in dict(metadata):
+        if not re.match(r'^[^/]+$', dict(metadata)['author']):
+           raise ValidationError(_("Author name cannot contain slashes.")) 
+    
     # strip and check
     checked_metadata = []
     for k,v in metadata:
@@ -189,5 +196,7 @@ def validator(package):
                 checked_metadata.append((k, v))
         except UnicodeDecodeError, e:
             raise ValidationError(_("There was an error converting metadata '%s' to UTF-8 . Reported error was: %s") % (k, e))
+
+            
     return checked_metadata
 
