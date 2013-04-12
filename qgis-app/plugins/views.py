@@ -37,6 +37,7 @@ def plugin_notify(plugin):
     """
 
     recipients = [u.email for u in User.objects.filter(is_staff=True, email__isnull=False).exclude(email='')]
+    recipients.append['qgis-developer@lists.osgeo.org']
 
     if recipients:
       domain = Site.objects.get_current().domain
