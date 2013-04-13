@@ -15,7 +15,7 @@ from django.conf import settings
 from django.contrib.auth.models import User, Permission
 from django.contrib.contenttypes.models import ContentType
 from django.utils.encoding import DjangoUnicodeDecodeError
-from plugins.models import Plugin, PluginVersion
+from plugins.models import Plugin, PluginVersion, vjust
 from plugins.forms import *
 
 from django.views.generic.list_detail import object_list, object_detail
@@ -26,6 +26,8 @@ from django.views.decorators.csrf import csrf_protect
 from django.core.mail import send_mail
 from django.contrib.sites.models import Site
 import logging
+
+import copy
 
 # Decorator
 staff_required = user_passes_test(lambda u: u.is_staff)
@@ -257,6 +259,7 @@ def plugin_upload(request):
                 version_data =  {
                     'plugin'            : plugin,
                     'min_qg_version'    : form.cleaned_data.get('qgisMinimumVersion'),
+                    'max_qg_version'    : form.cleaned_data.get('qgisMaximumVersion'),
                     'version'           : form.cleaned_data.get('version'),
                     'created_by'        : request.user,
                     'package'           : form.cleaned_data.get('package'),
@@ -751,12 +754,37 @@ def version_detail(request, package_name, version):
 def xml_plugins(request):
     """
     The XML file
-    """
-    min_qg_version = request.GET.get('qgis')
-    if min_qg_version:
-        queryset = Plugin.approved_objects.filter(pluginversion__min_qg_version__lte=min_qg_version)
-    else:
-        queryset = Plugin.approved_objects.all()
-    return render_to_response('plugins/plugins.xml', {'object_list': queryset}, mimetype='text/xml', context_instance=RequestContext(request))
 
+    accepted parameters:
+
+        * qgis: qgis version
+        * stable_only: 0/1
+    """
+    qg_version = vjust(request.GET.get('qgis'))
+    stable_only = request.GET.get('stable_only', '0')
+    
+    filters = {}
+    version_filters = {}
+    object_list = []
+    
+    if qg_version:
+        filters.update({'pluginversion__min_qg_version__lte' : qg_version})
+        version_filters.update({'min_qg_version__lte' : qg_version})
+        filters.update({'pluginversion__max_qg_version__gte' : qg_version})
+        version_filters.update({'max_qg_version__gte' : qg_version})
+
+    for plugin in Plugin.approved_objects.filter(**filters):
+        plugin_version_filters = copy.copy(version_filters)
+        plugin_version_filters.update({'plugin' : plugin})
+        try:
+            object_list.append(PluginVersion.stable_objects.filter(**plugin_version_filters)[0])
+        except IndexError:
+            pass
+        if stable_only != '1':
+            try:
+                object_list.append(PluginVersion.experimental_objects.filter(**plugin_version_filters)[0])
+            except IndexError:
+                pass
+     
+    return render_to_response('plugins/plugins.xml', {'object_list': object_list}, mimetype='text/xml', context_instance=RequestContext(request))
 

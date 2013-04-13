@@ -78,7 +78,7 @@ Download:
  <xsl:attribute name="href">
   <xsl:value-of select="download_url" />
  </xsl:attribute>
- <xsl:value-of select="@name" />
+ <xsl:value-of select="@name" /> - <xsl:value-of select="@version" />
 </xsl:element>
 </div>
 </xsl:for-each>
@@ -128,6 +128,9 @@ Deprecated: <xsl:value-of select="deprecated" />
 </div>
 <div class="author">
 Minimum QGIS Version: <xsl:value-of select="qgis_minimum_version" />
+</div>
+<div class="author">
+Maximum QGIS Version: <xsl:value-of select="qgis_maximum_version" />
 </div>
 <div class="author">
 Home page:

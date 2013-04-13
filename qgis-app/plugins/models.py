@@ -168,8 +168,8 @@ class Plugin (models.Model):
     downloads       = models.IntegerField(_('Downloads'), default=0, editable=False)
 
     # Flags
-    featured        = models.BooleanField(_('Featured'), default=False)
-    deprecated      = models.BooleanField(_('Deprecated'), default=False)
+    featured        = models.BooleanField(_('Featured'), default=False, db_index=True)
+    deprecated      = models.BooleanField(_('Deprecated'), default=False, db_index=True)
 
     # Managers
     objects                 = models.Manager()
@@ -305,6 +305,62 @@ class Plugin (models.Model):
 
 
 
+# Plugin version managers
+
+
+
+class ApprovedPluginVersions(models.Manager):
+    """
+    Shows only public plugin versions:
+    """
+    def get_query_set(self):
+        return super(ApprovedPluginVersions, self).get_query_set().filter(approved=True).order_by('-version')
+
+
+class StablePluginVersions(ApprovedPluginVersions):
+    """
+    Shows only approved public plugin versions: i.e. those with "approved" flag set
+    and with "stable" flag
+    """
+    def get_query_set(self):
+        return super(StablePluginVersions, self).get_query_set().filter(experimental=False)
+
+
+class ExperimentalPluginVersions(ApprovedPluginVersions):
+    """
+    Shows only public plugin versions: i.e. those with "approved" flag set
+    and with  "experimental" flag
+    """
+    def get_query_set(self):
+        return super(ExperimentalPluginVersions, self).get_query_set().filter(experimental=True)
+
+
+def vjust(str, level=3, delim='.', bitsize=3, fillchar=' '):
+    """
+    1.12 becomes : 1.    12
+    1.1  becomes : 1.     1
+    """
+    nb = str.count(delim)
+    if nb < level:
+        str += (level-nb) * delim
+    return delim.join([ v.rjust(bitsize,fillchar) for v in str.split(delim)[:level+1] ])
+
+
+class VersionField(models.CharField) :
+
+    description = 'Field to store version strings ("a.b.c.d") in a way it is sortable'
+
+    __metaclass__ = models.SubfieldBase
+
+    def get_prep_value(self, value):
+        return vjust(value,fillchar=' ')
+
+    def to_python(self, value):
+        if not value:
+            return ''
+        return re.sub('\.+$','',value.replace(' ',''))
+
+
 class PluginVersion (models.Model):
     """
     Plugin versions
@@ -319,15 +375,23 @@ class PluginVersion (models.Model):
     # owners
     created_by      = models.ForeignKey(User, verbose_name=_('Created by'))
     # version info, the first should be read from plugin
-    min_qg_version  = models.CharField(_('Minimum QGIS version'), max_length=32)
-    version         = models.CharField(_('Version'), max_length=32)
+    min_qg_version  = VersionField(_('Minimum QGIS version'), max_length=32, db_index=True)
+    max_qg_version  = VersionField(_('Maximum QGIS version'), max_length=32, null=True, blank=True, db_index=True)
+    version         = VersionField(_('Version'), max_length=32, db_index=True)
     changelog       = models.TextField(_('Changelog'), null=True, blank=True)
 
     # the file!
     package         = models.FileField(_('Plugin package'), upload_to=PLUGINS_STORAGE_PATH)
     # Flags: checks on unique current/experimental are done in save() and possibly in the views
-    experimental    = models.BooleanField(_('Experimental flag'), default=False, help_text=_("Check this box if this version is experimental, leave unchecked if it's stable."))
-    approved        = models.BooleanField(_('Approved'), default=True, help_text=_('Set to false if you wish to unapprove the plugin version.'))
+    experimental    = models.BooleanField(_('Experimental flag'), default=False, help_text=_("Check this box if this version is experimental, leave unchecked if it's stable."), db_index=True)
+    approved        = models.BooleanField(_('Approved'), default=True, help_text=_('Set to false if you wish to unapprove the plugin version.'), db_index=True)
+
+    # Managers, used in xml output
+    objects                 = models.Manager()
+    approved_objects        = ApprovedPluginVersions()
+    stable_objects          = StablePluginVersions()
+    experimental_objects    = ExperimentalPluginVersions()
+    
 
     @property
     def file_name(self):
@@ -350,6 +414,10 @@ class PluginVersion (models.Model):
         if not self.pk:
             self.plugin.modified_on = self.created_on
             self.plugin.save()
+
+        # fix Max version
+        if not self.max_qg_version:
+            self.max_qg_version = "%s.99" % tuple(self.min_qg_version.split('.')[0] )
 
         super(PluginVersion, self).save(*args, **kwargs)
 

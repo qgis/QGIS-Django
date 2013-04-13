@@ -71,7 +71,7 @@ Example from the `HelloWorld` plugin compressed zip file::
 Metadata
 ========
 
-TODO: add a link to the metadata.rst file.
+You can find detailed informations about 
 
 
 Configuration
@@ -89,6 +89,16 @@ MAIL_FROM_ADDRESS          -             used in email notifications
 PLUGIN_REQUIRED_METADATA   [#f1]_        used in validator
 PLUGIN_OPTIONAL_METADATA   [#f2]_        used in validator
 ========================== ============= =======================
+
+
+Plugins XMl
+===========
+
+Plugins XML is available at `http://plugins.qgis.org/plugins/plugins.xml`
+
+accepted parameters:
+    * qgis: qgis version
+    * stable_only: 0/1, default to 0
 
 
 .. rubric:: Footnotes

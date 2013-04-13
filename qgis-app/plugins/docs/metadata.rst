@@ -8,6 +8,9 @@ Metadata
 Plugins mandatory metadata are read from both the old `__init__.py` functions format
 and (if present) the new `metadata.txt` file.
 
+.. warning::
+    If `qgisMinimumVersion` is set to a value lower than 1.8 the old `__init__.py` is required in addition the new `metadata.txt` file.
+
 Valid metadata for the `__init__` file are:
     * `name`
     * `description`
@@ -16,6 +19,9 @@ Valid metadata for the `__init__` file are:
     * `email`
     * `author`
     * `experimental`
+    * `category`
+
+
 
 To avoid direct execution of python code (which would be a security issue),
 metadata are read from the `__init__.py` file with a simple regular expression
@@ -39,6 +45,7 @@ Mandatory metadata
 * `author`: author name
 * `email`: email of the author, will *not* be shown on the web site
 
+
 Optional metadata
 =================
 
@@ -51,6 +58,10 @@ Optional metadata
 * `icon`: a file name or a relative path (relative to the base folder of the compressed package)
 
 
+.. notice::
+    If `qgisMaximumVersion` is not set, it is automatically set to the major version plus `.99`. For example, if `qgisMinimumVersion` is `1.7` and `qgisMaximumVersion` is not set, `qgisMaximumVersion` becomes `1.99`.
+
+
 Example configuration file::
 
         ; the next section is mandatory
@@ -58,6 +69,7 @@ Example configuration file::
         ; start of mandatory metadata
         name=HelloWorld
         qgisMinimumVersion=1.8
+        qgisMaximumVersion=1.9
         description=This is a plugin for greeting the ...
             ... (going multiline) world
         version=version 1.2

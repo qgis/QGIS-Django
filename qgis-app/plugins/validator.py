@@ -18,7 +18,7 @@ from django.core.files.uploadedfile import SimpleUploadedFile
 PLUGIN_MAX_UPLOAD_SIZE=getattr(settings, 'PLUGIN_MAX_UPLOAD_SIZE', 1048576)
 PLUGIN_REQUIRED_METADATA=getattr(settings, 'PLUGIN_REQUIRED_METADATA', ('name', 'description', 'version', 'qgisMinimumVersion', 'author', 'email'))
 
-PLUGIN_OPTIONAL_METADATA=getattr(settings, 'PLUGIN_OPTIONAL_METADATA', ('homepage', 'changelog', 'tracker', 'repository', 'tags', 'deprecated', 'experimental'))
+PLUGIN_OPTIONAL_METADATA=getattr(settings, 'PLUGIN_OPTIONAL_METADATA', ('homepage', 'changelog', 'tracker', 'qgisMaximumVersion', 'repository', 'tags', 'deprecated', 'experimental'))
 PLUGIN_BOOLEAN_METADATA=getattr(settings, 'PLUGIN_BOOLEAN_METADATA', ('experimental',))
 
 
@@ -168,6 +168,7 @@ def validator(package):
     # Last temporary rule, check if mandatory metadata are also in __init__.py
     # fails if it is not
     min_qgs_version = dict(metadata).get('qgisMinimumVersion')
+    max_qgs_version = dict(metadata).get('qgisMaximumVersion')
     if tuple(min_qgs_version.split('.')) < tuple('1.8'.split('.')) and metadataname in namelist:
         initcontent = zip.read(initname)
         try:
