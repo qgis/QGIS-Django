@@ -340,6 +340,8 @@ def vjust(str, level=3, delim='.', bitsize=3, fillchar=' '):
     1.12 becomes : 1.    12
     1.1  becomes : 1.     1
     """
+    if not str:
+        return str
     nb = str.count(delim)
     if nb < level:
         str += (level-nb) * delim
