@@ -42,6 +42,8 @@ def plugin_upload(package, **kwargs):
             'description'       : cleaned_data['description'],
             'created_by'        : request.user,
             'icon'              : cleaned_data['icon_file'],
+            'author'            : cleaned_data['author'],
+            'email'             : cleaned_data['email'],
         }
 
         # Gets existing plugin
@@ -73,7 +75,7 @@ def plugin_upload(package, **kwargs):
 
         # Takes care of tags
         if cleaned_data.get('tags'):
-            plugin.tags.set(*cleaned_data.get('tags').split(','))
+            plugin.tags.set(*[t.strip().lower() for t in cleaned_data.get('tags').split(',')])
 
         version_data =  {
             'plugin'            : plugin,
@@ -91,8 +93,11 @@ def plugin_upload(package, **kwargs):
             version_data['experimental'] = cleaned_data.get('experimental')
         if cleaned_data.get('changelog'):
             version_data['changelog'] = cleaned_data.get('changelog')
+        if cleaned_data.get('qgsMaximumVersion'):
+            version_data['qgsMaximumVersion'] = cleaned_data.get('qgsMaximumVersion')
 
         new_version = PluginVersion(**version_data)
+        new_version.clean()
         new_version.save()
     except IntegrityError:
         # Avoids error: current transaction is aborted, commands ignored until

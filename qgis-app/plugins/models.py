@@ -73,7 +73,7 @@ class FreshPlugins(BasePluginManager):
         return super(FreshPlugins, self).__init__(*args, **kwargs)
 
     def get_query_set(self):
-        return super(FreshPlugins, self).get_query_set().filter(pluginversion__approved=True, modified_on__gte = datetime.datetime.now()- datetime.timedelta(days = self.days)).order_by('-created_on').distinct()
+        return super(FreshPlugins, self).get_query_set().filter(deprecated=False, pluginversion__approved=True, modified_on__gte = datetime.datetime.now()- datetime.timedelta(days = self.days)).order_by('-created_on').distinct()
 
 
 class UnapprovedPlugins(BasePluginManager):

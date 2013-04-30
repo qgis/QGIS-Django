@@ -19,7 +19,7 @@ PLUGIN_MAX_UPLOAD_SIZE=getattr(settings, 'PLUGIN_MAX_UPLOAD_SIZE', 1048576)
 PLUGIN_REQUIRED_METADATA=getattr(settings, 'PLUGIN_REQUIRED_METADATA', ('name', 'description', 'version', 'qgisMinimumVersion', 'author', 'email'))
 
 PLUGIN_OPTIONAL_METADATA=getattr(settings, 'PLUGIN_OPTIONAL_METADATA', ('homepage', 'changelog', 'tracker', 'qgisMaximumVersion', 'repository', 'tags', 'deprecated', 'experimental'))
-PLUGIN_BOOLEAN_METADATA=getattr(settings, 'PLUGIN_BOOLEAN_METADATA', ('experimental',))
+PLUGIN_BOOLEAN_METADATA=getattr(settings, 'PLUGIN_BOOLEAN_METADATA', ('experimental', 'deprecated'))
 
 
 def _read_from_init2(initcontent, initname):
@@ -118,7 +118,7 @@ def validator(package):
 
     # Checks metadata
     metadata = []
-    # First parse metadata.ini
+    # First parse metadata.txt
     if metadataname in namelist:
         try:
             parser = ConfigParser.ConfigParser()
@@ -134,7 +134,7 @@ def validator(package):
         # Then parse __init__
         # Ugly RE: regexp guru wanted!
         initcontent = zip.read(initname)
-        metadata.extend(_read_from_init(initcontent, initname))
+        metadata.extend(_read_from_init2(initcontent, initname))
         if not metadata:
             raise ValidationError(_('Cannot find valid metadata in %s') % initname)
         metadata.append(('metadata_source', '__init__.py'))
