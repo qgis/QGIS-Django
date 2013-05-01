@@ -19,5 +19,8 @@
         <tracker>{{ version.plugin.tracker }}</tracker>
         <repository>{{ version.plugin.repository }}</repository>
         <tags>{% for tag in version.plugin.tags.all %}{{ tag }}{% if not forloop.last %},{% endif %}{% endfor %}</tags>
+        <downloads>{{version.plugin.downloads}}</downloads>
+        <average_vote>{{version.plugin.avg_vote}}</average_vote>
+        <rating_votes>{{version.plugin.rating_votes}}</rating_votes>
     </pyqgis_plugin>{% endfor %}    
 </plugins>

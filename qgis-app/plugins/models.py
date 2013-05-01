@@ -242,6 +242,18 @@ class Plugin (models.Model):
         """
         return [l for l in self.editors if l.has_perm('plugins.can_approve')]
 
+
+    @property
+    def avg_vote(self):
+        """
+        Returns the rating_score/(rating_votes+0.001) value, this
+        calculation is also available in manager's queries as
+        "average_vote".
+        This property is still useful when the object is not loaded
+        through a manager, for example in related objects.
+        """
+        return self.rating_score/(self.rating_votes+0.001)
+
     class Meta:
         ordering = ('name',)
         # ABP: Note: this permission should belong to the
