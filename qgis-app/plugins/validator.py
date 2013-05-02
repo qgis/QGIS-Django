@@ -110,7 +110,7 @@ def validator(package):
     initname = package_name + '/__init__.py'
     metadataname = package_name + '/metadata.txt'
     if not initname in namelist and not metadataname in namelist:
-        raise ValidationError(_('Cannot find __init__.py or metadata.txt in the compressed package: this does not seems a valid plugin (I searched for %s and )') % (initname, metadataname))
+        raise ValidationError(_('Cannot find __init__.py or metadata.txt in the compressed package: this does not seems a valid plugin (I searched for %s and %s)') % (initname, metadataname))
 
     # Checks for __init__.py presence
     if not initname in namelist:
