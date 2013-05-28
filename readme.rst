@@ -1,7 +1,7 @@
 Introduction
 ================================================================================
 
-*Note:* This branch `gsoc13` contains the code written for Google Summer of Code 2013
+**Note:** This branch ``gsoc13`` contains the code written for Google Summer of Code 2013
 
 This directory contains the source code for django apps used in the QGIS 
 project.
