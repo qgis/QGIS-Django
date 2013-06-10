@@ -216,6 +216,8 @@ def plugin_upload(request):
                 # Gets existing plugin
                 try:
                     plugin = Plugin.objects.get(package_name=plugin_data['package_name'])
+                    if not check_plugin_access(request.user, plugin):
+                        return render_to_response('plugins/plugin_permission_deny.html', {}, context_instance=RequestContext(request))
                     # Apply new values
                     plugin.name         = plugin_data['name']
                     plugin.description  = plugin_data['description']
