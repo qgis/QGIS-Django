@@ -760,7 +760,8 @@ def xml_plugins(request):
         * qgis: qgis version
         * stable_only: 0/1
     """
-    qg_version = vjust(request.GET.get('qgis'))
+    
+    qg_version = vjust(request.GET.get('qgis', '1.8.0'))    
     stable_only = request.GET.get('stable_only', '0')
     
     filters = {}
