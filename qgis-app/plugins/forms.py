@@ -50,7 +50,7 @@ class PluginVersionForm(ModelForm):
 
     class Meta:
         model = PluginVersion
-        exclude = ('created_by', 'plugin', 'version', 'min_qg_version')
+        exclude = ('created_by', 'plugin', 'version', 'min_qg_version', 'max_qg_version')
         fields = ('package', 'experimental', 'approved', 'changelog')
 
     def clean(self):
@@ -70,6 +70,7 @@ class PluginVersionForm(ModelForm):
                 raise ValidationError(mark_safe("%s %s" % (msg, '<br />'.join(e.messages))))
             # Populate instance
             self.instance.min_qg_version = self.cleaned_data.get('qgisMinimumVersion')
+            self.instance.max_qg_version = self.cleaned_data.get('qgisMaximumVersion')
             self.instance.version        = PluginVersion.clean_version(self.cleaned_data.get('version'))
             # Check plugin name
             if self.cleaned_data.get('package_name') and self.cleaned_data.get('package_name') != self.instance.plugin.package_name:
