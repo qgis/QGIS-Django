@@ -21,12 +21,14 @@ markdown
 django-simple-ratings
 django-taggit
 django-taggit-templatetags
-django-haystack
+django-haystack==1.2.7
 whoosh==1.8.4 # with latest version there is an error (in production we have 1.4.1)
 # pip install django-amazon-resources <-- no such package have to manual install
 # Dont's use this - see INSTALL notes
 #git+git://github.com/coleifer/djangosnippets.org.git
 
+django-ratings
+django-taggit-autosuggest
 
 # For ldap authentication
 python-ldap
@@ -56,4 +58,7 @@ south
 # RPC API
 # Use my fork of rpc4django to support login_required for methods
 git+git://github.com/elpaso/rpc4django.git
+
+# ASN in admin
+pyasn1
 
