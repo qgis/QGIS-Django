@@ -40,6 +40,9 @@ urlpatterns = patterns('',
     # ABP: autosuggest for tags
     (r'^taggit_autosuggest/', include('taggit_autosuggest.urls')),
 
+    # Symbols
+    (r'^symbols/', include('symbols.urls')),
+
 )
 
 # ABP: temporary home page

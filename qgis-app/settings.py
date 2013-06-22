@@ -139,6 +139,8 @@ INSTALLED_APPS = (
     'rpc4django',
     'south',
     'djangoratings',
+    # Symbol repository
+    'symbols',
 )
 
 TEMPLATE_CONTEXT_PROCESSORS = (
