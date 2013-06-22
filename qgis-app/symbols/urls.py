@@ -9,7 +9,6 @@ urlpatterns = patterns('symbols.views',
         url(r'^tag/(?P<tag_id>\d+)/$', 'symbols_with_tag'),
 
         # Form to upload symbols
-        url(r'^add/symbol/','add_symbol'),
-        url(r'^add/colorramp/','add_colorramp'),
+        url(r'^add/','add_symbol'),
 
         )

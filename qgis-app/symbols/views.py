@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-from symbols.models import Symbol, ColorRamp, Tag
+from symbols.models import Symbol, Tag
 from django.http import HttpResponse
 
 def index(request):
@@ -18,7 +18,4 @@ def add_symbol(request):
     op = "symbols uploader is under construc..."
     return HttpResponse(op)
 
-def add_colorramp(request):
-    op = "colorramp uploader is under construc..."
-    return HttpResponse(op)
 
