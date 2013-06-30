@@ -3,20 +3,33 @@ from symbols.models import Symbol
 from symbols.forms import SymbolUploadForm
 from symbols.utils import SymbolExtractor
 
+from taggit.models import TaggedItem, Tag
+
 from django.http import HttpResponse, HttpResponseRedirect
 from django.shortcuts import render_to_response
 from django.contrib.auth.decorators import login_required, user_passes_test
 from django.contrib.auth.models import User
 from django.template import RequestContext
 
+from xml.dom.minidom import getDOMImplementation
 
 def index(request):
-    op = "Welcome to the new Symbols Page"
-    return HttpResponse(op)
+    return render_to_response("/symbols/s_index.html", {}, context_instance=RequestContext(request) )
 
 def tags(request):
-    op = "You are now requesting all the tags"
-    return HttpResponse(op)
+    queryset = TaggedItem.objects.filter(content_type__app_label="symbols")
+    tag_ids = queryset.values_list('tag_id', flat=True)
+    tags = Tag.objects.filter(id__in=tag_ids)
+    # create a xml with the list of the tag.name for tag in tags
+    domimp = getDOMImplementation()
+    doc = domimp.createDocument(None, "symbol_tags", None)
+    root_ele = doc.documentElement
+    for tag in tags:
+        tag_ele = doc.createElement("tag")
+        tagnode = doc.createTextNode(tag.name)
+        tag_ele.appendChild(tagnode)
+        root_ele.appendChild(tag_ele)
+    return HttpResponse(root_ele.toxml(), content_type="application/xhtml+xml")
 
 def symbols_with_tag(request, tag_id):
     op = "Request recieved for symbol with tag id" + str(tag_id)
