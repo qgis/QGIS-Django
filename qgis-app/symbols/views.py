@@ -11,7 +11,7 @@ from django.contrib.auth.decorators import login_required, user_passes_test
 from django.contrib.auth.models import User
 from django.template import RequestContext
 
-from xml.dom.minidom import getDOMImplementation
+from xml.dom.minidom import getDOMImplementation, parseString
 
 def index(request):
     return render_to_response("/symbols/s_index.html", {}, context_instance=RequestContext(request) )
@@ -31,9 +31,16 @@ def tags(request):
         root_ele.appendChild(tag_ele)
     return HttpResponse(root_ele.toxml(), content_type="application/xhtml+xml")
 
-def symbols_with_tag(request, tag_id):
-    op = "Request recieved for symbol with tag id" + str(tag_id)
-    return HttpResponse(op)
+def symbols_with_tag(request, tag):
+    doc = getDOMImplementation().createDocument(None, "qgis_style", None)
+    style_ele = doc.documentElement
+    symbols_ele = doc.createElement("symbols")
+    style_ele.appendChild(symbols_ele)
+    symbols = Symbol.objects.filter(tags__name__in=[tag])
+    for symbol in symbols:
+        symdom = parseString(symbol.xml).documentElement
+        symbols_ele.appendChild(symdom)
+    return HttpResponse(style_ele.toxml(), content_type="application/xhtml+xml")
 
 @login_required
 def add_symbol(request):

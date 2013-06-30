@@ -6,7 +6,7 @@ urlpatterns = patterns('symbols.views',
 
         # XML Responses for desktop
         url(r'^tags.xml$','tags'),
-        url(r'^tag/(?P<tag_id>\d+)/$', 'symbols_with_tag'),
+        url(r'^tag/(?P<tag>\w+)/$', 'symbols_with_tag'),
 
         # Form to upload symbols
         url(r'^add/','add_symbol', name='symbol_upload_link'),
