@@ -14,6 +14,7 @@ from django.template import RequestContext
 from xml.dom.minidom import getDOMImplementation, parseString
 
 def index(request):
+    op = "Be hell with the home page"
     return render_to_response("/symbols/s_index.html", {}, context_instance=RequestContext(request) )
 
 def tags(request):
@@ -22,7 +23,7 @@ def tags(request):
     tags = Tag.objects.filter(id__in=tag_ids)
     # create a xml with the list of the tag.name for tag in tags
     domimp = getDOMImplementation()
-    doc = domimp.createDocument(None, "symbol_tags", None)
+    doc = domimp.createDocument(None, "tags", None)
     root_ele = doc.documentElement
     for tag in tags:
         tag_ele = doc.createElement("tag")
@@ -34,6 +35,7 @@ def tags(request):
 def symbols_with_tag(request, tag):
     doc = getDOMImplementation().createDocument(None, "qgis_style", None)
     style_ele = doc.documentElement
+    style_ele.setAttribute("version", "1")
     symbols_ele = doc.createElement("symbols")
     style_ele.appendChild(symbols_ele)
     symbols = Symbol.objects.filter(tags__name__in=[tag])
@@ -68,7 +70,7 @@ def add_symbol(request):
     return render_to_response('/symbols/s_upload.html', {'form' : form, }, context_instance=RequestContext(request))
 
 def upload_thanks(request):
-    op = "Your symbols has been added to the repository"
+    op = "Your symbols has been added to the repository. <a href=\"/symbols/\">Click Here</a> to go back."
     return HttpResponse(op)
 
 
