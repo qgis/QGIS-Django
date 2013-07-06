@@ -10,6 +10,8 @@ urlpatterns = patterns('symbols.views',
         url(r'^tag/(?P<tag>\w+)/$', 'symbols_with_tag'),
         url(r'^authors.xml$', 'authors'),
         url(r'^author/(?P<authid>\d+)/$', 'symbols_by_author'),
+        url(r'^name/(?P<symname>\w+)/$','symbol_with_name'),
+        url(r'^type/(?P<typename>\w+)/$', 'symbols_of_type'),
 
         # Form to upload symbols
         url(r'^add/','add_symbol', name='symbol_upload_link'),
