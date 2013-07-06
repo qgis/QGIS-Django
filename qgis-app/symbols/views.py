@@ -44,6 +44,34 @@ def symbols_with_tag(request, tag):
         symbols_ele.appendChild(symdom)
     return HttpResponse(style_ele.toxml(), content_type="application/xhtml+xml")
 
+def authors(request):
+    users = User.objects.all()
+    # create a xml with the list of the authors
+    domimp = getDOMImplementation()
+    doc = domimp.createDocument(None, "authors", None)
+    root_ele = doc.documentElement
+    for user in users:
+        symbols = user.symbols.all()
+        if len(symbols) > 0:
+            auth_ele = doc.createElement("author")
+            authnode = doc.createTextNode(unicode(user))
+            auth_ele.appendChild(authnode)
+            auth_ele.setAttribute("id", unicode(user.pk))
+            root_ele.appendChild(auth_ele)
+    return HttpResponse(root_ele.toxml(), content_type="application/xhtml+xml")
+
+def symbols_by_author(request, authid):
+    doc = getDOMImplementation().createDocument(None, "qgis_style", None)
+    style_ele = doc.documentElement
+    style_ele.setAttribute("version", "1")
+    symbols_ele = doc.createElement("symbols")
+    style_ele.appendChild(symbols_ele)
+    symbols = Symbol.objects.filter(created_by=authid)
+    for symbol in symbols:
+        symdom = parseString(symbol.xml).documentElement
+        symbols_ele.appendChild(symdom)
+    return HttpResponse(style_ele.toxml(), content_type="application/xhtml+xml")
+
 @login_required
 def add_symbol(request):
     op = "symbols uploader is under construc..."
