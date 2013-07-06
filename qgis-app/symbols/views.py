@@ -28,6 +28,7 @@ def tags(request):
     for tag in tags:
         tag_ele = doc.createElement("tag")
         tagnode = doc.createTextNode(tag.name)
+        tag_ele.setAttribute("id", unicode(tag.pk))
         tag_ele.appendChild(tagnode)
         root_ele.appendChild(tag_ele)
     return HttpResponse(root_ele.toxml(), content_type="application/xhtml+xml")
@@ -39,6 +40,18 @@ def symbols_with_tag(request, tag):
     symbols_ele = doc.createElement("symbols")
     style_ele.appendChild(symbols_ele)
     symbols = Symbol.objects.filter(tags__name__in=[tag])
+    for symbol in symbols:
+        symdom = parseString(symbol.xml).documentElement
+        symbols_ele.appendChild(symdom)
+    return HttpResponse(style_ele.toxml(), content_type="application/xhtml+xml")
+
+def symbols_with_tagid(request, tag_id):
+    doc = getDOMImplementation().createDocument(None, "qgis_style", None)
+    style_ele = doc.documentElement
+    style_ele.setAttribute("version", "1")
+    symbols_ele = doc.createElement("symbols")
+    style_ele.appendChild(symbols_ele)
+    symbols = Symbol.objects.filter(tags__in=[tag_id])
     for symbol in symbols:
         symdom = parseString(symbol.xml).documentElement
         symbols_ele.appendChild(symdom)

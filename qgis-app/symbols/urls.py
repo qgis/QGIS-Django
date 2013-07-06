@@ -6,6 +6,7 @@ urlpatterns = patterns('symbols.views',
 
         # XML Responses for desktop
         url(r'^tags.xml$','tags'),
+        url(r'^tag/(?P<tag_id>\d+)/$', 'symbols_with_tagid'),
         url(r'^tag/(?P<tag>\w+)/$', 'symbols_with_tag'),
         url(r'^authors.xml$', 'authors'),
         url(r'^author/(?P<authid>\d+)/$', 'symbols_by_author'),
