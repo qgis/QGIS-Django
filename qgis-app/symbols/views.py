@@ -88,6 +88,7 @@ def add_symbol(request):
                 obj.created_by = request.user
                 obj.name = sym["name"]
                 obj.xml = sym["xml"]
+                obj.stype = sym["type"]
                 obj.save()
                 # add the tags via taggit after saving the symbol
                 for tag in tags:

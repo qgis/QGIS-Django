@@ -15,7 +15,7 @@ class Symbol (models.Model):
     created_by = models.ForeignKey(User, verbose_name='Created by', related_name="symbols")
     # Indicate Symbol or colorramp
     is_symbol = models.BooleanField(default=True, db_index=True)
-    #stype = models.CharField(max_length="64")
+    stype = models.CharField(max_length="64")
 
     def __unicode__(self):
         return self.name

@@ -9,4 +9,6 @@ class SymbolExtractor():
         self.symbolnodes = self.dom.getElementsByTagName( "symbol" )
 
     def symbols(self):
-        return [{ "name" : sym.getAttribute( "name" ), "xml" : sym.toxml() } for sym in self.symbolnodes]
+        return [{ "name" : sym.getAttribute( "name" ),
+            "type" : sym.getAttribute( "type" ),
+            "xml" : sym.toxml() } for sym in self.symbolnodes]
