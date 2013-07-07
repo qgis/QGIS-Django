@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 from symbols.models import Symbol
 from symbols.forms import SymbolUploadForm
-from symbols.utils import SymbolExtractor
+from symbols.utils import SymbolExtractor, XMLBuilder
 
 from taggit.models import TaggedItem, Tag
 
@@ -34,28 +34,12 @@ def tags(request):
     return HttpResponse(root_ele.toxml(), content_type="application/xhtml+xml")
 
 def symbols_with_tag(request, tag):
-    doc = getDOMImplementation().createDocument(None, "qgis_style", None)
-    style_ele = doc.documentElement
-    style_ele.setAttribute("version", "1")
-    symbols_ele = doc.createElement("symbols")
-    style_ele.appendChild(symbols_ele)
     symbols = Symbol.objects.filter(tags__name__in=[tag])
-    for symbol in symbols:
-        symdom = parseString(symbol.xml).documentElement
-        symbols_ele.appendChild(symdom)
-    return HttpResponse(style_ele.toxml(), content_type="application/xhtml+xml")
+    return HttpResponse( XMLBuilder(symbols).xml(), content_type="application/xhtml+xml")
 
 def symbols_with_tagid(request, tag_id):
-    doc = getDOMImplementation().createDocument(None, "qgis_style", None)
-    style_ele = doc.documentElement
-    style_ele.setAttribute("version", "1")
-    symbols_ele = doc.createElement("symbols")
-    style_ele.appendChild(symbols_ele)
     symbols = Symbol.objects.filter(tags__in=[tag_id])
-    for symbol in symbols:
-        symdom = parseString(symbol.xml).documentElement
-        symbols_ele.appendChild(symdom)
-    return HttpResponse(style_ele.toxml(), content_type="application/xhtml+xml")
+    return HttpResponse( XMLBuilder(symbols).xml(), content_type="application/xhtml+xml")
 
 def authors(request):
     users = User.objects.all()
@@ -74,42 +58,16 @@ def authors(request):
     return HttpResponse(root_ele.toxml(), content_type="application/xhtml+xml")
 
 def symbols_by_author(request, authid):
-    doc = getDOMImplementation().createDocument(None, "qgis_style", None)
-    style_ele = doc.documentElement
-    style_ele.setAttribute("version", "1")
-    symbols_ele = doc.createElement("symbols")
-    style_ele.appendChild(symbols_ele)
     symbols = Symbol.objects.filter(created_by=authid)
-    for symbol in symbols:
-        symdom = parseString(symbol.xml).documentElement
-        symbols_ele.appendChild(symdom)
-    return HttpResponse(style_ele.toxml(), content_type="application/xhtml+xml")
+    return HttpResponse( XMLBuilder(symbols).xml(), content_type="application/xhtml+xml" )
 
 def symbol_with_name(request, symname):
-    doc = getDOMImplementation().createDocument(None, "qgis_style", None)
-    style_ele = doc.documentElement
-    style_ele.setAttribute("version", "1")
-    symbols_ele = doc.createElement("symbols")
-    style_ele.appendChild(symbols_ele)
     symbols = Symbol.objects.filter(name=symname)
-    for symbol in symbols:
-        symdom = parseString(symbol.xml).documentElement
-        symbols_ele.appendChild(symdom)
-    return HttpResponse(style_ele.toxml(), content_type="application/xhtml+xml")
+    return HttpResponse( XMLBuilder(symbols).xml(), content_type="application/xhtml+xml" )
 
 def symbols_of_type(request, typename):
-    doc = getDOMImplementation().createDocument(None, "qgis_style", None)
-    style_ele = doc.documentElement
-    style_ele.setAttribute("version", "1")
-    symbols_ele = doc.createElement("symbols")
-    style_ele.appendChild(symbols_ele)
     symbols = Symbol.objects.filter(stype=typename)
-    for symbol in symbols:
-        symdom = parseString(symbol.xml).documentElement
-        symbols_ele.appendChild(symdom)
-    return HttpResponse(style_ele.toxml(), content_type="application/xhtml+xml")
-
-
+    return HttpResponse( XMLBuilder(symbols).xml(), content_type="application/xhtml+xml" )
 
 @login_required
 def add_symbol(request):
