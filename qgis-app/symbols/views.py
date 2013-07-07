@@ -79,13 +79,14 @@ def add_symbol(request):
             xmlfile = request.FILES['xmlfile']
             tags = form.cleaned_data['tags']
             extract = SymbolExtractor(xmlfile)
+            # Create the symbol object to save in the database
             for sym in extract.symbols():
-                # Create the symbol object to save in the database
                 obj = Symbol()
                 obj.created_by = request.user
                 obj.name = sym["name"]
                 obj.xml = sym["xml"]
                 obj.stype = sym["type"]
+                obj.is_symbol = sym["is_symbol"] # for colorramps
                 obj.save()
                 # add the tags via taggit after saving the symbol
                 for tag in tags:

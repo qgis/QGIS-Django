@@ -7,11 +7,18 @@ class SymbolExtractor():
     def __init__(self, xmlfile):
         self.dom  = parse(xmlfile)
         self.symbolnodes = self.dom.getElementsByTagName( "symbol" )
+        self.colorrampnodes = self.dom.getElementsByTagName( "colorramp" )
 
     def symbols(self):
-        return [{ "name" : sym.getAttribute( "name" ),
+        symbols = [{ "name" : sym.getAttribute( "name" ),
             "type" : sym.getAttribute( "type" ),
-            "xml" : sym.toxml() } for sym in self.symbolnodes]
+            "xml" : sym.toxml(),
+            "is_symbol" : True } for sym in self.symbolnodes]
+        ramps = [{ "name" : cr.getAttribute( "name" ),
+            "type" : cr.getAttribute( "type" ),
+            "xml" : cr.toxml(),
+            "is_symbol" : False } for cr in self.colorrampnodes]
+        return symbols + ramps
 
 class XMLBuilder():
     """A Class which gets the objects of Symbol Model and returns a xml of qgis_style"""
@@ -21,9 +28,14 @@ class XMLBuilder():
         self.style.setAttribute("version", "1")
         symbols_ele = self.doc.createElement("symbols")
         self.style.appendChild(symbols_ele)
+        ramps_ele = self.doc.createElement("colorramps")
+        self.style.appendChild(ramps_ele)
         for symbol in symbols:
             symdom = parseString(symbol.xml).documentElement
-            symbols_ele.appendChild(symdom)
+            if symbol.is_symbol:
+                symbols_ele.appendChild(symdom)
+            else:
+                ramps_ele.appendChild(symdom)
 
     def xml(self):
         return self.style.toxml()
