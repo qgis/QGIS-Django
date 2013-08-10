@@ -71,7 +71,7 @@ def symbols_of_type(request, typename):
 
 def search(request):
     qname = request.GET.get("name", "")
-    qauthid = request.GET.get("authid", "")
+    qauthid = request.GET.get("author", "")
     qtype = request.GET.get("type", "")
     qtag = request.GET.get("tag", "")
     qtagid = request.GET.get("tagid", 0)
