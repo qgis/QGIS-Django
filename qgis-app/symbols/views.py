@@ -69,6 +69,27 @@ def symbols_of_type(request, typename):
     symbols = Symbol.objects.filter(stype=typename)
     return HttpResponse( XMLBuilder(symbols).xml(), content_type="application/xhtml+xml" )
 
+def search(request):
+    qname = request.GET.get("name", "")
+    qauthid = request.GET.get("authid", "")
+    qtype = request.GET.get("type", "")
+    qtag = request.GET.get("tag", "")
+    qtagid = request.GET.get("tagid", 0)
+    symbols = []
+
+    if qname != "":
+        symbols = Symbol.objects.filter(name__icontains=qname)
+        if qauthid:
+            symbols = symbols.filter(created_by=qauthid)
+        if qtype != "":
+            symbols = symbols.filter(stype=qtype)
+        if qtag != "":
+            symbols = symbols.filter(tags__name__in=[qtag])
+        if qtagid:
+            symbols = symbols.filter(tags__in=[qtagid])
+
+    return HttpResponse( XMLBuilder(symbols).xml(), content_type="application/xhtml+xml" )
+
 @login_required
 def add_symbol(request):
     op = "symbols uploader is under construc..."
