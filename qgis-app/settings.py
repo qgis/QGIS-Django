@@ -141,6 +141,8 @@ INSTALLED_APPS = (
     'djangoratings',
     # Symbol repository
     'symbols',
+    # Style Sheets
+    'styles',
 )
 
 TEMPLATE_CONTEXT_PROCESSORS = (

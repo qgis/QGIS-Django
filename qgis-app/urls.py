@@ -43,6 +43,9 @@ urlpatterns = patterns('',
     # Symbols
     (r'^symbols/', include('symbols.urls')),
 
+    # Styles
+    (r'^styles/', include('styles.urls')),
+
 )
 
 # ABP: temporary home page

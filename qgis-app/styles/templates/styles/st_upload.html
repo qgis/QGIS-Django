@@ -1,0 +1,29 @@
+{% extends 'styles/st_base.html' %}
+{% block content %}
+<h3>Style Upload Form</h3>
+<p>The style upload form lets you upload the layer styles exported from QGIS into the online repository, which can be accessed by anyone. Kindly choose the <strong>.qml</strong> file exported by the "Save Style" option (Layer Properties dialog, Style tab) in QGIS 2.0 or later and add relevant tags so that it can be easily searched and retrieved by users.</p>
+<form action="/styles/add/" method="post" enctype="multipart/form-data">{% csrf_token %}
+    {{ form.non_field_errors }}
+    <div class="fieldWrapper">
+        {{ form.name.errors }}
+        <label for="id_name">Style Name: </label>
+        {{ form.name }}
+    </div>
+    <div class="fieldWrapper">
+        {{ form.xmlfile.errors }}
+        <label for="id_xmlfile">Style QML File: </label>
+        {{ form.xmlfile }}
+    </div>
+    <div class="fieldWrapper">
+        {{ form.desc.errors }}
+        <label for="id_desc">Description: </label>
+        {{ form.desc }}
+    </div>
+    <div class"filedWrapper">
+        {{ form.tags.errors }}
+        <label for="id_tags">Tags (seperated by commas): </label>
+        {{ form.tags }}
+    </div>
+    <input type="submit" value="Submit" />
+</form>
+{% endblock %}
