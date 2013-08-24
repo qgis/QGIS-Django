@@ -10,10 +10,17 @@ from django.shortcuts import render_to_response
 from django.contrib.auth.decorators import login_required, user_passes_test
 from django.contrib.auth.models import User
 from django.template import RequestContext
-
+from django.core.servers.basehttp import FileWrapper
 
 def index(request):
     return render_to_response("/styles/st_index.html", {}, context_instance=RequestContext(request) )
+
+def download(request, pk):
+    ''' return the xml file for the specific style '''
+    style = Style.objects.get(pk=pk)
+    resp = HttpResponse( style.xml, content_type="application/octet-stream" )
+    resp['Content-Disposition'] = 'attachment; filename='+style.name+'.qml'
+    return resp
 
 @login_required
 def add_style(request):

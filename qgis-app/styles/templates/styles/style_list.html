@@ -1,0 +1,28 @@
+{% extends 'styles/st_base.html' %}
+{% block content %}
+<h3>Styles List</h3>
+
+<table class="plugins">
+    <thead>
+        <tr>
+            <th>Name</th>
+            <th>Author</th>
+            <th>Renderer</th>
+            <th>QGIS Version</th>
+            <th>Min. Scale</th>
+            <th>Max. Scale</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for style in object_list %}
+        <td><a href="../{{ style.pk }}/">{{ style.name }}</a></td>
+            <td>{{ style.created_by }}</td>
+            <td>{{ style.renderer_type }}</td>
+            <td>{{ style.qgis_version }}</td>
+            <td>{{ style.min_scale }}</td>
+            <td>{{ style.max_scale }}</td>
+        {% endfor %}
+    </tbody>
+</table>
+
+{% endblock %}
