@@ -15,7 +15,7 @@
     </thead>
     <tbody>
         {% for style in object_list %}
-        <td><a href="../{{ style.pk }}/">{{ style.name }}</a></td>
+        <td><a href="../{{ style.pk }}/detail/">{{ style.name }}</a></td>
             <td>{{ style.created_by }}</td>
             <td>{{ style.renderer_type }}</td>
             <td>{{ style.qgis_version }}</td>

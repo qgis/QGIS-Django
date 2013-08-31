@@ -8,8 +8,8 @@ urlpatterns = patterns('styles.views',
         url(r'^$','index'),
 
         url(r'^list/$', ListView.as_view( model=Style ) ),
-        url(r'^(?P<pk>\d+)/$', DetailView.as_view( model=Style )),
-        url(r'^(?P<pk>\d+)/download/$', 'download' ),
+        url(r'^(?P<pk>\d+)/detail/$', DetailView.as_view( model=Style )),
+        url(r'^(?P<pk>\d+)/$', 'download' ),
 
         # Form to upload styles
         url(r'^add/','add_style', name='style_upload_link'),
