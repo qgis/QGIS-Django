@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-from xml.dom.minidom import parse
+from xml.dom.minidom import parse, getDOMImplementation
 
 MIN_SCALE_DEFAULT = -4.65661e-10
 MAX_SCALE_DEFAULT = 1e+08
@@ -40,3 +40,48 @@ class StyleDataExtractor():
     def styleAsString(self):
         return self.dom.toxml()
 
+class StyleListBuilder():
+    """Makes the list of styles with the metadata as a XML"""
+
+    def __init__(self, styles):
+        self.doc = getDOMImplementation().createDocument(None, "style_list", None)
+        self.style_list = self.doc.documentElement
+        for style in styles:
+            style_ele = self.doc.createElement("style")
+
+            name = self.doc.createElement("name")
+            name.appendChild(self.doc.createTextNode(style.name))
+            style_ele.appendChild(name)
+
+            desc = self.doc.createElement("description")
+            desc.appendChild(self.doc.createTextNode(style.description))
+            style_ele.appendChild(desc)
+
+            cr_on = self.doc.createElement("created_on")
+            cr_on.appendChild(self.doc.createTextNode(unicode(style.created_on)))
+            style_ele.appendChild(cr_on)
+
+            cr_by = self.doc.createElement("created_by")
+            cr_by.appendChild(self.doc.createTextNode(unicode(style.created_by)))
+            style_ele.appendChild(cr_by)
+
+            qgis_v = self.doc.createElement("qgis_version")
+            qgis_v.appendChild(self.doc.createTextNode(style.qgis_version))
+            style_ele.appendChild(qgis_v)
+
+            min_scale = self.doc.createElement("min_scale")
+            min_scale.appendChild(self.doc.createTextNode(unicode(style.min_scale)))
+            style_ele.appendChild(min_scale)
+
+            max_scale = self.doc.createElement("max_scale")
+            max_scale.appendChild(self.doc.createTextNode(unicode(style.max_scale)))
+            style_ele.appendChild(max_scale)
+
+            ren_type = self.doc.createElement("renderer")
+            ren_type.appendChild(self.doc.createTextNode(style.renderer_type))
+            style_ele.appendChild(ren_type)
+
+            self.style_list.appendChild(style_ele)
+
+    def xml(self):
+        return self.style_list.toxml()

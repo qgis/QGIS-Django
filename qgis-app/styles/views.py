@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 from styles.models import Style
 from styles.forms import StyleUploadForm
-from styles.utils import StyleDataExtractor
+from styles.utils import StyleDataExtractor, StyleListBuilder
 
 from taggit.models import TaggedItem, Tag
 
@@ -21,6 +21,11 @@ def download(request, pk):
     resp = HttpResponse( style.xml, content_type="application/octet-stream" )
     resp['Content-Disposition'] = 'attachment; filename='+style.name+'.qml'
     return resp
+
+def xml_list(request):
+    ''' returns the xml file of the list of all the styles with metadata '''
+    s = Style.objects.all()
+    return HttpResponse(StyleListBuilder(s).xml(), content_type="application/xhtml+xml")
 
 @login_required
 def add_style(request):

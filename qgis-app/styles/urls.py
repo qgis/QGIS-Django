@@ -8,6 +8,7 @@ urlpatterns = patterns('styles.views',
         url(r'^$','index'),
 
         url(r'^list/$', ListView.as_view( model=Style ) ),
+        url(r'^list.xml$', 'xml_list' ),
         url(r'^(?P<pk>\d+)/detail/$', DetailView.as_view( model=Style )),
         url(r'^(?P<pk>\d+)/$', 'download' ),
 
