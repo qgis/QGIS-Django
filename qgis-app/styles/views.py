@@ -3,6 +3,8 @@ from styles.models import Style
 from styles.forms import StyleUploadForm
 from styles.utils import StyleDataExtractor, StyleListBuilder
 
+from xml.dom.minidom import getDOMImplementation
+
 from taggit.models import TaggedItem, Tag
 
 from django.http import HttpResponse, HttpResponseRedirect
@@ -26,6 +28,32 @@ def xml_list(request):
     ''' returns the xml file of the list of all the styles with metadata '''
     s = Style.objects.all()
     return HttpResponse(StyleListBuilder(s).xml(), content_type="application/xhtml+xml")
+
+def tags(request):
+    queryset = TaggedItem.objects.filter(content_type__app_label="styles")
+    tag_ids = queryset.values_list('tag_id', flat=True)
+    tags = Tag.objects.filter(id__in=tag_ids)
+    # create a xml with the list of the tag.name for tag in tags
+    domimp = getDOMImplementation()
+    doc = domimp.createDocument(None, "tags", None)
+    root_ele = doc.documentElement
+    for tag in tags:
+        tag_ele = doc.createElement("tag")
+        tagnode = doc.createTextNode(tag.name)
+        tag_ele.setAttribute("id", unicode(tag.pk))
+        tag_ele.appendChild(tagnode)
+        root_ele.appendChild(tag_ele)
+    return HttpResponse(root_ele.toxml(), content_type="application/xhtml+xml")
+
+def styles_with_tag(request,tag):
+    s = Style.objects.filter(tags__name=tag)
+    return HttpResponse(StyleListBuilder(s).xml(), content_type="application/xhtml+xml")
+
+def styles_with_tagid(request, tag_id):
+    s= Style.objects.filter(tags=tag_id)
+    return HttpResponse( StyleListBuilder(s).xml(), content_type="application/xhtml+xml")
+
+
 
 @login_required
 def add_style(request):
