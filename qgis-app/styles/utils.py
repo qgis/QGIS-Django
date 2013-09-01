@@ -62,7 +62,7 @@ class StyleListBuilder():
             style_ele.appendChild(tags)
 
             cr_on = self.doc.createElement("created_on")
-            cr_on.appendChild(self.doc.createTextNode(unicode(style.created_on)))
+            cr_on.appendChild(self.doc.createTextNode(unicode(style.created_on.date())))
             style_ele.appendChild(cr_on)
 
             cr_by = self.doc.createElement("created_by")
