@@ -65,7 +65,8 @@ class StyleListBuilder():
             cr_on.appendChild(self.doc.createTextNode(unicode(style.created_on.date())))
             style_ele.appendChild(cr_on)
 
-            cr_by = self.doc.createElement("created_by")
+            cr_by = self.doc.createElement("author")
+            cr_by.setAttribute("id", str(style.created_by.pk))
             cr_by.appendChild(self.doc.createTextNode(unicode(style.created_by)))
             style_ele.appendChild(cr_by)
 
