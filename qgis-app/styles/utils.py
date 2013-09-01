@@ -57,6 +57,10 @@ class StyleListBuilder():
             desc.appendChild(self.doc.createTextNode(style.description))
             style_ele.appendChild(desc)
 
+            tags = self.doc.createElement("tags")
+            tags.appendChild(self.doc.createTextNode(",".join([unicode(tag) for tag in style.tags.all()])))
+            style_ele.appendChild(tags)
+
             cr_on = self.doc.createElement("created_on")
             cr_on.appendChild(self.doc.createTextNode(unicode(style.created_on)))
             style_ele.appendChild(cr_on)
