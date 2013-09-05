@@ -139,7 +139,7 @@ class TaggablePlugins(TaggableManager):
 
 class Plugin (models.Model):
     """
-    Plugins model    
+    Plugins model
     """
 
     # dates
@@ -347,16 +347,26 @@ class ExperimentalPluginVersions(ApprovedPluginVersions):
         return super(ExperimentalPluginVersions, self).get_query_set().filter(experimental=True)
 
 
-def vjust(str, level=3, delim='.', bitsize=3, fillchar=' '):
+def vjust(str, level=3, delim='.', bitsize=3, fillchar=' ', force_zero=False):
     """
     1.12 becomes : 1.    12
     1.1  becomes : 1.     1
+
+    if force_zero=True and level=2
+
+    1.12 becomes : 1.    12.     0
+    1.1  becomes : 1.     1.     0
+
+
     """
     if not str:
         return str
     nb = str.count(delim)
     if nb < level:
-        str += (level-nb) * delim
+        if force_zero:
+            str += (level-nb) * (delim+'0')
+        else:
+            str += (level-nb) * delim
     return delim.join([ v.rjust(bitsize,fillchar) for v in str.split(delim)[:level+1] ])
 
 
@@ -368,6 +378,21 @@ class VersionField(models.CharField) :
 
     def get_prep_value(self, value):
         return vjust(value,fillchar=' ')
+
+    def to_python(self, value):
+        if not value:
+            return ''
+        return re.sub('\.+$','',value.replace(' ',''))
+
+
+class QGVersionZeroForcedField(models.CharField) :
+
+    description = 'Field to store version strings ("a.b.c.d") in a way it is sortable and QGIS scheme compatible (x.y.z).'
+
+    __metaclass__ = models.SubfieldBase
+
+    def get_prep_value(self, value):
+        return vjust(value,fillchar=' ',level=2,force_zero=True)
 
     def to_python(self, value):
         if not value:
@@ -389,8 +414,8 @@ class PluginVersion (models.Model):
     # owners
     created_by      = models.ForeignKey(User, verbose_name=_('Created by'))
     # version info, the first should be read from plugin
-    min_qg_version  = VersionField(_('Minimum QGIS version'), max_length=32, db_index=True)
-    max_qg_version  = VersionField(_('Maximum QGIS version'), max_length=32, null=True, blank=True, db_index=True)
+    min_qg_version  = QGVersionZeroForcedField(_('Minimum QGIS version'), max_length=32, db_index=True)
+    max_qg_version  = QGVersionZeroForcedField(_('Maximum QGIS version'), max_length=32, null=True, blank=True, db_index=True)
     version         = VersionField(_('Version'), max_length=32, db_index=True)
     changelog       = models.TextField(_('Changelog'), null=True, blank=True)
 
@@ -405,7 +430,7 @@ class PluginVersion (models.Model):
     approved_objects        = ApprovedPluginVersions()
     stable_objects          = StablePluginVersions()
     experimental_objects    = ExperimentalPluginVersions()
-    
+
 
     @property
     def file_name(self):

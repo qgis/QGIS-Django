@@ -231,7 +231,7 @@ def plugin_upload(request):
                 # Check icon, don't change if not valid
                 if plugin_data['icon']:
                     plugin.icon         = plugin_data['icon']
-                    
+
                 # Other optional fields
                 warnings = []
                 if form.cleaned_data.get('homepage'):
@@ -434,8 +434,8 @@ def plugin_manage(request, package_name):
         return plugin_delete(request, package_name)
 
     return HttpResponseRedirect(reverse('user_details', args=[username]))
-    
-  
+
+
 ###############################################
 
 # Author functions
@@ -566,7 +566,7 @@ def _main_plugin_update(request, plugin, form):
         plugin.tags.set(*[t.strip().lower() for t in form.cleaned_data.get('tags').split(',')])
     plugin.save()
 
-    
+
 @login_required
 def version_create(request, package_name):
     """
@@ -596,7 +596,7 @@ def version_create(request, package_name):
                 if form.cleaned_data.get('icon_file'):
                     form.cleaned_data['icon'] = form.cleaned_data.get('icon_file')
                 _main_plugin_update(request, new_object.plugin, form)
-                _check_optional_metadata(form, request)            
+                _check_optional_metadata(form, request)
                 return HttpResponseRedirect(new_object.plugin.get_absolute_url())
             except (IntegrityError, ValidationError, DjangoUnicodeDecodeError), e:
                 messages.error(request, e, fail_silently=True)
@@ -762,14 +762,14 @@ def xml_plugins(request):
         * qgis: qgis version
         * stable_only: 0/1
     """
-    
-    qg_version = vjust(request.GET.get('qgis', '1.8.0'))    
+
+    qg_version = vjust(request.GET.get('qgis', '1.8.0'), level=2, force_zero=True)
     stable_only = request.GET.get('stable_only', '0')
-    
+
     filters = {}
     version_filters = {}
     object_list = []
-    
+
     if qg_version:
         filters.update({'pluginversion__min_qg_version__lte' : qg_version})
         version_filters.update({'min_qg_version__lte' : qg_version})
@@ -788,6 +788,6 @@ def xml_plugins(request):
                 object_list.append(PluginVersion.experimental_objects.filter(**plugin_version_filters)[0])
             except IndexError:
                 pass
-     
+
     return render_to_response('plugins/plugins.xml', {'object_list': object_list}, mimetype='text/xml', context_instance=RequestContext(request))
 
