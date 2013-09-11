@@ -349,10 +349,13 @@ class ExperimentalPluginVersions(ApprovedPluginVersions):
 
 def vjust(str, level=3, delim='.', bitsize=3, fillchar=' ', force_zero=False):
     """
+    Normalize a dotted version string.
+
     1.12 becomes : 1.    12
     1.1  becomes : 1.     1
 
-    if force_zero=True and level=2
+
+    if force_zero=True and level=2:
 
     1.12 becomes : 1.    12.     0
     1.1  becomes : 1.     1.     0
