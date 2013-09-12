@@ -4,7 +4,7 @@ from xml.dom.minidom import parse, getDOMImplementation
 MIN_SCALE_DEFAULT = -4.65661e-10
 MAX_SCALE_DEFAULT = 1e+08
 MIN_LBLSCALE_DEFAULT = 0
-MAX_LBLSCALE_DEAFULT = 1e+08
+MAX_LBLSCALE_DEFAULT = 1e+08
 
 class StyleDataExtractor():
     """ A class which will parse the uploaded qml (XML) file and
