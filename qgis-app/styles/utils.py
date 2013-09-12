@@ -49,6 +49,10 @@ class StyleListBuilder():
         for style in styles:
             style_ele = self.doc.createElement("style")
 
+            stid = self.doc.createElement("id")
+            stid.appendChild(self.doc.createTextNode(unicode(style.pk)))
+            style_ele.appendChild(stid)
+
             name = self.doc.createElement("name")
             name.appendChild(self.doc.createTextNode(style.name))
             style_ele.appendChild(name)
