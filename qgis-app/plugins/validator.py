@@ -60,7 +60,7 @@ def _check_required_metadata(metadata):
     """
     for md in PLUGIN_REQUIRED_METADATA:
         if not md in dict(metadata) or not dict(metadata)[md]:
-            raise ValidationError(_('Cannot find metadata <strong>%s</strong> in metadata source (%s).<br />Please bear in mind that the current implementation of the <tt>__init__.py</tt> validator is based on regular expressions, check that your metadata functions directly return metadata values as strings.<br />For further informations about metadata parsing in this application, please see: <a target="_blank"  href="https://github.com/qgis/QGIS-Documentation/blob/master/source/docs/pyqgis_developer_cookbook/13_plugins.rst">metadata documentation</a>') % (md, dict(metadata).get('metadata_source')))
+            raise ValidationError(_('Cannot find metadata <strong>%s</strong> in metadata source (%s).<br />Please bear in mind that the current implementation of the <tt>__init__.py</tt> validator is based on regular expressions, check that your metadata functions directly return metadata values as strings.<br />For further informations about metadata parsing in this application, please see: <a target="_blank"  href="https://github.com/qgis/QGIS-Documentation/blob/master/source/docs/pyqgis_developer_cookbook/13_plugins.rst#plugin-metadata">metadata documentation</a>') % (md, dict(metadata).get('metadata_source')))
 
 
 def validator(package):
