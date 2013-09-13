@@ -60,7 +60,7 @@ def _check_required_metadata(metadata):
     """
     for md in PLUGIN_REQUIRED_METADATA:
         if not md in dict(metadata) or not dict(metadata)[md]:
-            raise ValidationError(_('Cannot find metadata <strong>%s</strong> in metadata source (%s).<br />Please bear in mind that the current implementation of the <tt>__init__.py</tt> validator is based on regular expressions, check that your metadata functions directly return metadata values as strings.<br />For further informations about metadata parsing in this application, please see: <a target="_blank"  href="https://github.com/qgis/qgis-django/blob/master/qgis-app/plugins/docs/metadata.rst">metadata documentation</a>') % (md, dict(metadata).get('metadata_source')))
+            raise ValidationError(_('Cannot find metadata <strong>%s</strong> in metadata source (%s).<br />Please bear in mind that the current implementation of the <tt>__init__.py</tt> validator is based on regular expressions, check that your metadata functions directly return metadata values as strings.<br />For further informations about metadata parsing in this application, please see: <a target="_blank"  href="https://github.com/qgis/QGIS-Documentation/blob/master/source/docs/pyqgis_developer_cookbook/13_plugins.rst">metadata documentation</a>') % (md, dict(metadata).get('metadata_source')))
 
 
 def validator(package):
@@ -184,8 +184,8 @@ def validator(package):
     # Check author
     if 'author' in dict(metadata):
         if not re.match(r'^[^/]+$', dict(metadata)['author']):
-           raise ValidationError(_("Author name cannot contain slashes.")) 
-    
+           raise ValidationError(_("Author name cannot contain slashes."))
+
     # strip and check
     checked_metadata = []
     for k,v in metadata:
@@ -198,6 +198,6 @@ def validator(package):
         except UnicodeDecodeError, e:
             raise ValidationError(_("There was an error converting metadata '%s' to UTF-8 . Reported error was: %s") % (k, e))
 
-            
+
     return checked_metadata
 

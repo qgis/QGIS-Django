@@ -7,3 +7,5 @@ Some can contain errors:
 1.8_author_slashes_error (slashes in author name: invalid)
 1.9-full-md-max_qgs_version test max qgs version
 2.0-full-md-empty-max_qgs_version test max qgs version empty
+2.1-full-md-empty-max_qgs_version_2.999 test max qgs version
+2.2-full-md-empty-max_qgs_category_web test category metadata
