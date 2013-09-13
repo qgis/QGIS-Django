@@ -761,10 +761,12 @@ def xml_plugins(request):
 
         * qgis: qgis version
         * stable_only: 0/1
-    """
+        * package_name: Plugin.package_name
 
-    qg_version = vjust(request.GET.get('qgis', '1.8.0'), level=2, force_zero=True)
+    """
+    qg_version = vjust(request.GET.get('qgis', '1.8.0'), fillchar=' ', level=2, force_zero=True)
     stable_only = request.GET.get('stable_only', '0')
+    package_name = request.GET.get('package_name', None)
 
     filters = {}
     version_filters = {}
@@ -776,18 +778,33 @@ def xml_plugins(request):
         filters.update({'pluginversion__max_qg_version__gte' : qg_version})
         version_filters.update({'max_qg_version__gte' : qg_version})
 
-    for plugin in Plugin.approved_objects.filter(**filters):
-        plugin_version_filters = copy.copy(version_filters)
-        plugin_version_filters.update({'plugin' : plugin})
+    # Get all versions for the given plugin
+    if package_name:
+        filters.update({'package_name' : package_name})
         try:
-            object_list.append(PluginVersion.stable_objects.filter(**plugin_version_filters)[0])
-        except IndexError:
+            plugin = Plugin.approved_objects.get(**filters)
+            plugin_version_filters = copy.copy(version_filters)
+            plugin_version_filters.update({'plugin' : plugin})
+            for plugin_version in PluginVersion.stable_objects.filter(**plugin_version_filters):
+                object_list.append(plugin_version)
+            if stable_only != '1':
+                for plugin_version in PluginVersion.experimental_objects.filter(**plugin_version_filters):
+                    object_list.append(plugin_version)
+        except Plugin.DoesNotExist:
             pass
-        if stable_only != '1':
+    else:
+        for plugin in Plugin.approved_objects.filter(**filters):
+            plugin_version_filters = copy.copy(version_filters)
+            plugin_version_filters.update({'plugin' : plugin})
             try:
-                object_list.append(PluginVersion.experimental_objects.filter(**plugin_version_filters)[0])
+                object_list.append(PluginVersion.stable_objects.filter(**plugin_version_filters)[0])
             except IndexError:
                 pass
+            if stable_only != '1':
+                try:
+                    object_list.append(PluginVersion.experimental_objects.filter(**plugin_version_filters)[0])
+                except IndexError:
+                    pass
 
     return render_to_response('plugins/plugins.xml', {'object_list': object_list}, mimetype='text/xml', context_instance=RequestContext(request))
 

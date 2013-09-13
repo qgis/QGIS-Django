@@ -19,7 +19,9 @@ from taggit_templatetags import settings
 
 from plugins.models import Plugin
 
+from django.conf import settings as django_settings
 
+TAGCLOUD_EXCLUDE_COUNT_LTE = getattr(django_settings, 'TAGCLOUD_EXCLUDE_COUNT_LTE', None)
 T_MAX = getattr(settings, 'TAGCLOUD_MAX', 6.0)
 T_MIN = getattr(settings, 'TAGCLOUD_MIN', 1.0)
 
@@ -40,9 +42,12 @@ def get_queryset():
     # a version check (for example taggit.VERSION <= (0,8,0)) does NOT
     # work because of the version (0,8,0) of the current dev version of django-taggit
     try:
-        return queryset.annotate(num_times=Count('taggeditem_items'))
+        qs = queryset.annotate(num_times=Count('taggeditem_items'))
     except FieldError:
-        return queryset.annotate(num_times=Count('taggit_taggeditem_items'))
+        qs = queryset.annotate(num_times=Count('taggit_taggeditem_items'))
+    if TAGCLOUD_EXCLUDE_COUNT_LTE:
+        qs = qs.exclude(num_times__lte=TAGCLOUD_EXCLUDE_COUNT_LTE)
+    return qs
 
 def get_weight_fun(t_min, t_max, f_min, f_max):
     def weight_fun(f_i, t_min=t_min, t_max=t_max, f_min=f_min, f_max=f_max):

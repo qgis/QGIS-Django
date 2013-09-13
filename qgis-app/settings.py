@@ -115,7 +115,7 @@ INSTALLED_APPS = (
     'django.contrib.syndication',
     #'ratings',
     'taggit',
-    'taggit_autosuggest', 
+    'taggit_autosuggest',
     'taggit_templatetags',
     'haystack',
     'django.contrib.flatpages',
@@ -203,6 +203,9 @@ QGIS_DEV_MAILING_LIST_ADDRESS=''
 
 # Media URL for taggit autocomplete
 TAGGIT_AUTOCOMPLETE_JS_BASE_URL=MEDIA_ROOT + '/taggit-autocomplete'
+
+# Taggit: exclude tags with less than specified tagged items
+TAGCLOUD_EXCLUDE_COUNT_LTE=3
 
 # ratings
 RATINGS_VOTES_PER_IP=10000

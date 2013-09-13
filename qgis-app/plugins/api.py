@@ -114,10 +114,10 @@ def plugin_tags(**kwargs):
     Returns a list of current tags, in alphabetical order
     """
     return [t.name for t in Tag.objects.all().order_by('name')]
- 
+
 
 @rpcmethod(name='plugin.vote', signature=['array', 'integer', 'integer'], login_required=False)
-def plugin_tags(plugin_id, vote, **kwargs):
+def plugin_vote(plugin_id, vote, **kwargs):
     """
     Vote a plugin, valid values are 1-5
     """
@@ -135,4 +135,4 @@ def plugin_tags(plugin_id, vote, **kwargs):
         msg = unicode(_('%s is not a valid vote (1-5).') % vote)
         raise ValidationError(msg)
     return [plugin.rating.add(score=int(vote), user=request.user, ip_address=request.META['REMOTE_ADDR'])]
- 
+

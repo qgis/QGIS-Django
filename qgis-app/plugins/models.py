@@ -390,7 +390,8 @@ class VersionField(models.CharField) :
 
 class QGVersionZeroForcedField(models.CharField) :
 
-    description = 'Field to store version strings ("a.b.c.d") in a way it is sortable and QGIS scheme compatible (x.y.z).'
+    description = 'Field to store version strings ("a.b.c.d") in a way it \
+    is sortable and QGIS scheme compatible (x.y.z).'
 
     __metaclass__ = models.SubfieldBase
 
