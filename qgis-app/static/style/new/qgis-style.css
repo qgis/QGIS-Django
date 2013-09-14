@@ -1,0 +1,735 @@
+
+.toctree-l2.current, .toctree-l3.current, .toctree-l4.current {
+    font-style: italic;
+}
+.toctree-l4 {
+    font-size: 80%;
+}
+.nav-list > .active > a, .nav-list > .active > a:hover, .nav-list > .active > a:focus {
+    background-color: #FFFFFF;
+    color: #0088CC;
+    text-shadow: none;
+}
+.clearfix {
+}
+.clearfix:before, .clearfix:after {
+    content: "";
+    display: table;
+    line-height: 0;
+}
+.clearfix:after {
+    clear: both;
+}
+.hide-text {
+    background-color: rgba(0, 0, 0, 0);
+    border: 0 none;
+    color: rgba(0, 0, 0, 0);
+    font: 0px/0 a;
+    text-shadow: none;
+}
+.input-block-level {
+    -moz-box-sizing: border-box;
+    display: block;
+    min-height: 30px;
+    width: 100%;
+}
+@font-face {
+    font-family: "Inconsolata";
+    font-style: normal;
+    font-weight: normal;
+    src: url("fonts/inconsolata-regular-webfont.eot?#iefix") format("embedded-opentype"), url("fonts/inconsolata-regular-webfont.woff") format("woff"), url("fonts/inconsolata-regular-webfont.ttf") format("truetype"), url("fonts/inconsolata-regular-webfont.svg#Inconsolata") format("svg");
+}
+@font-face {
+    font-family: "Inconsolata";
+    font-style: normal;
+    font-weight: bold;
+    src: url("fonts/inconsolata-bold-webfont.eot?#iefix") format("embedded-opentype"), url("fonts/inconsolata-bold-webfont.woff") format("woff"), url("fonts/inconsolata-bold-webfont.ttf") format("truetype"), url("fonts/inconsolata-bold-webfont.svg#Inconsolata") format("svg");
+}
+@font-face {
+    font-family: "OpenSans";
+    font-style: normal;
+    font-weight: normal;
+    src: url("fonts/OpenSans-Regular-webfont.eot?#iefix") format("embedded-opentype"), url("fonts/OpenSans-Regular-webfont.woff") format("woff"), url("fonts/OpenSans-Regular-webfont.ttf") format("truetype"), url("fonts/OpenSans-Regular-webfont.svg#OpenSans") format("svg");
+}
+@font-face {
+    font-family: "OpenSans";
+    font-style: italic;
+    font-weight: normal;
+    src: url("fonts/OpenSans-Italic-webfont.eot?#iefix") format("embedded-opentype"), url("fonts/OpenSans-Italic-webfont.woff") format("woff"), url("fonts/OpenSans-Italic-webfont.ttf") format("truetype"), url("fonts/OpenSans-Italic-webfont.svg#OpenSans") format("svg");
+}
+@font-face {
+    font-family: "OpenSans";
+    font-style: normal;
+    font-weight: bold;
+    src: url("fonts/OpenSans-Bold-webfont.eot?#iefix") format("embedded-opentype"), url("fonts/OpenSans-Bold-webfont.woff") format("woff"), url("fonts/OpenSans-Bold-webfont.ttf") format("truetype"), url("fonts/OpenSans-Bold-webfont.svg#OpenSans") format("svg");
+}
+@font-face {
+    font-family: "OpenSans";
+    font-style: italic;
+    font-weight: bold;
+    src: url("fonts/OpenSans-BoldItalic-webfont.eot?#iefix") format("embedded-opentype"), url("fonts/OpenSans-BoldItalic-webfont.woff") format("woff"), url("fonts/OpenSans-BoldItalic-webfont.ttf") format("truetype"), url("fonts/OpenSans-BoldItalic-webfont.svg#OpenSans") format("svg");
+}
+@font-face {
+    font-family: "OpenSans";
+    font-style: normal;
+    font-weight: 300;
+    src: url("fonts/OpenSans-Light-webfont.eot?#iefix") format("embedded-opentype"), url("fonts/OpenSans-Light-webfont.woff") format("woff"), url("fonts/OpenSans-Light-webfont.ttf") format("truetype"), url("fonts/OpenSans-Light-webfont.svg#OpenSans") format("svg");
+}
+@font-face {
+    font-family: "OpenSans";
+    font-style: italic;
+    font-weight: 300;
+    src: url("fonts/OpenSans-LightItalic-webfont.eot?#iefix") format("embedded-opentype"), url("fonts/OpenSans-LightItalic-webfont.woff") format("woff"), url("fonts/OpenSans-LightItalic-webfont.ttf") format("truetype"), url("fonts/OpenSans-LightItalic-webfont.svg#OpenSans") format("svg");
+}
+@font-face {
+    font-family: "OpenSans";
+    font-style: normal;
+    font-weight: 600;
+    src: url("fonts/OpenSans-Semibold-webfont.eot?#iefix") format("embedded-opentype"), url("fonts/OpenSans-Semibold-webfont.woff") format("woff"), url("fonts/OpenSans-Semibold-webfont.ttf") format("truetype"), url("fonts/OpenSans-Semibold-webfont.svg#OpenSans") format("svg");
+}
+@font-face {
+    font-family: "OpenSans";
+    font-style: italic;
+    font-weight: 600;
+    src: url("fonts/OpenSans-SemiboldItalic-webfont.eot?#iefix") format("embedded-opentype"), url("fonts/OpenSans-SemiboldItalic-webfont.woff") format("woff"), url("fonts/OpenSans-SemiboldItalic-webfont.ttf") format("truetype"), url("fonts/OpenSans-SemiboldItalic-webfont.svg#OpenSans") format("svg");
+}
+body {
+    font: 62.5%/1.5 "Open Sans","Helvetica Neue",Ubuntu,Arial,sans-serif;
+    padding-top: 60px !important;
+}
+h1, h2, h3, h4, h5 {
+    font-weight: bold;
+}
+p, li, .button {
+    font-size: 0.9rem;
+    line-height: 1.4rem;
+}
+pre, code {
+    font-family: "Andale Mono","Ubuntu Mono","Courier New",Courier,monospace;
+    line-height: 1.2rem;
+}
+@media (max-width: 979px) {
+.navbar-fixed-top {
+    margin-bottom: 0 !important;
+}
+}
+.navbar-inverse .navbar-inner {
+    background: none repeat scroll 0 0 #1C2028;
+}
+.navbar-inverse .btn-navbar {
+    background: none repeat scroll 0 0 transparent;
+    border: medium none;
+    box-shadow: none;
+    padding-left: 20px;
+    padding-right: 0;
+}
+.navbar-inverse .btn-navbar:hover {
+    background: none repeat scroll 0 0 transparent;
+}
+.navbar-inverse .btn-navbar .icon-bar {
+    border-radius: 0 0 0 0;
+    height: 5px;
+    margin-bottom: 5px;
+    width: 34px;
+}
+.main-menu {
+    float: left;
+    margin: 16px 0 0 20px !important;
+}
+.main-menu > li {
+    float: left;
+}
+.main-menu > li a {
+    color: #FFFFFF;
+    font-size: 13px;
+    padding: 9px 15px;
+    text-shadow: none;
+    text-transform: uppercase;
+}
+.main-menu > li a:hover {
+    background: none repeat scroll 0 0 #3C4455;
+    text-decoration: none;
+}
+.navbar-search {
+    border: medium none !important;
+    box-shadow: none !important;
+    float: right !important;
+    margin: 16px 0 0 20px !important;
+    padding: 0 !important;
+}
+.navbar-search input {
+    background: none repeat scroll 0 0 #F1F1F1 !important;
+    border-color: #07080A #111419 #111419 !important;
+    text-shadow: none !important;
+    width: 150px;
+}
+.navbar-inner > select body, .navbar-inner > select html {
+    background: none repeat scroll 0 0 #444444;
+    padding: 50px 0;
+    text-align: center;
+}
+.nav-collapse {
+    background-color: #63676F;
+    height: auto;
+    margin: 0 -20px -10px;
+}
+.nav-collapse .nav {
+    margin-top: 12px !important;
+}
+.nav-collapse .nav > li {
+    float: left !important;
+}
+.nav-collapse .nav > li a {
+    color: #CCCCCC !important;
+    font-weight: bold !important;
+    text-shadow: none !important;
+    text-transform: uppercase;
+}
+.nav-collapse .nav > li a:hover {
+    background: none repeat scroll 0 0 #3C4455;
+    color: #FFFFFF;
+    text-decoration: none;
+}
+select#languages {
+    -moz-appearance: none;
+    background: url("images/down-arrow.png") no-repeat scroll 95% 50% #1C2028;
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    border-radius: 3px 3px 3px 3px;
+    color: #FFFFFF;
+    cursor: pointer;
+    display: inline-block;
+    float: right;
+    line-height: 20px;
+    margin: 16px 1px 0 4px;
+    outline: medium none;
+    padding: 3px;
+    width: 120px;
+}
+select#languages a {
+    outline: 0 none;
+}
+select#languages option {
+    outline: 0 none;
+    padding: 4px;
+}
+.navbar .brand {
+    background: url("logo.png") no-repeat scroll 0 0 transparent !important;
+    display: block;
+    height: 60px;
+    padding: 0 !important;
+    text-indent: -9999px;
+    width: 60px;
+}
+#main-body {
+    margin-bottom: 55px;
+    position: absolute;
+    right: 25px;
+    top: 75px;
+}
+.footer {
+    background: none repeat scroll 0 0 #1C2028;
+    border: 0 none !important;
+    color: #FFFFFF;
+    padding: 50px 0 !important;
+    text-align: center;
+}
+.footer .credit {
+    font-size: 0.8rem;
+}
+.footer #social > li > a > div {
+    height: 30px;
+    margin-right: 20px;
+    outline: medium none;
+    padding: 0;
+    width: 30px;
+}
+.footer #twitter {
+    background: url("images/footer-twitter.png") no-repeat scroll 0 0 transparent;
+}
+.footer #facebook {
+    background: url("images/footer-facebook.png") no-repeat scroll 0 0 transparent;
+}
+.footer #gplus {
+    background: url("images/footer-gplus.png") no-repeat scroll 0 0 transparent;
+}
+.footer #github {
+    background: url("images/footer-github.png") no-repeat scroll 0 0 transparent;
+}
+.current.reference.internal {
+    background-color: #D3D3D3;
+}
+.reference.external {
+    background: url("images/link-icon_external.png") no-repeat scroll right center transparent;
+    padding-right: 15px;
+}
+section {
+    margin: 0;
+}
+#carouselBox {
+    margin-top: 20px;
+}
+.carousel-caption {
+    padding: 0 20px 10px;
+    text-align: left;
+}
+.carousel-caption .caption-headline {
+    color: #FFFFFF;
+    font-weight: bold;
+    line-height: 18px;
+}
+.carousel-caption .caption-text {
+    color: #CCCCCC;
+}
+.carousel-caption .caption-link {
+    margin-left: 10px;
+}
+.carousel-caption .caption-link:hover {
+    color: #EFF391;
+    text-decoration: none;
+}
+section.slideshow {
+    padding-bottom: 20px;
+    padding-top: 20px;
+}
+section.info {
+    margin: 35px auto 25px;
+    text-align: center;
+}
+section.info h1 {
+    text-shadow: 0 1px 3px rgba(0, 0, 0, 0.4), 0 0 30px rgba(0, 0, 0, 0.075);
+}
+section.info h5 {
+    margin-top: 20px;
+}
+section.info p {
+    margin: 25px 0;
+}
+section.info span {
+    color: #465064;
+    display: block;
+    margin: 20px 0;
+}
+section.info .btn {
+    font-size: 1.4em;
+}
+section.info .btn:hover {
+    background: none repeat scroll 0 0 #108300;
+}
+section.highlights {
+    background: none repeat scroll 0 0 #404040;
+    border-bottom: 1px solid #E7E8EA;
+    border-top: 1px solid #E7E8EA;
+    box-shadow: 0 3px 7px rgba(0, 0, 0, 0.2) inset, 0 -3px 7px rgba(0, 0, 0, 0.2) inset;
+    padding: 30px 0;
+}
+section.highlights a {
+    text-decoration: none;
+}
+section.highlights .info-box {
+    background-color: #404040;
+    margin: 0 10px 30px;
+    text-align: center;
+}
+section.highlights .info-box h4 {
+    color: #FFFFFF;
+    font-weight: 400;
+    text-shadow: 0 1px 3px rgba(0, 0, 0, 0.4), 0 0 30px rgba(0, 0, 0, 0.075);
+}
+section.highlights .info-box .box-content {
+    background-color: rgba(0, 0, 0, 0);
+}
+section.highlights .info-box .box-content img {
+    margin-bottom: 10px;
+    width: 100%;
+}
+section.highlights .info-box .box-content p {
+    color: #FFFFFF;
+    font-size: 1.4em;
+    padding: 20px 10px 0;
+}
+section.highlights .info-box .highlights-icon {
+    height: 142px;
+    margin: 0 auto;
+    width: 200px;
+}
+section.highlights .info-box #get-started {
+    background: url("images/get-started.png") no-repeat scroll center center #CCCCCC;
+}
+section.highlights .info-box #get-involved {
+    background: url("images/get-involved.png") no-repeat scroll center center #CCCCCC;
+}
+section.highlights .info-box #learn-more {
+    background: url("images/learn-more.png") no-repeat scroll center center #CCCCCC;
+}
+section.highlights .info-box:hover h4, section.highlights .info-box:active h4, section.highlights .info-box:hover p, section.highlights .info-box:active p {
+    color: #FFFFFF;
+}
+section.highlights .info-box:hover h4, section.highlights .info-box:active h4 {
+    font-weight: 600;
+}
+section.highlights .info-box:hover #get-started, section.highlights .info-box:active #get-started, section.highlights .info-box:hover #get-involved, section.highlights .info-box:active #get-involved, section.highlights .info-box:hover #learn-more, section.highlights .info-box:active #learn-more {
+    background-color: #FFFFFF;
+}
+section.latest-news {
+    box-shadow: 0 3px 7px rgba(0, 0, 0, 0.2) inset, 0 -3px 7px rgba(0, 0, 0, 0.2) inset;
+    padding: 30px 0;
+    text-align: center;
+}
+section.latest-news a:hover, section.latest-news a:active {
+    text-decoration: none !important;
+}
+section.latest-news a:hover .info-box, section.latest-news a:active .info-box {
+    background: none repeat scroll 0 0 #FFFFFF;
+}
+section.latest-news header {
+    border-bottom: 1px solid #8D8D8D;
+    height: 30px;
+    margin-bottom: 40px;
+    overflow: visible;
+}
+section.latest-news h3 {
+    background: none repeat scroll 0 0 white;
+    display: inline-block;
+    font-weight: 400;
+    padding: 0 40px;
+    text-shadow: 0 1px 3px rgba(0, 0, 0, 0.4), 0 0 30px rgba(0, 0, 0, 0.075);
+    text-transform: uppercase;
+}
+section.latest-news .info-box {
+    background: none repeat scroll 0 0 #CCCCCC;
+    box-shadow: 1px 1px 1px 1px #999999;
+    margin: 0 10px 40px;
+    text-align: left;
+    width: 100%;
+}
+section.latest-news .info-box h4 {
+    color: #1C2028;
+    margin-bottom: 10px;
+    padding: 0 10px;
+}
+section.latest-news .info-box p {
+    color: #333333;
+    font-size: 15px;
+    padding: 0 10px 10px;
+}
+section.latest-news .info-box img {
+    width: 100%;
+}
+section.latest-news p.intro {
+    font-size: 16px;
+    font-style: italic;
+    margin: 0 40px 30px;
+}
+section.sponsors {
+    background: url("images/paper-texture.png") repeat scroll 0 0 #333333;
+    padding: 30px 0;
+    text-align: center;
+}
+section.sponsors header {
+    height: 30px;
+    margin-bottom: 40px;
+    overflow: visible;
+}
+section.sponsors h3 {
+    display: inline-block;
+    font-weight: 400;
+    padding: 0 40px;
+    text-shadow: 0 1px 3px rgba(0, 0, 0, 0.4), 0 0 30px rgba(0, 0, 0, 0.075);
+    text-transform: uppercase;
+}
+section.sponsors .sponsor {
+    text-align: center;
+}
+section.intro {
+    background: none repeat scroll 0 0 #F3F2F0;
+    border-bottom: 1px solid #DDDDDD;
+    margin-top: -20px;
+    padding: 30px 0 60px;
+}
+section.intro h2 {
+    font-weight: 400;
+}
+section.intro p.main {
+    font-size: 14px;
+    line-height: 20px;
+}
+section.content {
+    margin-top: -68px !important;
+    padding: 30px 0;
+}
+section.content .nav-tabs {
+    border-bottom: medium none;
+}
+section.content .nav-tabs > li > a {
+    border-radius: 0 0 0 0;
+    text-transform: uppercase;
+}
+section.content h4 {
+    border-bottom: 1px solid #DDDDDD;
+    font-weight: 400;
+    padding-bottom: 5px;
+}
+.bs-sidenav {
+    padding-top: 0 !important;
+}
+.bs-sidenav.well {
+    -moz-border-bottom-colors: none;
+    -moz-border-left-colors: none;
+    -moz-border-right-colors: none;
+    -moz-border-top-colors: none;
+    background: none repeat scroll 0 0 transparent;
+    border-color: -moz-use-text-color #DDDDDD -moz-use-text-color -moz-use-text-color;
+    border-image: none;
+    border-radius: 0 0 0 0;
+    border-style: none solid none none;
+    border-width: medium 1px medium medium;
+    box-shadow: none;
+}
+.bs-sidenav h3 {
+    font-size: 16px;
+    font-weight: normal;
+    text-transform: uppercase;
+}
+@media (min-width: 980px) {
+.navbar .container {
+    width: 940px !important;
+}
+.bs-sidenav {
+    margin: 0 !important;
+    width: 300px !important;
+}
+}
+@media (max-width: 979px) {
+body {
+    padding-top: 0 !important;
+}
+}
+@media (max-width: 470px) {
+.navbar-search input {
+    width: 120px;
+}
+}
+#downloads {
+    margin-top: 30px;
+}
+#downloads .accordion-group {
+    background-color: #EFEFEF;
+    border: 1px solid #BBBBBB;
+    border-radius: 0 0 0 0;
+    margin-bottom: 20px;
+}
+#downloads .accordion-heading:hover {
+    background-color: #333333;
+    border: 1px solid #000000;
+}
+#downloads .accordion-heading a {
+    color: #1C2028;
+    font-weight: bold;
+}
+#downloads .accordion-heading a:hover {
+    color: #91BEF3;
+    text-decoration: none;
+}
+#downloads .accordion-heading h4 {
+    border: 0 none;
+    font-weight: bold;
+}
+#downloads .accordion-inner {
+    background-color: #EEEEEE;
+    line-height: 40px;
+    margin-left: 20px;
+}
+#downloads .accordion-inner a {
+    text-decoration: none;
+}
+#downloads .accordion-inner .icon-large {
+    font-size: 18px;
+}
+#downloads .accordion-inner .download-row {
+    display: inline-block;
+    margin-left: 30px;
+}
+#downloads .accordion-inner .qgis-download, #downloads .accordion-inner .osgeo-download {
+    height: 60px;
+    margin-bottom: -20px;
+    width: 60px;
+}
+#downloads .accordion-inner .qgis-download {
+    background: url("images/qgis-logo.png") no-repeat scroll left center transparent;
+}
+#downloads .accordion-inner .osgeo-download {
+    background: url("images/osgeo-logo.png") no-repeat scroll left center transparent;
+}
+#downloads .accordion-inner .download-text {
+    font-weight: bold;
+    margin-left: 10px;
+}
+#downloads .accordion-inner button {
+    margin-left: 5px;
+}
+#color-identifier {
+    height: 10px;
+    left: 0;
+    overflow: visible;
+    position: fixed;
+    right: 0;
+    z-index: 1030;
+}
+@media (max-width: 979px) {
+#color-identifier {
+    position: absolute;
+}
+}
+#color-identifier.about {
+    background-color: #EFF391;
+}
+#color-identifier.forusers {
+    background-color: #0088CC;
+}
+#color-identifier.getinvolved {
+    background-color: #129700;
+}
+section.sub-landing-page {
+    color: #4D4E50;
+    font-size: 14px;
+    line-height: 20px;
+}
+section.sub-landing-page .container {
+    background-color: #FFFFFF;
+    margin-left: auto;
+    margin-right: auto;
+    padding-top: 40px;
+    position: relative;
+    width: 940px;
+}
+section.sub-landing-page .container:after {
+    clear: both;
+}
+section.sub-landing-page h2 {
+}
+section.sub-landing-page hr {
+    margin: 70px 0;
+}
+section.sub-landing-page h4.subsection-link {
+    margin-top: 20px;
+}
+div.banner {
+    padding-top: 40px;
+}
+section.menu nav.subnav {
+    background: none repeat scroll 0 0 white;
+    color: #1C2028;
+    padding: 30px 0;
+    text-align: center;
+}
+section.menu nav.subnav header {
+    border-bottom: 1px solid #BBBBBB;
+    height: 30px;
+    margin-bottom: 40px;
+    overflow: visible;
+}
+section.menu nav.subnav h3 {
+    background: none repeat scroll 0 0 white;
+    display: inline-block;
+    font-weight: 400;
+    padding: 0 40px;
+    text-transform: uppercase;
+}
+section.menu nav.subnav ul {
+    margin-top: 40px;
+}
+section.menu nav.subnav ul li {
+    display: inline;
+    margin: 0 10px;
+}
+section.menu nav.subnav ul li a {
+    color: #1C2028;
+    font-weight: bold;
+}
+section.menu nav.subnav ul li a:hover {
+    color: #0088CC;
+    text-decoration: none;
+}
+#myModal .modal-img {
+    width: 100%;
+}
+#myModal .modal-body p {
+    margin: 15px;
+}
+.background-mask {
+    background-color: #CCCCCC;
+}
+@media (max-width: 979px) {
+img.overflow-img, #processing {
+    min-width: 100% !important;
+}
+}
+@media (min-width: 980px) {
+img.overflow-img, #processing {
+    max-width: none !important;
+}
+}
+.disclaimer {
+    border: 2px solid red;
+    color: #FF0000;
+    display: block;
+    margin-top: 5px;
+    padding: 5px 50px;
+}
+.admonition-title {
+    border-bottom: 1px solid #DDDDDD;
+    display: block;
+    font-size: larger;
+    margin-left: 44px !important;
+}
+.warning {
+    background-image: url("images/warning.png");
+    background-position: 15px 8px;
+    background-repeat: no-repeat;
+}
+.note {
+    background-image: url("images/note.png");
+    background-position: 15px 8px;
+    background-repeat: no-repeat;
+}
+.tip {
+    background-image: url("images/tip.png");
+    background-position: 15px 8px;
+    background-repeat: no-repeat;
+}
+.admonition, .bordered-block {
+    background-color: #FBFBFB;
+    border-color: #F5F5F5 #ECECEC #DFDFDF;
+    border-radius: 5px 5px 5px 5px;
+    border-style: solid;
+    border-width: 1px;
+    box-shadow: 0 1px 3px #CCCCCC;
+}
+.admonition p img, .bordered-block p img {
+    float: left;
+    margin: 0 15px 0 0;
+}
+.guilabel {
+    background: none repeat scroll 0 0 #EEEEEE;
+    border: 1px solid #DDDDDD;
+    color: #0088CC;
+    font-weight: bold;
+    padding-left: 3px;
+    padding-right: 3px;
+}
+.menuselection {
+    background: none repeat scroll 0 0 #EEEEEE;
+    border: 1px dashed #DDDDDD;
+    color: #217AEC;
+    font-weight: bold;
+    padding-left: 3px;
+    padding-right: 3px;
+}
+.kbd {
+    background: none repeat scroll 0 0 #EEEEEE;
+    border: 1px solid #DDDDDD;
+    color: #EE2222;
+    font-weight: bold;
+    padding-left: 3px;
+    padding-right: 3px;
+}

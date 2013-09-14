@@ -1,6 +1,5 @@
 {% extends 'plugins/plugin_base.html' %}{% load i18n sorting_tags pagination_tags humanize smart_paginate range_filter %}
 {% block extrajs %}
-  <script type="text/javascript" src="/static/js/jquery-1.5.1.min.js"></script>
   <script type="text/javascript" src="/static/js/jquery.cookie.js"></script>
   <script language="javascript">
    $(document).ready(function () {
@@ -29,6 +28,11 @@
         jQuery('.plugin-description').toggle('slow', function(){
             jQuery.cookie('plugin-description-visible', jQuery('.plugin-description').is(':visible'));
         });
+        if(jQuery('.plugin-description').hasClass('hidden')){
+            jQuery('.plugin-description').removeClass('hidden');
+        } else {
+            jQuery('.plugin-description').addClass('hidden');
+        }
         return false;
     }
 
@@ -43,15 +47,15 @@
   </script>
 {% endblock %}
 {% block content %}
-    <h2>{% if title %}{{title}}{% else %}{% trans "QGIS Plugins list" %}{% endif %}</h2>
+    <h2>{% if title %}{{title}}{% else %}{% trans "All plugins" %}{% endif %}</h2>
     {# Filtered views menu #}
 
     {% if object_list.count %}
     <div id="list_commands">
-        <div class="num_items">{% blocktrans with records_count=object_list.count %}{{ records_count }} records found{% endblocktrans %}</div>
-        <div class="toggle_desc"><a href="javascript:void(0);" onclick="return toggle_desc()">{% trans "Click to toggle descriptions." %}</a></div>
+        <span class="num_items">{% blocktrans with records_count=object_list.count %}{{ records_count }} records found{% endblocktrans %}</span>&nbsp;&mdash;&nbsp;
+        <a class="toggle_desc" href="javascript:void(0);" onclick="return toggle_desc()">{% trans "Click to toggle descriptions." %}</a>
     </div>
-    <table class="plugins">
+    <table class="table table-striped plugins">
         <thead>
             <tr>
                 <th>&nbsp;</th>
@@ -73,31 +77,43 @@
             {% autosort object_list %}
             {% autopaginate object_list per_page %}
             {% for object in object_list %}
-            <tr class="pmain {% cycle "even" "odd" %}{% if object.deprecated %} deprecated{% endif %}" id="pmain{{object.pk}}">
-                <td><a title="{% if object.deprecated %} [DEPRECATED] {% endif %}{% trans "Click here for plugin details" %}" href="{% url plugin_detail object.package_name %}"><img class="plugin-icon" src="{% if object.icon %}{{ object.icon.url }}{% else %}/static/images/qgis-icon-32x32.png{% endif %}" alt="{% trans "Plugin icon" %}" /></a></td>
+            <tr class="pmain {% if object.deprecated %} error deprecated{% endif %}" id="pmain{{object.pk}}">
+                <td><a title="{% if object.deprecated %} [DEPRECATED] {% endif %}{% trans "Click here for plugin details" %}" href="{% url plugin_detail object.package_name %}"><img height="32" width="32" class="plugin-icon" src="{% if object.icon %}{{ object.icon.url }}{% else %}/static/images/qgis-icon-32x32.png{% endif %}" alt="{% trans "Plugin icon" %}" /></a></td>
                 <td><a title="{% if object.deprecated %} [DEPRECATED] {% endif %}{% trans "Click here for plugin details" %}"  href="{% url plugin_detail object.package_name %}">{{ object.name }}</a></td>
                 {% if not user.is_anonymous %}<td>{% if object.approved %}<img src="/static/images/tick_16.png" />{% else %}&mdash;{% endif %}</td>{% endif %}
                 <td>{% if object.featured%}<img src="/static/images/tick_16.png" />{% else %}&mdash;{% endif %}</td>
                 <td>{{ object.downloads }}</td>
-                <td><a title="{% trans "Plugins by"%} {{ object.author }}" href="{% url author_plugins object.author|urlencode %}">{{ object.author }}</a></td>
+                <td><a title="{% trans "See all plugins by"%} {{ object.author }}" href="{% url author_plugins object.author|urlencode %}">{{ object.author }}</a></td>
 <!--
                 <td>{{ object.modified_on|naturalday }}</td>
 -->
                 <td>{% for i in object.average_vote|add:"0"|get_range %}<span class="small-star"></span>{% endfor %} ({{ object.rating_votes }})</td>
                 <td>{% if object.stable %}<a href="{% url version_download object.package_name object.stable.version %}" title="{% trans "Download the stable version" %}" >{{ object.stable.version }}</a>{% else %}&mdash;{% endif %}</td>
                 <td>{% if object.experimental %}<a href="{% url version_download object.package_name object.experimental.version %}" title="{% trans "Download the experimental version" %}" >{{ object.experimental.version }}</a>{% else %}&mdash;{% endif %}</td>
-                {% if user.is_authenticated %}{% if user in object.editors or user.is_staff %}<td><a href="{% url plugin_update object.package_name %}">{% trans "Edit" %}</a></td>
-                <td><a class="delete" href="{% url plugin_delete object.package_name %}">{% trans "Delete" %}</a></td>{% else %}<td>&nbsp;</td><td>&nbsp;</td>{% endif %}{% endif %}
+                {% if user.is_authenticated %}{% if user in object.editors or user.is_staff %}<td><a class="btn btn-primary btn-mini" href="{% url plugin_update object.package_name %}"><i class="icon-pencil icon-white" title="{% trans "Edit" %}"></i></a>
+                <a class="btn btn-danger btn-mini"  class="delete" href="{% url plugin_delete object.package_name %}"><i class="icon-remove-sign icon-white" title="{% trans "Delete" %}"></i></a>{% else %}{% endif %}</td>{% endif %}
+
             </tr>
-            <tr id="pdesc{{object.pk}}" class="plugin-description {% cycle "even" "odd" %}" title="{% trans "Click to hide" %}"><td colspan="{% if user.is_authenticated %}12{% else %}11{% endif %}">{{ object.description }}</td></tr>
+
+            <tr id="pdesc{{object.pk}}" class="hidden plugin-description {% cycle "even" "odd" %}" title="{% trans "Click to hide" %}"><td>&nbsp;</td><td colspan="{% if user.is_authenticated %}9{% else %}8{% endif %}">{{ object.description }}</td></tr>
+
             {% endfor %}
         </tbody>
     </table>
     {% smart_paginate %}
-    <p>{% trans "Deprecated plugins are printed in red." %}</p>
+    <div class="alert">
+        <button type="button" class="close" data-dismiss="alert">&times;</button>
+        {% trans "Deprecated plugins are printed in red." %}
+    </div>
     {% else %}
     {% block plugins_message %}
-    <p>{% trans "This list is empty!" %}</p>
+    <div class="alert">
+        <button type="button" class="close" data-dismiss="alert">&times;</button>
+        {% trans "This list is empty!" %}
+    </div>
     {% endblock %}
     {% endif %}
+    <script type="text/javascript">
+        jQuery('.popover').popover();
+    </script>
 {% endblock %}

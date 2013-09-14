@@ -2,9 +2,8 @@
 {% load thumbnail %}
 
 {% block app_title %}
-<a href="/" class="logo">{% trans "Quantum GIS User Map" %}</a>
+<h1>{% trans "QGIS Users Map"%}</h1>
 {% endblock %}
-
 
 {% block menu %}
 {{ block.super }}
@@ -12,7 +11,7 @@
     <div>
         <div>
             <h3>{% trans "QGIS Users Map" %}</h3>
-            <ul class="menu">
+            <ul class="nav nav-list">
               <li><a href="{% url show_map %}">{% trans "Community map"%}</a></li>
               <li><a href="{% url create_user %}">{% trans "Add yourself!"%}</a></li>
               <li><a href="{% url email_update_user_link %}">{% trans "Update your details"%}</a></li>

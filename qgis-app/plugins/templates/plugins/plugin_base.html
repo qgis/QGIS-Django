@@ -1,18 +1,16 @@
 {% extends BASE_TEMPLATE %}{% load i18n plugins_tagcloud %}
 
 {% block app_title %}
-<a href="/" class="logo">{% trans "Quantum GIS Plugin Repository" %}</a>
+<h1>{% trans "QGIS Python Plugins Repository"%}</h1>
 {% endblock %}
 
 
 {% block menu %}
 {{ block.super }}
-<div class="module_menu" id="new_plugin_button">
-    <h3><a href="{% url plugin_upload %}">{% trans "Share a plugin" %}</a></h3>
-</div>
-<div class="module_menu">
-    <h3>{% trans "Plugins" %}</h3>
-    <ul class="menu">
+<a class="btn btn-block btn-primary btn-large" href="{% url plugin_upload %}"><i class="icon-upload icon-white"></i> {% trans "Share a plugin" %}</a>
+<h3>{% trans "Plugins" %}</h3>
+<ul class="nav nav-list">
+
         {% if user.is_authenticated %}
         {% if user.plugin_set_count %}<li><a href="{% url my_plugins user %}">{% trans "My plugins" %}</a></li>{% endif %}
         {% endif %}
@@ -31,14 +29,15 @@
         <li><a href="{% url most_voted_plugins %}">{% trans "Most voted" %}</a></li>
         <li><a href="{% url most_downloaded_plugins %}">{% trans "Top downloads" %}</a></li>
         <li><a href="{% url most_rated_plugins %}">{% trans "Most rated" %}</a></li>
-    </ul>
-</div>
+</ul>
+
 <div class="module_menu">
     <h3>{% trans "Plugin tags" %}</h3>
     {% include_plugins_tagcloud 'plugins.plugin' %}
 </div>
-<div class="module_menu">
-    <h3>{% trans "About" %}</h3>
-    <div class="menu">{% trans "This web application was developed by:" %}<a href="http://www.itopen.it"> Alessandro Pasotti</a></div>
-</div>
 {% endblock %}
+
+{% block "credits" %}
+{% trans "This web application was developed by:" %} <a href="http://www.itopen.it"> Alessandro Pasotti</a>
+{% endblock %}
+

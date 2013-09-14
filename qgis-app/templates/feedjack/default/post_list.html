@@ -3,7 +3,7 @@
 <link type="text/css" href="/static/style/planet.css" rel="stylesheet" />
 {% endblock %}
 {% block app_title %}
-<a href="/" class="logo">{% trans "Quantum GIS Planet" %}</a>
+{% trans "Quantum GIS Planet" %}
 {% endblock %}
 
 
@@ -114,7 +114,7 @@ title="{{ feed.feed.title }}">{{ feed.name }}</a></li>
     <img
      src="{{ media_url }}/img/faces/{{ item.subscriber.shortname}}.png" alt="">
     <br/>
-  </div>    
+  </div>
   {% endifchanged %}
 
   {% if item.title %}

@@ -21,7 +21,7 @@ from plugins.models import Plugin
 
 from django.conf import settings as django_settings
 
-TAGCLOUD_EXCLUDE_COUNT_LTE = getattr(django_settings, 'TAGCLOUD_EXCLUDE_COUNT_LTE', None)
+TAGCLOUD_COUNT_GTE = getattr(django_settings, 'TAGCLOUD_COUNT_GTE', None)
 T_MAX = getattr(settings, 'TAGCLOUD_MAX', 6.0)
 T_MIN = getattr(settings, 'TAGCLOUD_MIN', 1.0)
 
@@ -45,8 +45,8 @@ def get_queryset():
         qs = queryset.annotate(num_times=Count('taggeditem_items'))
     except FieldError:
         qs = queryset.annotate(num_times=Count('taggit_taggeditem_items'))
-    if TAGCLOUD_EXCLUDE_COUNT_LTE:
-        qs = qs.exclude(num_times__lte=TAGCLOUD_EXCLUDE_COUNT_LTE)
+    if TAGCLOUD_COUNT_GTE:
+        qs = qs.filter(num_times__gte=TAGCLOUD_COUNT_GTE)
     return qs
 
 def get_weight_fun(t_min, t_max, f_min, f_max):

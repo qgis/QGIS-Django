@@ -17,22 +17,16 @@ long_line_behaviour=1
 long_line_column=72
 
 [files]
-current_page=14
-FILE_NAME_0=13821;Python;0;16;0;1;0;/home/ale/public_html/django/qgis-django/qgis-app/plugins/models.py;0;4
-FILE_NAME_1=31848;Python;0;16;0;1;0;/home/ale/public_html/django/qgis-django/qgis-app/plugins/views.py;0;4
-FILE_NAME_2=3866;Python;0;16;0;1;0;/home/ale/public_html/django/qgis-django/qgis-app/plugins/api.py;0;4
-FILE_NAME_3=0;XML;0;16;0;1;0;/home/ale/public_html/django/qgis-django/qgis-app/plugins/templates/plugins/plugins.xml;0;4
-FILE_NAME_4=6646;Python;0;16;0;1;0;/home/ale/public_html/django/qgis-django/qgis-app/settings.py;0;4
-FILE_NAME_5=1788;HTML;0;16;0;1;0;/home/ale/public_html/django/qgis-django/qgis-app/plugins/templates/plugins/plugin_base.html;0;4
-FILE_NAME_6=24;HTML;0;16;0;1;0;/home/ale/public_html/django/qgis-django/qgis-app/templates/base.html;0;4
-FILE_NAME_7=0;HTML;0;16;0;1;0;/home/ale/public_html/django/qgis-django/qgis-app/templates/index.html;0;4
-FILE_NAME_8=177;HTML;0;16;0;1;0;/home/ale/public_html/django/qgis-django/qgis-app/templates/taggit_templatetags/tagcloud_include.html;0;4
-FILE_NAME_9=1727;Python;0;16;0;1;0;/home/ale/public_html/django/qgis-django/qgis-app/plugins/templatetags/plugins_tagcloud.py;0;4
-FILE_NAME_10=360;None;0;16;0;1;0;/home/ale/public_html/django/qgis-django/qgis-app/plugins/tests/HelloWorld/README;0;4
-FILE_NAME_11=183;Python;0;16;0;1;0;/home/ale/public_html/django/qgis-django/qgis-app/plugins/tests/HelloWorld/2.2-full-md-empty-max_qgs_category_web/HelloWorld/__init__.py;0;4
-FILE_NAME_12=510;None;0;16;0;1;0;/home/ale/public_html/django/qgis-django/qgis-app/plugins/tests/HelloWorld/2.2-full-md-empty-max_qgs_category_web/HelloWorld/metadata.txt;0;4
-FILE_NAME_13=0;Make;0;16;1;1;0;/home/ale/public_html/django/qgis-django/qgis-app/plugins/tests/HelloWorld/Makefile;0;4
-FILE_NAME_14=591;Python;0;16;0;1;0;/home/ale/public_html/django/qgis-django/qgis-app/plugins/tests/HelloWorld/2.2-full-md-empty-max_qgs_category_web/HelloWorld/HelloWorld.py;0;4
+current_page=1
+FILE_NAME_0=97;HTML;0;16;0;1;1;/home/ale/public_html/django/qgis-django/qgis-app/plugins/templates/plugins/plugin_base.html;0;4
+FILE_NAME_1=3156;HTML;0;16;0;1;1;/home/ale/public_html/django/qgis-django/qgis-app/templates/base.html;0;4
+FILE_NAME_2=142;HTML;0;16;0;1;1;/home/ale/public_html/django/qgis-django/qgis-app/plugins/templates/plugins/plugin_list.html;0;4
+FILE_NAME_3=2850;HTML;0;16;0;1;1;/home/ale/public_html/django/qgis-django/qgis-app/plugins/templates/plugins/plugin_detail.html;0;4
+FILE_NAME_4=29418;Python;0;16;0;1;1;/home/ale/public_html/django/qgis-django/qgis-app/plugins/views.py;0;4
+FILE_NAME_5=4908;Python;0;16;0;1;1;/home/ale/public_html/django/qgis-django/qgis-app/plugins/urls.py;0;4
+FILE_NAME_6=36;CSS;0;16;0;1;1;/home/ale/public_html/django/qgis-django/qgis-app/static/style/style.css;0;4
+FILE_NAME_7=1115;HTML;0;16;0;1;1;/home/ale/public_html/django/qgis-django/qgis-app/plugins/templates/plugins/plugin_form.html;0;4
+FILE_NAME_8=596;HTML;0;16;0;1;1;/home/ale/public_html/django/qgis-django/qgis-app/plugins/templates/plugins/plugin_upload.html;0;4
 
 [VTE]
 last_dir=/home/ale/public_html/django/qgis-django/qgis-app

@@ -1,81 +1,124 @@
-{% load i18n simplemenu_tags %}<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
-<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en-gb" lang="en-gb" >
+{% load i18n simplemenu_tags %}<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml">
 <head>
   <title>{% block extratitle %}{% endblock %}QGIS Plugins Repository</title>
   <meta name="AUTHOR" content="ItOpen" />
   <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-  <link type="text/css" href="/static/style/style.css" rel="stylesheet" />
-  {% block extrajs %}{% endblock %}
-  {% block extracss %}{% endblock %}
+
+    <link rel="stylesheet" href="/static/style/new/basic.css" type="text/css" />
+    <link rel="stylesheet" href="/static/bootstrap/css/bootstrap.min.css" type="text/css" />
+    <link rel="stylesheet" href="/static/style/new/qgis-style.css" type="text/css" />
+    <link rel="stylesheet" href="/static/style/new/bootstrap-sphinx.css" type="text/css" />
+    <link rel="stylesheet" href="/static/bootstrap/css/bootstrap-responsive.min.css" type="text/css" />
+    <link type="text/css" href="/static/style/style.css" rel="stylesheet" />
+    {% block extracss %}{% endblock %}
+
+    <script src="http://code.jquery.com/jquery.js"></script>
+<!--
+    <script src="//ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js"></script>
+-->
+    <script type="text/javascript" src="/static/bootstrap/js/bootstrap.min.js"></script>
+    {% block extrajs %}{% endblock %}
+
 </head>
 <body id="page_bg" {% block onload %}{% endblock %}>
     <div id="main_bg">
-        <img src="/static/images/blue/top.png" alt="top" />
-        <img src="/static/images/blue/logo.png" alt="logo" align="left" hspace="5" />
-        <div id="logo_bg">
-            {% block app_title %}
-            <a href="/" class="logo">{% trans "Quantum GIS" %}</a>
-            {% endblock %}
-            {% block status %}
-            <div id="user4">
-                {% if user.is_authenticated %}<div class="userinfo">{% trans "Welcome"%}: {{ user }}</div>{% endif %}
-            </div>
-            {% endblock %}
-        </div>
         {% block navigation %}
-        <div id="user3">
-            {% get_simplemenu as menu %}
-            <div class="navigation" id="pillmenu">
-                <ul>
-                {% for item in menu %}
-                    <li><a href="{{ item.page.url }}">{{ item.name }}</a></li>
-                {% endfor %}
-                    {% if user.is_authenticated %}
-                    <li><a href="{% url fe_logout %}">{% trans "Logout" %}</a></li>
-                    {% else %}
-                    <li><a href="{% url fe_login %}">{% trans "Login" %}</a></li>
+        <div id="navbar" class="navbar navbar-inverse navbar-fixed-top">
+            <div class="navbar-inner">
+                <div class="container">
+                    <!-- .btn-navbar is used as the toggle for collapsed navbar content -->
+                    <button class="btn btn-navbar" data-toggle="collapse" data-target=".nav-collapse">
+                      <span class="icon-bar"></span>
+                      <span class="icon-bar"></span>
+                      <span class="icon-bar"></span>
+                    </button>
+
+                    <a class="brand" href="#">QGIS</a>
+                    <span class="navbar-text pull-left"><b>2.0</b></span>
+
+                    <form class="navbar-search" action="/search/" method="get">
+                      <input type="text"  id="id_q" name="q" class="search-query" placeholder="Search" />
+                    </form>
+
+                    {% get_simplemenu as menu %}
+                     <div class="nav-collapse collapse">
+                        <ul class="unstyled nav main-menu">
+                        {% for item in menu %}
+                            <li><a href="{{ item.page.url }}">{{ item.name }}</a></li>
+                        {% endfor %}
+                            {% if user.is_authenticated %}
+                            <li><a href="{% url fe_logout %}">{% trans "Logout" %}</a></li>
+                            {% else %}
+                            <li><a href="{% url fe_login %}">{% trans "Login" %}</a></li>
+                            {% endif %}
+                            {% block navigation_extra %}
+                            {% endblock %}
+                        </ul>
+
+                    </div>
+                </div>
+            </div>
+        </div>
+        {% endblock %}
+        <div class="container-fluid">
+            <div class="row-fluid">
+                {% block leftbar %}
+                <div class="span3 well" id="leftcolumn" data-spy="scroll">
+                    {% block menu %}&nbsp;{% endblock %}
+                </div>
+                {% endblock %}
+                <div class="span9" id="maincolumn">
+                    <section class="info">
+                        {% block app_title %}
+                        <h1>{% trans "QGIS Python Plugins Repository"%}</h1>
+                        {% endblock %}
+                        {% block status %}
+                        <div class="pull-right" id="user4">
+                            {% if user.is_authenticated %}<div class="userinfo">{% trans "Welcome"%}: {{ user }}</div>{% endif %}
+                        </div>
+                        {% endblock %}
+                    </section>
+                    {% if messages %}
+                    <div class="alert">
+                        <button type="button" class="close" data-dismiss="alert">&times;</button>
+                        {% for message in messages %}
+                        <p {% if message.tags %} class="{{ message.tags }}"{% endif %}>{{ message|safe }}</p>
+                        {% endfor %}
+                    </div>
                     {% endif %}
-                    {% block navigation_extra %}
+                    <div>
+                    {% block content %}
                     {% endblock %}
-                </ul>
+                    </div>
+                </div>
+                {% block rightbar %}
+<!--
+                <div class="span2" id="rightcolumn"></div>
+-->
+                {% endblock %}
+            </div><!-- end row fluid -->
+        </div><!-- end container fluid -->
+
+        <footer class="footer">
+            <div class="container">
+                <div>
+                  <ul class="unstyled inline" id="social">
+                    <li id="twitter"><a href="http://twitter.com/qgis" class="external"><div></div></a></li>
+                    <li id="facebook"><a href="https://www.facebook.com/pages/QGIS-Quantum-GIS-/298112000235096" class="external"><div></div></a></li>
+                    <li id="gplus"><a href="http://plus.google.com/communities/114776597176808981624" class="external"><div></div></a></li>
+                    <li id="github"><a href="http://github.com/qgis/" class="external"><div></div></a></li>
+                  </ul>
+                </div>
+
+                <p class="credit">{% trans "All content is licensed under" %} <a href="http://creativecommons.org/licenses/by-sa/3.0/">Creative Commons Attribution-ShareAlike 3.0 licence (CC BY-SA)</a>.</p>
             </div>
-            <div id="search-div">
-            <form id="search-form" method="get" action="/search/">
-                <table>
-                <tr>
-                    <td><label for="id_q">Search:</label></td>
-                    <td><input type="text" name="q" id="id_q" style="width: 110px;" value="{{ request.GET.q }}" /></td>
-                    <td><input type="submit" value="Go" /></td>
-                </tr>
-                </table>
-            </form>
+            <div class="container">
+              {% block "credits" %}
+              <p class="credit">{% trans "Select graphics from " %}<a href="http://thenounproject.com" target="_blank">{% trans "The Noun Project collection" %}</a>.</p>
+              {% endblock %}
             </div>
-        </div>
-        {% endblock %}
-        {% block leftbar %}
-        <div id="leftcolumn">{% block menu %}&nbsp;{% endblock %}</div>
-        {% endblock %}
-        <div id="maincolumn">
-            {% if messages %}
-            <ul class="messages">
-                {% for message in messages %}
-                <li {% if message.tags %} class="{{ message.tags }}"{% endif %}>{{ message|safe }}</li>
-                {% endfor %}
-            </ul>
-            {% endif %}
-            <div>
-            {% block content %}
-            {% endblock %}
-            </div>
-        </div>
-        {% block rightbar %}
-        <div id="rightcolumn"></div>
-        {% endblock %}
-        <br clear="all" />
-        <img id="main_bottom" src="/static/images/blue/bottom.png" alt="bottom" align="bottom" /></div>
-<p id="power_by" align="center">
-    Powered by <a href="http://www.djangoproject.com">Django!</a>
-<!--    Valid <a href="http://validator.w3.org/check/referer">XHTML</a> and <a href="http://jigsaw.w3.org/css-validator/check/referer">CSS</a>.-->
-</p>
+        </footer>
+
 </body>
 </html>

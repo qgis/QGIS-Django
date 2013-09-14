@@ -205,10 +205,12 @@ QGIS_DEV_MAILING_LIST_ADDRESS=''
 TAGGIT_AUTOCOMPLETE_JS_BASE_URL=MEDIA_ROOT + '/taggit-autocomplete'
 
 # Taggit: exclude tags with less than specified tagged items
-TAGCLOUD_EXCLUDE_COUNT_LTE=3
+TAGCLOUD_COUNT_GTE=3
 
 # ratings
 RATINGS_VOTES_PER_IP=10000
+
+OLWIDGET_STATIC_URL='/static/olwidget/'
 
 # auth overrids
 from settings_auth import *

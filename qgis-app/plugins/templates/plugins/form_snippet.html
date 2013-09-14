@@ -1,0 +1,17 @@
+{% load i18n plugin_utils %}
+    <fieldset>
+{% for field in form %}
+        <div class="fieldWrapper">
+            {{ field.errors }}
+            {% if field.field.widget|klass = 'CheckboxInput' %}
+            <label for="{{ field.html_name }}">
+                {{ field.label }}
+                <input type="checkbox" id="{{ field.html_name }}" name="{{ field.html_name }}" />
+            </label>
+            {% else %}
+            {{ field.label_tag }}{{ field }}
+            {% endif %}
+            <div class="help">{{ field.help_text }}</div>
+        </div>
+{% endfor %}
+    </fieldset>

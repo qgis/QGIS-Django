@@ -1,0 +1,80 @@
+
+.navbar-inverse .brand {
+    color: #FFFFFF;
+}
+.page-top {
+    top: 0;
+}
+body {
+    padding-top: 40px;
+}
+.page-top {
+    top: 40px;
+}
+.navbar-inner {
+    padding-left: 12px !important;
+    padding-right: 12px !important;
+}
+@media (min-width: 980px) {
+.navbar h3 a, .navbar .brand {
+    background: url("logo.png") no-repeat scroll 22px 3px transparent;
+    padding-left: 62px;
+}
+}
+.bs-sidenav {
+    margin: 30px 0 0;
+    padding: 10px 0;
+    width: 228px;
+}
+.bs-sidenav ul {
+    list-style-type: none;
+}
+table {
+    border: 0 none;
+}
+.highlighttable .code pre {
+    font-size: 12px;
+}
+.highlighttable .linenos pre {
+    font-size: 12px;
+    word-break: normal;
+}
+table.field-list {
+    width: auto;
+}
+.footer {
+    border-top: 1px solid #CCCCCC;
+    padding-top: 10px;
+    width: 100%;
+}
+@media (min-width: 1200px) {
+.bs-sidenav {
+    width: 258px;
+}
+}
+@media (max-width: 980px) {
+.bs-sidenav {
+    margin-right: 0;
+    margin-top: 30px;
+    width: 218px;
+}
+}
+@media (min-width: 768px) and (max-width: 979px) {
+.bs-sidenav {
+    margin-top: 20px;
+    width: 166px;
+}
+}
+@media (max-width: 767px) {
+.navbar-version {
+    padding-left: 5px;
+}
+.bs-sidenav {
+    margin-bottom: 20px;
+    width: auto;
+}
+.bs-sidenav.affix {
+    position: static;
+    top: 0;
+}
+}

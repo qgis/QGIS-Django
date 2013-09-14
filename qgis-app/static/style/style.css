@@ -1,152 +1,35 @@
-@import url('template.css');
-@import url('blue.css');
-#map {
- width: 700px;
- height: 400px;
-}
-
-textarea#id_code, textarea#id_description {
-  width: 100%;
-}
-input#id_title, input#id_tags{
-  width: 100%;
-}
-div#leftcolumn li {
-  list-style-type: none;
-  margin-left: -10px;
-}
-/* Make community map forms layout nicely */
-form.horizontal input,
-form.horizontal select,
-form.horizontal textarea  {
-  display: block;
-}
-
-form.horizontal input[type="submit"]{
-  display: inline;
-  cursor: pointer;
-}
-
-form.horizontal label{
-  font-weight: bold;
-}
-
-
-/* ABP: plugins app styles */
 table.plugins {
-    width: 100%;
-    border-collapse:collapse;
+    font-size: 140%;
 }
 
-table.plugins td {
-    border-bottom: solid 1px #ddd;
-    padding: 0.25em;
+#maincolumn dl {
+    font-size: 140%;
 }
-table.plugins th {
-    padding: 0.25em;
-    border-top: solid 2px #ddd;
-    border-bottom: solid 2px #ddd;
-    font-size: 100%;
-    background: url("../images/bg_menu.png") repeat-x scroll center top transparent;
-    line-height: 1.4em;
+
+/* bs help block */
+div.help {
+    display: block;
+    margin-bottom: 10px;
 }
-#leftcolumn div.module_menu div.tag_cloud {
-    padding-top: 8px;
+
+#rating {
+    margin: 1em 0;
+}
+
+.fieldWrapper input, .fieldWrapper textarea {
+    width: 406px;
+}
+
+#id_tags__tagautosuggest {
+    width: inherit;
+}
+
+div.tag_cloud {
+    text-align: center;
 }
 
 div.tag_cloud a {
-   display: block;
-   float: left;
    margin: 4px;
 }
 
-#new_plugin_button h3  {
-    background:  url(../images/blue/bg_h3_btn.png) top left no-repeat;
-}
 
-.fieldWrapper .help {
-    color: gray;
-}
-
-td img.plugin-icon {
-    max-width: 24px;
-    max-height: 24px;
-}
-
-div.details img.plugin-icon {
-   display: block;
-   float: right;
-}
-
-pre,
-table.highlighttable pre,
-table.highlighttable pre span {
-  font-family: "Bitstream Vera Sans Mono", "Andale Mono", "Courier New", monospace;
-}
-
-table.highlighttable td.linenos {
-    padding-right: 1em;
-    vertical-align: top;
-}
-
-.centered, .wp-caption-text { text-align: center; }
-
-pre, .wp-caption-text {
-      background: #f8f2f0;
-      border: 1px solid #daccc8;
-      padding-bottom: 0.5em;
-      overflow: auto;
-    }
-
-#pagination_per_page {
- display: inline;
-}
-
-.plugin-description {
-    display: none;
-}
-
-#search-div {
-    float:right;
-    margin-top: 7px;
-}
-
-.fieldWrapper input[type=text] {
-    width: 100%;
-}
-
-/* plugins */
-
-div.plugin-details {
-    clear: both;
-}
-
-img.plugin-icon {
-    float: right;
-}
-
-div.plugin-details #rating {
-    margin-bottom: 1em;
-    height: 20px;
-}
-
-div.plugin-details .plugin-details-description{
-    border: solid 1px gray;
-    background-color: #f0f3f8;
-    padding: 0.5em;
-    font-size: 120%;
-    -moz-border-radius: 10px;
-    border-radius: 10px;    
-}
-
-#loading {
-    background: url(../images/loading.gif) top left no-repeat;
-    padding-left: 20px;
-}
-
-span.small-star {
-    background: url(../images/star_16.png) center bottom no-repeat;
-    width: 17px;
-    height: 17px;
-    display: inline-block;
-}

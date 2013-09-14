@@ -708,9 +708,9 @@ def version_manage(request, package_name, version):
     """
     Entry point for the user management functions
     """
-    if request.POST.get('version_approve'):
+    if request.POST.has_key('version_approve'):
         return version_approve(request, package_name, version)
-    if request.POST.get('version_unapprove'):
+    if request.POST.has_key('version_unapprove'):
         return version_unapprove(request, package_name, version)
 
     return HttpResponseRedirect(reverse('plugin_detail', args=[package_name]))

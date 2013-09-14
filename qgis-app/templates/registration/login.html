@@ -5,11 +5,17 @@
     <p>
        {% trans 'You can create a new OSGEO id on <a href="http://www.osgeo.org/osgeo_userid">OSGEO web portal.</a>' %}
     </p>
-  {% if form.errors %}
-  <ul class="messages">
-    <li class="error">{% trans "Sorry, that's not a valid username or password" %}</li>
-  </ul>
-  {% endif %}
+   {% if form.errors or form.non_field_errors %}
+    <div class="alert alert-error">
+        <button type="button" class="close" data-dismiss="alert">&times;</button>
+        {% for error in form.non_field_errors %}
+            <p>{{ error }}</p>
+        {% endfor %}
+        {% for error in form.field_errors %}
+            <p>{{ error }}</p>
+        {% endfor %}
+    </div>
+    {% endif %}
 
   <form class="horizontal" action='.' method='post'>{% csrf_token %}
     <p><label for="username">{% trans "User name" %}:</label>
@@ -17,7 +23,7 @@
     <p><label for="password">{% trans "Password" %}:</label>
     <input type="password" name="password" value="" id="password"></p>
 
-    <p><input type="submit" value="login" />
+    <p><input class="btn btn-primary" type="submit" value="login" />
     <input type="hidden" name="next" value="{{ next }}" /></p>
   </form>
 
