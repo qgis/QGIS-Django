@@ -38,9 +38,9 @@
 
                     <a class="brand" href="#">QGIS</a>
                     {% if user.is_authenticated %}
-                    <a id="user-tooltip" href="{% url fe_logout %}" data-toggle="tooltip" data-placement="bottom" title="{{ user.username }}" style="float: right !important"><i class="icon-user icon-3x"></i></a>
+                    <a id="user-tooltip" href="{% url "fe_logout" %}" data-toggle="tooltip" data-placement="bottom" title="{{ user.username }}" style="float: right !important"><i class="icon-user icon-3x"></i></a>
                     {% else %}
-                    <a href="{% url fe_login %}"><i class="icon-signin icon-3x"></i></a>
+                    <a href="{% url "fe_login" %}"><i class="icon-signin icon-3x"></i></a>
                     {% endif %}
 
                     <form class="navbar-search" action="/search/" method="get">

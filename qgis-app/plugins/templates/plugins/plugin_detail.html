@@ -90,7 +90,7 @@
                     {% if object.author %}
                         <dt>{% trans "Author"%}</dt>
                         <dd>
-                            <a title="{% trans "Plugins by"%} {{ object.author }}" href="{% url author_plugins object.author|urlencode %}">{{ object.author }}</a>
+                            <a title="{% trans "Plugins by"%} {{ object.author }}" href="{% url "author_plugins" object.author|urlencode %}">{{ object.author }}</a>
                         </dd>
                     {% endif %}
                     {% if object.email and not user.is_anonymous %}
@@ -98,14 +98,14 @@
                         <dd> <a href="mailto:{{ object.email }}">{{ object.email }}</a></dd>
                     {% endif %}
                     <dt>{% trans "Maintainer"%}</dt>
-                    <dd> 
-                        <a href="{% url user_details object.created_by %}">{{ object.created_by }}</a>
+                    <dd>
+                        <a href="{% url "user_details" object.created_by %}">{{ object.created_by }}</a>
                     </dd>
                     {% if object.owners.count %}
                         <dt>{% trans "Owners"%}</dt>
                         <dd>
                             {% for owner in object.owners.all %}
-                            <a href="{% url user_details owner.username %}">{{ owner.username }}</a>{% if not forloop.last %},{% endif %}
+                            <a href="{% url "user_details" owner.username %}">{{ owner.username }}</a>{% if not forloop.last %},{% endif %}
                             {% endfor %}
                         </dd>
                     {% endif %}
@@ -114,7 +114,7 @@
                         {% trans "Tags"%}
                     </dt>
                     <dd>
-                        {% for tag in object.tags.all %}<a href="{% url tags_plugins tag.name %}">{{tag}}</a>
+                        {% for tag in object.tags.all %}<a href="{% url "tags_plugins" tag.name %}">{{tag}}</a>
                         {% if not forloop.last %},&nbsp;{% endif %}{% endfor %}
                     </dd>
                     {% endif %}
@@ -132,11 +132,11 @@
                     {% endif %}
                     {% if object.stable %}
                         <dt>{% trans "Latest stable version"%}</dt>
-                        <dd> <a title="{% trans "Click to download" %}"  href="{% url version_detail object.package_name object.stable.version %}">{{ object.stable.version }}</a></dd>
+                        <dd> <a title="{% trans "Click to download" %}"  href="{% url "version_detail" object.package_name object.stable.version %}">{{ object.stable.version }}</a></dd>
                     {% endif %}
                     {% if object.experimental %}
                         <dt>{% trans "Latest experimental version"%}:</dt>
-                        <dd> <a title="{% trans "Click to download" %}" href="{% url version_detail object.package_name object.experimental.version %}">{{ object.experimental.version }}</a></dd>
+                        <dd> <a title="{% trans "Click to download" %}" href="{% url "version_detail" object.package_name object.experimental.version %}">{{ object.experimental.version }}</a></dd>
                     {% endif %}
                 </dl>
             </div>
@@ -168,7 +168,7 @@
                                 <td>{{ version.downloads }}</td>
                                 <td><a href="{% url "user_details" version.created_by.username %}">{{ version.created_by }}</a></td>
                                 <td>{{ version.created_on }}</td>
-                                {% if user.is_staff or user in version.plugin.approvers or user in version.plugin.editors %}<td><form method="post" action="{% url "version_manage" object.package_name version.version %}">
+                                {% if user.is_staff or user in version.plugin.approvers or user in version.plugin.editors %}<td><form method="post" action="{% url "version_manage" object.package_name version.version %}">{% csrf_token %}
                                 {% if user.is_staff or user in version.plugin.approvers %}
                                     {% if not version.approved %}<button class="btn btn-success btn-mini" type="submit" name="version_approve" id="version_approve"title="{% trans "Approve" %}"><i class="icon-thumbs-up icon-white"></i></button>{% else %}<button class="btn btn-warning btn-mini" type="submit" name="version_unapprove" id="version_unapprove" title="{% trans "Unapprove" %}"><i class="icon-thumbs-down icon-white"></i></button>{% endif %}
                                 {% endif %}
@@ -187,7 +187,7 @@
             <!-- manager functions -->
             {% if user.is_staff or user in object.editors %}
             <div class="tab-pane" id="plugin-manage">
-                <form method="post" action="{% url "plugin_manage" object.package_name %}">
+                <form method="post" action="{% url "plugin_manage" object.package_name %}">{% csrf_token %}
                 <div>
                         <a class="btn btn-primary" href="{% url "plugin_update" object.package_name %}">{% trans "Edit" %}</a>
                         <a class="btn btn-primary" href="{% url "version_create" object.package_name %}">{% trans "Add version" %}</a>

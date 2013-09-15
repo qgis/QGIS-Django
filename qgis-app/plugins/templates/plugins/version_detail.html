@@ -38,12 +38,12 @@
 
     {% if user.is_staff or user in version.plugin.approvers %}
             <h4>{% trans "Version approval"%}</h4>
-            <form class="form-inline" method="post" action="{% url "version_manage" version.plugin.package_name version.version %}">
+            <form class="form-inline" method="post" action="{% url "version_manage" version.plugin.package_name version.version %}">{% csrf_token %}
                 {% if not version.approved %}<input class="btn btn-success" type="submit" name="version_approve" id="version_approve" value="{% trans "Approve this version" %}" />&nbsp;{% else %}<input class="btn btn-warning" type="submit" name="version_unapprove" id="version_unapprove" value="{% trans "Unapprove this version" %}" />{% endif %}
             </form>
             {% if user.is_staff %}
             <h4>{% trans "Author management"%}</h4>
-            <form class="form-inline"  method="post" action="{% url "user_permissions_manage" version.plugin.created_by.username %}">
+            <form class="form-inline"  method="post" action="{% url "user_permissions_manage" version.plugin.created_by.username %}">{% csrf_token %}
                 {% if version.created_by.is_active %}
                 <input class="btn btn-danger" type="submit" id="user_block" name="user_block" value="{% trans "Block author" %}" />{% else %}
                 <input class="btn btn-warning" type="submit" id="user_unblock" name="user_unblock" value="{% trans "Unblock author" %}" />

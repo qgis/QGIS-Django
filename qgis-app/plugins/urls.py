@@ -2,7 +2,7 @@
 from django.conf.urls.defaults import *
 from plugins.models import Plugin, PluginVersion
 from django.utils.translation import ugettext_lazy as _
-
+from django.contrib.auth.decorators import login_required, user_passes_test
 from plugins.views import *
 from plugins.models import Plugin, PluginVersion
 from plugins.views import PluginDetailView
@@ -11,10 +11,10 @@ from plugins.views import PluginDetailView
 urlpatterns = patterns('plugins.views',
     # XML
     url(r'^plugins.xml$', 'xml_plugins', {}, name='xml_plugins'),
-    url(r'^tags/(?P<tags>[^\/]+)/$', 'tags_plugins', {}, name='tags_plugins'),
+    url(r'^tags/(?P<tags>[^\/]+)/$', PluginsList.as_view(), name='tags_plugins'),
     #url(r'^my/$', 'my_plugins', {}, name='my_plugins'),
     url(r'^add/$', 'plugin_upload', {}, name='plugin_upload'),
-    url(r'^user/(?P<username>\w+)/$', 'user_plugins', {}, name='user_plugins'),
+    #url(r'^user/(?P<username>\w+)/$', 'user_plugins', {}, name='user_plugins'),
     url(r'^user/(?P<username>\w+)/block/$', 'user_block', {}, name='user_block'),
     url(r'^user/(?P<username>\w+)/unblock/$', 'user_unblock', {}, name='user_unblock'),
     url(r'^user/(?P<username>\w+)/admin$', 'user_details', {}, name='user_details'),
@@ -28,24 +28,24 @@ urlpatterns = patterns('plugins.views',
     url(r'^(?P<package_name>[A-Za-z][A-Za-z0-9-_]+)/unset_featured/$', 'plugin_unset_featured', {}, name='plugin_unset_featured'),
 
     url(r'^$', PluginsList.as_view(), name='approved_plugins'),
-    url(r'^my$', MyPluginsList.as_view(), name='my_plugins'),
+    url(r'^my$', login_required(MyPluginsList.as_view(additional_context={'title':_('My Plugins')})), name='my_plugins'),
     url(r'^featured/$', PluginsList.as_view(queryset=Plugin.featured_objects.all()), name='featured_plugins'),
+    url(r'^user/(?P<username>\w+)/$', UserPluginsList.as_view(), name='user_plugins'),
 
-    #url(r'^$', 'plugins_list', { 'queryset' : Plugin.approved_objects.all()}, name='approved_plugins'),
-    #url(r'^featured/$', 'plugins_list', {'queryset' : Plugin.featured_objects.all(), 'extra_context' : {'title' : _('Featured plugins')}}, name='featured_plugins'),
-    url(r'^unapproved/$', 'plugins_list', {'queryset' : Plugin.unapproved_objects.all(), 'extra_context' : {'title' : _('Unapproved plugins')}}, name='unapproved_plugins'),
-    url(r'^deprecated/$', 'plugins_list', {'queryset' : Plugin.deprecated_objects.all(), 'extra_context' : {'title' : _('Deprecated plugins')}}, name='deprecated_plugins'),
-    url(r'^fresh/$', 'plugins_list', {'queryset' : Plugin.fresh_objects.all(), 'extra_context' : {'title' : _('Fresh plugins')}}, name='fresh_plugins'),
-    url(r'^stable/$', 'plugins_list', {'queryset' : Plugin.stable_objects.all(), 'extra_context' : {'title' : _('Stable plugins')}}, name='stable_plugins'),
-    url(r'^experimental/$', 'plugins_list', {'queryset' : Plugin.experimental_objects.all(), 'extra_context' : {'title' : _('Experimental plugins')}}, name='experimental_plugins'),
-    url(r'^popular/$', 'plugins_list', {'queryset' : Plugin.popular_objects.all(), 'extra_context' : {'title' : _('Popular plugins')}}, name='popular_plugins'),
-    url(r'^most_voted/$', 'plugins_list', {'queryset' : Plugin.most_voted_objects.all(), 'extra_context' : {'title' : _('Most voted plugins')}}, name='most_voted_plugins'),
-    url(r'^most_downloaded/$', 'plugins_list', {'queryset' : Plugin.most_downloaded_objects.all(), 'extra_context' : {'title' : _('Most downloaded plugins')}}, name='most_downloaded_plugins'),
-    url(r'^most_voted/$', 'plugins_list', {'queryset' : Plugin.most_voted_objects.all(), 'extra_context' : {'title' : _('Most voted plugins')}}, name='most_voted_plugins'),
-    url(r'^most_rated/$', 'plugins_list', {'queryset' : Plugin.most_rated_objects.all(), 'extra_context' : {'title' : _('Most rated plugins')}}, name='most_rated_plugins'),
 
-    url(r'^author/(?P<author>[^/]+)/$', 'author_plugins', {}, name='author_plugins'),
+    url(r'^unapproved/$', PluginsList.as_view(queryset=Plugin.unapproved_objects.all(), additional_context={'title' : _('Unapproved plugins')}), name='unapproved_plugins'),
+    url(r'^deprecated/$', PluginsList.as_view(queryset=Plugin.deprecated_objects.all(), additional_context={'title' : _('Deprecated plugins')}), name='deprecated_plugins'),
+    url(r'^fresh/$', PluginsList.as_view(queryset=Plugin.fresh_objects.all(), additional_context={'title' : _('Fresh plugins')}), name='fresh_plugins'),
+    url(r'^stable/$', PluginsList.as_view(queryset=Plugin.stable_objects.all(), additional_context={'title' : _('Stable plugins')}), name='stable_plugins'),
+    url(r'^experimental/$', PluginsList.as_view(queryset=Plugin.experimental_objects.all(), additional_context={'title' : _('Experimental plugins')}), name='experimental_plugins'),
+    url(r'^popular/$', PluginsList.as_view(queryset=Plugin.popular_objects.all(), additional_context={'title' : _('Popular plugins')}), name='popular_plugins'),
+    url(r'^most_voted/$', PluginsList.as_view(queryset=Plugin.most_voted_objects.all(), additional_context={'title' : _('Most voted plugins')}), name='most_voted_plugins'),
+    url(r'^most_downloaded/$', PluginsList.as_view(queryset=Plugin.most_downloaded_objects.all(), additional_context={'title' : _('Most downloaded plugins')}), name='most_downloaded_plugins'),
+    url(r'^most_voted/$', PluginsList.as_view(queryset=Plugin.most_voted_objects.all(), additional_context={'title' : _('Most voted plugins')}), name='most_voted_plugins'),
+    url(r'^most_rated/$', PluginsList.as_view(queryset=Plugin.most_rated_objects.all(), additional_context={'title' : _('Most rated plugins')}), name='most_rated_plugins'),
 
+    #url(r'^author/(?P<author>[^/]+)/$', 'author_plugins', {}, name='author_plugins'),
+    url(r'^author/(?P<author>[^/]+)/$', AuthorPluginsList.as_view(), name='author_plugins'),
 )
 
 

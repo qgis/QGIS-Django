@@ -401,6 +401,7 @@ class PluginsList(ListView):
     model = Plugin
     queryset = Plugin.approved_objects.all()
     title =  _('All plugins')
+    additional_context = {}
     #paginate_by =  settings.PAGINATION_DEFAULT_PAGINATION
     def get_context_data(self, **kwargs):
         context = super(PluginsList, self).get_context_data(**kwargs)
@@ -408,58 +409,49 @@ class PluginsList(ListView):
             'per_page': settings.PAGINATION_DEFAULT_PAGINATION,
             'title': self.title,
         })
+        context.update(self.additional_context)
         return context
 
 
 
-
-def plugins_list(request, queryset, template_name=None, extra_context=None):
-    """
-    Supports per_page
-    """
-    per_page = request.REQUEST.get('per_page', settings.PAGINATION_DEFAULT_PAGINATION)
-    try:
-        extra_context['per_page'] = int(per_page)
-    except TypeError:
-        extra_context = {'per_page': int(per_page)}
-    return object_list(
-        request,
-        queryset,
-        template_name=template_name,
-        extra_context=extra_context,
-        allow_empty=True,
-    )
-
-@login_required
-def __my_plugins(request):
-    """
-    Shows user's plugins (plugins where user is in owners or user is author)
-    """
-    queryset = Plugin.base_objects.filter(owners=request.user).distinct() | Plugin.objects.filter(created_by=request.user).distinct()
-    return plugins_list(request, queryset, template_name = 'plugins/plugin_list_my.html', extra_context = { 'title' : _('My plugins')})
-
-
 class MyPluginsList(PluginsList):
-    title = _('My plugins')
+    def get_queryset(self):
+        return Plugin.base_objects.filter(owners=self.request.user).distinct() | Plugin.objects.filter(created_by=self.request.user).distinct()
 
 
-
-def user_plugins(request, username):
-    """
-    List published plugins created_by user
-    """
-    user = get_object_or_404(User, username=username)
-    queryset = Plugin.approved_objects.filter(created_by=user)
-    return plugins_list(request, queryset, extra_context = { 'title' : _('Plugins from "%s"') % user})
+class UserPluginsList(PluginsList):
+    def get_queryset(self):
+        user = get_object_or_404(User, username=self.kwargs['username'])
+        return Plugin.approved_objects.filter(created_by=user)
 
 
-def tags_plugins(request, tags):
-    """
-    List plugins with given tags
-    """
-    tag_list = [t.strip().lower() for t in tags.split(',')]
-    queryset = Plugin.approved_objects.filter(tags__name__in=tag_list)
-    return plugins_list(request, queryset, extra_context = { 'title' : _('Plugins with tag "%s"') % tags})
+class AuthorPluginsList(PluginsList):
+    def get_queryset(self):
+        return Plugin.approved_objects.filter(author=self.kwargs['author'])
+    def get_context_data(self, **kwargs):
+        context = super(AuthorPluginsList, self).get_context_data(**kwargs)
+        context.update({
+            'title' : _('Plugins by %s') % self.kwargs['author'],
+        })
+        return context
+
+
+#def user_plugins(request, username):
+    #"""
+    #List published plugins created_by user
+    #"""
+    #user = get_object_or_404(User, username=username)
+    #queryset = Plugin.approved_objects.filter(created_by=user)
+    #return plugins_list(request, queryset, extra_context = { 'title' : _('Plugins from "%s"') % user})
+
+
+#def tags_plugins(request, tags):
+    #"""
+    #List plugins with given tags
+    #"""
+    #tag_list = [t.strip().lower() for t in tags.split(',')]
+    #queryset = Plugin.approved_objects.filter(tags__name__in=tag_list)
+    #return plugins_list(request, queryset, extra_context = { 'title' : _('Plugins with tag "%s"') % tags})
 
 
 @login_required
@@ -484,7 +476,7 @@ def plugin_manage(request, package_name):
 
 ###############################################
 
-def author_plugins(request, author):
+def __author_plugins(request, author):
     """
     List plugins from author
     """
