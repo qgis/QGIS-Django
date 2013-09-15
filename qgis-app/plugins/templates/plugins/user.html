@@ -4,22 +4,21 @@
 
     {% if user.is_staff %}
     <h2>{% trans "User Details of: " %} {{ plugin_user.username }}</h2>
-
     <ul>
-        {% if  plugin_user.first_name %}<li>{% trans "First name: " %} {{ plugin_user.first_name }}</li>{% endif %}
+        {% if plugin_user.first_name %}<li>{% trans "First name: " %} {{ plugin_user.first_name }}</li>{% endif %}
         {% if  plugin_user.last_name %}<li>{% trans "Last name: " %} {{ plugin_user.last_name }}</li>{% endif %}
-        <li>{% trans "Email: " %} {{ plugin_user.email }}</li>
+        {% if  plugin_user.email %}
+        <li>{% trans "Email: " %} {{ plugin_user.email }}</li>{% endif %}
     </ul>
-    <form method="post" action="{% url "user_permissions_manage" plugin_user.username %}">
-    <div>
-        <ul class="actions">
+    <form method="post" action="{% url "user_permissions_manage" plugin_user.username %}">{% csrf_token %}
+    <div class="form-actions">
             {% if plugin_user.is_active %}
-            <li><input type="submit" id="user_block" name="user_block" value="{% trans "Block author" %}" /></li>{% else %}
-                <li><input type="submit" id="user_unblock" name="user_unblock" value="{% trans "Unblock author" %}" /></li>
+            <input class="btn btn-danger" type="submit" id="user_block" name="user_block" value="{% trans "Block author" %}" />{% else %}
+                <input class="btn btn-warning"  type="submit" id="user_unblock" name="user_unblock" value="{% trans "Unblock author" %}" />
             {% endif %}
             {% if plugin_user.is_active %}
-            {% if not user_is_trusted %}<li><input type="submit" id="user_trust" name="user_trust" value="{% trans "Trust author" %}" /></li>{% else %}
-            <li><input type="submit" id="user_untrust" name="user_untrust" value="{% trans "Untrust author" %}" /></li>{% endif %}
+            {% if not user_is_trusted %}<input class="btn btn-success" type="submit" id="user_trust" name="user_trust" value="{% trans "Trust author" %}" /></li>{% else %}
+            <li><input class="btn btn-danger" type="submit" id="user_untrust" name="user_untrust" value="{% trans "Untrust author" %}" />{% endif %}
             {% endif %}
         </ul>
     </div>

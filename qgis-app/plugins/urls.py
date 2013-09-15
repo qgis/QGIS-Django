@@ -11,13 +11,12 @@ from plugins.views import PluginDetailView
 urlpatterns = patterns('plugins.views',
     # XML
     url(r'^plugins.xml$', 'xml_plugins', {}, name='xml_plugins'),
-    url(r'^tags/(?P<tags>[^\/]+)/$', PluginsList.as_view(), name='tags_plugins'),
+    url(r'^tags/(?P<tags>[^\/]+)/$', TagsPluginsList.as_view(), name='tags_plugins'),
     #url(r'^my/$', 'my_plugins', {}, name='my_plugins'),
     url(r'^add/$', 'plugin_upload', {}, name='plugin_upload'),
     #url(r'^user/(?P<username>\w+)/$', 'user_plugins', {}, name='user_plugins'),
     url(r'^user/(?P<username>\w+)/block/$', 'user_block', {}, name='user_block'),
     url(r'^user/(?P<username>\w+)/unblock/$', 'user_unblock', {}, name='user_unblock'),
-    url(r'^user/(?P<username>\w+)/admin$', 'user_details', {}, name='user_details'),
     url(r'^user/(?P<username>\w+)/trust/$', 'user_trust', {}, name='user_trust'),
     url(r'^user/(?P<username>\w+)/untrust/$', 'user_untrust', {}, name='user_untrust'),
 
@@ -27,6 +26,7 @@ urlpatterns = patterns('plugins.views',
     url(r'^(?P<package_name>[A-Za-z][A-Za-z0-9-_]+)/set_featured/$', 'plugin_set_featured', {}, name='plugin_set_featured'),
     url(r'^(?P<package_name>[A-Za-z][A-Za-z0-9-_]+)/unset_featured/$', 'plugin_unset_featured', {}, name='plugin_unset_featured'),
 
+    url(r'^user/(?P<username>\w+)/admin$', UserDetailsPluginsList.as_view(), name='user_details'),
     url(r'^$', PluginsList.as_view(), name='approved_plugins'),
     url(r'^my$', login_required(MyPluginsList.as_view(additional_context={'title':_('My Plugins')})), name='my_plugins'),
     url(r'^featured/$', PluginsList.as_view(queryset=Plugin.featured_objects.all()), name='featured_plugins'),

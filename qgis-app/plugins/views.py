@@ -414,6 +414,39 @@ class AuthorPluginsList(PluginsList):
         return context
 
 
+
+class UserDetailsPluginsList(PluginsList):
+    """
+    List plugins created_by OR owned by user
+    """
+    template_name = 'plugins/user.html'
+    def get_queryset(self):
+        user = get_object_or_404(User, username=self.kwargs['username'])
+        return Plugin.approved_objects.filter(Q(created_by=user) | Q(owners=user))
+
+    def get_context_data(self, **kwargs):
+        user = get_object_or_404(User, username=self.kwargs['username'])
+        user_is_trusted = user.has_perm('plugins.can_approve')
+        context = super(UserDetailsPluginsList, self).get_context_data(**kwargs)
+        context.update({
+            'title' : _('Plugins from %s') % user,
+            'user_is_trusted' : user_is_trusted,
+            'plugin_user': user,
+        })
+        return context
+
+
+class TagsPluginsList(PluginsList):
+    def get_queryset(self):
+        return Plugin.approved_objects.filter(tagged_items__tag__name=self.kwargs['tags'])
+    def get_context_data(self, **kwargs):
+        context = super(TagsPluginsList, self).get_context_data(**kwargs)
+        context.update({
+            'title' : _('Plugins tagged with: %s') % self.kwargs['tags'],
+        })
+        return context
+
+
 @login_required
 @require_POST
 def plugin_manage(request, package_name):
@@ -450,15 +483,6 @@ def __author_plugins(request, author):
 # User management functions
 
 ###############################################
-
-def user_details(request, username):
-    """
-    List plugins created_by OR owned by user
-    """
-    user = get_object_or_404(User, username=username)
-    user_is_trusted = user.has_perm('plugins.can_approve')
-    queryset = Plugin.approved_objects.filter(Q(created_by=user) | Q(owners=user))
-    return plugins_list(request, queryset, template_name = 'plugins/user.html', extra_context = { 'user_is_trusted' : user_is_trusted, 'plugin_user': user, 'title' : _('Plugins from %s') % user })
 
 
 @staff_required
