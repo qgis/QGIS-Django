@@ -1,9 +1,9 @@
-{% extends 'base.html' %}{% load i18n %}
+  {% extends 'base.html' %}{% load i18n %}
 {% block extracss %}
 <link type="text/css" href="/static/style/planet.css" rel="stylesheet" />
 {% endblock %}
 {% block app_title %}
-{% trans "Quantum GIS Planet" %}
+<h2>{% trans "QGIS Planet" %}</h2>
 {% endblock %}
 
 
@@ -11,18 +11,16 @@
 {{ block.super }}
 <div class="module_menu">
   <div id="paginate">
-    <ul>
+    <p class="text-center">Page {{ page }} of {{ pages }} ({% blocktrans count hits as posts %}{{ posts }} post{% plural %}{{ posts }} posts{% endblocktrans %})</p>
+    <ul class="pager">
       {% if has_previous %}
       <li><a href="?page={{ previous }}">&lt;&lt;</a></li>
       {% endif %}
-      <li>
-        Page {{ page }} of {{ pages }} (
-          {% blocktrans count hits as posts %}{{ posts }} post{% plural %}{{ posts }} posts{% endblocktrans %}
-        )
-      </li>
       {% if has_next %}
       <li><a href="?page={{ next }}">&gt;&gt;</a></li>
       {% endif %}
+    </ul>
+    <ul>
       {% if user %}
       <li class="username"><a href="{{ user.feed.link }}">{{ user.name }}</a>{% trans "talks about" %} »</li>
       {% endif %}
@@ -207,7 +205,7 @@ title="{{ feed.feed.title }}">{{ feed.name }}</a></li>
 {% endcomment %}
 
 <div id="paginate">
-<ul>
+<ul class="pager">
 
 {% if has_previous %}
 <li><a href="?page={{ previous }}">&lt;&lt;</a></li>
