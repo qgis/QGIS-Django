@@ -9,6 +9,4 @@ def avatar_exists( value ):
     """
     Test if an avatar exists
     """
-    path = '%simg/faces/%s.png' % (settings.MEDIA_ROOT, value)
-    print path
-    default_storage.exists(path)
+    default_storage.exists('%simg/faces/%s.png' % (settings.MEDIA_ROOT, value))
