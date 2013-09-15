@@ -45,7 +45,6 @@
 {{ block.super }}
 {% endblock %}
 {% block content %}
-
    <h2>{% trans "Plugin" %}: {{ object.name }}
    {% if object.icon %}
         {% thumbnail object.icon "128x128" upscale=False format="PNG" as im %}
@@ -89,25 +88,56 @@
             <div class="tab-pane active" id="plugin-details">
                 <dl class="dl-horizontal">
                     {% if object.author %}
-                    <dt>{% trans "Author"%}</dt><dd> <a title="{% trans "Plugins by"%} {{ object.author }}" href="{% url "author_plugins" object.author|urlencode %}">{{ object.author }}</a></dd>
+                        <dt>{% trans "Author"%}</dt>
+                        <dd>
+                            <a title="{% trans "Plugins by"%} {{ object.author }}" href="{% url author_plugins object.author|urlencode %}">{{ object.author }}</a>
+                        </dd>
                     {% endif %}
                     {% if object.email and not user.is_anonymous %}
-                    <dt>{% trans "Author's email"%}</dt><dd> <a href="mailto:{{ object.email }}">{{ object.email }}</a></dd>
+                        <dt>{% trans "Author's email"%}</dt>
+                        <dd> <a href="mailto:{{ object.email }}">{{ object.email }}</a></dd>
                     {% endif %}
-                    <dt>{% trans "Maintainer"%}</dt><dd> <a href="{% url "user_details" object.created_by %}">{{ object.created_by }}</a></dd>
-                    {% if object.owners.count %}<dt>{% trans "Owners"%}</dt><dd>
-                        {% for owner in object.owners.all %}
-                            <a href="{% url "user_details" owner.username %}">{{ owner.username }}</a>{% if not forloop.last %},{% endif %}
-                        {% endfor %}
+                    <dt>{% trans "Maintainer"%}</dt>
+                    <dd> 
+                        <a href="{% url user_details object.created_by %}">{{ object.created_by }}</a>
+                    </dd>
+                    {% if object.owners.count %}
+                        <dt>{% trans "Owners"%}</dt>
+                        <dd>
+                            {% for owner in object.owners.all %}
+                            <a href="{% url user_details owner.username %}">{{ owner.username }}</a>{% if not forloop.last %},{% endif %}
+                            {% endfor %}
+                        </dd>
+                    {% endif %}
+                    {% if object.tags.count %}
+                    <dt>
+                        {% trans "Tags"%}
+                    </dt>
+                    <dd>
+                        {% for tag in object.tags.all %}<a href="{% url tags_plugins tag.name %}">{{tag}}</a>
+                        {% if not forloop.last %},&nbsp;{% endif %}{% endfor %}
                     </dd>
                     {% endif %}
-                    {% if object.tags.count %}<dt>{% trans "Tags"%}</dt><dd>
-                    {% for tag in object.tags.all %}<a href="{% url "tags_plugins" tag.name %}">{{tag}}</a>{% if not forloop.last %},&nbsp;{% endif %}{% endfor %}</dd>{% endif %}
-                    {% if object.homepage %}<dt>{% trans "Plugin home page"%}</dt><dd> <a href="{{ object.homepage }}">{{ object.homepage }}</a></dd>{% endif %}
-                    {% if object.tracker %}<dt>{% trans "Tracker" %}</dt><dd> <a href="{{ object.tracker }}">{% trans "Browse and report bugs" %}</a></dd>{% endif %}
-                    {% if object.repository %}<dt>{% trans "Code repository" %}</dt><dd> <a href="{{ object.repository }}">{{ object.repository }}</a></dd>{% endif %}
-                    {% if object.stable %}<dt>{% trans "Latest stable version"%}</dt><dd> <a title="{% trans "Click to download" %}"  href="{% url "version_detail" object.package_name object.stable.version %}">{{ object.stable.version }}</a></dd>{% endif %}
-                    {% if object.experimental %}<dt>{% trans "Latest experimental version"%}:</dt><dd> <a title="{% trans "Click to download" %}" href="{% url "version_detail" object.package_name object.experimental.version %}">{{ object.experimental.version }}</a></dd>{% endif %}
+                    {% if object.homepage %}
+                        <dt>{% trans "Plugin home page"%}</dt>
+                        <dd> <a href="{{ object.homepage }}">{{ object.homepage }}</a></dd>
+                    {% endif %}
+                    {% if object.tracker %}
+                        <dt>{% trans "Tracker" %}</dt>
+                        <dd> <a href="{{ object.tracker }}">{% trans "Browse and report bugs" %}</a></dd>
+                    {% endif %}
+                    {% if object.repository %}
+                        <dt>{% trans "Code repository" %}</dt>
+                        <dd> <a href="{{ object.repository }}">{{ object.repository }}</a></dd>
+                    {% endif %}
+                    {% if object.stable %}
+                        <dt>{% trans "Latest stable version"%}</dt>
+                        <dd> <a title="{% trans "Click to download" %}"  href="{% url version_detail object.package_name object.stable.version %}">{{ object.stable.version }}</a></dd>
+                    {% endif %}
+                    {% if object.experimental %}
+                        <dt>{% trans "Latest experimental version"%}:</dt>
+                        <dd> <a title="{% trans "Click to download" %}" href="{% url version_detail object.package_name object.experimental.version %}">{{ object.experimental.version }}</a></dd>
+                    {% endif %}
                 </dl>
             </div>
             <div class="tab-pane" id="plugin-versions">
@@ -175,4 +205,5 @@
             {% endif %}
             {# end admin #}
         </div><!-- tab content -->
+    </div>
 {% endblock %}

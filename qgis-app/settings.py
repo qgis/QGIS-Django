@@ -139,6 +139,7 @@ INSTALLED_APPS = (
     'rpc4django',
     'south',
     'djangoratings',
+    'lib',
 )
 
 TEMPLATE_CONTEXT_PROCESSORS = (
@@ -213,9 +214,16 @@ RATINGS_VOTES_PER_IP=10000
 
 OLWIDGET_STATIC_URL='/static/olwidget/'
 
+DEBUG_TOOLBAR_CONFIG = {
+    'INTERCEPT_REDIRECTS': False
+}
+
 # auth overrids
 from settings_auth import *
 
 # Local settings overrides
 # Must be the last!
-from settings_local import *
+try:
+    from settings_local import *
+except ImportError:
+    pass

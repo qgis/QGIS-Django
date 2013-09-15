@@ -1,7 +1,7 @@
 {% load i18n simplemenu_tags %}<!DOCTYPE html>
 <html xmlns="http://www.w3.org/1999/xhtml">
 <head>
-  <title>{% block extratitle %}{% endblock %}QGIS Plugins Repository</title>
+  <title>QGIS - {% block extratitle %}{% endblock %}</title>
   <meta name="AUTHOR" content="ItOpen" />
   <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
 
@@ -10,6 +10,7 @@
     <link rel="stylesheet" href="/static/style/new/qgis-style.css" type="text/css" />
     <link rel="stylesheet" href="/static/style/new/bootstrap-sphinx.css" type="text/css" />
     <link rel="stylesheet" href="/static/bootstrap/css/bootstrap-responsive.min.css" type="text/css" />
+    <link rel="stylesheet" href="/static/font-awesome/css/font-awesome.min.css">
     <link type="text/css" href="/static/style/style.css" rel="stylesheet" />
     {% block extracss %}{% endblock %}
 
@@ -36,7 +37,11 @@
                     </button>
 
                     <a class="brand" href="#">QGIS</a>
-                    <span class="navbar-text pull-left"><b>2.0</b></span>
+                    {% if user.is_authenticated %}
+                    <a id="user-tooltip" href="{% url fe_logout %}" data-toggle="tooltip" data-placement="bottom" title="{{ user.username }}" style="float: right !important"><i class="icon-user icon-3x"></i></a>
+                    {% else %}
+                    <a href="{% url fe_login %}"><i class="icon-signin icon-3x"></i></a>
+                    {% endif %}
 
                     <form class="navbar-search" action="/search/" method="get">
                       <input type="text"  id="id_q" name="q" class="search-query" placeholder="Search" />
@@ -71,14 +76,7 @@
                 {% endblock %}
                 <div class="span9" id="maincolumn">
                     <section class="info">
-                        {% block app_title %}
-                        <h1>{% trans "QGIS Python Plugins Repository"%}</h1>
-                        {% endblock %}
-                        {% block status %}
-                        <div class="pull-right" id="user4">
-                            {% if user.is_authenticated %}<div class="userinfo">{% trans "Welcome"%}: {{ user }}</div>{% endif %}
-                        </div>
-                        {% endblock %}
+                        {% block app_title %}{% endblock %}
                     </section>
                     {% if messages %}
                     <div class="alert">
@@ -121,5 +119,8 @@
             </div>
         </footer>
     </div>
+<script type="text/javascript">
+$('#user-tooltip').tooltip('hide');
+</script>
 </body>
 </html>

@@ -1,13 +1,13 @@
 {% extends BASE_TEMPLATE %}{% load i18n plugins_tagcloud %}
 
 {% block app_title %}
-<h1>{% trans "QGIS Python Plugins Repository"%}</h1>
+<h2>{% trans "QGIS Python Plugins Repository"%}</h2>
 {% endblock %}
 
 
 {% block menu %}
 {{ block.super }}
-<a class="btn btn-block btn-primary btn-large" href="{% url "plugin_upload" %}"><i class="icon-upload icon-white icon-large"></i> {% trans "Share a plugin" %}</a>
+<a class="btn btn-block btn-primary btn-large" href="{% url plugin_upload %}"><i class="icon-upload icon-white icon-2x" style=" vertical-align: middle;"></i> {% trans "Share a plugin" %}</a>
 <h3>{% trans "Plugins" %}</h3>
 <ul class="nav nav-list">
         {% if user.is_authenticated %}

@@ -1,9 +1,9 @@
-{% extends 'base.html' %}{% load i18n %}
+  {% extends 'base.html' %}{% load i18n avatar_exists %}
 {% block extracss %}
 <link type="text/css" href="/static/style/planet.css" rel="stylesheet" />
 {% endblock %}
 {% block app_title %}
-{% trans "Quantum GIS Planet" %}
+<h2>{% trans "QGIS Planet" %}</h2>
 {% endblock %}
 
 
@@ -11,18 +11,16 @@
 {{ block.super }}
 <div class="module_menu">
   <div id="paginate">
-    <ul>
+    <p class="text-center">Page {{ page }} of {{ pages }} ({% blocktrans count hits as posts %}{{ posts }} post{% plural %}{{ posts }} posts{% endblocktrans %})</p>
+    <ul class="pager">
       {% if has_previous %}
       <li><a href="?page={{ previous }}">&lt;&lt;</a></li>
       {% endif %}
-      <li>
-        Page {{ page }} of {{ pages }} (
-          {% blocktrans count hits as posts %}{{ posts }} post{% plural %}{{ posts }} posts{% endblocktrans %}
-        )
-      </li>
       {% if has_next %}
       <li><a href="?page={{ next }}">&gt;&gt;</a></li>
       {% endif %}
+    </ul>
+    <ul>
       {% if user %}
       <li class="username"><a href="{{ user.feed.link }}">{{ user.name }}</a>{% trans "talks about" %} »</li>
       {% endif %}
@@ -34,9 +32,8 @@
   <div id="feed_list">
 <h4>{% trans "Blog List" %}</h4>
 
-<ul class="suscriptores">
 {% for feed in subscribers %}
-<li>
+<p>
 <a href="{{ feed.feed.feed_url }}"
 {% if feed.feed.last_modified %}
 title="{% blocktrans with feed.feed.last_modified as last_modified %}feed (last modified: {{ last_modified }}){% endblocktrans %}"
@@ -110,11 +107,12 @@ title="{{ feed.feed.title }}">{{ feed.name }}</a></li>
   <div class="post">
   {% ifchanged %}
   <!-- {{ item.date_modified|date:"F j, Y" }} -->
+  {% if item.subscriber.shortname|avatar_exists %}
   <div class="avatar">
-    <img
-     src="{{ media_url }}/img/faces/{{ item.subscriber.shortname}}.png" alt="">
+    <img src="{{ media_url }}/img/faces/{{ item.subscriber.shortname}}.png" alt="">
     <br/>
   </div>
+  {% endif %}
   {% endifchanged %}
 
   {% if item.title %}
@@ -207,7 +205,7 @@ title="{{ feed.feed.title }}">{{ feed.name }}</a></li>
 {% endcomment %}
 
 <div id="paginate">
-<ul>
+<ul class="pager">
 
 {% if has_previous %}
 <li><a href="?page={{ previous }}">&lt;&lt;</a></li>
@@ -228,4 +226,10 @@ title="{{ feed.feed.title }}">{{ feed.name }}</a></li>
 {% endif %}
 </ul>
 </div>
+<p class="text-center">
+<a href="#top"> 
+<i class="icon-arrow-up"></i> {% trans "Back to Top" %}
+</a>
+</p>
 {% endblock %}
+

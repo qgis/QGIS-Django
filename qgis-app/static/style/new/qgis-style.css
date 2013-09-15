@@ -163,6 +163,22 @@ pre, code {
     text-shadow: none !important;
     width: 150px;
 }
+.icon-user {
+    color: #fff;
+    top: 100px !important;
+    float: right !important;
+    margin: 16px 0 0 20px !important;
+    text-decoration:none !important;
+}
+
+.icon-signin {
+    color: #fff;
+    top: 100px !important;
+    float: right !important;
+    margin: 16px 0 0 20px !important;
+    text-decoration:none !important;
+}
+
 .navbar-inner > select body, .navbar-inner > select html {
     background: none repeat scroll 0 0 #444444;
     padding: 50px 0;
