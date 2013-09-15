@@ -146,7 +146,7 @@ def plugin_create(request):
     """
     if request.method == 'POST':
         form = PluginForm(request.POST, request.FILES)
-        form.fields['owners'].queryset = User.objects.exclude(pk=request.user.pk)
+        form.fields['owners'].queryset = User.objects.exclude(pk=request.user.pk).order_by('username')
         if form.is_valid():
             plugin = form.save(commit = False)
             plugin.created_by = request.user
@@ -157,7 +157,7 @@ def plugin_create(request):
             return HttpResponseRedirect(plugin.get_absolute_url())
     else:
         form = PluginForm()
-        form.fields['owners'].queryset = User.objects.exclude(pk=request.user.pk)
+        form.fields['owners'].queryset = User.objects.exclude(pk=request.user.pk).order_by('username')
 
     return render_to_response('plugins/plugin_form.html', { 'form' : form , 'form_title' : _('New plugin')}, context_instance=RequestContext(request))
 
@@ -352,7 +352,7 @@ def plugin_update(request, package_name):
         return render_to_response('plugins/plugin_permission_deny.html', {}, context_instance=RequestContext(request))
     if request.method == 'POST':
         form = PluginForm(request.POST, request.FILES, instance=plugin)
-        form.fields['owners'].queryset = User.objects.exclude(pk=plugin.created_by.pk)
+        form.fields['owners'].queryset = User.objects.exclude(pk=plugin.created_by.pk).order_by('username')
         if form.is_valid():
             new_object = form.save(commit=False)
             new_object.modified_by = request.user
@@ -371,7 +371,7 @@ def plugin_update(request, package_name):
             return HttpResponseRedirect(new_object.get_absolute_url())
     else:
         form = PluginForm(instance = plugin)
-        form.fields['owners'].queryset = User.objects.exclude(pk=plugin.created_by.pk)
+        form.fields['owners'].queryset = User.objects.exclude(pk=plugin.created_by.pk).order_by('username')
 
     return render_to_response('plugins/plugin_form.html', { 'form' : form , 'form_title' : _('Edit plugin')}, context_instance=RequestContext(request))
 
