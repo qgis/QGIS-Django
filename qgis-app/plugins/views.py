@@ -317,26 +317,6 @@ class PluginDetailView(DetailView):
         return context
 
 
-
-@csrf_protect
-def __plugin_detail(request, package_name, **kwargs):
-    """
-    Just a wrapper for clean urls
-    """
-    plugin = get_object_or_404(Plugin, package_name=package_name)
-    # Warnings for owners
-    if check_plugin_access(request.user, plugin) and not (plugin.homepage and plugin.tracker and plugin.repository):
-        msg = _("Some important informations are missing from the plugin metadata (homepage, tracker or repository). Please consider creating a project on <a href=\"http://hub.qgis.org\">hub.qgis.org</a> and filling the missing metadata.")
-        messages.warning(request, msg, fail_silently=True)
-    # add rating to context
-    if not kwargs:
-        kwargs = {}
-    kwargs['extra_context'] = {
-        'rating': int(plugin.rating.get_rating()),
-        'votes': plugin.rating.votes,
-    }
-    return object_detail(request, object_id=plugin.pk, **kwargs)
-
 @login_required
 def plugin_delete(request, package_name):
     plugin = get_object_or_404(Plugin, package_name=package_name)
@@ -402,7 +382,6 @@ class PluginsList(ListView):
     queryset = Plugin.approved_objects.all()
     title =  _('All plugins')
     additional_context = {}
-    #paginate_by =  settings.PAGINATION_DEFAULT_PAGINATION
     def get_context_data(self, **kwargs):
         context = super(PluginsList, self).get_context_data(**kwargs)
         context.update({
@@ -411,7 +390,6 @@ class PluginsList(ListView):
         })
         context.update(self.additional_context)
         return context
-
 
 
 class MyPluginsList(PluginsList):
@@ -434,24 +412,6 @@ class AuthorPluginsList(PluginsList):
             'title' : _('Plugins by %s') % self.kwargs['author'],
         })
         return context
-
-
-#def user_plugins(request, username):
-    #"""
-    #List published plugins created_by user
-    #"""
-    #user = get_object_or_404(User, username=username)
-    #queryset = Plugin.approved_objects.filter(created_by=user)
-    #return plugins_list(request, queryset, extra_context = { 'title' : _('Plugins from "%s"') % user})
-
-
-#def tags_plugins(request, tags):
-    #"""
-    #List plugins with given tags
-    #"""
-    #tag_list = [t.strip().lower() for t in tags.split(',')]
-    #queryset = Plugin.approved_objects.filter(tags__name__in=tag_list)
-    #return plugins_list(request, queryset, extra_context = { 'title' : _('Plugins with tag "%s"') % tags})
 
 
 @login_required
@@ -748,7 +708,6 @@ def version_manage(request, package_name, version):
         return version_unapprove(request, package_name, version)
 
     return HttpResponseRedirect(reverse('plugin_detail', args=[package_name]))
-
 
 
 def version_download(request, package_name, version):
