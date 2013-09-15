@@ -10,7 +10,6 @@
 <a class="btn btn-block btn-primary btn-large" href="{% url plugin_upload %}"><i class="icon-upload icon-white"></i> {% trans "Share a plugin" %}</a>
 <h3>{% trans "Plugins" %}</h3>
 <ul class="nav nav-list">
-
         {% if user.is_authenticated %}
         {% if user.plugin_set_count %}<li><a href="{% url my_plugins user %}">{% trans "My plugins" %}</a></li>{% endif %}
         {% endif %}
@@ -38,6 +37,6 @@
 {% endblock %}
 
 {% block "credits" %}
-{% trans "This web application was developed by:" %} <a href="http://www.itopen.it"> Alessandro Pasotti</a>
+{% trans "This web application was developed by:" %}&nbsp;<a href="http://www.itopen.it">Alessandro Pasotti</a>
 {% endblock %}
 
