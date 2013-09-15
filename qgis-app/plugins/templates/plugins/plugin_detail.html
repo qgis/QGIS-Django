@@ -44,7 +44,7 @@
 <link type="text/css" href="/static/jquery-ratings/jquery.ratings.css" rel="stylesheet" />
 {{ block.super }}
 {% endblock %}
-
+{% block content %}
    <h2>{% trans "Plugin" %}: {{ object.name }}
    {% if object.icon %}
         {% thumbnail object.icon "128x128" upscale=False format="PNG" as im %}
