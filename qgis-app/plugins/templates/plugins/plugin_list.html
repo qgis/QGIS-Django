@@ -1,4 +1,4 @@
-{% extends 'plugins/plugin_base.html' %}{% load i18n sorting_tags pagination_tags humanize smart_paginate range_filter %}
+{% extends 'plugins/plugin_base.html' %}{% load i18n sorting_tags pagination_tags humanize smart_paginate range_filter thumbnail %}
 {% block extrajs %}
   <script type="text/javascript" src="/static/js/jquery.cookie.js"></script>
   <script language="javascript">
@@ -78,7 +78,15 @@
             {% autopaginate object_list per_page %}
             {% for object in object_list %}
             <tr class="pmain {% if object.deprecated %} error deprecated{% endif %}" id="pmain{{object.pk}}">
-                <td><a title="{% if object.deprecated %} [DEPRECATED] {% endif %}{% trans "Click here for plugin details" %}" href="{% url plugin_detail object.package_name %}"><img height="32" width="32" class="plugin-icon" src="{% if object.icon %}{{ object.icon.url }}{% else %}/static/images/qgis-icon-32x32.png{% endif %}" alt="{% trans "Plugin icon" %}" /></a></td>
+                <td><a title="{% if object.deprecated %} [DEPRECATED] {% endif %}{% trans "Click here for plugin details" %}" href="{% url plugin_detail object.package_name %}">
+                {% if object.icon %}
+                {% thumbnail object.icon "24x24" format="PNG" as im %}
+                    <img class="plugin-icon" alt="{% trans "Plugin icon" %}" src="{{ im.url }}" width="{{ im.x }}" height="{{ im.y }}" />
+                {% endthumbnail %}
+                {% else %}
+                    <img height="32" width="32" class="plugin-icon" src="/static/images/qgis-icon-32x32.png" alt="{% trans "Plugin icon" %}" />
+                {% endif %}
+                </a></td>
                 <td><a title="{% if object.deprecated %} [DEPRECATED] {% endif %}{% trans "Click here for plugin details" %}"  href="{% url plugin_detail object.package_name %}">{{ object.name }}</a></td>
                 {% if not user.is_anonymous %}<td>{% if object.approved %}<img src="/static/images/tick_16.png" />{% else %}&mdash;{% endif %}</td>{% endif %}
                 <td>{% if object.featured%}<img src="/static/images/tick_16.png" />{% else %}&mdash;{% endif %}</td>

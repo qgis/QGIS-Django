@@ -137,6 +137,7 @@ class TaggablePlugins(TaggableManager):
         return super(TaggablePlugnis, self).get_query_set().filter(deprecated=False, pluginversion__approved=True).distinct()
 
 
+
 class Plugin (models.Model):
     """
     Plugins model

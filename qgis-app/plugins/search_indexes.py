@@ -9,9 +9,9 @@ class PluginIndex(RealTimeSearchIndex):
     created_by = CharField(model_attr='created_by')
     created_on = DateTimeField(model_attr='created_on')
     # We add this for autocomplete.
-    name_auto = NgramField(model_attr='name')
-    description_auto = NgramField(model_attr='description')
-    
+    name_auto = EdgeNgramField(model_attr='name')
+    description_auto = EdgeNgramField(model_attr='description')
+
     def index_queryset(self):
         """Only search in approved plugins."""
         return Plugin.approved_objects.all()

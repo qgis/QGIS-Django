@@ -1,18 +1,49 @@
 {% extends 'base.html' %}
+{% load i18n plugin_utils plugins_tagcloud %}
+
+{% block menu %}
+{{ block.super }}
+    <div class="module_menu">
+        <h3>{% trans "Plugin tags" %}</h3>
+        {% include_plugins_tagcloud 'plugins.plugin' %}
+    </div>
+
+{% endblock %}
 
 {% block content %}
     <h2>Search</h2>
 
-    <form class="advancedsearch" method="get" action=".">
-        <table>
-            {{ form.as_table }}
-            <tr>
-                <td>&nbsp;</td>
-                <td>
-                    <input type="submit" value="Search">
-                </td>
-            </tr>
-        </table>
+    <form class="horizontal advancedsearch" method="get" action=".">
+        {% for field in form %}
+        <div class="fieldWrapper">
+            {{ field.errors }}
+            {% if field.field.widget|klass = 'CheckboxSelectMultiple' %}
+            {% comment %}
+<!--
+            ABP: does not work!
+-->
+            <fieldset>
+            <label for="{{ field.html_name }}">
+                {{ field.label }}
+                {% for x,y in field.field.widget.choices %}
+                {{ field.field.widget.value|pprint }}
+                <div class="fieldWrapper">
+                    <label for="{{ field.html_name }}">{{ y }}
+                    <input type="checkbox" id="{{ field.html_name }}" name="{{ field.html_name }}" value="{{ x }}" {% if field.field.widget.value == x %}checked="checked"{% endif %}/></label>
+                </div>
+                {% endfor %}
+            </label>
+            </fieldset>
+            {% endcomment %}
+            {% else %}
+            {{ field.label_tag }}{{ field }}
+            {% endif %}
+            <div class="help">{{ field.help_text }}</div>
+        </div>
+        {% endfor %}
+        <div class="form-actions">
+            <input type="submit" class="btn btn-primary" value="Search">
+        </div>
 
         {% if query %}
             <h3>Search results</h3>
