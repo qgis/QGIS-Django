@@ -217,4 +217,7 @@ from settings_auth import *
 
 # Local settings overrides
 # Must be the last!
-from settings_local import *
+try:
+    from settings_local import *
+except ImportError:
+    pass
