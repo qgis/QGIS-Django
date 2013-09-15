@@ -18,7 +18,8 @@
     <script src="//ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js"></script>
 -->
     <script type="text/javascript" src="/static/bootstrap/js/bootstrap.min.js"></script>
-    {% block extrajs %}{% endblock %}
+
+   {% block extrajs %}{% endblock %}
 
 </head>
 <body id="page_bg" {% block onload %}{% endblock %}>
@@ -48,9 +49,9 @@
                             <li><a href="{{ item.page.url }}">{{ item.name }}</a></li>
                         {% endfor %}
                             {% if user.is_authenticated %}
-                            <li><a href="{% url fe_logout %}">{% trans "Logout" %}</a></li>
+                            <li><a href="{% url "fe_logout" %}">{% trans "Logout" %}</a></li>
                             {% else %}
-                            <li><a href="{% url fe_login %}">{% trans "Login" %}</a></li>
+                            <li><a href="{% url "fe_login" %}">{% trans "Login" %}</a></li>
                             {% endif %}
                             {% block navigation_extra %}
                             {% endblock %}
@@ -119,6 +120,6 @@
               {% endblock %}
             </div>
         </footer>
-
+    </div>
 </body>
 </html>

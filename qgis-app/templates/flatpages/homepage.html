@@ -9,7 +9,7 @@
         <div class="module_menu">
             <h3>{% trans "Featured plugins" %}</h3>
             <ul class="nav nav-list">
-                {% for plugin in featured  %}<li><a href="{% url plugin_detail plugin.package_name %}">{{ plugin.name }}</a></li>{% endfor %}
+                {% for plugin in featured  %}<li><a href="{% url "plugin_detail" plugin.package_name %}">{{ plugin.name }}</a></li>{% endfor %}
             </ul>
         </div>
         {% endif %}
@@ -17,7 +17,7 @@
         <div class="module_menu">
             <h3>{% trans "Latest plugins" %}</h3>
             <ul class="nav nav-list">
-                {% for plugin in fresh  %}<li><a href="{% url plugin_detail plugin.package_name %}">{{ plugin.name }}</a></li>{% endfor %}
+                {% for plugin in fresh  %}<li><a href="{% url "plugin_detail" plugin.package_name %}">{{ plugin.name }}</a></li>{% endfor %}
             </ul>
         </div>
         {% endif %}
@@ -25,7 +25,7 @@
         <div class="module_menu">
             <h3>{% trans "Popular plugins" %}</h3>
             <ul class="nav nav-list">
-                {% for plugin in popular  %}<li><a href="{% url plugin_detail plugin.package_name %}">{{ plugin.name }}</a></li>{% endfor %}
+                {% for plugin in popular  %}<li><a href="{% url "plugin_detail" plugin.package_name %}">{{ plugin.name }}</a></li>{% endfor %}
             </ul>
         </div>
         {% endif %}

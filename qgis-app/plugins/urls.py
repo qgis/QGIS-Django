@@ -3,12 +3,16 @@ from django.conf.urls.defaults import *
 from plugins.models import Plugin, PluginVersion
 from django.utils.translation import ugettext_lazy as _
 
+from plugins.views import *
+from plugins.models import Plugin, PluginVersion
+from plugins.views import PluginDetailView
+
 # Plugins filtered views (need user parameter from request)
 urlpatterns = patterns('plugins.views',
     # XML
     url(r'^plugins.xml$', 'xml_plugins', {}, name='xml_plugins'),
     url(r'^tags/(?P<tags>[^\/]+)/$', 'tags_plugins', {}, name='tags_plugins'),
-    url(r'^my/$', 'my_plugins', {}, name='my_plugins'),
+    #url(r'^my/$', 'my_plugins', {}, name='my_plugins'),
     url(r'^add/$', 'plugin_upload', {}, name='plugin_upload'),
     url(r'^user/(?P<username>\w+)/$', 'user_plugins', {}, name='user_plugins'),
     url(r'^user/(?P<username>\w+)/block/$', 'user_block', {}, name='user_block'),
@@ -23,8 +27,12 @@ urlpatterns = patterns('plugins.views',
     url(r'^(?P<package_name>[A-Za-z][A-Za-z0-9-_]+)/set_featured/$', 'plugin_set_featured', {}, name='plugin_set_featured'),
     url(r'^(?P<package_name>[A-Za-z][A-Za-z0-9-_]+)/unset_featured/$', 'plugin_unset_featured', {}, name='plugin_unset_featured'),
 
-    url(r'^$', 'plugins_list', { 'queryset' : Plugin.approved_objects.all()}, name='approved_plugins'),
-    url(r'^featured/$', 'plugins_list', {'queryset' : Plugin.featured_objects.all(), 'extra_context' : {'title' : _('Featured plugins')}}, name='featured_plugins'),
+    url(r'^$', PluginsList.as_view(), name='approved_plugins'),
+    url(r'^my$', MyPluginsList.as_view(), name='my_plugins'),
+    url(r'^featured/$', PluginsList.as_view(queryset=Plugin.featured_objects.all()), name='featured_plugins'),
+
+    #url(r'^$', 'plugins_list', { 'queryset' : Plugin.approved_objects.all()}, name='approved_plugins'),
+    #url(r'^featured/$', 'plugins_list', {'queryset' : Plugin.featured_objects.all(), 'extra_context' : {'title' : _('Featured plugins')}}, name='featured_plugins'),
     url(r'^unapproved/$', 'plugins_list', {'queryset' : Plugin.unapproved_objects.all(), 'extra_context' : {'title' : _('Unapproved plugins')}}, name='unapproved_plugins'),
     url(r'^deprecated/$', 'plugins_list', {'queryset' : Plugin.deprecated_objects.all(), 'extra_context' : {'title' : _('Deprecated plugins')}}, name='deprecated_plugins'),
     url(r'^fresh/$', 'plugins_list', {'queryset' : Plugin.fresh_objects.all(), 'extra_context' : {'title' : _('Fresh plugins')}}, name='fresh_plugins'),
@@ -77,8 +85,9 @@ urlpatterns += patterns('',
     }, name='plugin_rate'),
 )
 
+
 # Plugin detail (keep last)
 urlpatterns += patterns('plugins.views',
-    url(r'^(?P<package_name>[A-Za-z][A-Za-z0-9-_]+)/$', 'plugin_detail', { 'queryset' : Plugin.objects.all() }, name='plugin_detail'),
+    url(r'^(?P<package_name>[A-Za-z][A-Za-z0-9-_]+)/$', PluginDetailView.as_view(slug_url_kwarg='package_name', slug_field='package_name'), name='plugin_detail'),
 )
 

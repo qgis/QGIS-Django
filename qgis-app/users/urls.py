@@ -1,5 +1,6 @@
 from django.conf.urls.defaults import *
 
+from django.views.generic.base import TemplateView
 
 urlpatterns = patterns('users.views',
 
@@ -11,5 +12,5 @@ urlpatterns = patterns('users.views',
 )
 
 urlpatterns += patterns('django.views.generic.simple',
-    (r'^edit/email_confirm.html$','direct_to_template', {'template': 'email_confirm.html'}),
+    (r'^edit/email_confirm.html$',TemplateView.as_view(template_name='email_confirm.html')),
 )

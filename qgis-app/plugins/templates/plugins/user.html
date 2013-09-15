@@ -10,7 +10,7 @@
         {% if  plugin_user.last_name %}<li>{% trans "Last name: " %} {{ plugin_user.last_name }}</li>{% endif %}
         <li>{% trans "Email: " %} {{ plugin_user.email }}</li>
     </ul>
-    <form method="post" action="{% url user_permissions_manage plugin_user.username %}">
+    <form method="post" action="{% url "user_permissions_manage" plugin_user.username %}">
     <div>
         <ul class="actions">
             {% if plugin_user.is_active %}

@@ -7,27 +7,27 @@
 
 {% block menu %}
 {{ block.super }}
-<a class="btn btn-block btn-primary btn-large" href="{% url plugin_upload %}"><i class="icon-upload icon-white"></i> {% trans "Share a plugin" %}</a>
+<a class="btn btn-block btn-primary btn-large" href="{% url "plugin_upload" %}"><i class="icon-upload icon-white icon-large"></i> {% trans "Share a plugin" %}</a>
 <h3>{% trans "Plugins" %}</h3>
 <ul class="nav nav-list">
         {% if user.is_authenticated %}
-        {% if user.plugin_set_count %}<li><a href="{% url my_plugins user %}">{% trans "My plugins" %}</a></li>{% endif %}
+        {% if user.plugin_set_count %}<li><a href="{% url "my_plugins" user %}">{% trans "My plugins" %}</a></li>{% endif %}
         {% endif %}
         {% if user.is_authenticated %}
-        <li class="authenticated"><a href="{% url my_plugins %}">{% trans "My plugins"%}</a></li>
+        <li class="authenticated"><a href="{% url "my_plugins" %}">{% trans "My plugins"%}</a></li>
         {% endif %}
         {% if user.is_staff %}
-        <li class="staff"><a href="{% url unapproved_plugins %}">{% trans "Unapproved"%}</a></li>
-        <li class="staff"><a href="{% url deprecated_plugins %}">{% trans "Deprecated"%}</a></li>
+        <li class="staff"><a href="{% url "unapproved_plugins" %}">{% trans "Unapproved"%}</a></li>
+        <li class="staff"><a href="{% url "deprecated_plugins" %}">{% trans "Deprecated"%}</a></li>
         {% endif %}
-        <li><a href="{% url featured_plugins %}">{% trans "Featured "%}</a></li>
-        <li><a href="{% url approved_plugins %}">{% trans "All"%}</a></li>
-        <li><a href="{% url stable_plugins %}">{% trans "Stable"%}</a></li>
-        <li><a href="{% url experimental_plugins %}">{% trans "Experimental"%}</a></li>
-        <li><a href="{% url popular_plugins %}">{% trans "Popular" %}</a></li>
-        <li><a href="{% url most_voted_plugins %}">{% trans "Most voted" %}</a></li>
-        <li><a href="{% url most_downloaded_plugins %}">{% trans "Top downloads" %}</a></li>
-        <li><a href="{% url most_rated_plugins %}">{% trans "Most rated" %}</a></li>
+        <li><a href="{% url "featured_plugins" %}">{% trans "Featured "%}</a></li>
+        <li><a href="{% url "approved_plugins" %}">{% trans "All"%}</a></li>
+        <li><a href="{% url "stable_plugins" %}">{% trans "Stable"%}</a></li>
+        <li><a href="{% url "experimental_plugins" %}">{% trans "Experimental"%}</a></li>
+        <li><a href="{% url "popular_plugins" %}">{% trans "Popular" %}</a></li>
+        <li><a href="{% url "most_voted_plugins" %}">{% trans "Most voted" %}</a></li>
+        <li><a href="{% url "most_downloaded_plugins" %}">{% trans "Top downloads" %}</a></li>
+        <li><a href="{% url "most_rated_plugins" %}">{% trans "Most rated" %}</a></li>
 </ul>
 
 <div class="module_menu">

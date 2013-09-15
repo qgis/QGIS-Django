@@ -15,10 +15,11 @@ from django.conf import settings
 from django.contrib.auth.models import User, Permission
 from django.contrib.contenttypes.models import ContentType
 from django.utils.encoding import DjangoUnicodeDecodeError
+from django.views.generic.list import ListView
+from django.views.generic.detail import DetailView
 from plugins.models import Plugin, PluginVersion, vjust
 from plugins.forms import *
 
-from django.views.generic.list_detail import object_list, object_detail
 from django.views.decorators.http import require_POST
 from django.views.decorators.csrf import csrf_protect
 
@@ -298,8 +299,27 @@ def plugin_upload(request):
     return render_to_response('plugins/plugin_upload.html', { 'form' : form }, context_instance=RequestContext(request))
 
 
+class PluginDetailView(DetailView):
+    model = Plugin
+    queryset = Plugin.objects.all()
+
+    def get_context_data(self, **kwargs):
+        plugin = kwargs.get('object')
+        context = super(PluginDetailView, self).get_context_data(**kwargs)
+        # Warnings for owners
+        if check_plugin_access(self.request.user, plugin) and not (plugin.homepage and plugin.tracker and plugin.repository):
+            msg = _("Some important informations are missing from the plugin metadata (homepage, tracker or repository). Please consider creating a project on <a href=\"http://hub.qgis.org\">hub.qgis.org</a> and filling the missing metadata.")
+            messages.warning(self.request, msg, fail_silently=True)
+        context.update({
+            'rating': int(plugin.rating.get_rating()),
+            'votes': plugin.rating.votes,
+        })
+        return context
+
+
+
 @csrf_protect
-def plugin_detail(request, package_name, **kwargs):
+def __plugin_detail(request, package_name, **kwargs):
     """
     Just a wrapper for clean urls
     """
@@ -376,6 +396,23 @@ def plugin_update(request, package_name):
     return render_to_response('plugins/plugin_form.html', { 'form' : form , 'form_title' : _('Edit plugin')}, context_instance=RequestContext(request))
 
 
+
+class PluginsList(ListView):
+    model = Plugin
+    queryset = Plugin.approved_objects.all()
+    title =  _('All plugins')
+    #paginate_by =  settings.PAGINATION_DEFAULT_PAGINATION
+    def get_context_data(self, **kwargs):
+        context = super(PluginsList, self).get_context_data(**kwargs)
+        context.update({
+            'per_page': settings.PAGINATION_DEFAULT_PAGINATION,
+            'title': self.title,
+        })
+        return context
+
+
+
+
 def plugins_list(request, queryset, template_name=None, extra_context=None):
     """
     Supports per_page
@@ -394,12 +431,17 @@ def plugins_list(request, queryset, template_name=None, extra_context=None):
     )
 
 @login_required
-def my_plugins(request):
+def __my_plugins(request):
     """
     Shows user's plugins (plugins where user is in owners or user is author)
     """
     queryset = Plugin.base_objects.filter(owners=request.user).distinct() | Plugin.objects.filter(created_by=request.user).distinct()
     return plugins_list(request, queryset, template_name = 'plugins/plugin_list_my.html', extra_context = { 'title' : _('My plugins')})
+
+
+class MyPluginsList(PluginsList):
+    title = _('My plugins')
+
 
 
 def user_plugins(request, username):

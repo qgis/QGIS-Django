@@ -2,6 +2,6 @@
 
 {% block plugins_message %}
     {% if not object_list.count %}
-    <p>{% trans "You have not uploaded any plugin yet:" %} <a href="{% url plugin_upload %}">{% trans "Create a new plugin" %}</a></p>
+    <p>{% trans "You have not uploaded any plugin yet:" %} <a href="{% url "plugin_upload" %}">{% trans "Create a new plugin" %}</a></p>
     {% endif %}
 {% endblock %}

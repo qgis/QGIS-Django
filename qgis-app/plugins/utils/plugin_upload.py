@@ -37,7 +37,7 @@ def main(options, args):
         print "Fault string: %s" % err.faultString
 
 def hidepassword(url, start = 6):
-    """Returns the http url with password part replaced with '*'."""
+    """Returns the http url "with" password part replaced with '*'."""
     passdeb = url.find(':', start) + 1
     passend = url.find('@')
     return "%s%s%s" % (url[:passdeb], '*' * (passend - passdeb), url[passend:])

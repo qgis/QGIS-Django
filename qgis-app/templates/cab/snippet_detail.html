@@ -48,7 +48,7 @@
     <dt>QGIS Version:</dt>
     <dd>{{ object.get_version }}</dd>
     <dt>Tags:</dt>
-    <dd>{% for tag in object.tags.all %}<a href="{% url cab_snippet_matches_tag tag.slug %}">{{ tag.name }}</a> {% endfor %}</dd>
+    <dd>{% for tag in object.tags.all %}<a href="{% url "cab_snippet_matches_tag" tag.slug %}">{{ tag.name }}</a> {% endfor %}</dd>
     <dt>Score:</dt>
     <dd>{{ object.rating_score }} (after {{ object.ratings.count }} ratings)</dd>
   </dl>
