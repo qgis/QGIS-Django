@@ -212,6 +212,10 @@ RATINGS_VOTES_PER_IP=10000
 
 OLWIDGET_STATIC_URL='/static/olwidget/'
 
+DEBUG_TOOLBAR_CONFIG = {
+    'INTERCEPT_REDIRECTS': False
+}
+
 # auth overrids
 from settings_auth import *
 
