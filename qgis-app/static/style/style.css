@@ -32,4 +32,8 @@ div.tag_cloud a {
    margin: 4px;
 }
 
+.white, .white a {
+  color: #fff;
+}
+
 
