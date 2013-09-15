@@ -1,4 +1,4 @@
-  {% extends 'base.html' %}{% load i18n %}
+  {% extends 'base.html' %}{% load i18n avatar_exists %}
 {% block extracss %}
 <link type="text/css" href="/static/style/planet.css" rel="stylesheet" />
 {% endblock %}
@@ -107,11 +107,12 @@ title="{{ feed.feed.title }}">{{ feed.name }}</a></li>
   <div class="post">
   {% ifchanged %}
   <!-- {{ item.date_modified|date:"F j, Y" }} -->
+  {% if item.subscriber.shortname|avatar_exists %}
   <div class="avatar">
-    <img
-     src="{{ media_url }}/img/faces/{{ item.subscriber.shortname}}.png" alt="">
+    <img src="{{ media_url }}/img/faces/{{ item.subscriber.shortname}}.png" alt="">
     <br/>
   </div>
+  {% endif %}
   {% endifchanged %}
 
   {% if item.title %}
