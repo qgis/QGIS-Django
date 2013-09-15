@@ -12,9 +12,7 @@ urlpatterns = patterns('plugins.views',
     # XML
     url(r'^plugins.xml$', 'xml_plugins', {}, name='xml_plugins'),
     url(r'^tags/(?P<tags>[^\/]+)/$', TagsPluginsList.as_view(), name='tags_plugins'),
-    #url(r'^my/$', 'my_plugins', {}, name='my_plugins'),
     url(r'^add/$', 'plugin_upload', {}, name='plugin_upload'),
-    #url(r'^user/(?P<username>\w+)/$', 'user_plugins', {}, name='user_plugins'),
     url(r'^user/(?P<username>\w+)/block/$', 'user_block', {}, name='user_block'),
     url(r'^user/(?P<username>\w+)/unblock/$', 'user_unblock', {}, name='user_unblock'),
     url(r'^user/(?P<username>\w+)/trust/$', 'user_trust', {}, name='user_trust'),
@@ -44,7 +42,6 @@ urlpatterns = patterns('plugins.views',
     url(r'^most_voted/$', PluginsList.as_view(queryset=Plugin.most_voted_objects.all(), additional_context={'title' : _('Most voted plugins')}), name='most_voted_plugins'),
     url(r'^most_rated/$', PluginsList.as_view(queryset=Plugin.most_rated_objects.all(), additional_context={'title' : _('Most rated plugins')}), name='most_rated_plugins'),
 
-    #url(r'^author/(?P<author>[^/]+)/$', 'author_plugins', {}, name='author_plugins'),
     url(r'^author/(?P<author>[^/]+)/$', AuthorPluginsList.as_view(), name='author_plugins'),
 )
 

@@ -36,4 +36,6 @@ div.tag_cloud a {
   color: #fff;
 }
 
-
+.olwidgetEditableLayerSwitcher .container {
+    width: inherit !important;
+}
