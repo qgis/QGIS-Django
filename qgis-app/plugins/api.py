@@ -94,7 +94,7 @@ def plugin_upload(package, **kwargs):
         if cleaned_data.get('changelog'):
             version_data['changelog'] = cleaned_data.get('changelog')
         if cleaned_data.get('qgsMaximumVersion'):
-            version_data['qgsMaximumVersion'] = cleaned_data.get('qgsMaximumVersion')
+            version_data['max_qg_version'] = cleaned_data.get('qgsMaximumVersion')
 
         new_version = PluginVersion(**version_data)
         new_version.clean()
