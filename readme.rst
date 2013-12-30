@@ -139,20 +139,6 @@ To install as a cron, use the following (adjust the paths for your site)::
   */2 * * * * /home/web/qgis-django/update_planet.sh \
     1>>/tmp/planet_update.log 2>>/tmp/planet_update.err
 
-Deploying a live site using wsgi
---------------------------------------------------------------------------------
-
-We need to configure Apache for having wsgi support::
-
-  cd /etc/apache/sites-available
-  sudo cp <path to qgis-django>/pootle/pootle.virtenv.conf.example 
-    pootle.conf
-
-Now modify pootle.conf to your needs (making sure paths and web url are 
-correct) then::
-
-  sudo a2ensite pootle.conf
-  sudo /etc/init.d/apache2 reload
 
 Planned applications
 ================================================================================
