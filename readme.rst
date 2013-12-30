@@ -32,24 +32,9 @@ For a readonly checkout do::
   git clone git@github.com:qgis/qgis-django.git
   cd qgis-django
   sudo easy_install virtualenv
-  virtualenv --no-site-packages python
-  source python/bin/activate
+  virtualenv venv
+  source vebv/bin/activate
   pip install -r REQUIREMENTS.txt
-
-Install some manual dependencies needed for django-snippets (make sure your
-virtual env is active)::
-
-  git clone https://github.com/coleifer/django-amazon-resources.git
-  cd django-amazon-resources/
-  python setup.py install
-  cd ..
-
-Now install qgis snippets (a fork of django snippets)::
-
-  git clone git@github.com:qgis/qgis-snippets.git
-  cd qgis-snippets
-  python setup.py install
-  cd ..
 
 .. note::  Important note: the server currently use python 2.5, due to some
    strange incompatibilities between compressed egg format and Django
@@ -57,8 +42,8 @@ Now install qgis snippets (a fork of django snippets)::
    cab EGG must be uncompressed such as the final directories (in the 
    virtualenv) are::
 
-     python/lib/python2.5/site-packages/cab-0.2.0-py2.5.egg/cab
-     python/lib/python2.5/site-packages/cab-0.2.0-py2.5.egg/EGG-INFO
+     venv/lib/python2.5/site-packages/cab-0.2.0-py2.5.egg/cab
+     venv/lib/python2.5/site-packages/cab-0.2.0-py2.5.egg/EGG-INFO
 
 Install PostGIS::
 
@@ -82,7 +67,7 @@ Then run the createdb script::
 .. note:: Remember to source the activate script to enabled the python
    virtual environment::
 
-     source python/bin/activate
+     source venv/bin/activate
 
 Modify settings_local.py to include the correct username and pwd for the
 db connection and then sync the database::
@@ -154,31 +139,6 @@ To install as a cron, use the following (adjust the paths for your site)::
   */2 * * * * /home/web/qgis-django/update_planet.sh \
     1>>/tmp/planet_update.log 2>>/tmp/planet_update.err
 
-Pootle
-================================================================================
-
-Installation
-------------
-
-Create a virtual env, activate it and install requirements::
-
-    virtualenv --no-site-packages --python=python2.5 pootle_env
-    . pootle_env/bin/activate
-    sudo apt-get install libxml2-dev libxslt-dev
-    pip install -r REQUIREMENTS.txt
-   
-Modify pootle/settings.py to include the correct username and pwd for the
-db connection and then stat the Pootle server with the ./PootleServer
-command (note that the first time that the Pootle server will be started the
-database will be synced)::
-
-  cd pootle
-  ./manage runserver
-
-Then point your browser at::
-
-  http://localhost:8000
-  
 Deploying a live site using wsgi
 --------------------------------------------------------------------------------
 
