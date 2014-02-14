@@ -1,9 +1,9 @@
 {% extends 'plugins/plugin_base.html' %}{% load i18n %}
 {% block content %}
-    <h2>{% blocktrans with version.version as version and plugin.name as plugin_name %}Delete version "{{ version }}" of "{{ plugin_name }}"{% endblocktrans %}</h2>
+    <h3>{% blocktrans with version.version as version and plugin.name as plugin_name %}Delete version "{{ version }}" of "{{ plugin_name }}"{% endblocktrans %}</h3>
     <form action="" method="post">{% csrf_token %}
-        <p class="warning">{% trans "You asked to delete one version.<br />The version will be permanently deleted and this action cannot be undone.<br />Please confirm." %}</p>
-        <p><input type="submit" class="delete" name="delete_confirm" value="{% trans "Ok" %}" /> <a class="button" href="javascript:history.back()">{% trans "Cancel" %}</a></p>
+        <p class="alert alert-danger">{% trans "You asked to delete one version.<br />The version will be permanently deleted and this action cannot be undone.<br />Please confirm." %}</p>
+        <p><input type="submit" class="btn btn-danger" name="delete_confirm" value="{% trans "Ok" %}" /> <a class="btn btn-default" href="javascript:history.back()">{% trans "Cancel" %}</a></p>
     </form>
 
 {% endblock %}

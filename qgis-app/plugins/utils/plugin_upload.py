@@ -18,9 +18,9 @@ def main(options, args):
     address = "%s://%s:%s@%s:%s%s" % (PROTOCOL, options.username, options.password,
             options.server, options.port, ENDPOINT)
     print "Connecting to: %s" % hidepassword(address)
-    
+
     server = xmlrpclib.ServerProxy(address, verbose=VERBOSE)
-    
+
     try:
         plugin_id, version_id = server.plugin.upload(xmlrpclib.Binary(open(args[0]).read()))
         print "Plugin ID: %s" % plugin_id
@@ -35,6 +35,10 @@ def main(options, args):
         print "A fault occurred"
         print "Fault code: %d" % err.faultCode
         print "Fault string: %s" % err.faultString
+    except Exception, err:
+        print "Error occourred"
+        print "Error message: %s" % err
+
 
 def hidepassword(url, start = 6):
     """Returns the http url "with" password part replaced with '*'."""

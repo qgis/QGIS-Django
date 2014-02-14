@@ -8,7 +8,7 @@ import re
 import os
 import ConfigParser
 import StringIO
-
+import codecs
 from django.conf import settings
 from django.utils.translation import ugettext_lazy as _
 from django.forms import ValidationError
@@ -123,7 +123,7 @@ def validator(package):
         try:
             parser = ConfigParser.ConfigParser()
             parser.optionxform = str
-            parser.readfp(StringIO.StringIO(zip.read(metadataname)))
+            parser.readfp(StringIO.StringIO(codecs.decode(zip.read(metadataname), "utf8")))
             if not parser.has_section('general'):
                 raise ValidationError(_("Cannot find a section named 'general' in %s") % metadataname)
             metadata.extend(parser.items('general'))
@@ -191,7 +191,7 @@ def validator(package):
     for k,v in metadata:
         try:
             if not (k in PLUGIN_BOOLEAN_METADATA or k == 'icon_file'):
-                v.decode('UTF-8')
+                #v.decode('UTF-8')
                 checked_metadata.append((k, v.strip()))
             else:
                 checked_metadata.append((k, v))

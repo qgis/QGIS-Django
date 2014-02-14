@@ -1,11 +1,10 @@
 # -*- coding: utf-8 -*-
-from django.conf.urls.defaults import *
+from django.conf.urls import patterns, include, url
 from plugins.models import Plugin, PluginVersion
 from django.utils.translation import ugettext_lazy as _
 from django.contrib.auth.decorators import login_required, user_passes_test
-from plugins.views import *
 from plugins.models import Plugin, PluginVersion
-from plugins.views import PluginDetailView
+from plugins.views import *
 
 # Plugins filtered views (need user parameter from request)
 urlpatterns = patterns('plugins.views',

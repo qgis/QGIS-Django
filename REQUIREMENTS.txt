@@ -1,51 +1,52 @@
-#####################################
-# Django 1.5 compatible requirements
-#
-
-Django==1.5.4
+Django==1.6.2
 Feedjack==0.9.16
 Markdown==2.3.1
 PIL==1.1.7
 Pygments==1.6
 South==0.8.2
-Whoosh==1.8.4
+Whoosh==2.5.6
 argparse==1.2.1
+cab==0.2.0
+distribute==0.7.3
 django-annoying==0.7.7
+django-auth-ldap==1.1.4
 django-autoslug==1.7.1
-django-debug-toolbar==0.9.4
+django-debug-toolbar==1.0.1
 django-endless-pagination==2.0
 django-extensions==1.2.0
 django-generic-aggregation==0.3.2
-django-haystack==1.2.7
+django-haystack==2.1.0
+django-olwidget==0.61.0
 django-pagination==1.0.7
 django-ratings==0.3.7
 django-simple-ratings==0.3.2
+# SIMPLEMENU
+git+git://github.com/elpaso/django-simplemenu.git
 django-sorting==0.1
-django-taggit==0.9.3
-django-taggit-autosuggest==0.2
+django-taggit==0.11.2
+django-taggit-autosuggest==0.2.1
 django-taggit-templatetags==0.4.6dev
 django-templatetag-sugar==0.1
-django-tinymce==1.5.1
+django-tinymce==1.5.2
 feedparser==5.1.3
+ipython==1.2.0
+lxml==3.3.1
 opml==0.5
 psycopg2==2.5.1
+python-ldap==2.4.13
+# RPC4DJANGO
+git+https://github.com/davidfischer/rpc4django.git
 six==1.4.1
 sorl-thumbnail==11.12
+sqlparse==0.1.11
+wsgiref==0.1.2
 
-# ABP: Django 1.5 compatible version
-https://github.com/cato-/django-feedjack/archive/master.zip
 
-# RPC API
-# ABP: Use my fork of rpc4django to support login_required for methods
-git+git://github.com/elpaso/rpc4django.git
-
-# For simple menus
-git+git://github.com/elpaso/django-simplemenu.git
 
 # For ldap authentication
-
-python-ldap==2.4.13
+python-ldap
 django-auth-ldap
 
-# ABP: openlayers widget - use easy install if pip install fails
-django-olwidget
+
+
+

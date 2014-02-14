@@ -2,7 +2,7 @@
 
 from haystack.views import SearchView
 from haystack.query import SearchQuerySet
-from django.conf.urls.defaults import *
+from django.conf.urls import patterns, include, url
 
 class SearchWithRequest(SearchView):
 
@@ -28,5 +28,5 @@ class SearchWithRequest(SearchView):
 
 
 urlpatterns = patterns('haystack.views',
-    url(r'^$', SearchWithRequest(load_all=False), name='haystack_search'), 
+    url(r'^$', SearchWithRequest(load_all=False), name='haystack_search'),
 )

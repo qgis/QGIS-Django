@@ -1,9 +1,8 @@
-from django.conf.urls.defaults import *
-
+from django.conf.urls import patterns, include, url
 from django.views.generic.base import TemplateView
 
-urlpatterns = patterns('users.views',
 
+urlpatterns = patterns('users.views',
     url("^$", "usersMap", name="show_map"),
     url("^view_users.html$", "usersMap", name="show_map"),
     url("^create_user_form.html$", "createUser", name="create_user"),

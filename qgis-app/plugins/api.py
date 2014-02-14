@@ -4,13 +4,15 @@ XML-RPC webservices for the plugin web application
 
 from rpc4django import rpcmethod
 from xmlrpclib import Fault
+
+from plugins.validator import validator
 from plugins.models import *
-from validator import validator
-from django.db import IntegrityError
 from plugins.views import plugin_notify
+
 import StringIO
 from taggit.models import Tag
 
+from django.db import IntegrityError
 from django.utils.translation import ugettext_lazy as _
 from django.core.exceptions import ValidationError, PermissionDenied
 from django.core.files.uploadedfile import InMemoryUploadedFile
@@ -93,8 +95,8 @@ def plugin_upload(package, **kwargs):
             version_data['experimental'] = cleaned_data.get('experimental')
         if cleaned_data.get('changelog'):
             version_data['changelog'] = cleaned_data.get('changelog')
-        if cleaned_data.get('qgsMaximumVersion'):
-            version_data['max_qg_version'] = cleaned_data.get('qgsMaximumVersion')
+        if cleaned_data.get('qgisMaximumVersion'):
+            version_data['max_qg_version'] = cleaned_data.get('qgisMaximumVersion')
 
         new_version = PluginVersion(**version_data)
         new_version.clean()
