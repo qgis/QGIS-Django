@@ -6,21 +6,21 @@
         <version>{{ version.version }}</version>
         <qgis_minimum_version>{{ version.min_qg_version }}</qgis_minimum_version>
         <qgis_maximum_version>{{ version.max_qg_version }}</qgis_maximum_version>
-        <homepage>{% if version.plugin.homepage %}{{ version.plugin.homepage }}{% else %}{% if request.is_secure %}https{% else %}http{% endif %}://{{ request.get_host }}{{ version.plugin.get_absolute_url }}{% endif %}</homepage>
+        <homepage><![CDATA[{% if version.plugin.homepage %}{{ version.plugin.homepage }}{% else %}{% if request.is_secure %}https{% else %}http{% endif %}://{{ request.get_host }}{{ version.plugin.get_absolute_url }}{% endif %}]]></homepage>
         <file_name>{{ version.download_file_name }}</file_name>
         <icon>{% if version.plugin.icon %}{{ version.plugin.icon.url }}{% endif %}</icon>
-        <author_name>{% firstof version.plugin.author version.plugin.created_by %}</author_name>
+        <author_name><![CDATA[{% firstof version.plugin.author version.plugin.created_by %}]]></author_name>
         <download_url>{% if request.is_secure %}https{% else %}http{% endif %}://{{ request.get_host }}{{ version.get_download_url }}</download_url>
-        <uploaded_by>{{ version.created_by }}</uploaded_by>
+        <uploaded_by><![CDATA[{{ version.created_by }}]]></uploaded_by>
         <create_date>{{ version.created_on.isoformat }}</create_date>
         <update_date>{{ version.created_on.isoformat }}</update_date>
         <experimental>{% if version.experimental %}True{% else%}False{% endif %}</experimental>
         <deprecated>{{ version.plugin.deprecated }}</deprecated>
-        <tracker>{{ version.plugin.tracker }}</tracker>
-        <repository>{{ version.plugin.repository }}</repository>
-        <tags>{% for tag in version.plugin.tags.all %}{{ tag }}{% if not forloop.last %},{% endif %}{% endfor %}</tags>
+        <tracker><![CDATA[{{ version.plugin.tracker }}]]></tracker>
+        <repository><![CDATA[{{ version.plugin.repository }}]]></repository>
+        <tags><![CDATA[{% for tag in version.plugin.tags.all %}{{ tag }}{% if not forloop.last %},{% endif %}{% endfor %}]]></tags>
         <downloads>{{version.plugin.downloads}}</downloads>
         <average_vote>{{version.plugin.avg_vote}}</average_vote>
         <rating_votes>{{version.plugin.rating_votes}}</rating_votes>
-    </pyqgis_plugin>{% endfor %}    
+    </pyqgis_plugin>{% endfor %}
 </plugins>

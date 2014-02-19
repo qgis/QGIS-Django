@@ -27,7 +27,7 @@ from django.views.decorators.csrf import csrf_protect
 from django.core.mail import send_mail
 from django.contrib.sites.models import Site
 import logging
-
+import urllib
 import copy
 
 # Decorator
@@ -382,6 +382,7 @@ class PluginsList(ListView):
     queryset = Plugin.approved_objects.all()
     title =  _('All plugins')
     additional_context = {}
+
     def get_context_data(self, **kwargs):
         context = super(PluginsList, self).get_context_data(**kwargs)
         context.update({
@@ -393,23 +394,27 @@ class PluginsList(ListView):
 
 
 class MyPluginsList(PluginsList):
+
     def get_queryset(self):
         return Plugin.base_objects.filter(owners=self.request.user).distinct() | Plugin.objects.filter(created_by=self.request.user).distinct()
 
 
 class UserPluginsList(PluginsList):
+
     def get_queryset(self):
         user = get_object_or_404(User, username=self.kwargs['username'])
         return Plugin.approved_objects.filter(created_by=user)
 
 
 class AuthorPluginsList(PluginsList):
+
     def get_queryset(self):
-        return Plugin.approved_objects.filter(author=self.kwargs['author'])
+        return Plugin.approved_objects.filter(author=urllib.unquote(self.kwargs['author']))
+
     def get_context_data(self, **kwargs):
         context = super(AuthorPluginsList, self).get_context_data(**kwargs)
         context.update({
-            'title' : _('Plugins by %s') % self.kwargs['author'],
+            'title' : _('Plugins by %s') % urllib.unquote(self.kwargs['author']),
         })
         return context
 
@@ -437,12 +442,14 @@ class UserDetailsPluginsList(PluginsList):
 
 
 class TagsPluginsList(PluginsList):
+
     def get_queryset(self):
-        return Plugin.approved_objects.filter(tagged_items__tag__name=self.kwargs['tags'])
+        return Plugin.approved_objects.filter(tagged_items__tag__name=urllib.unquote(self.kwargs['tags']))
+
     def get_context_data(self, **kwargs):
         context = super(TagsPluginsList, self).get_context_data(**kwargs)
         context.update({
-            'title' : _('Plugins tagged with: %s') % self.kwargs['tags'],
+            'title' : _('Plugins tagged with: %s') % urllib.unquote(self.kwargs['tags']),
         })
         return context
 

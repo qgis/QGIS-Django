@@ -1,4 +1,7 @@
 # -*- coding: utf-8 -*-
+
+import datetime, os, re
+
 from django.db import models
 # import auth users for owners
 from django.contrib.auth.models import User
@@ -7,7 +10,6 @@ from django.utils.translation import ugettext_lazy as _
 # For permalinks
 from django.core.urlresolvers import reverse
 from django.conf import settings
-import datetime, os, re
 from djangoratings.fields import AnonymousRatingField
 
 # Tagging
@@ -374,6 +376,7 @@ def vjust(str, level=3, delim='.', bitsize=3, fillchar=' ', force_zero=False):
     return delim.join([ v.rjust(bitsize,fillchar) for v in str.split(delim)[:level+1] ])
 
 
+
 class VersionField(models.CharField) :
 
     description = 'Field to store version strings ("a.b.c.d") in a way it is sortable'
@@ -381,12 +384,12 @@ class VersionField(models.CharField) :
     __metaclass__ = models.SubfieldBase
 
     def get_prep_value(self, value):
-        return vjust(value,fillchar=' ')
+        return vjust(value, fillchar='#')
 
     def to_python(self, value):
         if not value:
             return ''
-        return re.sub('\.+$','',value.replace(' ',''))
+        return re.sub('#+|\.#+(\.|$)', '', value)
 
 
 class QGVersionZeroForcedField(models.CharField) :
@@ -397,12 +400,12 @@ class QGVersionZeroForcedField(models.CharField) :
     __metaclass__ = models.SubfieldBase
 
     def get_prep_value(self, value):
-        return vjust(value,fillchar=' ',level=2,force_zero=True)
+        return vjust(value,fillchar='#',level=2,force_zero=True)
 
     def to_python(self, value):
         if not value:
             return ''
-        return re.sub('\.+$','',value.replace(' ',''))
+        return re.sub('#+|\.#+(\.|$)', '', value)
 
 
 class PluginVersion (models.Model):
