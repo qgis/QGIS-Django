@@ -18,6 +18,11 @@ from taggit_autosuggest.managers import TaggableManager
 PLUGINS_STORAGE_PATH = getattr(settings, 'PLUGINS_STORAGE_PATH', 'packages')
 PLUGINS_FRESH_DAYS   = getattr(settings, 'PLUGINS_FRESH_DAYS', 30)
 
+
+# Used in Version fields to transform DB value back to human readable string
+VERSION_RE=r'(^|(?<=\.))0+(?!(\.|$))|\.#+'
+
+
 class BasePluginManager(models.Manager):
     """
     Adds a score
@@ -350,6 +355,7 @@ class ExperimentalPluginVersions(ApprovedPluginVersions):
         return super(ExperimentalPluginVersions, self).get_query_set().filter(experimental=True)
 
 
+
 def vjust(str, level=3, delim='.', bitsize=3, fillchar=' ', force_zero=False):
     """
     Normalize a dotted version string.
@@ -373,26 +379,35 @@ def vjust(str, level=3, delim='.', bitsize=3, fillchar=' ', force_zero=False):
             str += (level-nb) * (delim+'0')
         else:
             str += (level-nb) * delim
-    return delim.join([ v.rjust(bitsize,fillchar) for v in str.split(delim)[:level+1] ])
+    parts = []
+    for v in str.split(delim)[:level+1]:
+        if not v:
+            parts.append(v.rjust(bitsize,'#'))
+        else:
+            parts.append(v.rjust(bitsize,fillchar))
+    return delim.join(parts)
 
 
 
-class VersionField(models.CharField) :
+
+class VersionField(models.CharField):
+
 
     description = 'Field to store version strings ("a.b.c.d") in a way it is sortable'
 
     __metaclass__ = models.SubfieldBase
 
     def get_prep_value(self, value):
-        return vjust(value, fillchar='#')
+        return vjust(value, fillchar='0')
 
     def to_python(self, value):
         if not value:
             return ''
-        return re.sub('#+|\.#+(\.|$)', '', value)
+        return re.sub(VERSION_RE, '', value)
 
 
 class QGVersionZeroForcedField(models.CharField) :
+
 
     description = 'Field to store version strings ("a.b.c.d") in a way it \
     is sortable and QGIS scheme compatible (x.y.z).'
@@ -400,12 +415,12 @@ class QGVersionZeroForcedField(models.CharField) :
     __metaclass__ = models.SubfieldBase
 
     def get_prep_value(self, value):
-        return vjust(value,fillchar='#',level=2,force_zero=True)
+        return vjust(value,fillchar='0',level=2,force_zero=True)
 
     def to_python(self, value):
         if not value:
             return ''
-        return re.sub('#+|\.#+(\.|$)', '', value)
+        return re.sub(VERSION_RE, '', value)
 
 
 class PluginVersion (models.Model):

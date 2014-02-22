@@ -788,7 +788,7 @@ def xml_plugins(request):
         * package_name: Plugin.package_name
 
     """
-    qg_version = vjust(request.GET.get('qgis', '1.8.0'), fillchar=' ', level=2, force_zero=True)
+    qg_version = vjust(request.GET.get('qgis', '1.8.0'), fillchar='0', level=2, force_zero=True)
     stable_only = request.GET.get('stable_only', '0')
     package_name = request.GET.get('package_name', None)
 
