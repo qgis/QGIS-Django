@@ -1,0 +1,42 @@
+{% extends 'styles/st_base.html' %}
+{% block content %}
+<h3>Style: {{ object.name }}</h3>
+
+<table class="plugins">
+    <tr>
+        <td>Name</td><td>{{ object.name }}</td>
+    </tr>
+    <tr>
+        <td>Description</td><td>{{ object.description }}</td>
+    </tr>
+    <tr>
+        <td>Renderer</td><td>{{ object.renderer_type }}</td>
+    </tr>
+    <tr>
+        <td>Tags</td><td>{% for tag in object.tags.all %}{{ tag.name }}, {% endfor %}</td>
+    </tr>
+    <tr>
+        <td>Uploaded on</td><td>{{ object.created_on }}</td>
+    </tr>
+    <tr>
+        <td>Author</td><td>{{ object.created_by }}</td>
+    </tr>
+    <tr>
+        <td>QGIS Version</td><td>{{ object.qgis_version }}</td>
+    </tr>
+    <tr>
+        <td>Minimum Scale</td><td>{{ object.min_scale }}</td>
+    </tr>
+    <tr>
+        <td>Maximum Scale</td><td>{{ object.max_scale }}</td>
+    </tr>
+    <tr>
+        <td>Scale Based Visibility</td><td>{{ object.scale_flag }}</td>
+    </tr>
+</table>
+
+<form action="../" method="get">
+    <input type="submit" value="Download" />
+</form>
+
+{% endblock %}

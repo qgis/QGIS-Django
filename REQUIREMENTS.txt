@@ -1,15 +1,14 @@
 Django==1.6.2
-Feedjack==0.9.16
+git+https://github.com/Erve1879/feedjack.git
 Markdown==2.3.1
-PIL==1.1.7
+pillow
 Pygments==1.6
 South==0.8.2
 Whoosh==2.5.6
 argparse==1.2.1
-cab==0.2.0
+# cab==0.2.0
 distribute==0.7.3
 django-annoying==0.7.7
-django-auth-ldap==1.1.4
 django-autoslug==1.7.1
 django-debug-toolbar==1.0.1
 django-endless-pagination==2.0
@@ -33,7 +32,6 @@ ipython==1.2.0
 lxml==3.3.1
 opml==0.5
 psycopg2==2.5.1
-python-ldap==2.4.13
 # RPC4DJANGO
 git+https://github.com/davidfischer/rpc4django.git
 six==1.4.1
@@ -46,7 +44,3 @@ wsgiref==0.1.2
 # For ldap authentication
 python-ldap
 django-auth-ldap
-
-
-
-

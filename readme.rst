@@ -75,6 +75,20 @@ db connection and then sync the database::
   cd qgis-app
   python manage.py syncdb
 
+Cache setup
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+We will use database based caching here (see `django (caching) 
+<http://docs.djangoproject.com/en/dev/topics/cache/>`.
+
+Make sure your virtual env is set up and then create a cache table::
+
+  python manage.py createcachetable cache_table
+
+.. note:: The cache backend is required for the planet / feedjack to work 
+   properly
+
+
 Then run the project using the embedded test server::
 
   python manage.py runserver
@@ -108,19 +122,6 @@ The haystack search indexes should be created after initial install::
 There after they should be updated regularly e.g. using a 5 min cron job::
 
   python manage.py update_index
-
-Cache setup
---------------------------------------------------------------------------------
-
-We will use database based caching here (see `django (caching) 
-<http://docs.djangoproject.com/en/dev/topics/cache/>`.
-
-Make sure your virtual env is set up and then create a cache table::
-
-  python manage.py createcachetable cache_table
-
-.. note:: The cache backend is required for the planet / feedjack to work 
-   properly
 
 Feedjack Update
 --------------------------------------------------------------------------------

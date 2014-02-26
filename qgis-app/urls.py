@@ -11,20 +11,23 @@ from django.contrib.flatpages.models import FlatPage
 
 # Uncomment the next two lines to enable the admin:
 from django.contrib import admin
-admin.autodiscover()
+# admin.autodiscover()
 
 
-urlpatterns = patterns('',
+urlpatterns = patterns(
+    '',
     # Example:
     # (r'^qgis/', include('qgis.foo.urls')),
 
-    # Uncomment the admin/doc line below to enable admin documentation:
-    # (r'^admin/doc/', include('django.contrib.admindocs.urls')),
+    # Uncomment the admin/doc line below to enable admin
+    # documentation:
+    # (r'^admin/doc/',
+    # include('django.contrib.admindocs.urls')),
 
     # Uncomment the next line to enable the admin:
     (r'^admin/', include(admin.site.urls)),
 
-    # ABP: plugins app
+    # # ABP: plugins app
     (r'^plugins/', include('plugins.urls')),
     #(r'^tags/', include('cab.urls.tags')),
     #(r'^bookmarks/', include('cab.urls.bookmarks')),
@@ -38,39 +41,50 @@ urlpatterns = patterns('',
     # Tim: Feedjack feed aggregator / planet
     (r'^planet/', include('feedjack.urls')),
     # ABP: autosuggest for tags
-    (r'^taggit_autosuggest/', include('taggit_autosuggest.urls')),
+    (r'^taggit_autosuggest/',
+    include('taggit_autosuggest.urls')),
 
+    # Symbols
+    (r'^symbols/', include('symbols.urls')),
+
+    # Styles
+    (r'^styles/', include('styles.urls')),
 )
 
 # ABP: temporary home page
-#urlpatterns += patterns('django.views.generic.simple',
-#    url(r'^$', 'direct_to_template', {'template': 'index.html'}, name = 'index'),
-#)
+# urlpatterns += patterns('django.views.generic.simple',
+#                         url(r'^$', 'direct_to_template',
+#                             {'template': 'index.html'}, name='index'),
+#                         )
 
 
 # serving static media
 if settings.SERVE_STATIC_MEDIA:
     urlpatterns += patterns('',
-        (r'^static/(?P<path>.*)$', 'django.views.static.serve', {'document_root': settings.MEDIA_ROOT}),
-    )
+                            (r'^static/(?P<path>.*)$',
+                             'django.views.static.serve',
+                             {'document_root': settings.MEDIA_ROOT}),
+                            )
 
 
 # auth
 urlpatterns += patterns('',
-    url(r'^accounts/login/$',  login, {}, name = 'fe_login'),
-    url(r'^accounts/logout/$', logout, {}, name = 'fe_logout'),
-)
+                        url(r'^accounts/login/$',  login, {},
+                            name='fe_login'),
+                        url(r'^accounts/logout/$', logout, {},
+                            name='fe_logout'),
+                        )
 
 # tinymce
 urlpatterns += patterns('',
-    (r'^tinymce/', include('tinymce.urls')),
-)
+                        (r'^tinymce/', include('tinymce.urls')),
+                        )
 
 
 # Home
 urlpatterns += patterns('homepage',
-    (r'^$', 'homepage'),
-)
+                        (r'^$', 'homepage'),
+                        )
 
 simplemenu.register(
     '/admin/',

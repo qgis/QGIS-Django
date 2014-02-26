@@ -1,0 +1,19 @@
+{% extends 'symbols/s_base.html' %}
+{% block content %}
+<h3>Symbol Upload Form</h3>
+<p>The symbol upload form lets you upload the symbols exported from QGIS into the online repository, which can be accessed by anyone. Kindly choose the XML file exported by the Symbol Manager in QGIS 2.0 or later and add relevant tags so that it can be easily searched and retrived by users.</p>
+<form action="/symbols/add/" method="post" enctype="multipart/form-data">{% csrf_token %}
+    {{ form.non_field_errors }}
+    <div class="fieldWrapper">
+        {{ form.xmlfile.errors }}
+        <label for="id_xmlfile">Symbol XML File: </label>
+        {{ form.xmlfile }}
+    </div>
+    <div class"filedWrapper">
+        {{ form.tags.errors }}
+        <label for="id_tags">Tags (seperated by commas): </label>
+        {{ form.tags }}
+    </div>
+    <input type="submit" value="Submit" />
+</form>
+{% endblock %}
