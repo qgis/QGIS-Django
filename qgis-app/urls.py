@@ -26,12 +26,6 @@ urlpatterns = patterns('',
 
     # ABP: plugins app
     (r'^plugins/', include('plugins.urls')),
-    #(r'^tags/', include('cab.urls.tags')),
-    #(r'^bookmarks/', include('cab.urls.bookmarks')),
-    #(r'^languages/', include('cab.urls.languages')),
-    #(r'^popular/', include('cab.urls.popular')),
-    (r'^search/', include('haystack.urls')),
-    (r'^search/', include('custom_haystack_urls')),
 
     # SAM: qgis-users app
     (r'^community-map/', include('users.urls')),
