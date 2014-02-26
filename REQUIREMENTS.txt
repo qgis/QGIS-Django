@@ -1,7 +1,8 @@
 Django==1.6.2
 # Currently broken with 'no module named defaults' error
 #Feedjack==0.9.18
-git+git://github.com/erve1879/feedjack.git
+# So use George's fork rather
+git+https://github.com/Erve1879/feedjack.git
 Markdown==2.3.1
 PIL==1.1.7
 Pygments==1.6
