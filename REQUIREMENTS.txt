@@ -1,10 +1,11 @@
 Django==1.6.2
-Feedjack==0.9.16
+# Currently broken with 'no module named defaults' error
+#Feedjack==0.9.18
+git+git://github.com/erve1879/feedjack.git
 Markdown==2.3.1
 PIL==1.1.7
 Pygments==1.6
 South==0.8.2
-Whoosh==2.5.6
 argparse==1.2.1
 cab==0.2.0
 distribute==0.7.3
@@ -40,7 +41,4 @@ six==1.4.1
 sorl-thumbnail==11.12
 sqlparse==0.1.11
 wsgiref==0.1.2
-
-
-
-
+simplejson==3.3.3
