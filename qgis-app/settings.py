@@ -166,6 +166,20 @@ ACCOUNT_ACTIVATION_DAYS = 7 # One-week activation window; you may, of course, us
 
 LOGIN_REDIRECT_URL='/'
 
+# Added by Tim for snippets (and possibly other site search support)
+#HAYSTACK_SITECONF = 'search_sites'
+# django.core.exceptions.ImproperlyConfigured: The HAYSTACK_SITECONF setting is no longer used & can be removed.
+HAYSTACK_CONNECTIONS = { 'default' : 'whoosh' }
+HAYSTACK_WHOOSH_PATH = SITE_ROOT + '/search-index'
+
+HAYSTACK_CONNECTIONS = {
+    'default': {
+        'ENGINE': 'haystack.backends.whoosh_backend.WhooshEngine',
+        'PATH': os.path.join(os.path.dirname(__file__), 'whoosh_index'),
+    },
+}
+
+
 # Added by Tim for database based caching
 # See http://docs.djangoproject.com/en/dev/topics/cache/
 CACHES = {
@@ -221,7 +235,7 @@ DEBUG_TOOLBAR_CONFIG = {
     'INTERCEPT_REDIRECTS': False
 }
 
-# auth overrides
+# auth overrids
 from settings_auth import *
 
 # Local settings overrides

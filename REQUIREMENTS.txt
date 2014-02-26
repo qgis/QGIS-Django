@@ -7,6 +7,7 @@ Markdown==2.3.1
 PIL==1.1.7
 Pygments==1.6
 South==0.8.2
+Whoosh==2.5.6
 argparse==1.2.1
 cab==0.2.0
 distribute==0.7.3
