@@ -43,10 +43,4 @@ wsgiref==0.1.2
 
 
 
-# For ldap authentication
-python-ldap
-django-auth-ldap
-
-
-
 
