@@ -236,6 +236,8 @@ DEBUG_TOOLBAR_CONFIG = {
     'INTERCEPT_REDIRECTS': False
 }
 
+THUMBNAIL_ENGINE='sorl.thumbnail.engines.convert_engine.Engine'
+
 # auth overrids
 from settings_auth import *
 
