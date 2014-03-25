@@ -10,7 +10,7 @@ South==0.8.2
 Whoosh==2.5.6
 argparse==1.2.1
 #cab==0.2.0 # Not used anymore..-
-distribute==0.7.3
+#distribute==0.7.3
 django-annoying==0.7.7
 django-auth-ldap==1.1.4
 django-autoslug==1.7.1
