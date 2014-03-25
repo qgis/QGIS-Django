@@ -5,8 +5,6 @@ SITE_ROOT = os.path.dirname(os.path.realpath(__file__))
 
 TEMPLATE_DEBUG = False
 
-ROOT_URLCONF = 'urls'
-
 # Local time zone for this installation. Choices can be found here:
 # http://en.wikipedia.org/wiki/List_of_tz_zones_by_name
 # although not all choices may be available on all operating systems.
@@ -32,21 +30,21 @@ USE_L10N = True
 
 # Absolute path to the directory that holds media.
 # Example: "/home/media/media.lawrence.com/"
-MEDIA_ROOT = SITE_ROOT + '/media/'
+MEDIA_ROOT = SITE_ROOT + '/static/'
 
 # URL that handles the media served from MEDIA_ROOT. Make sure to use a
 # trailing slash if there is a path component (optional in other cases).
 # Examples: "http://media.lawrence.com", "http://example.com/media/"
-MEDIA_URL = '/media/'
-MEDIA_URL_FOLDER = '/media/'
+MEDIA_URL = '/static/'
+MEDIA_URL_FOLDER = '/static/'
 
 # URL prefix for admin media -- CSS, JavaScript and images. Make sure to use a
 # trailing slash.
 # Examples: "http://foo.com/media/", "/media/".
 ADMIN_MEDIA_PREFIX = '/admin/'
 
-STATIC_URL = '/static/'
-STATIC_ROOT = SITE_ROOT + '/static/'
+STATIC_URL='/static_media/'
+STATIC_ROOT=SITE_ROOT + '/static_media/'
 
 # Make this unique, and don't share it with anybody.
 SECRET_KEY = 'y2vu=4qarl)p=g_blq_c4afk!p6u_cor1gy1k@05ro=+tf7+)g'
@@ -78,12 +76,15 @@ MIDDLEWARE_CLASSES = (
     'django.middleware.cache.FetchFromCacheMiddleware',
 )
 
+ROOT_URLCONF = 'urls'
+
 TEMPLATE_DIRS = (
     # Put strings here, like "/home/html/django_templates" or "C:/www/django/templates".
     # Always use forward slashes, even on Windows.
     # Don't forget to use absolute paths, not relative paths.
     os.path.join(SITE_ROOT, 'templates'),
 )
+
 
 DEBUG_TOOLBAR_PANELS = [
     'debug_toolbar.panels.versions.VersionsPanel',
@@ -131,7 +132,7 @@ INSTALLED_APPS = (
     # Tim for django snippets app support
     #'cab', #the django snippets app itself
     # Tim for Debug toolbar
-    # 'debug_toolbar',
+    'debug_toolbar',
     # Tim for command extensions so we can run feedjack cron using python manage.py runscript
     'django_extensions',
     # Sam for Users map
@@ -146,11 +147,12 @@ INSTALLED_APPS = (
     'rpc4django',
     'south',
     'djangoratings',
+    'lib',
     # Symbol repository
     'symbols',
     # Style Sheets
     'styles',
-    'lib'
+    'endless_pagination',
 )
 
 TEMPLATE_CONTEXT_PROCESSORS = (
@@ -172,7 +174,6 @@ LOGIN_REDIRECT_URL='/'
 # Added by Tim for snippets (and possibly other site search support)
 #HAYSTACK_SITECONF = 'search_sites'
 # django.core.exceptions.ImproperlyConfigured: The HAYSTACK_SITECONF setting is no longer used & can be removed.
-HAYSTACK_WHOOSH_PATH = SITE_ROOT + '/search-index'
 
 HAYSTACK_CONNECTIONS = {
     'default': {
@@ -181,6 +182,7 @@ HAYSTACK_CONNECTIONS = {
     },
 }
 
+# Migration: see http://django-haystack.readthedocs.org/en/latest/migration_from_1_to_2.html#removal-of-realtimesearchindex
 HAYSTACK_SIGNAL_PROCESSOR = 'haystack.signals.RealtimeSignalProcessor'
 
 # Added by Tim for database based caching
@@ -237,6 +239,8 @@ OLWIDGET_STATIC_URL='/static/olwidget/'
 DEBUG_TOOLBAR_CONFIG = {
     'INTERCEPT_REDIRECTS': False
 }
+
+THUMBNAIL_ENGINE='sorl.thumbnail.engines.convert_engine.Engine'
 
 # auth overrids
 from settings_auth import *
