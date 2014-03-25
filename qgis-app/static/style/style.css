@@ -39,3 +39,7 @@ div.tag_cloud a {
 .olwidgetEditableLayerSwitcher .container {
     width: inherit !important;
 }
+
+img.plugin-icon {
+    max-width: inherit;
+}

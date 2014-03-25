@@ -46,7 +46,7 @@
 {% endblock %}
 {% block content %}
    <h2>{% trans "Plugin" %}: {{ object.name }}
-   {% if object.icon %}
+   {% if object.icon and object.icon.file %}
         {% thumbnail object.icon "128x128" upscale=False format="PNG" as im %}
             <img class="pull-right plugin-icon" alt="{% trans "Plugin icon" %}" src="{{ im.url }}" width="{{ im.x }}" height="{{ im.y }}" />
         {% endthumbnail %}
