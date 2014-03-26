@@ -20,14 +20,14 @@ class PluginForm(ModelForm):
 
     class Meta:
         model = Plugin
-        fields = ('description', 'author', 'email', 'icon', 'deprecated', 'homepage', 'tracker', 'repository', 'owners', 'tags')
+        fields = ('description', 'about', 'author', 'email', 'icon', 'deprecated', 'homepage', 'tracker', 'repository', 'owners', 'tags')
 
     def clean(self):
         """
         Check author
         """
         if self.cleaned_data.get('author') and not re.match(r'^[^/]+$', self.cleaned_data.get('author')):
-            raise ValidationError(_("Author name cannot contain slashes."))            
+            raise ValidationError(_("Author name cannot contain slashes."))
         return super(PluginForm, self).clean()
 
 class PluginVersionForm(ModelForm):
@@ -81,7 +81,7 @@ class PluginVersionForm(ModelForm):
             self.cleaned_data['changelog'] = changelog
 
         self.instance.changelog = self.cleaned_data.get('changelog')
-        
+
 
         return super(PluginVersionForm, self).clean()
 

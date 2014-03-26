@@ -49,6 +49,17 @@ div.description{
   font-weight:normal;
   font-style: italic;
  }
+
+ div.about{
+  display: block;
+  float:none;
+  margin:0;
+  text-align: left;
+  padding:0.2em 0.5em 0.4em;
+  color: black;
+  font-size:85%;
+  font-weight:normal;
+ }
 div.tags{
   padding:0 0 0 1em;
   font-size:85%;
@@ -100,6 +111,9 @@ Download:
 </div>
 <div class="description">
 <xsl:value-of select="description" />
+</div>
+<div class="about">
+<xsl:value-of select="about" />
 </div>
 <div class="tags">
 Tags:

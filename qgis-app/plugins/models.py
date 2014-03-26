@@ -15,13 +15,12 @@ from djangoratings.fields import AnonymousRatingField
 # Tagging
 from taggit_autosuggest.managers import TaggableManager
 
-PLUGINS_STORAGE_PATH = getattr(settings, 'PLUGINS_STORAGE_PATH', 'packages')
+PLUGINS_STORAGE_PATH = getattr(settings, 'PLUGINS_STORAGE_PATH', 'packages/%Y')
 PLUGINS_FRESH_DAYS   = getattr(settings, 'PLUGINS_FRESH_DAYS', 30)
 
 
 # Used in Version fields to transform DB value back to human readable string
 VERSION_RE=r'(^|(?<=\.))0+(?!(\.|$))|\.#+'
-
 
 class BasePluginManager(models.Manager):
     """
@@ -169,6 +168,7 @@ class Plugin (models.Model):
     package_name    = models.CharField(_('Package Name'), help_text=_('This is the plugin\'s internal name, equals to the main folder name'), max_length=256, unique=True, editable=False)
     name            = models.CharField(_('Name'), help_text=_('Must be unique'), max_length=256, unique=True)
     description     = models.TextField(_('Description'))
+    about           = models.TextField(_('About'), blank=True, null=True)
 
     icon            = models.ImageField(_('Icon'), blank=True, null=True, upload_to=PLUGINS_STORAGE_PATH)
 
@@ -579,3 +579,7 @@ def delete_plugin_icon(sender, instance, **kw):
 models.signals.post_delete.connect(delete_version_package, sender=PluginVersion)
 models.signals.post_delete.connect(delete_plugin_icon, sender=Plugin)
 
+
+from south.modelsinspector import add_introspection_rules
+add_introspection_rules([], ["^plugins\.models\.QGVersionZeroForcedField"])
+add_introspection_rules([], ["^plugins\.models\.VersionField"])

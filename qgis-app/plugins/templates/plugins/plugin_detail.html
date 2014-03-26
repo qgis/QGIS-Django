@@ -75,9 +75,17 @@
         <blockquote>
             <p class="plugin-details-description">{{ object.description }}</p>
         </blockquote>
+        {% comment%}
+        {% if object.about %}
+        <div class="well"><p>{{ object.about }}</p></div>
+        {% endif %}
+        {% endcomment %}
 
         <ul class="nav nav-tabs" id="plugintab">
-            <li class="active"><a href="#plugin-details" data-toggle="tab">{% trans "Details" %}</a></li>
+            {% if object.about %}
+            <li class="active"><a href="#plugin-about" data-toggle="tab">{% trans "About" %}</a></li>
+            {% endif %}
+            <li {% if not object.about %}class="active"{% endif %}><a href="#plugin-details" data-toggle="tab">{% trans "Details" %}</a></li>
             <li><a href="#plugin-versions" data-toggle="tab">{% trans "Versions" %}</a></li>
             {% if user.is_staff or user in object.editors %}
             <li><a href="#plugin-manage" data-toggle="tab">{% trans "Manage" %}</a></li>
@@ -85,7 +93,12 @@
         </ul>
 
         <div class="tab-content">
-            <div class="tab-pane active" id="plugin-details">
+            {% if object.about %}
+            <div class="tab-pane active" id="plugin-about">
+                <p>{{ object.about }}</p>
+            </div>
+            {% endif %}
+            <div class="tab-pane{% if not object.about %} active{% endif %}" id="plugin-details">
                 <dl class="dl-horizontal">
                     {% if object.author %}
                         <dt>{% trans "Author"%}</dt>

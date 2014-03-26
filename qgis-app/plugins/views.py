@@ -247,6 +247,10 @@ def plugin_upload(request):
                     plugin.repository = form.cleaned_data.get('repository')
                 elif not plugin.repository:
                     warnings.append(_('<strong>repository</strong> field is empty, this field is not required but is recommended, please consider adding it to metadata.'))
+                if form.cleaned_data.get('about'):
+                    plugin.about = form.cleaned_data.get('about')
+                elif not plugin.about:
+                    warnings.append(_('<strong>about</strong> field is empty, this field is not required but is recommended, please consider adding it to metadata.'))
 
 
                 # Save main Plugin object
@@ -580,7 +584,7 @@ def _main_plugin_update(request, plugin, form):
     Updates the main plugin object from version metadata
     """
     # Update plugin from metadata
-    for f in ['name', 'author', 'email', 'description', 'homepage', 'tracker']:
+    for f in ['name', 'author', 'email', 'description', 'about', 'homepage', 'tracker']:
         if form.cleaned_data.get(f):
             setattr(plugin, f, form.cleaned_data.get(f))
 

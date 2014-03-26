@@ -149,6 +149,7 @@ INSTALLED_APPS = (
     'djangoratings',
     'lib',
     'endless_pagination',
+    'userexport',
 )
 
 TEMPLATE_CONTEXT_PROCESSORS = (

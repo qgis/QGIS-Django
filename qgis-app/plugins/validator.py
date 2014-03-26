@@ -18,7 +18,7 @@ from django.core.files.uploadedfile import SimpleUploadedFile
 PLUGIN_MAX_UPLOAD_SIZE=getattr(settings, 'PLUGIN_MAX_UPLOAD_SIZE', 1048576)
 PLUGIN_REQUIRED_METADATA=getattr(settings, 'PLUGIN_REQUIRED_METADATA', ('name', 'description', 'version', 'qgisMinimumVersion', 'author', 'email'))
 
-PLUGIN_OPTIONAL_METADATA=getattr(settings, 'PLUGIN_OPTIONAL_METADATA', ('homepage', 'changelog', 'tracker', 'qgisMaximumVersion', 'repository', 'tags', 'deprecated', 'experimental'))
+PLUGIN_OPTIONAL_METADATA=getattr(settings, 'PLUGIN_OPTIONAL_METADATA', ('about', 'homepage', 'changelog', 'tracker', 'qgisMaximumVersion', 'repository', 'tags', 'deprecated', 'experimental'))
 PLUGIN_BOOLEAN_METADATA=getattr(settings, 'PLUGIN_BOOLEAN_METADATA', ('experimental', 'deprecated'))
 
 
@@ -197,7 +197,5 @@ def validator(package):
                 checked_metadata.append((k, v))
         except UnicodeDecodeError, e:
             raise ValidationError(_("There was an error converting metadata '%s' to UTF-8 . Reported error was: %s") % (k, e))
-
-
     return checked_metadata
 

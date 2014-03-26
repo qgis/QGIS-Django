@@ -39,6 +39,7 @@ urlpatterns = patterns('',
     (r'^planet/', include('feedjack.urls')),
     # ABP: autosuggest for tags
     (r'^taggit_autosuggest/', include('taggit_autosuggest.urls')),
+    (r'^userexport/', include('userexport.urls')),
 
 )
 

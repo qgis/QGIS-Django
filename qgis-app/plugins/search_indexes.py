@@ -10,6 +10,7 @@ class PluginIndex(indexes.SearchIndex, indexes.Indexable):
     # We add this for autocomplete.
     name_auto = indexes.EdgeNgramField(model_attr='name')
     description_auto = indexes.EdgeNgramField(model_attr='description')
+    about_auto = indexes.EdgeNgramField(model_attr='about', default='')
 
     def get_model(self):
         return Plugin

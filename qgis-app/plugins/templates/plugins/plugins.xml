@@ -3,6 +3,7 @@
 <plugins>
     {% for version in object_list %}<pyqgis_plugin name="{{version.plugin.name}}" version="{{ version.version }}">
         <description><![CDATA[{{ version.plugin.description }}]]></description>
+        <about>{% if version.plugin.about %}<![CDATA[{{ version.plugin.about }}]]>{% endif %}</about>
         <version>{{ version.version }}</version>
         <qgis_minimum_version>{{ version.min_qg_version }}</qgis_minimum_version>
         <qgis_maximum_version>{{ version.max_qg_version }}</qgis_maximum_version>
