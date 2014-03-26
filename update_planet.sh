@@ -1,9 +1,9 @@
+cd /home/plugins/QGIS-Django/qgis-app
 # Run feedjack_update.py to update the planet postings
-SITE_DIR=/home/web/qgis-django
-source $SITE_DIR/python/bin/activate
+SITE_DIR=/home/plugins/QGIS-Django/qgis-app
+source /home/plugins/.virtualenvs/plugins/bin/activate
 # set up the environment
-export PYTHONPATH=$SITE_DIR:$SITE_DIR/qgis
-export DJANGO_SETTINGS_MODULE=qgis.settings
+export PYTHONPATH=$SITE_DIR:$SITE_DIR
+export DJANGO_SETTINGS_MODULE=settings
 # update the feeds
-feedjack_update.py
-
+/home/plugins/.virtualenvs/plugins/bin/feedjack_update.py
