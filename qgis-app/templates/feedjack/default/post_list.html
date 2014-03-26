@@ -1,4 +1,4 @@
-  {% extends 'base.html' %}{% load i18n avatar_exists %}
+{% extends 'base.html' %}{% load i18n avatar_exists %}
 {% block extracss %}
 <link type="text/css" href="/static/style/planet.css" rel="stylesheet" />
 {% endblock %}
@@ -227,7 +227,7 @@ title="{{ feed.feed.title }}">{{ feed.name }}</a></li>
 </ul>
 </div>
 <p class="text-center">
-<a href="#top"> 
+<a href="#top">
 <i class="icon-arrow-up"></i> {% trans "Back to Top" %}
 </a>
 </p>
