@@ -1,0 +1,27 @@
+{% load endless pretty_html i18n %}
+{% paginate object_list %}
+{% for post in object_list %}
+  <div class="post">
+    <h1 class="post-title"><a href="{{ post.link }}">{% if post.title %}{{ post.title|safe }}{% else %}{{ post.subscriber.name }}{% endif %}</a></h1>
+    <div class="post-content">
+      <p>{{ post.content|prettyhtml|safe }}</p>
+      <div class="post-meta">
+        <a href="{{ post.link }}">
+        {% if post.author %}{% blocktrans with post.author as author %}by {{ author }} at{% endblocktrans %}{% endif %}
+        {{ post.date_modified|date:"H:i" }}</a>
+        {% for tag in post.qtags %}
+            {% if forloop.first %}{% trans "under" %}{% endif %}
+            <a href="{% url "post-tag" tag.name %}">{{ tag.name }}</a>
+            {% if not forloop.last %}, {% endif %}
+        {% endfor %}
+        {% if post.comments %}
+          <a href="{{ post.comments }}">({% trans "Comments" %})</a>
+        {% endif %}
+      </div>
+    </div>
+  </div>
+{% endfor %}
+<div class="pagination">
+{% show_more %}
+</div>
+
