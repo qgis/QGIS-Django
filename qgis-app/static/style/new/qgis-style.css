@@ -749,3 +749,17 @@ img.overflow-img, #processing {
     padding-left: 3px;
     padding-right: 3px;
 }
+
+section.sponsors {
+    padding: 30px 0;
+    text-align: center;
+    background: #333333 url('http://www.qgis.org/en/_static/images/paper-texture.png') repeat;
+}
+
+/* votes in plugin listing */
+.small-star {
+    display: inline-block;
+    height: 16px;
+    width: 16px;
+    background-image: url('../../images/star_16.png');
+}

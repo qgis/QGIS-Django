@@ -116,9 +116,9 @@ title="{{ feed.feed.title }}">{{ feed.name }}</a></li>
   {% endifchanged %}
 
   {% if item.title %}
-  <div class="post-title"><a href="{{ item.link }}">{{ item.title }}</a></div>
+  <h1 class="post-title"><a href="{{ item.link }}">{{ item.title }}</a></h1>
   {% else %}
-  <div class="post-title"> {{ item.subscriber.name }}</div>
+  <h1 class="post-title"> {{ item.subscriber.name }}</h1>
   {% endif %}
   {% ifchanged %}
   <div class="post-meta"> <span class="date">{{ item.date_modified|date:"F j, Y" }}</span> <span class="name">{{ item.subscriber.name }}</span><br/></div>
