@@ -20,7 +20,9 @@ PLUGINS_FRESH_DAYS   = getattr(settings, 'PLUGINS_FRESH_DAYS', 30)
 
 
 # Used in Version fields to transform DB value back to human readable string
-VERSION_RE=r'(^|(?<=\.))0+(?!(\.|$))|\.#+'
+#VERSION_RE=r'(^|(?<=\.))0+(?!(\.|$))|\.#+'
+# Allows "-" for processing plugin
+VERSION_RE=r'(^|(?<=\.))0+(?!(\.|$|-))|\.#+'
 
 class BasePluginManager(models.Manager):
     """
