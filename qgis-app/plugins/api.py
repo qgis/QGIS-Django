@@ -136,5 +136,5 @@ def plugin_vote(plugin_id, vote, **kwargs):
     if not int(vote) in range(1, 6):
         msg = unicode(_('%s is not a valid vote (1-5).') % vote)
         raise ValidationError(msg)
-    return [plugin.rating.add(score=int(vote), user=request.user, ip_address=request.META['REMOTE_ADDR'])]
+    return [plugin.rating.add(score=int(vote), user=request.user, ip_address=request.META['REMOTE_ADDR'], cookies=request.COOKIES)]
 

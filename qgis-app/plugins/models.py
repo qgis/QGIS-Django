@@ -200,7 +200,6 @@ class Plugin (models.Model):
 
     tags                    = TaggableManager(blank=True)
 
-
     @property
     def approved(self):
         """
