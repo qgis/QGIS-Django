@@ -241,6 +241,10 @@ DEBUG_TOOLBAR_CONFIG = {
 
 THUMBNAIL_ENGINE='sorl.thumbnail.engines.convert_engine.Engine'
 
+# When run behind a proxy
+USE_X_FORWARDED_HOST = True
+
+
 # auth overrids
 from settings_auth import *
 
