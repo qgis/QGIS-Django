@@ -1,7 +1,7 @@
 {% load i18n simplemenu_tags %}<!DOCTYPE html>
 <html xmlns="http://www.w3.org/1999/xhtml">
 <head>
-  <title>QGIS - {% block extratitle %}{% endblock %}</title>
+  <title>QGIS {% block extratitle %}Plugins{% endblock %}</title>
   <meta name="AUTHOR" content="QGIS Web Team" />
   <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
 
@@ -36,7 +36,7 @@
                       <span class="icon-bar"></span>
                     </button>
 
-                    <a class="brand" href="#">QGIS</a>
+                    <a class="brand" href="http://www.qgis.org">QGIS</a>
                     {% if user.is_authenticated %}
                     <a id="user-tooltip" href="{% url "fe_logout" %}" data-toggle="tooltip" data-placement="bottom" title="{{ user.username }}" style="float: right !important"><i class="icon-user icon-3x"></i></a>
                     {% else %}

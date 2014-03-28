@@ -508,7 +508,7 @@ section.content h4 {
 }
 @media (min-width: 980px) {
 .navbar .container {
-    width: 940px !important;
+    /*width: 940px !important;*/
 }
 .bs-sidenav {
     margin: 0 !important;
