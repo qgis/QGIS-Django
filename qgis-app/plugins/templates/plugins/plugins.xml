@@ -1,7 +1,7 @@
 <?xml version = '1.0' encoding = 'UTF-8'?>
 <?xml-stylesheet type="text/xsl" href="{{ MEDIA_URL}}style/plugins.xsl" ?>
 <plugins>
-    {% for version in object_list %}<pyqgis_plugin name="{{version.plugin.name}}" version="{{ version.version }}">
+    {% for version in object_list %}<pyqgis_plugin name="{{version.plugin.name}}" version="{{ version.version }}" plugin_id="{{version.plugin.id }}">
         <description><![CDATA[{{ version.plugin.description }}]]></description>
         <about>{% if version.plugin.about %}<![CDATA[{{ version.plugin.about }}]]>{% endif %}</about>
         <version>{{ version.version }}</version>
