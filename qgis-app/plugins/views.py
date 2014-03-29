@@ -389,8 +389,12 @@ class PluginsList(ListView):
 
     def get_context_data(self, **kwargs):
         context = super(PluginsList, self).get_context_data(**kwargs)
+        try:
+            per_page = int(self.request.GET.get('per_page', settings.PAGINATION_DEFAULT_PAGINATION))
+        except ValueError:
+            per_page = settings.PAGINATION_DEFAULT_PAGINATION
         context.update({
-            'per_page': self.request.GET.get('per_page', settings.PAGINATION_DEFAULT_PAGINATION),
+            'per_page': per_page,
             'title': self.title,
         })
         context.update(self.additional_context)

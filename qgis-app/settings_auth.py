@@ -1,6 +1,9 @@
 import ldap
 from django_auth_ldap.config import LDAPSearch, GroupOfNamesType
 
+ldap.set_option(ldap.OPT_X_TLS_REQUIRE_CERT, ldap.OPT_X_TLS_NEVER)
+
+
 # Keep ModelBackend around for per-user permissions and maybe a local superuser.
 AUTHENTICATION_BACKENDS = (
   'django_auth_ldap.backend.LDAPBackend',
