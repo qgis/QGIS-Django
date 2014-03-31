@@ -5,7 +5,6 @@ from django.db import connection
 from django.db.models import Q
 from django.shortcuts import get_object_or_404, render_to_response
 from django.template import RequestContext
-from django.utils.translation import ugettext_lazy as _
 from django.http import Http404, HttpResponse, HttpResponseRedirect
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required, user_passes_test
@@ -15,13 +14,15 @@ from django.conf import settings
 from django.contrib.auth.models import User, Permission
 from django.contrib.contenttypes.models import ContentType
 from django.utils.encoding import DjangoUnicodeDecodeError
+from django.utils.decorators import method_decorator
+from django.utils.translation import ugettext_lazy as _
 from django.views.generic.list import ListView
 from django.views.generic.detail import DetailView
 from plugins.models import Plugin, PluginVersion, vjust
 from plugins.forms import *
 
 from django.views.decorators.http import require_POST
-from django.views.decorators.csrf import csrf_protect
+from django.views.decorators.csrf import csrf_protect, ensure_csrf_cookie
 
 
 from django.core.mail import send_mail
@@ -303,9 +304,14 @@ def plugin_upload(request):
     return render_to_response('plugins/plugin_upload.html', { 'form' : form }, context_instance=RequestContext(request))
 
 
+
 class PluginDetailView(DetailView):
     model = Plugin
     queryset = Plugin.objects.all()
+
+    @method_decorator(ensure_csrf_cookie)
+    def dispatch(self, *args, **kwargs):
+        return super(PluginDetailView, self).dispatch(*args, **kwargs)
 
     def get_context_data(self, **kwargs):
         plugin = kwargs.get('object')

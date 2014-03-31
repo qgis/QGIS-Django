@@ -20,6 +20,7 @@ from django.core.files.uploadedfile import InMemoryUploadedFile
 # Transaction
 from django.db import connection
 
+
 @rpcmethod(name='plugin.upload', signature=['array', 'base64'], login_required=True)
 def plugin_upload(package, **kwargs):
     """
@@ -118,7 +119,8 @@ def plugin_tags(**kwargs):
     return [t.name for t in Tag.objects.all().order_by('name')]
 
 
-@rpcmethod(name='plugin.vote', signature=['array', 'integer', 'integer'], login_required=False)
+
+@rpcmethod(name='plugin.vote', signature=['array', 'integer', 'integer'], login_required=True)
 def plugin_vote(plugin_id, vote, **kwargs):
     """
     Vote a plugin, valid values are 1-5
