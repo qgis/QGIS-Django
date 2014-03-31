@@ -16,6 +16,7 @@ from django.db import IntegrityError
 from django.utils.translation import ugettext_lazy as _
 from django.core.exceptions import ValidationError, PermissionDenied
 from django.core.files.uploadedfile import InMemoryUploadedFile
+from django.contrib.contenttypes.models import ContentType
 
 # Transaction
 from django.db import connection
@@ -120,7 +121,7 @@ def plugin_tags(**kwargs):
 
 
 
-@rpcmethod(name='plugin.vote', signature=['array', 'integer', 'integer'], login_required=True)
+@rpcmethod(name='plugin.vote', signature=['array', 'integer', 'integer'], login_required=False)
 def plugin_vote(plugin_id, vote, **kwargs):
     """
     Vote a plugin, valid values are 1-5
@@ -138,5 +139,17 @@ def plugin_vote(plugin_id, vote, **kwargs):
     if not int(vote) in range(1, 6):
         msg = unicode(_('%s is not a valid vote (1-5).') % vote)
         raise ValidationError(msg)
-    return [plugin.rating.add(score=int(vote), user=request.user, ip_address=request.META['REMOTE_ADDR'], cookies=request.COOKIES)]
+    cookies=request.COOKIES
+    if request.user.is_anonymous:
+        # Get the cookie
+        cookie_name = "vote-%s.%s.%s" % (ContentType.objects.get(app_label="plugins", model="plugin").pk, plugin_id, plugin.rating.field.key[:6])
+        if not request.COOKIES.get(cookie_name, False):
+            # Get the IP
+            ip_address = request.META['REMOTE_ADDR']
+            # Check if a recent vote exists
+            rating = plugin.rating.get_ratings().filter(cookie__isnull=False, ip_address=ip_address, date_changed__gte=datetime.datetime.now()-datetime.timedelta(days=10)).order_by('-date_changed')
+            # Change vote if exists
+            if len(rating):
+                cookies = {cookie_name: rating[0].cookie}
+    return [plugin.rating.add(score=int(vote), user=request.user, ip_address=request.META['REMOTE_ADDR'], cookies=cookies)]
 
