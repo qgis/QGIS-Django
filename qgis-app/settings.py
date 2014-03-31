@@ -74,6 +74,7 @@ MIDDLEWARE_CLASSES = (
     # Added by Tim for advanced loggin options
     'debug_toolbar.middleware.DebugToolbarMiddleware',
     'django.middleware.cache.FetchFromCacheMiddleware',
+    'middleware.XForwardedForMiddleware',
 )
 
 ROOT_URLCONF = 'urls'
