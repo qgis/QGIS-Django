@@ -72,9 +72,12 @@ urlpatterns += patterns('',
 
 # plugin rating
 from djangoratings.views import AddRatingFromModel
+from django.views.decorators.http import require_POST
+from django.views.decorators.csrf import csrf_protect, ensure_csrf_cookie
+
 
 urlpatterns += patterns('',
-    url(r'rate/(?P<object_id>\d+)/(?P<score>\d+)/', AddRatingFromModel(), {
+    url(r'rate/(?P<object_id>\d+)/(?P<score>\d+)/', require_POST(csrf_protect(AddRatingFromModel())), {
         'app_label': 'plugins',
         'model': 'plugin',
         'field_name': 'rating',
