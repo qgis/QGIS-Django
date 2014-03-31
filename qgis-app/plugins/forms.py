@@ -30,6 +30,7 @@ class PluginForm(ModelForm):
             raise ValidationError(_("Author name cannot contain slashes."))
         return super(PluginForm, self).clean()
 
+
 class PluginVersionForm(ModelForm):
     """
     Form for version upload on existing plugins
@@ -64,7 +65,13 @@ class PluginVersionForm(ModelForm):
         if self.files:
             package         = self.cleaned_data.get('package')
             try:
-                self.cleaned_data.update(validator(package))
+                cleaned_data = validator(package)
+                if ('experimental' in dict(cleaned_data)
+                    and 'experimental' in self.cleaned_data
+                    and dict(cleaned_data)['experimental'] != self.cleaned_data['experimental']):
+                    msg = unicode(_("The 'experimental' flag in the form does not match the 'experimental' flag in the plugins package metadata.<br />"))
+                    raise ValidationError(mark_safe("%s" % msg))
+                self.cleaned_data.update(cleaned_data)
             except ValidationError, e:
                 msg = unicode(_("There were errors reading plugin package (please check also your plugin's metadata).<br />"))
                 raise ValidationError(mark_safe("%s %s" % (msg, '<br />'.join(e.messages))))

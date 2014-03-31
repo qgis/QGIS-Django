@@ -27,10 +27,9 @@
                 }
             }
         });
-        var has_voted = false;
         jQuery('#rating').ratings(5, {% firstof rating '0' %}).bind('ratingchanged', function(event, data) {
             jQuery.post('{% url "plugin_rate" object.pk '0' %}'.replace('/0', '/' + data.rating),  function(data){
-                if(!has_voted){
+                if(data.search('changed') == -1){
                     has_voted = true;
                     jQuery('#votes').html(parseInt(jQuery('#votes').html())+1);
                 }
