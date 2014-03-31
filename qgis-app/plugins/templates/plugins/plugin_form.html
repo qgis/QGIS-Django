@@ -33,7 +33,7 @@ ul.as-list {
 <script src="/static/jquery-autosuggest/js/jquery.autoSuggest.minified.js" type="text/javascript"></script>
 {% endblock %}
 {% block content %}
-    <h2>{{ form_title }}</h2>
+    <h2>{{ form_title }} {{ plugin }}</h2>
     {% if form.non_field_errors %}
     <div class="alert alert-error">
         <button type="button" class="close" data-dismiss="alert">&times;</button>

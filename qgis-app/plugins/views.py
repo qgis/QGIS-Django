@@ -377,7 +377,7 @@ def plugin_update(request, package_name):
         form = PluginForm(instance = plugin)
         form.fields['owners'].queryset = User.objects.exclude(pk=plugin.created_by.pk).order_by('username')
 
-    return render_to_response('plugins/plugin_form.html', { 'form' : form , 'form_title' : _('Edit plugin')}, context_instance=RequestContext(request))
+    return render_to_response('plugins/plugin_form.html', { 'form' : form , 'form_title' : _('Edit plugin'), 'plugin' : plugin}, context_instance=RequestContext(request))
 
 
 
@@ -638,7 +638,11 @@ def version_create(request, package_name):
     else:
         form = PluginVersionForm(is_trusted=request.user.has_perm('plugins.can_approve'))
 
-    return render_to_response('plugins/version_form.html', { 'form' : form, 'plugin' : plugin, 'form_title' : _('New version for plugin')}, context_instance=RequestContext(request))
+    return render_to_response('plugins/version_form.html', {
+        'form' : form,
+        'plugin' : plugin,
+        'form_title' : _('New version for plugin')
+    }, context_instance=RequestContext(request))
 
 
 @login_required
@@ -667,7 +671,12 @@ def version_update(request, package_name, version):
     else:
         form = PluginVersionForm(instance=version, is_trusted=request.user.has_perm('plugins.can_approve'))
 
-    return render_to_response('plugins/version_form.html', { 'form' : form, 'plugin' : plugin, 'form_title' : _('Edit version for plugin')}, context_instance=RequestContext(request))
+    return render_to_response('plugins/version_form.html', {
+        'form' : form,
+        'plugin' : plugin,
+        'version' : version,
+        'form_title' : _('Edit version for plugin')
+    }, context_instance=RequestContext(request))
 
 
 
