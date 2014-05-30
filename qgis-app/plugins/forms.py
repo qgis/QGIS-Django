@@ -13,7 +13,7 @@ import re
 
 
 def _clean_tags(tags):
-    """Return a tripped and cleaned tag list, empty tags are deleted"""
+    """Return a stripped and cleaned tag list, empty tags are deleted"""
     if tags:
         _tags = []
         for t in tags.split(','):
