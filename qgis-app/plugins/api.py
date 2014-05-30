@@ -147,7 +147,7 @@ def plugin_vote(plugin_id, vote, **kwargs):
             # Get the IP
             ip_address = request.META['REMOTE_ADDR']
             # Check if a recent vote exists
-            rating = plugin.rating.get_ratings().filter(cookie__isnull=False, ip_address=ip_address, date_changed__gte=datetime.datetime.now()-datetime.timedelta(days=10)).order_by('-date_changed')
+            rating = plugin.rating.get_ratings().filter(cookie__isnull=False, ip_address=ip_address, date_changed__gte=datetime.datetime.now() - datetime.timedelta(days=10)).order_by('-date_changed')
             # Change vote if exists
             if len(rating):
                 cookies = {cookie_name: rating[0].cookie}

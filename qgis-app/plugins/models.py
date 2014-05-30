@@ -446,7 +446,7 @@ class PluginVersion (models.Model):
     # the file!
     package         = models.FileField(_('Plugin package'), upload_to=PLUGINS_STORAGE_PATH)
     # Flags: checks on unique current/experimental are done in save() and possibly in the views
-    experimental    = models.BooleanField(_('Experimental flag'), default=False, help_text=_("Check this box if this version is experimental, leave unchecked if it's stable."), db_index=True)
+    experimental    = models.BooleanField(_('Experimental flag'), default=False, help_text=_("Check this box if this version is experimental, leave unchecked if it's stable. Please note that this field might be overridden by metadata (if present)."), db_index=True)
     approved        = models.BooleanField(_('Approved'), default=True, help_text=_('Set to false if you wish to unapprove the plugin version.'), db_index=True)
 
     # Managers, used in xml output

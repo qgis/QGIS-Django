@@ -162,7 +162,7 @@ def validator(package):
 
     # Adds package_name
     if not re.match(r'^[A-Za-z][A-Za-z0-9-_]+$', package_name):
-        raise ValidationError(_("Package name must start with an ASCII letter and can contain ASCII letters, digits and the signs '-' and '_'."))
+        raise ValidationError(_("The name of the top level directory inside the zip package must start with an ASCII letter and can only contain ASCII letters, digits and the signs '-' and '_'."))
     metadata.append(('package_name', package_name))
 
     # Last temporary rule, check if mandatory metadata are also in __init__.py

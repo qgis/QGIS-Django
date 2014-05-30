@@ -11,6 +11,19 @@ from taggit.forms import *
 
 import re
 
+
+def _clean_tags(tags):
+    """Return a tripped and cleaned tag list, empty tags are deleted"""
+    if tags:
+        _tags = []
+        for t in tags.split(','):
+            if t.strip():
+               _tags.append(t.strip())
+        return ','.join(_tags)
+    return None
+
+
+
 class PluginForm(ModelForm):
     """
     Form for plugin editing
@@ -58,7 +71,6 @@ class PluginVersionForm(ModelForm):
         """
         Only read package if uploaded
         """
-
         # Override package
         changelog = self.cleaned_data.get('changelog')
 
@@ -82,14 +94,12 @@ class PluginVersionForm(ModelForm):
             # Check plugin name
             if self.cleaned_data.get('package_name') and self.cleaned_data.get('package_name') != self.instance.plugin.package_name:
                 raise ValidationError(_('Plugin name mismatch: the plugin main folder name in the compressed file (%s) is different from the original plugin package name (%s).') % (self.cleaned_data.get('package_name'), self.instance.plugin.package_name))
-
         # Also set changelog from metadata
         if changelog:
             self.cleaned_data['changelog'] = changelog
-
+        # Clean tags
+        self.cleaned_data['tags'] = _clean_tags(self.cleaned_data.get('tags', None))
         self.instance.changelog = self.cleaned_data.get('changelog')
-
-
         return super(PluginVersionForm, self).clean()
 
 
@@ -110,19 +120,17 @@ class PackageUploadForm(forms.Form):
         except ValidationError, e:
             msg = unicode(_("There were errors reading plugin package (please check also your plugin's metadata)."))
             raise ValidationError(mark_safe("%s %s" % (msg, ','.join(e.messages))))
-
         # Disabled: now the PackageUploadForm also accepts updates
         #if Plugin.objects.filter(package_name = self.cleaned_data['package_name']).count():
         #    raise ValidationError(_('A plugin with this package name (%s) already exists. To update an existing plugin, you should open the plugin\'s details view and add a new version from there.') % self.cleaned_data['package_name'])
 
         #if Plugin.objects.filter(name = self.cleaned_data['name']).count():
         #    raise ValidationError(_('A plugin with this name (%s) already exists.') % self.cleaned_data['name'])
-
         self.cleaned_data['version'] = PluginVersion.clean_version(self.cleaned_data['version'])
-
         # Checks for version
         if Plugin.objects.filter(package_name=self.cleaned_data['package_name'], pluginversion__version=self.cleaned_data['version']).count():
             raise ValidationError(_('A plugin with this name (%s) and version number (%s) already exists.') % (self.cleaned_data['name'], self.cleaned_data['version']))
-
+        # Clean tags
+        self.cleaned_data['tags'] = _clean_tags(self.cleaned_data.get('tags', None))
         return package
 
