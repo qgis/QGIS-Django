@@ -1,6 +1,6 @@
 from django.conf.urls import patterns, include, url
 from django.conf import settings
-
+from django.views.generic.base import RedirectView
 from django.contrib.auth.views import login, logout
 # to find users app views
 from users.views import *
@@ -35,6 +35,8 @@ urlpatterns = patterns('',
 
     # SAM: qgis-users app
     (r'^community-map/', include('users.urls')),
+    # Fix broken URLS in feedjack
+    (r'^planet/feed/$', RedirectView.as_view(url='/planet/feed/atom/')),
     # Tim: Feedjack feed aggregator / planet
     (r'^planet/', include('feedjack.urls')),
     # ABP: autosuggest for tags
