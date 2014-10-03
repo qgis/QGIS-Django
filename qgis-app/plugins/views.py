@@ -458,7 +458,7 @@ class UserDetailsPluginsList(PluginsList):
 class TagsPluginsList(PluginsList):
 
     def get_queryset(self):
-        return Plugin.approved_objects.filter(tagged_items__tag__name=urllib.unquote(self.kwargs['tags']))
+        return Plugin.approved_objects.filter(tagged_items__tag__slug=urllib.unquote(self.kwargs['tags']))
 
     def get_context_data(self, **kwargs):
         context = super(TagsPluginsList, self).get_context_data(**kwargs)

@@ -4,7 +4,7 @@
 
 <div class="tag_cloud">
 {% for tag in tags %}
-<a style="font-size:{{tag.weight|floatformat:0}}px" href="{% url "tags_plugins" tag.name|iriencode %}">{{tag}}</a>
+<a style="font-size:{{tag.weight|floatformat:0}}px" href="{% url "tags_plugins" tag.slug|iriencode %}">{{tag}}</a>
 {% endfor %}
 <div style="clear:both"></div>
 </div>
