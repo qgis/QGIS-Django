@@ -95,7 +95,7 @@ def validator(package):
     if bad_file:
         zip.close()
         del zip
-        raise ValidationError( msg )
+        raise ValidationError( __('Bad zip (maybe a CRC error) on file %s') %  bad_file )
 
     # Checks that package_name  exists
     namelist = zip.namelist()
