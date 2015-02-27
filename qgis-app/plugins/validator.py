@@ -22,7 +22,7 @@ PLUGIN_OPTIONAL_METADATA=getattr(settings, 'PLUGIN_OPTIONAL_METADATA', ('about',
 PLUGIN_BOOLEAN_METADATA=getattr(settings, 'PLUGIN_BOOLEAN_METADATA', ('experimental', 'deprecated'))
 
 
-def _read_from_init2(initcontent, initname):
+def _read_from_init(initcontent, initname):
     """
     Read metadata from __init__.py, raise ValidationError
     """
@@ -42,17 +42,6 @@ def _read_from_init2(initcontent, initname):
     if not len(metadata):
         raise ValidationError(_('Cannot find valid metadata in %s') % initname)
     return metadata
-
-def _read_from_init(initcontent, initname):
-    """
-    Read metadata from __init__.py, raise ValidationError
-    DEPRECATED: _read_from_init2 has better support for metadata
-    """
-    metadata = []
-    metadata.extend(re.findall('def\s+([^c]\w+).*?return\s+.*?(?P<quote>["\'])(.*?)(?P=quote)', initcontent , re.DOTALL))
-    if not metadata:
-        raise ValidationError(_('Cannot find valid metadata in %s') % initname)
-    return [(md[0], md[2]) for md in metadata]
 
 def _check_required_metadata(metadata):
     """
@@ -95,7 +84,7 @@ def validator(package):
     if bad_file:
         zip.close()
         del zip
-        raise ValidationError( __('Bad zip (maybe a CRC error) on file %s') %  bad_file )
+        raise ValidationError( _('Bad zip (maybe a CRC error) on file %s') %  bad_file )
 
     # Checks that package_name  exists
     namelist = zip.namelist()
@@ -134,7 +123,7 @@ def validator(package):
         # Then parse __init__
         # Ugly RE: regexp guru wanted!
         initcontent = zip.read(initname)
-        metadata.extend(_read_from_init2(initcontent, initname))
+        metadata.extend(_read_from_init(initcontent, initname))
         if not metadata:
             raise ValidationError(_('Cannot find valid metadata in %s') % initname)
         metadata.append(('metadata_source', '__init__.py'))
@@ -172,7 +161,7 @@ def validator(package):
     if tuple(min_qgs_version.split('.')) < tuple('1.8'.split('.')) and metadataname in namelist:
         initcontent = zip.read(initname)
         try:
-            initmetadata = _read_from_init2(initcontent, initname)
+            initmetadata = _read_from_init(initcontent, initname)
             initmetadata.append(('metadata_source', '__init__.py'))
             _check_required_metadata(initmetadata)
         except ValidationError, e:
