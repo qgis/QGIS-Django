@@ -84,7 +84,10 @@ def validator(package):
     if bad_file:
         zip.close()
         del zip
-        raise ValidationError( _('Bad zip (maybe a CRC error) on file %s') %  bad_file )
+        try:
+            raise ValidationError( _('Bad zip (maybe a CRC error) on file %s') %  bad_file )
+        except UnicodeDecodeError:
+            raise ValidationError( _('Bad zip (maybe unicode filename) on file %s') %  unicode( bad_file, errors='replace'))
 
     # Checks that package_name  exists
     namelist = zip.namelist()
