@@ -10,13 +10,15 @@ from django.contrib import messages
 from django.contrib.auth.decorators import login_required, user_passes_test
 from django.contrib.auth.models import User
 from django.core.urlresolvers import reverse
+from django.core.exceptions import FieldDoesNotExist
 from django.conf import settings
 from django.contrib.auth.models import User, Permission
 from django.contrib.contenttypes.models import ContentType
 from django.utils.encoding import DjangoUnicodeDecodeError
 from django.utils.decorators import method_decorator
 from django.utils.translation import ugettext_lazy as _
-from sortable_listview import SortableListView
+#from sortable_listview import SortableListView
+from django.views.generic.list import ListView
 from django.views.generic.detail import DetailView
 from plugins.models import Plugin, PluginVersion, vjust
 from plugins.forms import *
@@ -31,6 +33,12 @@ from django.contrib.sites.models import Site
 import logging
 import urllib
 import copy
+
+try:
+    from urllib import urlencode
+    from urlparse import urlparse, parse_qs
+except ImportError:
+    from urllib.parse import urlencode, urlparse, parse_qs
 
 # Decorator
 staff_required = user_passes_test(lambda u: u.is_staff)
@@ -390,35 +398,12 @@ def plugin_update(request, package_name):
 
 
 
-class PluginsList(SortableListView):
+class PluginsList(ListView):
     model = Plugin
     queryset = Plugin.approved_objects.all()
     title =  _('All plugins')
     additional_context = {}
     paginate_by = settings.PAGINATION_DEFAULT_PAGINATION
-    allowed_sort_fields =  {
-                                'name': {
-                                    'default_direction': '',
-                                    'verbose_name': _('Name')
-                                },
-                                'author': {
-                                    'default_direction': '',
-                                    'verbose_name': _('Author')
-                                },
-                                'featured': {
-                                    'default_direction': '-',
-                                    'verbose_name': _('Featured')
-                                },
-                                'average_vote': {
-                                    'default_direction': '-',
-                                    'verbose_name': _('Stars (votes)')
-                                },
-                                'downloads': {
-                                    'default_direction': '-',
-                                    'verbose_name': _('Downloads')
-                                }
-                            }
-    default_sort_field = 'name'
 
     def get_paginate_by(self, queryset):
         """
@@ -430,13 +415,51 @@ class PluginsList(SortableListView):
             paginate_by = self.paginate_by
         return paginate_by
 
+    def get_queryset(self):
+        qs = super(PluginsList, self).get_queryset()
+        sort_by = self.request.GET.get('sort', None)
+        if sort_by:
+            if sort_by[0] == '-':
+                _sort_by = sort_by[1:]
+            else:
+                _sort_by = sort_by
+            try:
+                self.model._meta.get_field(_sort_by)
+                qs = qs.order_by(sort_by)
+            except FieldDoesNotExist:
+                pass
+        return qs
+
     def get_context_data(self, **kwargs):
         context = super(PluginsList, self).get_context_data(**kwargs)
         context.update({
             'title': self.title,
         })
         context.update(self.additional_context)
+        context['current_sort_query'] = self.get_sortstring()
+        context['current_querystring'] = self.get_querystring()
         return context
+
+
+    def get_sortstring(self):
+        if self.request.GET.get('sort', None):
+            return 'sort=%s' % self.request.GET.get('sort')
+        return ''
+
+
+    def get_querystring(self):
+        """
+        Clean existing query string (GET parameters) by removing
+        arguments that we don't want to preserve (sort parameter, 'page')
+        """
+        to_remove = ['page', 'sort']
+        query_string = urlparse(self.request.get_full_path()).query
+        query_dict = parse_qs(query_string)
+        for arg in to_remove:
+            if arg in query_dict:
+                del query_dict[arg]
+        clean_query_string = urlencode(query_dict, doseq=True)
+        return clean_query_string
 
 
 class MyPluginsList(PluginsList):
