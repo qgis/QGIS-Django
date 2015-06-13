@@ -35,3 +35,5 @@ div.tag_cloud a {
 img.plugin-icon {
     max-width: inherit;
 }
+
+.required label:after { content:" *"; color: red; }

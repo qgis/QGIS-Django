@@ -161,8 +161,8 @@ class Plugin (models.Model):
     email           = models.EmailField(_('Author email'))
     homepage        = models.URLField(_('Plugin homepage'), blank=True, null=True)
     # Support
-    repository      = models.URLField(_('Code repository'), blank=True, null=True)
-    tracker         = models.URLField(_('Tracker'), blank=True, null=True)
+    repository      = models.URLField(_('Code repository'), blank=False, null=True)
+    tracker         = models.URLField(_('Tracker'), blank=False, null=True)
 
     owners          = models.ManyToManyField(User, blank=True)
 
@@ -170,7 +170,7 @@ class Plugin (models.Model):
     package_name    = models.CharField(_('Package Name'), help_text=_('This is the plugin\'s internal name, equals to the main folder name'), max_length=256, unique=True, editable=False)
     name            = models.CharField(_('Name'), help_text=_('Must be unique'), max_length=256, unique=True)
     description     = models.TextField(_('Description'))
-    about           = models.TextField(_('About'), blank=True, null=True)
+    about           = models.TextField(_('About'), blank=False, null=True)
 
     icon            = models.ImageField(_('Icon'), blank=True, null=True, upload_to=PLUGINS_STORAGE_PATH)
 

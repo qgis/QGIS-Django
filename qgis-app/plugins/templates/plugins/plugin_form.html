@@ -34,6 +34,15 @@ ul.as-list {
 {% endblock %}
 {% block content %}
     <h2>{{ form_title }} {{ plugin }}</h2>
+    <div class="alert alert-info">
+        <p class="required"><label style="display:inline"></label> {% trans "required field." %}</p>
+    </div>
+    {% if form.errors %}
+    <div class="alert alert-error">
+        <button type="button" class="close" data-dismiss="alert">&times;</button>
+        <p>{% trans "The form contains errors and cannot be submitted, please check the fields highlighted in red." %}</p>
+    </div>
+    {% endif %}
     {% if form.non_field_errors %}
     <div class="alert alert-error">
         <button type="button" class="close" data-dismiss="alert">&times;</button>

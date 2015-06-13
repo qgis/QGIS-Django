@@ -28,7 +28,7 @@ class PluginForm(ModelForm):
     """
     Form for plugin editing
     """
-
+    required_css_class = 'required'
     tags = TagField(required=False)
 
     class Meta:
@@ -48,8 +48,9 @@ class PluginVersionForm(ModelForm):
     """
     Form for version upload on existing plugins
     """
+    required_css_class = 'required'
     changelog = forms.fields.CharField(label=_('Changelog'), required=False,
-                help_text=_('Insert here a short description of the changes that have been made in this version. This field is not mandatory and can be automatically read from the metadata.txt file.'), widget=forms.Textarea)
+                help_text=_('Insert here a short description of the changes that have been made in this version. This field is not mandatory and it is automatically filled from the metadata.txt file.'), widget=forms.Textarea)
 
 
     def __init__(self, *args, **kwargs):
