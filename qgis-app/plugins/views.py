@@ -424,7 +424,11 @@ class PluginsList(SortableListView):
         """
         Paginate by specified value in querystring, or use default class property value.
         """
-        return self.request.GET.get('per_page', self.paginate_by)
+        try:
+            paginate_by = int(self.request.GET.get('per_page', self.paginate_by))
+        except ValueError:
+            paginate_by = self.paginate_by
+        return paginate_by
 
     def get_context_data(self, **kwargs):
         context = super(PluginsList, self).get_context_data(**kwargs)
