@@ -9,7 +9,7 @@ def export(request, **kwargs):
     if not request.user.is_superuser:
         raise PermissionDenied()
     import csv
-    response = HttpResponse(mimetype='text/csv')
+    response = HttpResponse(content_type='text/csv')
     response['Content-Disposition'] = 'attachment; filename=plugins_users_list.csv'
     writer = csv.writer(response)
     for u in User.objects.all():

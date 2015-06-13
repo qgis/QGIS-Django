@@ -16,10 +16,11 @@ from django.contrib.contenttypes.models import ContentType
 from django.utils.encoding import DjangoUnicodeDecodeError
 from django.utils.decorators import method_decorator
 from django.utils.translation import ugettext_lazy as _
-from django.views.generic.list import ListView
+from sortable_listview import SortableListView
 from django.views.generic.detail import DetailView
 from plugins.models import Plugin, PluginVersion, vjust
 from plugins.forms import *
+from plugins.validator import PLUGIN_REQUIRED_METADATA
 
 from django.views.decorators.http import require_POST
 from django.views.decorators.csrf import csrf_protect, ensure_csrf_cookie
@@ -236,6 +237,7 @@ def plugin_upload(request):
 
                 # Other optional fields
                 warnings = []
+
                 if form.cleaned_data.get('homepage'):
                     plugin.homepage = form.cleaned_data.get('homepage')
                 elif not plugin.homepage:
@@ -243,15 +245,15 @@ def plugin_upload(request):
                 if form.cleaned_data.get('tracker'):
                     plugin.tracker = form.cleaned_data.get('tracker')
                 elif not plugin.tracker:
-                    warnings.append(_('<strong>tracker</strong> field is empty, this field is not required but is recommended, please consider adding it to metadata.'))
+                    raise ValidationError(_('"tracker" metadata is required! Please add it to <code>metadata.txt</code>.'))
                 if form.cleaned_data.get('repository'):
                     plugin.repository = form.cleaned_data.get('repository')
                 elif not plugin.repository:
-                    warnings.append(_('<strong>repository</strong> field is empty, this field is not required but is recommended, please consider adding it to metadata.'))
+                    raise ValidationError(_('"repository" metadata is required! Please add it to <code>metadata.txt</code>.'))
                 if form.cleaned_data.get('about'):
                     plugin.about = form.cleaned_data.get('about')
                 elif not plugin.about:
-                    warnings.append(_('<strong>about</strong> field is empty, this field is not required but is recommended, please consider adding it to metadata.'))
+                    raise ValidationError(_('"about" metadata is required! Please add it to <code>metadata.txt</code>.'))
 
 
                 # Save main Plugin object
@@ -317,9 +319,14 @@ class PluginDetailView(DetailView):
         plugin = kwargs.get('object')
         context = super(PluginDetailView, self).get_context_data(**kwargs)
         # Warnings for owners
-        if check_plugin_access(self.request.user, plugin) and not (plugin.homepage and plugin.tracker and plugin.repository):
-            msg = _("Some important informations are missing from the plugin metadata (homepage, tracker or repository). Please consider creating a project on <a href=\"http://hub.qgis.org\">hub.qgis.org</a> and filling the missing metadata.")
-            messages.warning(self.request, msg, fail_silently=True)
+        if check_plugin_access(self.request.user, plugin):
+            if not plugin.homepage:
+                msg = _('<strong>homepage</strong> metadata is missing, this is not required but recommended. Please consider adding "homepage" to  <code>metadata.txt</code>.')
+                messages.warning(self.request, msg, fail_silently=True)
+            for md in set(PLUGIN_REQUIRED_METADATA)  - set(('version', 'qgisMinimumVersion')):
+                if not getattr(plugin, md, None):
+                    msg = _('<strong>%s</strong> metadata is missing, this metadata entry is <strong>required</strong>. Please add <strong>%s</strong> to <code>metadata.txt</code>.')% (md, md)
+                    messages.error(self.request, msg, fail_silently=True)
         context.update({
             'rating': int(plugin.rating.get_rating()),
             'votes': plugin.rating.votes,
@@ -345,11 +352,7 @@ def _check_optional_metadata(form, request):
     Checks for the presence of optional metadata
     """
     if not form.cleaned_data.get('homepage'):
-        messages.warning(request, _('Homepage field is empty, this field is not required but is recommended, please consider adding it to metadata.'), fail_silently=True)
-    if not form.cleaned_data.get('tracker'):
-        messages.warning(request, _('Tracker field is empty, this field is not required but is  recommended, please consider adding it to metadata.'), fail_silently=True)
-    if not form.cleaned_data.get('repository'):
-        messages.warning(request, _('Repository field is empty, this field is not required but is recommended, please consider adding it to metadata.'), fail_silently=True)
+        messages.warning(request, _('Homepage field is empty, this field is not required but is recommended, please consider adding it to  <code>metadata.txt</code>.'), fail_silently=True)
 
 
 @login_required
@@ -387,20 +390,45 @@ def plugin_update(request, package_name):
 
 
 
-class PluginsList(ListView):
+class PluginsList(SortableListView):
     model = Plugin
     queryset = Plugin.approved_objects.all()
     title =  _('All plugins')
     additional_context = {}
+    paginate_by = settings.PAGINATION_DEFAULT_PAGINATION
+    allowed_sort_fields =  {
+                                'name': {
+                                    'default_direction': '',
+                                    'verbose_name': _('Name')
+                                },
+                                'author': {
+                                    'default_direction': '',
+                                    'verbose_name': _('Author')
+                                },
+                                'featured': {
+                                    'default_direction': '-',
+                                    'verbose_name': _('Featured')
+                                },
+                                'average_vote': {
+                                    'default_direction': '-',
+                                    'verbose_name': _('Stars (votes)')
+                                },
+                                'downloads': {
+                                    'default_direction': '-',
+                                    'verbose_name': _('Downloads')
+                                }
+                            }
+    default_sort_field = 'name'
+
+    def get_paginate_by(self, queryset):
+        """
+        Paginate by specified value in querystring, or use default class property value.
+        """
+        return self.request.GET.get('per_page', self.paginate_by)
 
     def get_context_data(self, **kwargs):
         context = super(PluginsList, self).get_context_data(**kwargs)
-        try:
-            per_page = int(self.request.GET.get('per_page', settings.PAGINATION_DEFAULT_PAGINATION))
-        except ValueError:
-            per_page = settings.PAGINATION_DEFAULT_PAGINATION
         context.update({
-            'per_page': per_page,
             'title': self.title,
         })
         context.update(self.additional_context)
@@ -410,7 +438,8 @@ class PluginsList(ListView):
 class MyPluginsList(PluginsList):
 
     def get_queryset(self):
-        return Plugin.base_objects.filter(owners=self.request.user).distinct() | Plugin.objects.filter(created_by=self.request.user).distinct()
+        return Plugin.base_objects.filter(owners=self.request.user).distinct()\
+         | Plugin.objects.filter(created_by=self.request.user).distinct()
 
 
 class UserPluginsList(PluginsList):
@@ -482,20 +511,6 @@ def plugin_manage(request, package_name):
         return plugin_delete(request, package_name)
 
     return HttpResponseRedirect(reverse('user_details', args=[username]))
-
-
-###############################################
-
-# Author functions
-
-###############################################
-
-def __author_plugins(request, author):
-    """
-    List plugins from author
-    """
-    queryset = Plugin.approved_objects.filter(author=author)
-    return plugins_list(request, queryset, template_name = 'plugins/plugin_list.html', extra_context = { 'title' : _('Plugins by %s') % author})
 
 
 
@@ -779,7 +794,7 @@ def version_download(request, package_name, version):
         version.package.file.file.close()
     zipfile = open(version.package.file.name, 'rb')
     file_content = zipfile.read()
-    response = HttpResponse(file_content, mimetype='application/zip')
+    response = HttpResponse(file_content, content_type='application/zip')
     response['Content-Disposition'] = 'attachment; filename=%s-%s.zip' % (version.plugin.package_name, version.version)
     return response
 
@@ -853,5 +868,5 @@ def xml_plugins(request):
                 except IndexError:
                     pass
 
-    return render_to_response('plugins/plugins.xml', {'object_list': object_list}, mimetype='text/xml', context_instance=RequestContext(request))
+    return render_to_response('plugins/plugins.xml', {'object_list': object_list}, content_type='text/xml', context_instance=RequestContext(request))
 

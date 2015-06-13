@@ -2,7 +2,9 @@ Django==1.6.2
 # Currently broken with 'no module named defaults' error
 #Feedjack==0.9.18
 # So use George's fork rather
-git+https://github.com/Erve1879/feedjack.git
+# git+https://github.com/Erve1879/feedjack.git
+# Use my fork (django 1.8 ready)
+git+https://github.com/elpaso/feedjack.git
 Markdown==2.3.1
 PIL==1.1.7
 Pygments==1.6
@@ -19,14 +21,15 @@ django-endless-pagination==2.0
 django-extensions==1.2.0
 django-generic-aggregation==0.3.2
 django-haystack==2.1.0
-django-olwidget==0.61.0
+#django-olwidget==0.61.0 unmaintained, use this fork
+git+https://github.com/Christophe31/olwidget.git
 django-pagination==1.0.7
-django-ratings==0.3.7
+# Unmaintained!
+#django-ratings==0.3.7
+git+https://github.com/enikesha/django-ratings.git
 django-simple-ratings==0.3.2
 # SIMPLEMENU
 git+git://github.com/elpaso/django-simplemenu.git
-#Use my fork: the official is buggy
-git+git://github.com/elpaso/django-sorting.git
 django-taggit==0.11.2
 django-taggit-autosuggest==0.2.1
 django-taggit-templatetags==0.4.6dev
@@ -46,3 +49,5 @@ sqlparse==0.1.11
 wsgiref==0.1.2
 simplejson==3.3.3
 BeautifulSoup
+django-bootstrap-pagination
+django-sortable-listview

@@ -1,4 +1,4 @@
-{% extends 'plugins/plugin_base.html' %}{% load i18n sorting_tags pagination_tags humanize smart_paginate range_filter thumbnail %}
+{% extends 'plugins/plugin_base.html' %}{% load i18n bootstrap_pagination humanize sort_anchor range_filter thumbnail %}
 {% block extrajs %}
   <script type="text/javascript" src="/static/js/jquery.cookie.js"></script>
   <script language="javascript">
@@ -49,11 +49,13 @@
 {% block content %}
     <h2>{% if title %}{{title}}{% else %}{% trans "All plugins" %}{% endif %}</h2>
     {# Filtered views menu #}
-
     {% if object_list.count %}
     <div id="list_commands">
-        <span class="num_items">{% blocktrans with records_count=object_list.count %}{{ records_count }} records found{% endblocktrans %}</span>&nbsp;&mdash;&nbsp;
+        <span class="num_items">{% blocktrans with records_count=page_obj.paginator.count %}{{ records_count }} records found{% endblocktrans %}</span>&nbsp;&mdash;&nbsp;
         <a class="toggle_desc" href="javascript:void(0);" onclick="return toggle_desc()">{% trans "Click to toggle descriptions." %}</a>
+    </div>
+    <div class="pagination">
+    {% include 'sortable_listview/sort_links.html' %}
     </div>
     <table class="table table-striped plugins">
         <thead>
@@ -74,8 +76,6 @@
             </tr>
         </thead>
         <tbody>
-            {% autosort object_list %}
-            {% autopaginate object_list per_page %}
             {% for object in object_list %}
             <tr class="pmain {% if object.deprecated %} error deprecated{% endif %}" id="pmain{{object.pk}}">
                 <td><a title="{% if object.deprecated %} [DEPRECATED] {% endif %}{% trans "Click here for plugin details" %}" href="{% url "plugin_detail" object.package_name %}">
@@ -108,7 +108,9 @@
             {% endfor %}
         </tbody>
     </table>
-    {% smart_paginate %}
+    <div class="pagination">
+    {% include 'sortable_listview/pagination.html' %}
+    </div>
     <div class="alert">
         <button type="button" class="close" data-dismiss="alert">&times;</button>
         {% trans "Deprecated plugins are printed in red." %}

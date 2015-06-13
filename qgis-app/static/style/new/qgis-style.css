@@ -94,7 +94,7 @@
     src: url("fonts/OpenSans-SemiboldItalic-webfont.eot?#iefix") format("embedded-opentype"), url("fonts/OpenSans-SemiboldItalic-webfont.woff") format("woff"), url("fonts/OpenSans-SemiboldItalic-webfont.ttf") format("truetype"), url("fonts/OpenSans-SemiboldItalic-webfont.svg#OpenSans") format("svg");
 }
 body {
-    font: 62.5%/1.5 "Open Sans","Helvetica Neue",Ubuntu,Arial,sans-serif;
+    font-family: "Open Sans","Helvetica Neue",Ubuntu,Arial,sans-serif;
     padding-top: 60px !important;
 }
 h1, h2, h3, h4, h5 {

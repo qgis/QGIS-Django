@@ -63,12 +63,11 @@ MIDDLEWARE_CLASSES = (
     'django.middleware.csrf.CsrfViewMiddleware',
     #'django.middleware.csrf.CsrfResponseMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
+    'django.contrib.auth.middleware.SessionAuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     # Needed by rpc4django
     'plugins.middleware.HttpAuthMiddleware',
     'django.contrib.auth.middleware.RemoteUserMiddleware',
-    # ABP:
-    'django_sorting.middleware.SortingMiddleware',
     'pagination.middleware.PaginationMiddleware',
     'django.contrib.flatpages.middleware.FlatpageFallbackMiddleware',
     # Added by Tim for advanced loggin options
@@ -116,10 +115,8 @@ INSTALLED_APPS = (
 
     # ABP:
     'plugins',
-    'django_sorting',
     'pagination',
     'django.contrib.humanize',
-    'django.contrib.comments',
     #'django.contrib.markup',
     'django.contrib.syndication',
     #'ratings',
@@ -146,24 +143,36 @@ INSTALLED_APPS = (
     'sorl.thumbnail',
     # RPC
     'rpc4django',
-    'south',
+    #'south',
     'djangoratings',
     'lib',
     'endless_pagination',
     'userexport',
+    'bootstrap_pagination',
+    'sortable_listview',
 )
 
-TEMPLATE_CONTEXT_PROCESSORS = (
-    "django.contrib.auth.context_processors.auth",
-    'django.contrib.messages.context_processors.messages',
-    # old django "django.core.context_processors.auth",
-    "django.core.context_processors.debug",
-    "django.core.context_processors.i18n",
-    "django.core.context_processors.media",
-    "django.core.context_processors.request",
-    # ABP: adds DEBUG and BASE_TEMPLATE vars
-    "qgis_context_processor.additions",
-)
+TEMPLATES = [
+    {
+        'BACKEND': 'django.template.backends.django.DjangoTemplates',
+        'DIRS': ['templates'],
+        'APP_DIRS': True,
+        'OPTIONS': {
+            'context_processors' : (
+                "django.contrib.auth.context_processors.auth",
+                'django.contrib.messages.context_processors.messages',
+                # old django "django.core.context_processors.auth",
+                "django.core.context_processors.debug",
+                "django.core.context_processors.i18n",
+                "django.core.context_processors.media",
+                "django.core.context_processors.request",
+                # ABP: adds DEBUG and BASE_TEMPLATE vars
+                "qgis_context_processor.additions",
+            ),
+        },
+    },
+]
+
 
 ACCOUNT_ACTIVATION_DAYS = 7 # One-week activation window; you may, of course, use a different value
 
@@ -234,7 +243,7 @@ TAGCLOUD_COUNT_GTE=3
 # ratings
 RATINGS_VOTES_PER_IP=10000
 
-OLWIDGET_STATIC_URL='/static/olwidget/'
+#OLWIDGET_STATIC_URL='/static/olwidget/'
 
 DEBUG_TOOLBAR_CONFIG = {
     'INTERCEPT_REDIRECTS': False

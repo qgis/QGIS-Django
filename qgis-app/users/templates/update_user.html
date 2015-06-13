@@ -2,8 +2,8 @@
 
 {% block content %}
  <p> Please enter the email you registered with and further instructions will be emailed to you. </p>
-  <div id="submit_guid"> 
-  <form action="" method="post" accept-charset="utf-8" class="horizontal">
+  <div id="submit_guid">
+  <form action="" method="post" accept-charset="utf-8" class="horizontal">{% csrf_token %}
    {{ myForm.as_p }}
   <button type="submit">OK</button></form>
   </div>

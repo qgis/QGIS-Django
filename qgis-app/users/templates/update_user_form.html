@@ -7,7 +7,7 @@
 
 {% block content %}
   <div id="viewform">
-  <form enctype="multipart/form-data" action="" method="post" accept-charset="utf-8" class="horizontal">
+  <form enctype="multipart/form-data" action="" method="post" accept-charset="utf-8" class="horizontal">{% csrf_token %}
     {{ myForm.as_p }}
   <button type="submit">Save</button></form>
   </div>

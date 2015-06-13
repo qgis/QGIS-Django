@@ -28,8 +28,8 @@ class BasePluginManager(models.Manager):
     """
     Adds a score
     """
-    def get_query_set(self):
-        return super(BasePluginManager, self).get_query_set().extra(
+    def get_queryset(self):
+        return super(BasePluginManager, self).get_queryset().extra(
             select={
                 'average_vote': 'rating_score/(rating_votes+0.001)'
             })
@@ -39,8 +39,8 @@ class ApprovedPlugins(BasePluginManager):
     Shows only public plugins: i.e. those with
     and with at least one approved version ("stable" or "experimental")
     """
-    def get_query_set(self):
-        return super(ApprovedPlugins, self).get_query_set().filter(pluginversion__approved=True).distinct()
+    def get_queryset(self):
+        return super(ApprovedPlugins, self).get_queryset().filter(pluginversion__approved=True).distinct()
 
 
 class StablePlugins(BasePluginManager):
@@ -48,8 +48,8 @@ class StablePlugins(BasePluginManager):
     Shows only public plugins: i.e. those with "approved" flag set
     and with one "stable" version
     """
-    def get_query_set(self):
-        return super(StablePlugins, self).get_query_set().filter(pluginversion__approved=True, pluginversion__experimental=False).distinct()
+    def get_queryset(self):
+        return super(StablePlugins, self).get_queryset().filter(pluginversion__approved=True, pluginversion__experimental=False).distinct()
 
 
 class ExperimentalPlugins(BasePluginManager):
@@ -57,8 +57,8 @@ class ExperimentalPlugins(BasePluginManager):
     Shows only public plugins: i.e. those with "approved" flag set
     and with one "experimental" version
     """
-    def get_query_set(self):
-        return super(ExperimentalPlugins, self).get_query_set().filter(pluginversion__approved=True, pluginversion__experimental=True).distinct()
+    def get_queryset(self):
+        return super(ExperimentalPlugins, self).get_queryset().filter(pluginversion__approved=True, pluginversion__experimental=True).distinct()
 
 
 class FeaturedPlugins(BasePluginManager):
@@ -66,8 +66,8 @@ class FeaturedPlugins(BasePluginManager):
     Shows only public featured stable plugins: i.e. those with "approved" flag set
     and "featured" flag set
     """
-    def get_query_set(self):
-        return super(FeaturedPlugins, self).get_query_set().filter(pluginversion__approved=True, featured=True).order_by('-created_on').distinct()
+    def get_queryset(self):
+        return super(FeaturedPlugins, self).get_queryset().filter(pluginversion__approved=True, featured=True).order_by('-created_on').distinct()
 
 
 class FreshPlugins(BasePluginManager):
@@ -80,24 +80,24 @@ class FreshPlugins(BasePluginManager):
         self.days = days
         return super(FreshPlugins, self).__init__(*args, **kwargs)
 
-    def get_query_set(self):
-        return super(FreshPlugins, self).get_query_set().filter(deprecated=False, pluginversion__approved=True, modified_on__gte = datetime.datetime.now()- datetime.timedelta(days = self.days)).order_by('-created_on').distinct()
+    def get_queryset(self):
+        return super(FreshPlugins, self).get_queryset().filter(deprecated=False, pluginversion__approved=True, modified_on__gte = datetime.datetime.now()- datetime.timedelta(days = self.days)).order_by('-created_on').distinct()
 
 
 class UnapprovedPlugins(BasePluginManager):
     """
     Shows only unapproved plugins
     """
-    def get_query_set(self):
-        return super(UnapprovedPlugins, self).get_query_set().filter(pluginversion__approved=False).distinct()
+    def get_queryset(self):
+        return super(UnapprovedPlugins, self).get_queryset().filter(pluginversion__approved=False).distinct()
 
 
 class DeprecatedPlugins(BasePluginManager):
     """
     Shows only deprecated plugins
     """
-    def get_query_set(self):
-        return super(DeprecatedPlugins, self).get_query_set().filter(deprecated=True).distinct()
+    def get_queryset(self):
+        return super(DeprecatedPlugins, self).get_queryset().filter(deprecated=True).distinct()
 
 
 
@@ -105,8 +105,8 @@ class PopularPlugins(ApprovedPlugins):
     """
     Shows only approved plugins, sort by popularity algorithm
     """
-    def get_query_set(self):
-        return super(PopularPlugins, self).get_query_set().filter(deprecated=False).extra(
+    def get_queryset(self):
+        return super(PopularPlugins, self).get_queryset().filter(deprecated=False).extra(
             select={
                 'popularity': 'plugins_plugin.downloads * (1 + (rating_score/(rating_votes+0.01)/3))'
             }
@@ -117,32 +117,32 @@ class MostDownloadedPlugins(ApprovedPlugins):
     """
     Shows only approved plugins, sort by downloads
     """
-    def get_query_set(self):
-        return super(MostDownloadedPlugins, self).get_query_set().filter(deprecated=False).order_by('-downloads').distinct()
+    def get_queryset(self):
+        return super(MostDownloadedPlugins, self).get_queryset().filter(deprecated=False).order_by('-downloads').distinct()
 
 
 class MostVotedPlugins(ApprovedPlugins):
     """
     Shows only approved plugins, sort by vote number
     """
-    def get_query_set(self):
-        return super(MostVotedPlugins, self).get_query_set().filter(deprecated=False).order_by('-rating_votes').distinct()
+    def get_queryset(self):
+        return super(MostVotedPlugins, self).get_queryset().filter(deprecated=False).order_by('-rating_votes').distinct()
 
 
 class MostRatedPlugins(ApprovedPlugins):
     """
     Shows only approved plugins, sort by vote/number of votes number
     """
-    def get_query_set(self):
-        return super(ApprovedPlugins, self).get_query_set().filter(deprecated=False).order_by('-average_vote').distinct()
+    def get_queryset(self):
+        return super(ApprovedPlugins, self).get_queryset().filter(deprecated=False).order_by('-average_vote').distinct()
 
 
 class TaggablePlugins(TaggableManager):
     """
     Shows only public plugins: i.e. those with "approved" flag set
     """
-    def get_query_set(self):
-        return super(TaggablePlugnis, self).get_query_set().filter(deprecated=False, pluginversion__approved=True).distinct()
+    def get_queryset(self):
+        return super(TaggablePlugnis, self).get_queryset().filter(deprecated=False, pluginversion__approved=True).distinct()
 
 
 
@@ -164,7 +164,7 @@ class Plugin (models.Model):
     repository      = models.URLField(_('Code repository'), blank=True, null=True)
     tracker         = models.URLField(_('Tracker'), blank=True, null=True)
 
-    owners          = models.ManyToManyField(User, null=True, blank=True)
+    owners          = models.ManyToManyField(User, blank=True)
 
     # name, desc etc.
     package_name    = models.CharField(_('Package Name'), help_text=_('This is the plugin\'s internal name, equals to the main folder name'), max_length=256, unique=True, editable=False)
@@ -334,8 +334,8 @@ class ApprovedPluginVersions(models.Manager):
     """
     Shows only public plugin versions:
     """
-    def get_query_set(self):
-        return super(ApprovedPluginVersions, self).get_query_set().filter(approved=True).order_by('-version')
+    def get_queryset(self):
+        return super(ApprovedPluginVersions, self).get_queryset().filter(approved=True).order_by('-version')
 
 
 class StablePluginVersions(ApprovedPluginVersions):
@@ -343,8 +343,8 @@ class StablePluginVersions(ApprovedPluginVersions):
     Shows only approved public plugin versions: i.e. those with "approved" flag set
     and with "stable" flag
     """
-    def get_query_set(self):
-        return super(StablePluginVersions, self).get_query_set().filter(experimental=False)
+    def get_queryset(self):
+        return super(StablePluginVersions, self).get_queryset().filter(experimental=False)
 
 
 class ExperimentalPluginVersions(ApprovedPluginVersions):
@@ -352,8 +352,8 @@ class ExperimentalPluginVersions(ApprovedPluginVersions):
     Shows only public plugin versions: i.e. those with "approved" flag set
     and with  "experimental" flag
     """
-    def get_query_set(self):
-        return super(ExperimentalPluginVersions, self).get_query_set().filter(experimental=True)
+    def get_queryset(self):
+        return super(ExperimentalPluginVersions, self).get_queryset().filter(experimental=True)
 
 
 
@@ -581,6 +581,6 @@ models.signals.post_delete.connect(delete_version_package, sender=PluginVersion)
 models.signals.post_delete.connect(delete_plugin_icon, sender=Plugin)
 
 
-from south.modelsinspector import add_introspection_rules
-add_introspection_rules([], ["^plugins\.models\.QGVersionZeroForcedField"])
-add_introspection_rules([], ["^plugins\.models\.VersionField"])
+#from south.modelsinspector import add_introspection_rules
+#add_introspection_rules([], ["^plugins\.models\.QGVersionZeroForcedField"])
+#add_introspection_rules([], ["^plugins\.models\.VersionField"])

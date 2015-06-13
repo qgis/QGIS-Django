@@ -1,10 +1,11 @@
-from django.conf.urls import patterns, include, url
+from django.conf.urls import include, url
 from django.conf import settings
 from django.views.generic.base import RedirectView
+from django.views.static import serve
 from django.contrib.auth.views import login, logout
 # to find users app views
 from users.views import *
-
+from homepage import homepage
 # Menu system, registration of views is at the end of this file
 import simplemenu
 from django.contrib.flatpages.models import FlatPage
@@ -14,7 +15,7 @@ from django.contrib import admin
 admin.autodiscover()
 
 
-urlpatterns = patterns('',
+urlpatterns =[
     # Example:
     # (r'^qgis/', include('qgis.foo.urls')),
 
@@ -22,28 +23,28 @@ urlpatterns = patterns('',
     # (r'^admin/doc/', include('django.contrib.admindocs.urls')),
 
     # Uncomment the next line to enable the admin:
-    (r'^admin/', include(admin.site.urls)),
+    url(r'^admin/', include(admin.site.urls)),
 
     # ABP: plugins app
-    (r'^plugins/', include('plugins.urls')),
+    url(r'^plugins/', include('plugins.urls')),
     #(r'^tags/', include('cab.urls.tags')),
     #(r'^bookmarks/', include('cab.urls.bookmarks')),
     #(r'^languages/', include('cab.urls.languages')),
     #(r'^popular/', include('cab.urls.popular')),
-    (r'^search/', include('haystack.urls')),
-    (r'^search/', include('custom_haystack_urls')),
+    url(r'^search/', include('haystack.urls')),
+    url(r'^search/', include('custom_haystack_urls')),
 
     # SAM: qgis-users app
-    (r'^community-map/', include('users.urls')),
+    url(r'^community-map/', include('users.urls')),
     # Fix broken URLS in feedjack
-    (r'^planet/feed/$', RedirectView.as_view(url='/planet/feed/atom/')),
+    url(r'^planet/feed/$', RedirectView.as_view(url='/planet/feed/atom/')),
     # Tim: Feedjack feed aggregator / planet
-    (r'^planet/', include('feedjack.urls')),
+    url(r'^planet/', include('feedjack.urls')),
     # ABP: autosuggest for tags
-    (r'^taggit_autosuggest/', include('taggit_autosuggest.urls')),
-    (r'^userexport/', include('userexport.urls')),
+    url(r'^taggit_autosuggest/', include('taggit_autosuggest.urls')),
+    url(r'^userexport/', include('userexport.urls')),
 
-)
+]
 
 # ABP: temporary home page
 #urlpatterns += patterns('django.views.generic.simple',
@@ -53,27 +54,27 @@ urlpatterns = patterns('',
 
 # serving static media
 if settings.SERVE_STATIC_MEDIA:
-    urlpatterns += patterns('',
-        (r'^static/(?P<path>.*)$', 'django.views.static.serve', {'document_root': settings.MEDIA_ROOT}),
-    )
+    urlpatterns += [
+        url(r'^static/(?P<path>.*)$', serve, {'document_root': settings.MEDIA_ROOT}),
+    ]
 
 
 # auth
-urlpatterns += patterns('',
+urlpatterns += [
     url(r'^accounts/login/$',  login, {}, name = 'fe_login'),
     url(r'^accounts/logout/$', logout, {}, name = 'fe_logout'),
-)
+]
 
 # tinymce
-urlpatterns += patterns('',
-    (r'^tinymce/', include('tinymce.urls')),
-)
+urlpatterns += [
+    url(r'^tinymce/', include('tinymce.urls')),
+]
 
 
 # Home
-urlpatterns += patterns('homepage',
-    (r'^$', 'homepage'),
-)
+urlpatterns += [
+    url(r'^$', homepage),
+]
 
 simplemenu.register(
     '/admin/',
