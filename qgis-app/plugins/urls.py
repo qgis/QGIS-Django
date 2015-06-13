@@ -26,7 +26,7 @@ urlpatterns = [
     url(r'^user/(?P<username>\w+)/admin$', UserDetailsPluginsList.as_view(), name='user_details'),
     url(r'^$', PluginsList.as_view(), name='approved_plugins'),
     url(r'^my$', login_required(MyPluginsList.as_view(additional_context={'title':_('My Plugins')})), name='my_plugins'),
-    url(r'^featured/$', PluginsList.as_view(queryset=Plugin.featured_objects.all()), name='featured_plugins'),
+    url(r'^featured/$', PluginsList.as_view(queryset=Plugin.featured_objects.all(), additional_context={'title' : _('Featured plugins')}), name='featured_plugins'),
     url(r'^user/(?P<username>\w+)/$', UserPluginsList.as_view(), name='user_plugins'),
 
 
