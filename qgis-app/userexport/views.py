@@ -25,8 +25,8 @@ def export_bad(request, **kwargs):
     import csv
     response = HttpResponse(content_type='text/csv')
     response['Content-Disposition'] = 'attachment; filename=bad_plugins_users_list.csv'
-    writer = csv.writer(response)
-    writer.writerow(['Name', 'Author email', 'Maintainer email', 'Approved', 'Deprecated'])
+    writer = csv.writer(response, dialect='excel-tab')
+    writer.writerow(['Name', 'Author email', 'Maintainer email', 'Approved', 'Deprecated', 'Tracker', 'Repository', 'About'])
     for p in Plugin.approved_objects.filter(Q(about__isnull=True) | Q(about='') | Q(description__isnull=True) | Q(description='') |  Q(tracker__isnull=True) | Q(tracker='')):
-        writer.writerow([unicode(p.name).encode("utf-8"), unicode(p.created_by.email).encode("utf-8"), p.email, p.approved, p.deprecated])
+        writer.writerow([unicode(p.name).encode("utf-8"), unicode(p.created_by.email).encode("utf-8"), p.email, p.approved, p.deprecated, p.tracker, p.repository, unicode(p.about).encode("utf-8")])
     return response
