@@ -6,7 +6,6 @@ Django==1.8.2
 # George's is also broken: use my fork (django 1.8 ready)
 git+https://github.com/elpaso/feedjack.git
 Markdown==2.3.1
-PIL==1.1.7
 Pygments==1.6
 Whoosh==2.5.6
 argparse==1.2.1
@@ -15,7 +14,7 @@ argparse==1.2.1
 django-annoying==0.7.7
 django-auth-ldap==1.2.6
 django-autoslug==1.7.1
-django-debug-toolbar==1.0.1
+django-debug-toolbar==1.3.2
 django-endless-pagination==2.0
 django-extensions==1.2.0
 django-generic-aggregation==0.3.2
@@ -29,7 +28,7 @@ git+https://github.com/enikesha/django-ratings.git
 django-simple-ratings==0.3.2
 # SIMPLEMENU
 git+git://github.com/elpaso/django-simplemenu.git
-django-taggit==0.14.0
+django-taggit==0.16.0
 django-taggit-autosuggest==0.2.7
 django-taggit-templatetags==0.4.6dev0
 django-templatetag-sugar==0.1
@@ -42,10 +41,14 @@ python-ldap==2.4.19
 # RPC4DJANGO
 git+https://github.com/davidfischer/rpc4django.git
 six==1.4.1
+
+# Django sorl.thumbnail
+Pillow==2.9.0
 sorl-thumbnail==11.12
+
 sqlparse==0.1.11
 wsgiref==0.1.2
 simplejson==3.3.3
-BeautifulSoup
-django-bootstrap-pagination
-django-sortable-listview
+BeautifulSoup=3.2.1
+django-bootstrap-pagination=1.5.1
+django-sortable-listview=0.41
