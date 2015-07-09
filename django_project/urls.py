@@ -55,7 +55,8 @@ urlpatterns =[
 # serving static media
 if settings.SERVE_STATIC_MEDIA:
     urlpatterns += [
-        url(r'^static/(?P<path>.*)$', serve, {'document_root': settings.MEDIA_ROOT}),
+        url(r'^static/(?P<path>.*)$', serve, {'document_root':
+                                                  settings.STATIC_ROOT}),
     ]
 
 

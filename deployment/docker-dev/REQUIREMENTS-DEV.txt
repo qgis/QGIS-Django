@@ -1,0 +1,51 @@
+Django==1.8.2
+# Currently broken with 'no module named defaults' error
+#Feedjack==0.9.18
+# So use George's fork rather
+# git+https://github.com/Erve1879/feedjack.git
+# George's is also broken: use my fork (django 1.8 ready)
+git+https://github.com/elpaso/feedjack.git
+Markdown
+Pillow
+Pygments
+Whoosh
+argparse
+#cab==0.2.0 # Not used anymore..-
+#distribute==0.7.3
+django-annoying
+django-auth-ldap
+django-autoslug
+django-debug-toolbar
+django-endless-pagination
+django-extensions
+django-generic-aggregation
+django-haystack
+#django-olwidget==0.61.0 unmaintained, use this fork
+git+https://github.com/Christophe31/olwidget.git
+django-pagination
+# Unmaintained!
+#django-ratings==0.3.7
+git+https://github.com/enikesha/django-ratings.git
+django-simple-ratings
+# SIMPLEMENU
+git+git://github.com/elpaso/django-simplemenu.git
+django-taggit
+django-taggit-autosuggest
+django-taggit-templatetags
+django-templatetag-sugar
+django-tinymce
+feedparser
+lxml
+opml
+psycopg2
+python-ldap
+# RPC4DJANGO
+git+https://github.com/davidfischer/rpc4django.git
+six
+sorl-thumbnail
+sqlparse
+wsgiref
+simplejson
+BeautifulSoup
+django-bootstrap-pagination
+django-sortable-listview
