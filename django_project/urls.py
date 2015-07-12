@@ -1,4 +1,4 @@
-from django.conf.urls import include, url
+from django.conf.urls import include, url, patterns
 from django.conf import settings
 from django.views.generic.base import RedirectView
 from django.views.static import serve
@@ -51,13 +51,17 @@ urlpatterns =[
 #    url(r'^$', 'direct_to_template', {'template': 'index.html'}, name = 'index'),
 #)
 
-
-# serving static media
-if settings.SERVE_STATIC_MEDIA:
-    urlpatterns += [
-        url(r'^static/(?P<path>.*)$', serve, {'document_root':
-                                                  settings.STATIC_ROOT}),
-    ]
+# expose static files and uploded media if DEBUG is active
+if settings.DEBUG:
+    urlpatterns += patterns(
+        '',
+        url(r'^media/(?P<path>.*)$', 'django.views.static.serve',
+            {
+                'document_root': settings.MEDIA_ROOT,
+                'show_indexes': True
+            }),
+        url(r'', include('django.contrib.staticfiles.urls'))
+    )
 
 
 # auth

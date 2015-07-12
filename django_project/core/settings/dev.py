@@ -22,6 +22,3 @@ DATABASES = {
 EMAIL_HOST = 'localhost'
 #EMAIL_PORT =
 DEFAULT_FROM_EMAIL = 'noreply@qgis.org'
-
-# TIM: Place where search indexes are stored for snippets - should be non web accessible
-HAYSTACK_WHOOSH_PATH = '/home/web/qgis-django/search-index'

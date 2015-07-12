@@ -3,12 +3,10 @@
 # Django settings for qgis project.
 # ABP: More portable config
 import os
-from utils import ABS_PATH
+from .utils import ABS_PATH
 
 # Import secret key
 from .secret import SECRET_KEY  # noqa
-
-TEMPLATE_DEBUG = False
 
 # Local time zone for this installation. Choices can be found here:
 # http://en.wikipedia.org/wiki/List_of_tz_zones_by_name
@@ -41,7 +39,6 @@ MEDIA_ROOT = ABS_PATH('media')
 # trailing slash if there is a path component (optional in other cases).
 # Examples: "http://media.lawrence.com", "http://example.com/media/"
 MEDIA_URL = '/media/'
-MEDIA_URL_FOLDER = '/static/'
 
 # URL prefix for admin media -- CSS, JavaScript and images. Make sure to use a
 # trailing slash.
@@ -62,7 +59,8 @@ STATICFILES_DIRS = (
     ABS_PATH('core', 'base_static'),
 )
 
-SERVE_STATIC_MEDIA = True
+# Python dotted path to the WSGI application used by Django's runserver.
+WSGI_APPLICATION = 'core.wsgi.application'
 
 TEMPLATE_DIRS = (
     # project level templates
@@ -101,6 +99,7 @@ TEMPLATE_DIRS = (
     # project level templates
     ABS_PATH('templates'),
 )
+
 
 # Django native apps
 INSTALLED_APPS = (

@@ -11,7 +11,8 @@ INSTALLED_APPS += (
 )
 
 ADMINS = (
-    ('Tim Sutton', 'tim@linfiniti.com'),
+    ('Tim Sutton', 'tim@kartoza.com'),
+    ('Akbar Gumbira', 'akbargumbira@gmail.com')
 )
 
 MANAGERS = ADMINS

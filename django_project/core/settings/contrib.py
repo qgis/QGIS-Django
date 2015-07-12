@@ -64,8 +64,7 @@ HAYSTACK_WHOOSH_PATH = ABS_PATH('search-index')
 HAYSTACK_CONNECTIONS = {
     'default': {
         'ENGINE': 'haystack.backends.whoosh_backend.WhooshEngine',
-        'PATH': os.path.join(
-            os.path.dirname(os.path.dirname(__file__)), 'whoosh_index'),
+        'PATH': ABS_PATH('whoosh_index'),
     },
 }
 # Migration: see http://django-haystack.readthedocs.org/en/latest/migration_from_1_to_2.html#removal-of-realtimesearchindex
