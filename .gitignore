@@ -38,6 +38,7 @@ qgis-django.sqlite3
 qgis/user-pics/*
 
 # Akbar: Deployment related
+deployment/backups
 deployment/docker/71-apt-cacher-ng
 deployment/logs
 deployment/media
