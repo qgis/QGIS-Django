@@ -424,7 +424,8 @@ class PluginsList(ListView):
             else:
                 _sort_by = sort_by
             try:
-                self.model._meta.get_field(_sort_by)
+                # Average vote is not a field!
+                _sort_by == 'average_vote' or self.model._meta.get_field(_sort_by)
                 qs = qs.order_by(sort_by)
             except FieldDoesNotExist:
                 pass
