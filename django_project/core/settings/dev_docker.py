@@ -3,12 +3,12 @@ from .dev import *  # noqa
 
 DATABASES = {
     'default': {
-        # Newer django versions may require you to use the postgis backed
         'ENGINE': 'django.contrib.gis.db.backends.postgis',
-        'NAME': 'qgis',
-        'USER': 'docker',
-        'PASSWORD': 'docker',
-        'HOST': 'db',
+        'NAME': os.environ['DATABASE_NAME'],
+        'USER': os.environ['DATABASE_USERNAME'],
+        'PASSWORD': os.environ['DATABASE_PASSWORD'],
+        'HOST': os.environ['DATABASE_HOST'],
         'PORT': 5432,
+        'TEST_NAME': 'unittests',
     }
 }

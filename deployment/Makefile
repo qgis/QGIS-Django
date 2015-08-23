@@ -3,21 +3,13 @@ PROJECT_ID := qgisdjango
 SHELL := /bin/bash
 
 
-status:
-	@echo
-	@echo "-------------------------------------------------------------------"
-	@echo "Status of all running containers"
-	@echo "-------------------------------------------------------------------"
-	@docker-compose -p $(PROJECT_ID) ps
-
-
 # ----------------------------------------------------------------------------
 #    P R O D U C T I O N     C O M M A N D S
 # ----------------------------------------------------------------------------
 default: web
-run: build web migrate collectstatic update_index create_cache
+run: permissions web migrate collectstatic update_index create_cache
 
-deploy: run
+deploy: build run
 	@echo
 	@echo "------------------------------------------------------------------"
 	@echo "Bringing up fresh instance "
@@ -30,6 +22,13 @@ build:
 	@echo "Building in production mode"
 	@echo "------------------------------------------------------------------"
 	@docker-compose -p $(PROJECT_ID) build
+
+status:
+	@echo
+	@echo "-------------------------------------------------------------------"
+	@echo "Status of all running production containers"
+	@echo "-------------------------------------------------------------------"
+	@docker-compose -p $(PROJECT_ID) ps
 
 web:
 	@echo
@@ -53,7 +52,6 @@ permissions:
 	@if [ -d "logs" ]; then sudo chmod -R a+rwx logs; fi
 	@if [ -d "media" ]; then sudo chmod -R a+rwx media; fi
 	@if [ -d "static" ]; then sudo chmod -R a+rwx static; fi
-	@if [ -d "pg" ]; then sudo chmod -R a+rwx pg; fi
 	@if [ -d "backups" ]; then sudo chmod -R a+rwx backups; fi
 
 db:
@@ -62,17 +60,6 @@ db:
 	@echo "Running db in production mode"
 	@echo "------------------------------------------------------------------"
 	@docker-compose -p $(PROJECT_ID) up -d db
-
-nginx:
-	@echo
-	@echo "------------------------------------------------------------------"
-	@echo "Running nginx in production mode"
-	@echo "Normally you should use this only for testing"
-	@echo "In a production environment you will typically use nginx running"
-	@echo "on the host rather if you have a multi-site host."
-	@echo "------------------------------------------------------------------"
-	@docker-compose -p $(PROJECT_ID) up -d nginx
-	@echo "Site should now be available at http://localhost"
 
 migrate:
 	@echo
@@ -217,13 +204,6 @@ mailerrorlogs:
 	@echo "------------------------------------------------------------------"
 	@docker exec -t -i $(PROJECT_ID)_smtp_1 tail -f /var/log/mail.err
 
-mediasync:
-	@echo
-	@echo "------------------------------------------------------------------"
-	@echo "Syncing media files from live server"
-	@echo "------------------------------------------------------------------"
-	@rsync -av --progress kartoza3:/home/timlinux/production-sites/projecta/django_project/media media
-
 
 # ----------------------------------------------------------------------------
 #    DEVELOPMENT C O M M A N D S
@@ -231,21 +211,29 @@ mediasync:
 # after running you will have ssh and web ports open (see dockerfile for no's)
 # and you can set your pycharm to use the python in the container
 # ----------------------------------------------------------------------------
+dev-run: dev-web dev-loaddata
 
-devweb:
+dev-web:
 	@echo
 	@echo "------------------------------------------------------------------"
 	@echo "Running in DEVELOPMENT mode"
 	@echo "------------------------------------------------------------------"
 	@docker-compose -p $(PROJECT_ID) up --no-deps -d devweb
 
+dev-loaddata:
+	@echo
+	@echo "-------------------------------------------------------------------"
+	@echo "Load all the fixtures"
+	@echo "-------------------------------------------------------------------"
+	@docker-compose -p $(PROJECT_ID) run devweb python manage.py loaddata django_flatpage simplemenu_menu simplemenu_urlitem simplemenu_menuitem auth
+
+
 # ----------------------------------------------------------------------------
 #    S T A G I N G     C O M M A N D S
 # ----------------------------------------------------------------------------
+staging-run: staging-web staging-migrate staging-collectstatic staging-update_index staging-create_cache
 
-staging-run: staging-build staging-web
-
-staging-deploy: staging-run staging-migrate staging-collectstatic
+staging-deploy: staging-build staging-run
 	@echo
 	@echo "------------------------------------------------------------------"
 	@echo "Bringing up fresh staging instance "
@@ -259,6 +247,13 @@ staging-build:
 	@echo "------------------------------------------------------------------"
 	@docker-compose -p $(PROJECT_ID)-staging build
 
+staging-status:
+	@echo
+	@echo "-------------------------------------------------------------------"
+	@echo "Status of all running staging containers"
+	@echo "-------------------------------------------------------------------"
+	@docker-compose -p $(PROJECT_ID)-staging ps
+
 staging-web:
 	@echo
 	@echo "------------------------------------------------------------------"
@@ -271,6 +266,13 @@ staging-migrate:
 	@echo "------------------------------------------------------------------"
 	@echo "Running migrate static in staging mode"
 	@echo "------------------------------------------------------------------"
+	@#http://stackoverflow.com/questions/29689365/auth-user-error-with-django-1-8-and-syncdb-migrate
+	@#and
+	@#http://stackoverflow.com/questions/3143635/how-to-ignore-mv-error
+	@# We add the '-' prefix to the next line as the migration may fail
+	@# but we want to continue anyway.
+	@#We need to migrate accounts first as it has a reference to user model
+	-@docker-compose -p $(PROJECT_ID)-staging run uwsgi python manage.py migrate auth
 	@docker-compose -p $(PROJECT_ID)-staging run uwsgi python manage.py migrate
 
 staging-collectstatic:
@@ -288,10 +290,9 @@ staging-kill:
 	@echo "------------------------------------------------------------------"
 	@echo "Killing in staging mode"
 	@echo "------------------------------------------------------------------"
-
 	@docker-compose -p $(PROJECT_ID)-staging kill
 
-staging-rm: kill
+staging-rm: staging-kill
 	@echo
 	@echo "------------------------------------------------------------------"
 	@echo "Removing staging instance!!! "
@@ -310,7 +311,7 @@ staging-weblogs:
 	@echo "------------------------------------------------------------------"
 	@echo "Showing web logs in staging mode"
 	@echo "------------------------------------------------------------------"
-	@docker-compose -p $(PROJECT_ID)-staging logs web
+	@docker-compose -p $(PROJECT_ID)-staging logs stagingweb
 
 staging-shell:
 	@echo
@@ -325,3 +326,17 @@ staging-dbshell:
 	@echo "Shelling in in staging database"
 	@echo "------------------------------------------------------------------"
 	@docker exec -t -i $(PROJECT_ID)staging_db_1 psql -U docker -h localhost gis
+
+staging-update_index:
+	@echo
+	@echo "------------------------------------------------------------------"
+	@echo "Update haystack index"
+	@echo "------------------------------------------------------------------"
+	@docker-compose -p $(PROJECT_ID)-staging run uwsgi python manage.py update_index
+
+staging-create_cache:
+	@echo
+	@echo "------------------------------------------------------------------"
+	@echo "Create cache table for caching"
+	@echo "------------------------------------------------------------------"
+	@docker-compose -p $(PROJECT_ID)-staging run uwsgi python manage.py createcachetable cache_table

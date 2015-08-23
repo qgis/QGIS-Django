@@ -6,16 +6,6 @@
 #
 # See accompanying Make commands for easy collectstatic etc.
 
-# Our main nginx service - this is for testing only - normally
-# You would use a standalone nginx instance running on the host!
-nginx:
-  image: nginx
-  hostname: nginx
-  volumes:
-    - ./nginx-conf:/etc/nginx/conf.d
-  ports:
-    - "0.0.0.0:8001:80"
-
 smtp:
   image: catatnight/postfix
   hostname: postfix
@@ -26,7 +16,7 @@ smtp:
 
 
 db:
-  image: kartoza/postgis
+  image: kartoza/postgis:9.4-2.1
   volumes:
     - ./pg/postgres_data:/var/lib/postgresql
     - ./backups:/backups
@@ -46,6 +36,7 @@ uwsgi:
     - VIRTUAL_HOST=plugins.qgis.org
     - VIRTUAL_PORT=8080
   volumes:
+    - ./docker/uwsgi.conf:/uwsgi.conf
     - ../django_project:/home/web/django_project
     - ./static:/home/web/static
     - ./media:/home/web/media
@@ -74,6 +65,7 @@ dbbackups:
     - PGHOST=db
     - PGDATABASE=gis
 
+
 # This is normally the main entry point for a production server
 web:
   image: nginx
@@ -88,6 +80,23 @@ web:
     - uwsgi:uwsgi
   ports:
     - "61200:8080"
+
+
+# Exactly the same as web but for staging we use a different port.
+stagingweb:
+  image: nginx
+  hostname: nginx
+  volumes:
+    - ./sites-enabled:/etc/nginx/conf.d:ro
+    # I dont use volumes_from as I want to use the ro modifier
+    - ./static:/home/web/static:ro
+    - ./media:/home/web/media:ro
+    - ./logs:/var/log/nginx
+  links:
+    - uwsgi:uwsgi
+  ports:
+    - "61201:8080"
+
 
 # This is the entry point for a development server.
 # Run with --no-deps to run attached to the services
@@ -114,22 +123,5 @@ devweb:
     - smtp:smtp
     - db:db
   ports:
-    # for django test server
-    - "61202:8080"
     # for ssh
     - "61203:22"
-
-# Exactly the same as web but for staging we use a different port.
-stagingweb:
-  image: nginx
-  hostname: nginx
-  volumes:
-    - ./sites-enabled:/etc/nginx/conf.d:ro
-    # I dont use volumes_from as I want to use the ro modifier
-    - ./static:/home/web/static:ro
-    - ./media:/home/web/media:ro
-    - ./logs:/var/log/nginx
-  links:
-    - uwsgi:uwsgi
-  ports:
-    - "61201:8080"

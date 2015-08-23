@@ -1,0 +1,54 @@
+[
+  {
+    "model": "simplemenu.menuitem",
+    "pk": 1,
+    "fields": {
+      "name": "About plugins",
+      "menu_id": 1,
+      "rank": 1,
+      "urlobj_content_type_id": 8,
+      "urlobj_id": 1
+    }
+  },
+  {
+    "model": "simplemenu.menuitem",
+    "pk": 2,
+    "fields": {
+      "name": "Plugins",
+      "menu_id": 1,
+      "rank": 2,
+      "urlstr": "/plugins"
+    }
+  },
+  {
+    "model": "simplemenu.menuitem",
+    "pk": 3,
+    "fields": {
+      "name": "Planet",
+      "menu_id": 1,
+      "rank": 3,
+      "urlstr": "/planet/"
+    }
+  },
+  {
+    "model": "simplemenu.menuitem",
+    "pk": 4,
+    "fields": {
+      "name": "User map",
+      "menu_id": 1,
+      "rank": 4,
+      "urlstr": "/community-map/"
+    }
+  },
+  {
+    "model": "simplemenu.menuitem",
+    "pk": 6,
+    "fields": {
+      "name": "QGIS Home",
+      "menu_id": 1,
+      "rank": 0,
+      "urlobj_content_type_id": 14,
+      "urlobj_id": 2
+    }
+  }
+]

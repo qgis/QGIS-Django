@@ -1,0 +1,18 @@
+[
+  {
+    "model": "simplemenu.urlitem",
+    "pk": 1,
+    "fields": {
+      "name": "Snippets",
+      "url": "/snippets/"
+    }
+  },
+  {
+    "model": "simplemenu.urlitem",
+    "pk": 2,
+    "fields": {
+      "name": "Main QGIS website",
+      "url": "http://www.qgis.org"
+    }
+  }
+]

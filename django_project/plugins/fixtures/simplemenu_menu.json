@@ -1,0 +1,9 @@
+[
+  {
+    "model": "simplemenu.menu",
+    "pk": 1,
+    "fields": {
+      "name": "Navigation"
+    }
+  }
+]

@@ -1,0 +1,15 @@
+[
+  {
+    "model": "flatpages.flatpage",
+    "pk": 1,
+    "fields": {
+      "url": "/",
+      "title": "Home",
+      "content": "",
+      "enable_comments": false,
+      "template_name": "''",
+      "registration_required": false
+
+    }
+  }
+]
