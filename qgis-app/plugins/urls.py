@@ -30,6 +30,7 @@ urlpatterns = [
     url(r'^user/(?P<username>\w+)/$', UserPluginsList.as_view(), name='user_plugins'),
 
 
+    url(r'^server/$', PluginsList.as_view(queryset=Plugin.server_objects.all(), additional_context={'title' : _('QGIS Server plugins')}), name='server_plugins'),
     url(r'^unapproved/$', PluginsList.as_view(queryset=Plugin.unapproved_objects.all(), additional_context={'title' : _('Unapproved plugins')}), name='unapproved_plugins'),
     url(r'^deprecated/$', PluginsList.as_view(queryset=Plugin.deprecated_objects.all(), additional_context={'title' : _('Deprecated plugins')}), name='deprecated_plugins'),
     url(r'^fresh/$', PluginsList.as_view(queryset=Plugin.fresh_objects.all(), additional_context={'title' : _('Fresh plugins')}), name='fresh_plugins'),

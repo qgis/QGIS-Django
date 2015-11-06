@@ -146,6 +146,15 @@ class TaggablePlugins(TaggableManager):
 
 
 
+class ServerPlugins(ApprovedPlugins):
+    """
+    Shows only Server plugins
+    """
+    def get_queryset(self):
+        return super(ApprovedPlugins, self).get_queryset().filter(server=True).distinct()
+
+
+
 class Plugin (models.Model):
     """
     Plugins model
@@ -174,12 +183,17 @@ class Plugin (models.Model):
 
     icon            = models.ImageField(_('Icon'), blank=True, null=True, upload_to=PLUGINS_STORAGE_PATH)
 
+    external_deps   = models.TextField(_('External dependencies'), help_text=_('PIP install string'), blank=False, null=True)
+
     # downloads (soft trigger from versions)
     downloads       = models.IntegerField(_('Downloads'), default=0, editable=False)
 
     # Flags
     featured        = models.BooleanField(_('Featured'), default=False, db_index=True)
     deprecated      = models.BooleanField(_('Deprecated'), default=False, db_index=True)
+
+    # True if the plugin has a server interface
+    server          = models.BooleanField(_('Server'), default=False, db_index=True)
 
     # Managers
     objects                 = models.Manager()
@@ -195,6 +209,7 @@ class Plugin (models.Model):
     most_downloaded_objects = MostDownloadedPlugins()
     most_voted_objects      = MostVotedPlugins()
     most_rated_objects      = MostRatedPlugins()
+    server_objects          = ServerPlugins()
 
     rating                  = AnonymousRatingField(range=5, use_cookies=True, can_change_vote=True, allow_delete=True)
 
@@ -448,12 +463,14 @@ class PluginVersion (models.Model):
     # Flags: checks on unique current/experimental are done in save() and possibly in the views
     experimental    = models.BooleanField(_('Experimental flag'), default=False, help_text=_("Check this box if this version is experimental, leave unchecked if it's stable. Please note that this field might be overridden by metadata (if present)."), db_index=True)
     approved        = models.BooleanField(_('Approved'), default=True, help_text=_('Set to false if you wish to unapprove the plugin version.'), db_index=True)
+    external_deps   = models.CharField(_('External dependencies'), help_text=_('PIP install string'), max_length=512, blank=False, null=True)
 
     # Managers, used in xml output
     objects                 = models.Manager()
     approved_objects        = ApprovedPluginVersions()
     stable_objects          = StablePluginVersions()
     experimental_objects    = ExperimentalPluginVersions()
+
 
 
     @property
