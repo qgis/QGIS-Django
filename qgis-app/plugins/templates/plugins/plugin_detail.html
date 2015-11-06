@@ -98,6 +98,9 @@
             </div>
             {% endif %}
             <div class="tab-pane{% if not object.about %} active{% endif %}" id="plugin-details">
+                {% if object.server %}
+                <div class="alert alert-info fade in">{% trans "This plugin provides an interface for QGIS Server." %}</div>
+                {% endif %}
                 <dl class="dl-horizontal">
                     {% if object.author %}
                         <dt>{% trans "Author"%}</dt>

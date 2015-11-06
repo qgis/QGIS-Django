@@ -183,8 +183,6 @@ class Plugin (models.Model):
 
     icon            = models.ImageField(_('Icon'), blank=True, null=True, upload_to=PLUGINS_STORAGE_PATH)
 
-    external_deps   = models.TextField(_('External dependencies'), help_text=_('PIP install string'), blank=False, null=True)
-
     # downloads (soft trigger from versions)
     downloads       = models.IntegerField(_('Downloads'), default=0, editable=False)
 
@@ -482,7 +480,6 @@ class PluginVersion (models.Model):
         Soft triggers:
         * updates modified_on in parent
         """
-
         # Transforms the version...
         # Need to be done here too, because clean()
         # is only called in forms.

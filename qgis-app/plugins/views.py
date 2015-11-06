@@ -222,6 +222,7 @@ def plugin_upload(request):
                     'email'             : form.cleaned_data['email'],
                     'created_by'        : request.user,
                     'icon'              : form.cleaned_data['icon_file'],
+                    'server'            : form.cleaned_data['server'],
                 }
 
                 # Gets existing plugin
@@ -284,6 +285,7 @@ def plugin_upload(request):
                     'approved'          : request.user.has_perm('plugins.can_approve') or plugin.approved,
                     'experimental'      : form.cleaned_data.get('experimental'),
                     'changelog'         : form.cleaned_data.get('changelog', ''),
+                    'external_deps'     : form.cleaned_data.get('external_deps', ''),
                 }
 
                 new_version = PluginVersion(**version_data)
