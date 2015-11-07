@@ -30,3 +30,17 @@ def export_bad(request, **kwargs):
     for p in Plugin.approved_objects.filter(Q(about__isnull=True) | Q(about='') | Q(description__isnull=True) | Q(description='') |  Q(tracker__isnull=True) | Q(tracker='')):
         writer.writerow([unicode(p.name).encode("utf-8"), unicode(p.created_by.email).encode("utf-8"), p.email, p.approved, p.deprecated, p.tracker, p.repository, unicode(p.about).encode("utf-8")])
     return response
+
+
+def export_plugin_maintainers(request, **kwargs):
+    """Plugin maintainers"""
+    if not request.user.is_superuser:
+        raise PermissionDenied()
+    import csv
+    response = HttpResponse(content_type='text/csv')
+    response['Content-Disposition'] = 'attachment; filename=plugin_maintainers.csv'
+    writer = csv.writer(response, dialect='excel-tab')
+    #writer.writerow(['email'])
+    for u in User.objects.filter(plugins_created_by__isnull=False, email__isnull=False).exclude(email='').order_by('email').distinct():
+        writer.writerow([unicode(u.email).encode("utf-8")])
+    return response

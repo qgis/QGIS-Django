@@ -8,5 +8,8 @@
     <li>
         <a href="{% url 'userexport-bad' %}{% if is_popup %}?_popup=1{% endif %}" class="addlink">{% trans "Export bad plugins list" %}</a>
     </li>
+    <li>
+        <a href="{% url 'userexport-plugin-maintainers' %}{% if is_popup %}?_popup=1{% endif %}" class="addlink">{% trans "Export plugin maintainers" %}</a>
+    </li>
 {% endblock %}
 

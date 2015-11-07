@@ -22,6 +22,16 @@ from django.contrib.contenttypes.models import ContentType
 from django.db import connection
 
 
+@rpcmethod(name='plugin.maintainers', signature=['string'], login_required=True)
+def plugin_maintaners(**kwargs):
+    """
+
+    Returns a CSV list of plugin maintainers
+
+
+    """
+    return '\n'.join([u.email for u in User.objects.filter(plugins_created_by__isnull=False, email__isnull=False).exclude(email='').order_by('email').distinct()])
+
 @rpcmethod(name='plugin.upload', signature=['array', 'base64'], login_required=True)
 def plugin_upload(package, **kwargs):
     """
