@@ -30,6 +30,8 @@ def plugin_maintaners(**kwargs):
 
 
     """
+    if not request.user.is_superuser:
+        raise PermissionDenied()
     return '\n'.join([u.email for u in User.objects.filter(plugins_created_by__isnull=False, email__isnull=False).exclude(email='').order_by('email').distinct()])
 
 @rpcmethod(name='plugin.upload', signature=['array', 'base64'], login_required=True)
