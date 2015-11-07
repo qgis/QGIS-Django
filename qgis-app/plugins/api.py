@@ -30,6 +30,7 @@ def plugin_maintaners(**kwargs):
 
 
     """
+    request = kwargs.get('request')
     if not request.user.is_superuser:
         raise PermissionDenied()
     return '\n'.join([u.email for u in User.objects.filter(plugins_created_by__isnull=False, email__isnull=False).exclude(email='').order_by('email').distinct()])
