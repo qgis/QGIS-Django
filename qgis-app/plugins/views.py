@@ -201,7 +201,6 @@ def plugin_unset_featured(request, package_name):
     messages.success(request, msg, fail_silently=True)
     return HttpResponseRedirect(plugin.get_absolute_url())
 
-
 @login_required
 def plugin_upload(request):
     """
@@ -222,7 +221,6 @@ def plugin_upload(request):
                     'email'             : form.cleaned_data['email'],
                     'created_by'        : request.user,
                     'icon'              : form.cleaned_data['icon_file'],
-                    'server'            : form.cleaned_data['server'],
                 }
 
                 # Gets existing plugin
@@ -243,6 +241,9 @@ def plugin_upload(request):
                 # Check icon, don't change if not valid
                 if plugin_data['icon']:
                     plugin.icon         = plugin_data['icon']
+
+                # Server is optional
+                plugin.server = form.cleaned_data.get('server', False)
 
                 # Other optional fields
                 warnings = []
