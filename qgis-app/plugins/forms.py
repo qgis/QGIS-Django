@@ -68,7 +68,7 @@ class PluginVersionForm(ModelForm):
     class Meta:
         model = PluginVersion
         exclude = ('created_by', 'plugin', 'version', 'min_qg_version', 'max_qg_version')
-        fields = ('package', 'experimental', 'approved', 'changelog', 'external_deps')
+        fields = ('package', 'experimental', 'approved', 'changelog')
 
     def clean(self):
         """
