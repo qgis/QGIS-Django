@@ -1,4 +1,4 @@
-{% extends 'plugins/plugin_base.html' %}{% load i18n  thumbnail %}
+{% extends 'plugins/plugin_base.html' %}{% load i18n  thumbnail tz %}
 {% block extrajs %}
 {{ block.super }}
 <script type="text/javascript" src="/static/js/jquery.cookie.js"></script>
@@ -182,7 +182,7 @@
                                 <td>{{ version.min_qg_version }}</td>
                                 <td>{{ version.downloads }}</td>
                                 <td><a href="{% url "user_details" version.created_by.username %}">{{ version.created_by }}</a></td>
-                                <td>{{ version.created_on }}</td>
+                                <td>{{ version.created_on|localtime }}</td>
                                 {% if user.is_staff or user in version.plugin.approvers or user in version.plugin.editors %}<td><form method="post" action="{% url "version_manage" object.package_name version.version %}">{% csrf_token %}
                                 {% if user.is_staff or user in version.plugin.approvers %}
                                     {% if not version.approved %}<button class="btn btn-success btn-mini" type="submit" name="version_approve" id="version_approve"title="{% trans "Approve" %}"><i class="icon-thumbs-up icon-white"></i></button>{% else %}<button class="btn btn-warning btn-mini" type="submit" name="version_unapprove" id="version_unapprove" title="{% trans "Unapprove" %}"><i class="icon-thumbs-down icon-white"></i></button>{% endif %}
