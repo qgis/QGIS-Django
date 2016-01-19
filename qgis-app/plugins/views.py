@@ -57,8 +57,8 @@ def plugin_notify(plugin):
       mail_from = settings.DEFAULT_FROM_EMAIL
 
       send_mail(
-          _('A new plugin has been created by %s.') % plugin.created_by,
-          _('\r\nPlugin name is: %s\r\nPlugin description is: %s\r\nLink: http://%s%s\r\n') % (plugin.name, plugin.description, domain, plugin.get_absolute_url()),
+          unicode(_('A new plugin has been created by %s.') % plugin.created_by),
+          unicode(_('\r\nPlugin name is: %s\r\nPlugin description is: %s\r\nLink: http://%s%s\r\n') % (plugin.name, plugin.description, domain, plugin.get_absolute_url())),
           mail_from,
           recipients,
           fail_silently=True)
@@ -87,8 +87,8 @@ def plugin_approve_notify(plugin, msg, user):
         mail_from = settings.DEFAULT_FROM_EMAIL
         logging.debug('Sending email %s notification for %s plugin, recipients:  %s' % (approval_state, plugin, recipients))
         send_mail(
-          _('Plugin %s %s notification.') % (plugin, approval_state),
-          _('\r\nPlugin %s %s by %s.\r\n%s\r\nLink: http://%s%s\r\n') % (plugin.name, approval_state, user, msg, domain, plugin.get_absolute_url()),
+          unicode(_('Plugin %s %s notification.') % (plugin, approval_state)),
+          unicode(_('\r\nPlugin %s %s by %s.\r\n%s\r\nLink: http://%s%s\r\n') % (plugin.name, approval_state, user, msg, domain, plugin.get_absolute_url())),
           mail_from,
           recipients,
           fail_silently=True)
@@ -98,7 +98,7 @@ def plugin_approve_notify(plugin, msg, user):
 
 def user_trust_notify(user):
     """
-    Sends a message when a plugin is approved or unapproved.
+    Sends a message when an author is trusted or untrusted.
     """
     if user.is_staff:
         logging.debug('Skipping trust notification for staff user %s' % user)
@@ -108,11 +108,11 @@ def user_trust_notify(user):
             mail_from = settings.DEFAULT_FROM_EMAIL
 
             if user.has_perm('plugins.can_approve'):
-                subject = _('User trust notification.')
-                message = _('\r\nYou can now approve your own plugins and the plugins you can edit.\r\n')
+                subject = unicode(_('User trust notification.'))
+                message = unicode(_('\r\nYou can now approve your own plugins and the plugins you can edit.\r\n'))
             else:
-                subject = _('User untrust notification.')
-                message = _('\r\nYou cannot approve any plugin.\r\n')
+                subject = unicode(_('User untrust notification.'))
+                message = unicode(_('\r\nYou cannot approve any plugin.\r\n'))
 
             logging.debug('Sending email trust change notification to %s' % recipients)
             send_mail(
@@ -200,6 +200,7 @@ def plugin_unset_featured(request, package_name):
     msg = _("The plugin %s is not marked as featured anymore." % plugin)
     messages.success(request, msg, fail_silently=True)
     return HttpResponseRedirect(plugin.get_absolute_url())
+
 
 @login_required
 def plugin_upload(request):
@@ -562,7 +563,7 @@ def user_block(request, username):
     # Disable
     user.is_active = False
     user.save()
-    msg = _("The user %s is now blocked." % user)
+    msg = unicode(_("The user %s is now blocked." % user))
     messages.success(request, msg, fail_silently=True)
     return HttpResponseRedirect(reverse('user_details', args=[user.username]))
 
@@ -577,7 +578,7 @@ def user_unblock(request, username):
     # Enable
     user.is_active = True
     user.save()
-    msg = _("The user %s is now unblocked." % user)
+    msg = unicode(_("The user %s is now unblocked." % user))
     messages.success(request, msg, fail_silently=True)
     return HttpResponseRedirect(reverse('user_details', args=[user.username]))
 
@@ -589,8 +590,8 @@ def user_trust(request, username):
     Assigns can_approve permission to the plugin creator
     """
     user = get_object_or_404(User, username=username)
-    user.user_permissions.add(Permission.objects.get(codename='can_approve', content_type=ContentType.objects.get(name='plugin')))
-    msg = _("The user %s is now a trusted user." % user)
+    user.user_permissions.add(Permission.objects.get(codename='can_approve', content_type=ContentType.objects.get(app_label="plugins", model='plugin')))
+    msg = unicode(_("The user %s is now a trusted user." % user))
     messages.success(request, msg, fail_silently=True)
     user_trust_notify(user)
     return HttpResponseRedirect(reverse('user_details', args=[user.username]))
@@ -603,8 +604,8 @@ def user_untrust(request, username):
     Revokes can_approve permission to the plugin creator
     """
     user = get_object_or_404(User, username=username)
-    user.user_permissions.remove(Permission.objects.get(codename='can_approve', content_type=ContentType.objects.get(name='plugin')))
-    msg = _("The user %s is now an untrusted user." % user)
+    user.user_permissions.remove(Permission.objects.get(codename='can_approve', content_type=ContentType.objects.get(app_label="plugins", model='plugin')))
+    msg = unicode(_("The user %s is now an untrusted user." % user))
     messages.success(request, msg, fail_silently=True)
     user_trust_notify(user)
     return HttpResponseRedirect(reverse('user_details', args=[user.username]))
@@ -761,7 +762,7 @@ def version_approve(request, package_name, version):
         return HttpResponseRedirect(version.get_absolute_url())
     version.approved = True
     version.save()
-    msg = _("The plugin version \"%s\" is now approved" % version)
+    msg = unicode(_("The plugin version \"%s\" is now approved" % version))
     messages.success(request, msg, fail_silently=True)
     plugin_approve_notify(version.plugin, msg, request.user)
     try:
@@ -785,7 +786,7 @@ def version_unapprove(request, package_name, version):
         return HttpResponseRedirect(version.get_absolute_url())
     version.approved = False
     version.save()
-    msg = _("The plugin version \"%s\" is now unapproved" % version)
+    msg = unicode(_("The plugin version \"%s\" is now unapproved" % version))
     messages.success(request, msg, fail_silently=True)
     plugin_approve_notify(version.plugin, msg, request.user)
     try:

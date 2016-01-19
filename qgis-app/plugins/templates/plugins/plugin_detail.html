@@ -72,11 +72,11 @@
 
         <div id="rating"> (<span id="votes">{% firstof votes '0' %}</span>) {% trans "votes" %}&nbsp;<span id="loading" style="display:none">Loading...</span><span id="vote-message" style="display:none"></span></div>
         <blockquote>
-            <p class="plugin-details-description">{{ object.description|linebreaksbr }}</p>
+            <p class="plugin-details-description">{{ object.description|safe|linebreaksbr }}</p>
         </blockquote>
         {% comment%}
         {% if object.about %}
-        <div class="well"><p>{{ object.about|linebreaksbr }}</p></div>
+        <div class="well"><p>{{ object.about|safe|linebreaksbr }}</p></div>
         {% endif %}
         {% endcomment %}
 
@@ -94,7 +94,7 @@
         <div class="tab-content">
             {% if object.about %}
             <div class="tab-pane active" id="plugin-about">
-                <p>{{ object.about|linebreaksbr }}</p>
+                <p>{{ object.about|safe|linebreaksbr }}</p>
             </div>
             {% endif %}
             <div class="tab-pane{% if not object.about %} active{% endif %}" id="plugin-details">
