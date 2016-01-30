@@ -2,18 +2,24 @@
     <fieldset>
 {% for field in form %}
         <div class="fieldWrapper {{ field.css_classes }}">
+            {% if field.field.widget|klass = 'CheckboxInput' %}
+            <label for="{{ field.html_name }}" class="{{ field.css_classes }}">
+                {{ field.label }}
+                {% if field.errors %}
+                <div class="alert alert-error">
+                {{ field.errors }}
+                </div>
+                {% endif %}
+                <input type="checkbox" id="{{ field.html_name }}" name="{{ field.html_name }}" {% if field.value %}checked="checked"{% endif %} />
+            </label>
+            {% else %}
+            {{ field.label_tag }}
             {% if field.errors %}
             <div class="alert alert-error">
             {{ field.errors }}
             </div>
             {% endif %}
-            {% if field.field.widget|klass = 'CheckboxInput' %}
-            <label for="{{ field.html_name }}" class="{{ field.css_classes }}">
-                {{ field.label }}
-                <input type="checkbox" id="{{ field.html_name }}" name="{{ field.html_name }}" {% if field.value %}checked="checked"{% endif %} />
-            </label>
-            {% else %}
-            {{ field.label_tag }}{{ field }}
+            {{ field }}
             {% endif %}
             <div class="help">{{ field.help_text }}</div>
         </div>

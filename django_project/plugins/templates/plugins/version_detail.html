@@ -24,6 +24,7 @@
                 <dt>{% trans "Uploaded" %}</dt><dd>{{ version.created_on }}</dd>
                 <dt>{% trans "Minimum QGIS version" %}</dt><dd>{{ version.min_qg_version }}</dd>
                 <dt>{% trans "Maximum QGIS version" %}</dt><dd>{{ version.max_qg_version }}</dd>
+                <dt>{% trans "External dependencies (PIP install string)" %}</dt><dd>{{ version.external_deps }}</dd>
                 <dt {% if version.experimental %}class="warning"{% endif %}>{% trans "Experimental" %}</dt><dd>{{ version.experimental|yesno }}</dd>
             </dl>
         </div>

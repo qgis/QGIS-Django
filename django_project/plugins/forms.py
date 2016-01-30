@@ -4,6 +4,7 @@ from django.contrib.auth.models import User
 from django.forms import ModelForm, ValidationError
 from django import forms
 from django.utils.safestring import mark_safe
+from django.forms import CharField
 
 from plugins.validator import validator
 from plugins.models import *
@@ -33,7 +34,7 @@ class PluginForm(ModelForm):
 
     class Meta:
         model = Plugin
-        fields = ('description', 'about', 'author', 'email', 'icon', 'deprecated', 'homepage', 'tracker', 'repository', 'owners', 'tags')
+        fields = ('description', 'about', 'author', 'email', 'icon', 'deprecated', 'homepage', 'tracker', 'repository', 'owners', 'tags', 'server')
 
     def clean(self):
         """
@@ -57,6 +58,7 @@ class PluginVersionForm(ModelForm):
         is_trusted = kwargs.pop('is_trusted')
         super(PluginVersionForm, self).__init__(*args, **kwargs)
         instance = getattr(self, 'instance', None)
+        self.fields['approved'].widget
         if instance and not is_trusted:
             self.fields['approved'].initial = False
             self.fields['approved'].widget.attrs = {'disabled':'disabled'}
@@ -92,6 +94,7 @@ class PluginVersionForm(ModelForm):
             self.instance.min_qg_version = self.cleaned_data.get('qgisMinimumVersion')
             self.instance.max_qg_version = self.cleaned_data.get('qgisMaximumVersion')
             self.instance.version        = PluginVersion.clean_version(self.cleaned_data.get('version'))
+            self.instance.server         = self.cleaned_data.get('server')
             # Check plugin name
             if self.cleaned_data.get('package_name') and self.cleaned_data.get('package_name') != self.instance.plugin.package_name:
                 raise ValidationError(_('Plugin name mismatch: the plugin main folder name in the compressed file (%s) is different from the original plugin package name (%s).') % (self.cleaned_data.get('package_name'), self.instance.plugin.package_name))
