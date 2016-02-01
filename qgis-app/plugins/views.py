@@ -423,13 +423,20 @@ class PluginsList(ListView):
     def get_queryset(self):
         qs = super(PluginsList, self).get_queryset()
         sort_by = self.request.GET.get('sort', None)
-        chars_fields = ['name', 'author']
         if sort_by:
             if sort_by[0] == '-':
                 _sort_by = sort_by[1:]
             else:
                 _sort_by = sort_by
 
+            # Check if the sort criterion is a field or 'average_vote'
+            try:
+                _sort_by == 'average_vote' or self.model._meta.get_field(_sort_by)
+            except FieldDoesNotExist:
+                return qs
+
+            chars_fields = [field.name for field in self.model._meta.fields
+                            if field.get_internal_type() == 'CharField']
             if _sort_by in chars_fields:
                 if sort_by[0] == '-':
                     qs = qs.order_by(Lower(_sort_by).desc())
