@@ -3,6 +3,7 @@ from django.core.exceptions import NON_FIELD_ERRORS
 from django.db import IntegrityError
 from django.db import connection
 from django.db.models import Q
+from django.db.models.functions import Lower
 from django.shortcuts import get_object_or_404, render_to_response
 from django.template import RequestContext
 from django.http import Http404, HttpResponse, HttpResponseRedirect
@@ -427,12 +428,24 @@ class PluginsList(ListView):
                 _sort_by = sort_by[1:]
             else:
                 _sort_by = sort_by
+
+            # Check if the sort criterion is a field or 'average_vote'
             try:
-                # Average vote is not a field!
                 _sort_by == 'average_vote' or self.model._meta.get_field(_sort_by)
-                qs = qs.order_by(sort_by)
             except FieldDoesNotExist:
-                pass
+                return qs
+
+            chars_fields = [field.name for field in self.model._meta.fields
+                            if field.get_internal_type() == 'CharField']
+            if _sort_by in chars_fields:
+                if sort_by[0] == '-':
+                    qs = qs.order_by(Lower(_sort_by).desc())
+                else:
+                    qs = qs.order_by(Lower(_sort_by))
+            else:
+                qs = qs.order_by(sort_by)
+        else:
+            qs = qs.order_by(Lower('name'))
         return qs
 
     def get_context_data(self, **kwargs):
