@@ -757,9 +757,18 @@ section.sponsors {
 }
 
 /* votes in plugin listing */
-.small-star {
-    display: inline-block;
-    height: 16px;
-    width: 16px;
-    background-image: url('../../images/star_16.png');
+.star-ratings
+{
+    background  : url("../../images/empty_star_16.png") repeat-x;
+    height      : 16px;
+    line-height : 0;
+    width       : 80px;
+    float: left;
+
 }
+.rating {
+    background: url("../../images/star_16.png") repeat-x;
+    float: left;
+    height: 16px;
+    display:block;
+  }
