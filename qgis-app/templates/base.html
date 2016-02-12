@@ -43,7 +43,7 @@
                     <a href="{% url "fe_login" %}"><i class="icon-signin icon-3x"></i></a>
                     {% endif %}
 
-                    <form class="navbar-search" action="/search/" method="get">
+                    <form class="navbar-search" action="{% url "haystack_search" %}" method="get">
                       <input type="text"  id="id_q" name="q" class="search-query" placeholder="Search" />
                     </form>
 

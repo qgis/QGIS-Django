@@ -4,7 +4,7 @@ from plugins.models import Plugin
 
 
 class PluginIndex(indexes.SearchIndex, indexes.Indexable):
-    text = indexes.NgramField(document=True, use_template=True)
+    text = indexes.CharField(document=True, use_template=True)
     created_by = indexes.CharField(model_attr='created_by')
     created_on = indexes.DateTimeField(model_attr='created_on')
     # We add this for autocomplete.

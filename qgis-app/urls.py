@@ -31,8 +31,8 @@ urlpatterns =[
     #(r'^bookmarks/', include('cab.urls.bookmarks')),
     #(r'^languages/', include('cab.urls.languages')),
     #(r'^popular/', include('cab.urls.popular')),
-    url(r'^search/', include('haystack.urls')),
     url(r'^search/', include('custom_haystack_urls')),
+    url(r'^search/', include('haystack.urls')),
 
     # SAM: qgis-users app
     url(r'^community-map/', include('users.urls')),
