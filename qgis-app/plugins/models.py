@@ -16,7 +16,7 @@ from djangoratings.fields import AnonymousRatingField
 from taggit_autosuggest.managers import TaggableManager
 
 PLUGINS_STORAGE_PATH = getattr(settings, 'PLUGINS_STORAGE_PATH', 'packages/%Y')
-PLUGINS_FRESH_DAYS   = getattr(settings, 'PLUGINS_FRESH_DAYS', 30)
+PLUGINS_FRESH_DAYS = getattr(settings, 'PLUGINS_FRESH_DAYS', 7)
 
 
 # Used in Version fields to transform DB value back to human readable string
@@ -69,7 +69,6 @@ class FeaturedPlugins(BasePluginManager):
     def get_queryset(self):
         return super(FeaturedPlugins, self).get_queryset().filter(pluginversion__approved=True, featured=True).order_by('-created_on').distinct()
 
-
 class FreshPlugins(BasePluginManager):
     """
     Shows only approved plugins: i.e. those with "approved" version flag set
@@ -81,7 +80,11 @@ class FreshPlugins(BasePluginManager):
         return super(FreshPlugins, self).__init__(*args, **kwargs)
 
     def get_queryset(self):
-        return super(FreshPlugins, self).get_queryset().filter(deprecated=False, pluginversion__approved=True, modified_on__gte = datetime.datetime.now()- datetime.timedelta(days = self.days)).order_by('-created_on').distinct()
+        return super(FreshPlugins, self).get_queryset().filter(
+            deprecated=False,
+            pluginversion__approved=True,
+            modified_on__gte=datetime.datetime.now() - datetime.timedelta(days=self.days)
+        ).order_by('-modified_on').distinct()
 
 
 class UnapprovedPlugins(BasePluginManager):
@@ -98,7 +101,6 @@ class DeprecatedPlugins(BasePluginManager):
     """
     def get_queryset(self):
         return super(DeprecatedPlugins, self).get_queryset().filter(deprecated=True).distinct()
-
 
 
 class PopularPlugins(ApprovedPlugins):

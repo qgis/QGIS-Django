@@ -69,6 +69,7 @@
 <!--
                 <th>{% anchor modified_on "Last modified" %}</th>
 -->
+                <th>{% anchor created_on "Created on" %}</th>
                 <th>{% anchor average_vote "Stars (votes)" %}</th>
                 <th>{% trans "Stable" %}</th>
                 <th>{% trans "Exp." %}</th>
@@ -95,6 +96,7 @@
 <!--
                 <td>{{ object.modified_on|naturalday }}</td>
 -->
+                <td>{{ object.created_on|naturalday }}</td>
                 <td><div><div class="star-ratings"><span style="width:{% widthratio object.average_vote 5 100 %}%" class="rating"></span></div> ({{ object.rating_votes }})</div></td>
                 <td>{% if object.stable %}<a href="{% url "version_download" object.package_name object.stable.version %}" title="{% trans "Download the stable version" %}" >{{ object.stable.version }}</a>{% else %}&mdash;{% endif %}</td>
                 <td>{% if object.experimental %}<a href="{% url "version_download" object.package_name object.experimental.version %}" title="{% trans "Download the experimental version" %}" >{{ object.experimental.version }}</a>{% else %}&mdash;{% endif %}</td>
