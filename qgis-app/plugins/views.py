@@ -49,6 +49,8 @@ def plugin_notify(plugin):
     """
     Sends a message to staff on new plugins
     """
+    if settings.DEBUG:
+        return
 
     recipients = [u.email for u in User.objects.filter(is_staff=True, email__isnull=False).exclude(email='')]
     recipients.append(settings.QGIS_DEV_MAILING_LIST_ADDRESS)
@@ -73,6 +75,8 @@ def plugin_approve_notify(plugin, msg, user):
     """
     Sends a message when a plugin is approved or unapproved.
     """
+    if settings.DEBUG:
+        return
     recipients = [u.email for u in plugin.editors if u.email]
     if settings.QGIS_DEV_MAILING_LIST_ADDRESS:
         recipients.append(settings.QGIS_DEV_MAILING_LIST_ADDRESS)
@@ -101,6 +105,8 @@ def user_trust_notify(user):
     """
     Sends a message when an author is trusted or untrusted.
     """
+    if settings.DEBUG:
+        return
     if user.is_staff:
         logging.debug('Skipping trust notification for staff user %s' % user)
     else:
