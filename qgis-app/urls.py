@@ -34,8 +34,8 @@ urlpatterns =[
     url(r'^search/', include('haystack.urls')),
     url(r'^search/', include('custom_haystack_urls')),
 
-    # SAM: qgis-users app
-    url(r'^community-map/', include('users.urls')),
+    # AG: User Map
+    url(r'^community-map/', include('user_map.urls', namespace='user_map')),
     # Fix broken URLS in feedjack
     url(r'^planet/feed/$', RedirectView.as_view(url='/planet/feed/atom/')),
     # Tim: Feedjack feed aggregator / planet
