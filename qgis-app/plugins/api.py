@@ -106,6 +106,8 @@ def plugin_upload(package, **kwargs):
         }
 
         # Optional version metadata
+        if cleaned_data.get('support_python3'):
+            version_data['support_python3'] = cleaned_data.get('supportPython3')
         if cleaned_data.get('experimental'):
             version_data['experimental'] = cleaned_data.get('experimental')
         if cleaned_data.get('changelog'):

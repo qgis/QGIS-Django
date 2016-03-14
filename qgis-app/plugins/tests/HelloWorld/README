@@ -10,3 +10,4 @@ Some can contain errors:
 2.1_full-md-empty-max_qgs_version_2.999 test max qgs version
 2.2_full-md-empty-max_qgs_category_web test category metadata
 2.3_full-changed-repository test repository changed, also tests about metadata
+2.4-full-support-python3 added option to say if plugin support Python 3

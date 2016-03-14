@@ -141,6 +141,9 @@ Experimental: <xsl:value-of select="experimental" />
 Deprecated: <xsl:value-of select="deprecated" />
 </div>
 <div class="author">
+Supports Python 3: <xsl:value-of select="support_python3" />
+</div>
+<div class="author">
 Minimum QGIS Version: <xsl:value-of select="qgis_minimum_version" />
 </div>
 <div class="author">

@@ -104,5 +104,5 @@ accepted parameters:
 
 .. rubric:: Footnotes
 
-.. [#f1] 'name', 'description', 'version', 'qgisMinimumVersion'
+.. [#f1] 'name', 'description', 'version', 'qgisMinimumVersion', 'supportPython3'
 .. [#f2] Supported by metadata.txt only: 'homepage', 'changelog', 'tracker', 'repository', 'tags'

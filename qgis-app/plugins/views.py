@@ -285,16 +285,17 @@ def plugin_upload(request):
                     plugin.tags.set(*[t.strip().lower() for t in form.cleaned_data.get('tags').split(',')])
 
                 version_data =  {
-                    'plugin'            : plugin,
-                    'min_qg_version'    : form.cleaned_data.get('qgisMinimumVersion'),
-                    'max_qg_version'    : form.cleaned_data.get('qgisMaximumVersion'),
-                    'version'           : form.cleaned_data.get('version'),
-                    'created_by'        : request.user,
-                    'package'           : form.cleaned_data.get('package'),
-                    'approved'          : request.user.has_perm('plugins.can_approve') or plugin.approved,
-                    'experimental'      : form.cleaned_data.get('experimental'),
-                    'changelog'         : form.cleaned_data.get('changelog', ''),
-                    'external_deps'     : form.cleaned_data.get('external_deps', ''),
+                    'plugin'         : plugin,
+                    'support_python3': form.cleaned_data.get('supportPython3'),
+                    'min_qg_version' : form.cleaned_data.get('qgisMinimumVersion'),
+                    'max_qg_version' : form.cleaned_data.get('qgisMaximumVersion'),
+                    'version'        : form.cleaned_data.get('version'),
+                    'created_by'     : request.user,
+                    'package'        : form.cleaned_data.get('package'),
+                    'approved'       : request.user.has_perm('plugins.can_approve') or plugin.approved,
+                    'experimental'   : form.cleaned_data.get('experimental'),
+                    'changelog'      : form.cleaned_data.get('changelog', ''),
+                    'external_deps'  : form.cleaned_data.get('external_deps', ''),
                 }
 
                 new_version = PluginVersion(**version_data)

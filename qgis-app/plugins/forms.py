@@ -91,10 +91,11 @@ class PluginVersionForm(ModelForm):
                 msg = unicode(_("There were errors reading plugin package (please check also your plugin's metadata).<br />"))
                 raise ValidationError(mark_safe("%s %s" % (msg, '<br />'.join(e.messages))))
             # Populate instance
-            self.instance.min_qg_version = self.cleaned_data.get('qgisMinimumVersion')
-            self.instance.max_qg_version = self.cleaned_data.get('qgisMaximumVersion')
-            self.instance.version        = PluginVersion.clean_version(self.cleaned_data.get('version'))
-            self.instance.server         = self.cleaned_data.get('server')
+            self.instance.support_python3 = self.cleaned_data.get('supportPython3')
+            self.instance.min_qg_version  = self.cleaned_data.get('qgisMinimumVersion')
+            self.instance.max_qg_version  = self.cleaned_data.get('qgisMaximumVersion')
+            self.instance.version         = PluginVersion.clean_version(self.cleaned_data.get('version'))
+            self.instance.server          = self.cleaned_data.get('server')
             # Check plugin name
             if self.cleaned_data.get('package_name') and self.cleaned_data.get('package_name') != self.instance.plugin.package_name:
                 raise ValidationError(_('Plugin name mismatch: the plugin main folder name in the compressed file (%s) is different from the original plugin package name (%s).') % (self.cleaned_data.get('package_name'), self.instance.plugin.package_name))

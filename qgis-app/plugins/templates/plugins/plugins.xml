@@ -5,6 +5,7 @@
         <description><![CDATA[{{ version.plugin.description }}]]></description>
         <about>{% if version.plugin.about %}<![CDATA[{{ version.plugin.about }}]]>{% endif %}</about>
         <version>{{ version.version }}</version>
+        <support_python3>{{ version.support_python3 }}</support_python3>
         <qgis_minimum_version>{{ version.min_qg_version }}</qgis_minimum_version>
         <qgis_maximum_version>{{ version.max_qg_version }}</qgis_maximum_version>
         <homepage><![CDATA[{% if version.plugin.homepage %}{{ version.plugin.homepage }}{% else %}{% if request.is_secure %}https{% else %}http{% endif %}://{{ request.get_host }}{{ version.plugin.get_absolute_url }}{% endif %}]]></homepage>
