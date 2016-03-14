@@ -22,6 +22,7 @@
                 <dt>{% trans "Approved" %}</dt><dd>{{ version.approved|yesno }}</dd>
                 <dt>{% trans "Author" %}</dt><dd>{{ version.created_by }}</dd>
                 <dt>{% trans "Uploaded" %}</dt><dd>{{ version.created_on }}</dd>
+                <dt>{% trans "Supports Python 3" %}</dt><dd>{{ version.support_python3 }}</dd>
                 <dt>{% trans "Minimum QGIS version" %}</dt><dd>{{ version.min_qg_version }}</dd>
                 <dt>{% trans "Maximum QGIS version" %}</dt><dd>{{ version.max_qg_version }}</dd>
                 <dt>{% trans "External dependencies (PIP install string)" %}</dt><dd>{{ version.external_deps }}</dd>

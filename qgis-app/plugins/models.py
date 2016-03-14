@@ -453,6 +453,7 @@ class PluginVersion (models.Model):
     # owners
     created_by      = models.ForeignKey(User, verbose_name=_('Created by'))
     # version info, the first should be read from plugin
+    support_python3 = models.BooleanField(_('Support Python 3'), default=False, help_text=_("Check this box if this version supports Python 3 and uses PyQt5."), db_index=True)
     min_qg_version  = QGVersionZeroForcedField(_('Minimum QGIS version'), max_length=32, db_index=True)
     max_qg_version  = QGVersionZeroForcedField(_('Maximum QGIS version'), max_length=32, null=True, blank=True, db_index=True)
     version         = VersionField(_('Version'), max_length=32, db_index=True)
