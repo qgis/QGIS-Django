@@ -264,7 +264,7 @@ USER_MAP = {
     'marker': {
         'iconUrl': '/static/images/qgis-icon-32x32.png',
         'iconSize': [32, 32],
-        'iconAnchor': [16, 0],
+        'popupAnchor': [0, -15]
     },
     'leaflet_config': {
         'TILES': [(
