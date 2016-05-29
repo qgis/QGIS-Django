@@ -451,7 +451,9 @@ class PluginsList(ListView):
             else:
                 qs = qs.order_by(sort_by)
         else:
-            qs = qs.order_by(Lower('name'))
+            # default
+            if not qs.ordered:
+                qs = qs.order_by(Lower('name'))
         return qs
 
     def get_context_data(self, **kwargs):
@@ -920,4 +922,3 @@ def xml_plugins(request):
                     pass
 
     return render_to_response('plugins/plugins.xml', {'object_list': object_list}, content_type='text/xml', context_instance=RequestContext(request))
-

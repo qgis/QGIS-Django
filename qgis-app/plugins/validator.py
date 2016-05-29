@@ -190,4 +190,3 @@ def validator(package):
         except UnicodeDecodeError, e:
             raise ValidationError(_("There was an error converting metadata '%s' to UTF-8 . Reported error was: %s") % (k, e))
     return checked_metadata
-

@@ -57,18 +57,19 @@ class PluginVersionForm(ModelForm):
     def __init__(self, *args, **kwargs):
         is_trusted = kwargs.pop('is_trusted')
         super(PluginVersionForm, self).__init__(*args, **kwargs)
-        instance = getattr(self, 'instance', None)
-        self.fields['approved'].widget
-        if instance and not is_trusted:
-            self.fields['approved'].initial = False
-            self.fields['approved'].widget.attrs = {'disabled':'disabled'}
-            instance.approved = False
+        # FIXME: check why this is not working correctly anymore
+        #        now "approved" is removed from the form (see Meta)
+        #instance = getattr(self, 'instance', None)
+        #if instance and not is_trusted:
+        #    self.fields['approved'].initial = False
+        #    self.fields['approved'].widget.attrs = {'disabled':'disabled'}
+        #    instance.approved = False
 
 
     class Meta:
         model = PluginVersion
-        exclude = ('created_by', 'plugin', 'version', 'min_qg_version', 'max_qg_version')
-        fields = ('package', 'experimental', 'approved', 'changelog')
+        exclude = ('created_by', 'plugin', 'approved', 'version', 'min_qg_version', 'max_qg_version')
+        fields = ('package', 'experimental', 'changelog')
 
     def clean(self):
         """
@@ -137,4 +138,3 @@ class PackageUploadForm(forms.Form):
         # Clean tags
         self.cleaned_data['tags'] = _clean_tags(self.cleaned_data.get('tags', None))
         return package
-

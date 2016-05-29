@@ -134,8 +134,8 @@ INSTALLED_APPS = (
     # Tim for command extensions so we can run feedjack cron using python manage.py runscript
     'django_extensions',
     # Sam for Users map
-    'django.contrib.gis',
-    'users',
+    #'django.contrib.gis',
+    #'users',
     'olwidget',
     # Tim for blog planet / feed aggregator
     'feedjack',
@@ -198,8 +198,8 @@ HAYSTACK_SIGNAL_PROCESSOR = 'haystack.signals.RealtimeSignalProcessor'
 # See http://docs.djangoproject.com/en/dev/topics/cache/
 CACHES = {
   'default': {
-    'BACKEND': 'django.core.cache.backends.db.DatabaseCache',
-    #'BACKEND': 'django.core.cache.backends.dummy.DummyCache',
+    #'BACKEND': 'django.core.cache.backends.db.DatabaseCache',
+    'BACKEND': 'django.core.cache.backends.dummy.DummyCache',
     'LOCATION': 'cache_table',
   }
 }
