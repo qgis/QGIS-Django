@@ -10,6 +10,7 @@ from plugins.views import *
 urlpatterns = [
     # XML
     url(r'^plugins.xml$', xml_plugins, {}, name='xml_plugins'),
+    url(r'^plugins_(?P<qg_version>\d+\.\d+).xml$', xml_plugins, {}, name='xml_plugins_version_filtered'),
     url(r'^tags/(?P<tags>[^\/]+)/$', TagsPluginsList.as_view(), name='tags_plugins'),
     url(r'^add/$', plugin_upload, {}, name='plugin_upload'),
     url(r'^user/(?P<username>\w+)/block/$', user_block, {}, name='user_block'),
@@ -89,4 +90,3 @@ urlpatterns += [
 urlpatterns += [
     url(r'^(?P<package_name>[A-Za-z][A-Za-z0-9-_]+)/$', PluginDetailView.as_view(slug_url_kwarg='package_name', slug_field='package_name'), name='plugin_detail'),
 ]
-

@@ -867,8 +867,11 @@ def version_detail(request, package_name, version):
 
 ###############################################
 
+from django.views.decorators.cache import cache_page
 
-def xml_plugins(request):
+
+@cache_page(60 * 15)
+def xml_plugins(request, qg_version=None, stable_only=None, package_name=None):
     """
     The XML file
 
@@ -879,9 +882,9 @@ def xml_plugins(request):
         * package_name: Plugin.package_name
 
     """
-    qg_version = vjust(request.GET.get('qgis', '1.8.0'), fillchar='0', level=2, force_zero=True)
-    stable_only = request.GET.get('stable_only', '0')
-    package_name = request.GET.get('package_name', None)
+    qg_version = qg_version if qg_version is not None else vjust(request.GET.get('qgis', '1.8.0'), fillchar='0', level=2, force_zero=True)
+    stable_only = stable_only if stable_only is not None else request.GET.get('stable_only', '0')
+    package_name = package_name if package_name is not None else request.GET.get('package_name', None)
 
     filters = {}
     version_filters = {}
