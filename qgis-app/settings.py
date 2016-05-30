@@ -251,65 +251,6 @@ DEBUG_TOOLBAR_CONFIG = {
 
 THUMBNAIL_ENGINE='sorl.thumbnail.engines.convert_engine.Engine'
 
-USER_MAP = {
-    'project_name': 'QGIS',
-    'favicon_file': '/static/images/qgis-icon-32x32.png',
-    'login_view': 'fe_login',
-    'marker': {
-        'iconUrl': '/static/images/qgis-icon-32x32.png',
-        'iconSize': [32, 32],
-        'iconAnchor': [16, 0],
-    },
-    'leaflet_config': {
-        'TILES': [(
-            # The title
-            'MapQuest',
-            # Tile's URL
-            'http://otile{s}.mqcdn.com/tiles/1.0.0/osm/{z}/{x}/{y}.png',
-            # More valid leaflet option is passed here
-            {
-                'attribution':
-                    '© <a href="http://www.openstreetmap.org" '
-                    'target="_parent">OpenStreetMap'
-                    '</a> and contributors, under an <a '
-                    'href="http://www.openstreetmap.org/copyright" '
-                    'target="_parent">open license</a>. Tiles Courtesy of '
-                    '<a '
-                    'href="http://www.mapquest.com/">MapQuest</a> <img '
-                    'src="http://developer.mapquest.com/content/osm/mq_logo'
-                    '.png"',
-                'maxZoom': 18,
-                'minZoom': 2,
-                'noWrap': True,
-                'subdomains': '1234'
-
-            }
-        )]
-    },
-    'roles': [
-        {
-            'id': 1,
-            'name': 'User',
-            'badge': 'user_map/img/badge-user.png'
-        },
-        {
-            'id': 2,
-            'name': 'Trainer',
-            'badge': 'user_map/img/badge-trainer.png'
-        },
-        {
-            'id': 3,
-            'name': 'Developer',
-            'badge': 'user_map/img/badge-developer.png'
-        }
-    ],
-    'api_user_fields': [
-        'username'
-    ],
-
-}
-
-
 # When run behind a proxy
 USE_X_FORWARDED_HOST = True
 
