@@ -1,0 +1,27 @@
+#!/bin/bash
+
+# This script will get (via wget) the (uncached!) version of the plugins.xml
+# and save it in /home/plugins/cached_xmls/plugins as plugins_x.x.xml
+# It serves as a cache, and will be served by the plugins django app.
+#
+# NOTE: we save with underscore first because wget will create a zero-byte file 
+# during the wait for the total result
+#
+# This script is to be run via crontab every 10 minutes:
+#
+# */10 * * * * cd /home/plugins/QGIS-Django/scripts;./get_plugins_xml;
+#
+# given that currently in the plugins container the Django app is checked out
+# and run from /home/plugins/QGIS-Django directory
+
+cd /home/plugins/cached_xmls/plugins
+wget -O _plugins_1.8.xml http://localhost/plugins/version_filtered/1.8.xml;mv _plugins_1.8.xml plugins_1.8.xml
+wget -O _plugins_2.0.xml http://localhost/plugins/version_filtered/2.0.xml;mv _plugins_2.0.xml plugins_2.0.xml
+wget -O _plugins_2.2.xml http://localhost/plugins/version_filtered/2.2.xml;mv _plugins_2.2.xml plugins_2.2.xml
+wget -O _plugins_2.4.xml http://localhost/plugins/version_filtered/2.4.xml;mv _plugins_2.4.xml plugins_2.4.xml
+wget -O _plugins_2.6.xml http://localhost/plugins/version_filtered/2.6.xml;mv _plugins_2.6.xml plugins_2.6.xml
+wget -O _plugins_2.8.xml http://localhost/plugins/version_filtered/2.8.xml;mv _plugins_2.8.xml plugins_2.8.xml
+wget -O _plugins_2.10.xml http://localhost/plugins/version_filtered/2.10.xml;mv _plugins_2.10.xml plugins_2.10.xml
+wget -O _plugins_2.12.xml http://localhost/plugins/version_filtered/2.12.xml;mv _plugins_2.12.xml plugins_2.12.xml
+wget -O _plugins_2.14.xml http://localhost/plugins/version_filtered/2.14.xml;mv _plugins_2.14.xml plugins_2.14.xml
+wget -O _plugins_2.16.xml http://localhost/plugins/version_filtered/2.16.xml;mv _plugins_2.16.xml plugins_2.16.xml
