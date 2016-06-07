@@ -911,16 +911,22 @@ def xml_plugins(request, qg_version=None, stable_only=None, package_name=None):
         except Plugin.DoesNotExist:
             pass
     else:
-        for plugin in Plugin.approved_objects.filter(**filters):
+        trusted_users = User.objects.filter(Q(user_permissions__codename='can_approve', user_permissions__content_type__app_label='plugins') | Q(is_superuser=True)).distinct()
+        for plugin in Plugin.approved_objects.filter(**filters).prefetch_related('created_by'):
+            is_trusted = plugin.created_by in trusted_users
             plugin_version_filters = copy.copy(version_filters)
             plugin_version_filters.update({'plugin' : plugin})
             try:
-                object_list.append(PluginVersion.stable_objects.filter(**plugin_version_filters)[0])
+                data = PluginVersion.stable_objects.filter(**plugin_version_filters)[0]
+                setattr(data, 'is_trusted', is_trusted)
+                object_list.append(data)
             except IndexError:
                 pass
             if stable_only != '1':
                 try:
-                    object_list.append(PluginVersion.experimental_objects.filter(**plugin_version_filters)[0])
+                    data = PluginVersion.experimental_objects.filter(**plugin_version_filters)[0]
+                    setattr(data, 'is_trusted', is_trusted)
+                    object_list.append(data)
                 except IndexError:
                     pass
 
