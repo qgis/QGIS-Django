@@ -50,3 +50,4 @@ simplejson==3.3.3
 BeautifulSoup
 django-bootstrap-pagination
 django-sortable-listview
+django-user-map
