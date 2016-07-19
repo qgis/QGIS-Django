@@ -1,3 +1,5 @@
+#!/bin/bash
+
 cd /home/plugins/QGIS-Django/qgis-app
 # Run feedjack_update.py to update the planet postings
 SITE_DIR=/home/plugins/QGIS-Django/qgis-app
