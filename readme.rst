@@ -136,8 +136,8 @@ The script must be run by a user that has permissions to the site directory.
 
 To install as a cron, use the following (adjust the paths for your site)::
 
-  */2 * * * * /home/web/qgis-django/update_planet.sh \
-    1>>/tmp/planet_update.log 2>>/tmp/planet_update.err
+  */15 * * * * cd /home/plugins/QGIS-Django;./update_planet.sh \ 
+  1>>/tmp/planet_update.log 2>>/tmp/planet_update.err
 
 
 Planned applications
