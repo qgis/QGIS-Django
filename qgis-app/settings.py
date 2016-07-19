@@ -269,25 +269,20 @@ USER_MAP = {
     'leaflet_config': {
         'TILES': [(
             # The title
-            'MapQuest',
+            'OpenStreetMap',
             # Tile's URL
-            'http://otile{s}.mqcdn.com/tiles/1.0.0/osm/{z}/{x}/{y}.png',
+            'http://{s}.tile.openstreetmap.fr/hot/{z}/{x}/{y}.png',
             # More valid leaflet option is passed here
             {
-                'attribution':
-                    '© <a href="http://www.openstreetmap.org" '
-                    'target="_parent">OpenStreetMap'
-                    '</a> and contributors, under an <a '
-                    'href="http://www.openstreetmap.org/copyright" '
-                    'target="_parent">open license</a>. Tiles Courtesy of '
-                    '<a '
-                    'href="http://www.mapquest.com/">MapQuest</a> <img '
-                    'src="http://developer.mapquest.com/content/osm/mq_logo'
-                    '.png"',
+                'attribution': '© <a href="http://www.openstreetmap.org" '
+                               'target="_parent">OpenStreetMap'
+                               '</a> and contributors, under an <a '
+                               'href="http://www.openstreetmap.org/copyright" '
+                               'target="_parent">open '
+                               'license</a>',
                 'maxZoom': 18,
                 'minZoom': 2,
-                'noWrap': True,
-                'subdomains': '1234'
+                'noWrap': True
 
             }
         )]
