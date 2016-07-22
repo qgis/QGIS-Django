@@ -17,6 +17,6 @@
 DEST_DIR="/home/plugins/cached_xmls/plugins"                                                                                                                                      
 BASE_URL="http://plugins.qgis.org/plugins/version_filtered"
 
-for VERSION in 1.8 2.0 2.2 2.4 2.6 2.8 2.10 2.12 2.14 2.16; do 
+for VERSION in 1.8 2.0 2.2 2.4 2.6 2.8 2.10 2.12 2.14 2.15 2.16 2.17; do
   wget -q -O $DEST_DIR/plugins_${VERSION}.xml "$BASE_URL/${VERSION}.xml"
 done;
