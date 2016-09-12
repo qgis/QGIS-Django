@@ -913,7 +913,6 @@ def xml_plugins(request, qg_version=None, stable_only=None, package_name=None):
             pass
     else:
 
-        """
         # Old way to retrieve plugins: much slower.
 
         trusted_users_ids = zip(*User.objects.filter(Q(user_permissions__codename='can_approve', user_permissions__content_type__app_label='plugins') | Q(is_superuser=True)).distinct().values_list('id'))[0]
@@ -936,9 +935,52 @@ def xml_plugins(request, qg_version=None, stable_only=None, package_name=None):
                 except IndexError:
                     pass
 
-        return render_to_response('plugins/plugins.xml', {'object_list': object_list}, content_type='text/xml', context_instance=RequestContext(request))
+    return render_to_response('plugins/plugins.xml', {'object_list': object_list}, content_type='text/xml', context_instance=RequestContext(request))
 
-        """
+
+
+
+@cache_page(60 * 15)
+def xml_plugins_new(request, qg_version=None, stable_only=None, package_name=None):
+    """
+    The XML file
+
+    accepted parameters:
+
+        * qgis: qgis version
+        * stable_only: 0/1
+        * package_name: Plugin.package_name
+
+    """
+    qg_version = qg_version if qg_version is not None else vjust(request.GET.get('qgis', '1.8.0'), fillchar='0', level=2, force_zero=True)
+    stable_only = stable_only if stable_only is not None else request.GET.get('stable_only', '0')
+    package_name = package_name if package_name is not None else request.GET.get('package_name', None)
+
+    filters = {}
+    version_filters = {}
+    object_list = []
+
+    if qg_version:
+        filters.update({'pluginversion__min_qg_version__lte' : qg_version})
+        version_filters.update({'min_qg_version__lte' : qg_version})
+        filters.update({'pluginversion__max_qg_version__gte' : qg_version})
+        version_filters.update({'max_qg_version__gte' : qg_version})
+
+    # Get all versions for the given plugin
+    if package_name:
+        filters.update({'package_name' : package_name})
+        try:
+            plugin = Plugin.approved_objects.get(**filters)
+            plugin_version_filters = copy.copy(version_filters)
+            plugin_version_filters.update({'plugin' : plugin})
+            for plugin_version in PluginVersion.stable_objects.filter(**plugin_version_filters):
+                object_list.append(plugin_version)
+            if stable_only != '1':
+                for plugin_version in PluginVersion.experimental_objects.filter(**plugin_version_filters):
+                    object_list.append(plugin_version)
+        except Plugin.DoesNotExist:
+            pass
+    else:
 
         # Fast lane: uses raw queries
 
@@ -991,15 +1033,5 @@ def xml_plugins(request, qg_version=None, stable_only=None, package_name=None):
                 'trusted_users_ids': str(trusted_users_ids),
             })]
 
-        # Check code to make sure the fast lane gives the same output as the old one
-        """
-        ol = { v.id: v.version for v in object_list }
-        olnew = { v.id: v.version for v in object_list_new_list }
-        for i, v in ol.items():
-            try:
-                assert olnew[i] == v, "id %s v %s not found. SQL = %s"  % (i, v, str(object_list_new.query))
-            except:
-                raise Exception("id %s v %s not found. SQL = %s"  % (i, v, str(object_list_new.query)))
-        """
 
     return render_to_response('plugins/plugins.xml', {'object_list': object_list_new}, content_type='text/xml', context_instance=RequestContext(request))

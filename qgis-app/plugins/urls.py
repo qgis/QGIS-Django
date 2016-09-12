@@ -9,6 +9,7 @@ from plugins.views import *
 # Plugins filtered views (need user parameter from request)
 urlpatterns = [
     # XML
+    url(r'^plugins_new.xml$', xml_plugins_new, {}, name='xml_plugins_new'),
     url(r'^plugins.xml$', xml_plugins, {}, name='xml_plugins'),
     url(r'^plugins_(?P<qg_version>\d+\.\d+).xml$', xml_plugins, {}, name='xml_plugins_version_filtered_cached'),
     url(r'^version_filtered/(?P<qg_version>\d+\.\d+).xml$', xml_plugins, {}, name='xml_plugins_version_filtered_uncached'),
