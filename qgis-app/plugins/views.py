@@ -2,8 +2,9 @@
 from django.core.exceptions import NON_FIELD_ERRORS
 from django.db import IntegrityError
 from django.db import connection
-from django.db.models import Q
+from django.db.models import Q, Max
 from django.db.models.functions import Lower
+from django.db.models.expressions import RawSQL
 from django.shortcuts import get_object_or_404, render_to_response
 from django.template import RequestContext
 from django.http import Http404, HttpResponse, HttpResponseRedirect
@@ -911,23 +912,94 @@ def xml_plugins(request, qg_version=None, stable_only=None, package_name=None):
         except Plugin.DoesNotExist:
             pass
     else:
-        trusted_users = User.objects.filter(Q(user_permissions__codename='can_approve', user_permissions__content_type__app_label='plugins') | Q(is_superuser=True)).distinct()
-        for plugin in Plugin.approved_objects.filter(**filters).prefetch_related('created_by'):
-            is_trusted = plugin.created_by in trusted_users
+
+        """
+        # Old way to retrieve plugins: much slower.
+
+        trusted_users_ids = zip(*User.objects.filter(Q(user_permissions__codename='can_approve', user_permissions__content_type__app_label='plugins') | Q(is_superuser=True)).distinct().values_list('id'))[0]
+
+        qs = Plugin.approved_objects.filter(**filters).annotate(is_trusted=RawSQL('%s.created_by_id in %%s' % Plugin._meta.db_table, (trusted_users_ids,)))
+        for plugin in qs:
             plugin_version_filters = copy.copy(version_filters)
-            plugin_version_filters.update({'plugin' : plugin})
+            plugin_version_filters.update({'plugin_id' : plugin.pk})
             try:
                 data = PluginVersion.stable_objects.filter(**plugin_version_filters)[0]
-                setattr(data, 'is_trusted', is_trusted)
+                setattr(data, 'is_trusted', plugin.is_trusted)
                 object_list.append(data)
             except IndexError:
                 pass
             if stable_only != '1':
                 try:
                     data = PluginVersion.experimental_objects.filter(**plugin_version_filters)[0]
-                    setattr(data, 'is_trusted', is_trusted)
+                    setattr(data, 'is_trusted', plugin.is_trusted)
                     object_list.append(data)
                 except IndexError:
                     pass
 
-    return render_to_response('plugins/plugins.xml', {'object_list': object_list}, content_type='text/xml', context_instance=RequestContext(request))
+        return render_to_response('plugins/plugins.xml', {'object_list': object_list}, content_type='text/xml', context_instance=RequestContext(request))
+
+        """
+
+        # Fast lane: uses raw queries
+
+        trusted_users_ids = '''
+        (SELECT DISTINCT "auth_user"."id"
+            FROM "auth_user"
+            LEFT OUTER JOIN "auth_user_user_permissions"
+                ON ( "auth_user"."id" = "auth_user_user_permissions"."user_id" )
+            LEFT OUTER JOIN "auth_permission"
+                ON ( "auth_user_user_permissions"."permission_id" = "auth_permission"."id" )
+            LEFT OUTER JOIN "django_content_type"
+                ON ( "auth_permission"."content_type_id" = "django_content_type"."id" )
+        WHERE (("auth_permission"."codename" = 'can_approve'
+            AND "django_content_type"."app_label" = 'plugins')
+            OR "auth_user"."is_superuser" = True))
+        '''
+
+        sql = '''
+        SELECT DISTINCT ON (pv.plugin_id) pv.*,
+        pv.created_by_id IN %(trusted_users_ids)s AS is_trusted
+            FROM %(pv_table)s pv
+            WHERE (
+                pv.approved = True
+                AND pv."max_qg_version" >= '%(qg_version)s'
+                AND pv."min_qg_version" <= '%(qg_version)s'
+                AND pv.experimental = %(experimental)s
+            )
+            ORDER BY pv.plugin_id, pv.version DESC
+        '''
+
+
+        object_list_new = PluginVersion.objects.raw(sql % {
+            'pv_table': PluginVersion._meta.db_table,
+            'p_table': Plugin._meta.db_table,
+            'qg_version': qg_version,
+            'experimental': 'False',
+            'trusted_users_ids': str(trusted_users_ids),
+        })
+
+        # Do the query
+        object_list_new_list = [o for o in object_list_new]
+
+        if stable_only != '1':
+            object_list_new_list = [o for o in object_list_new]
+            object_list_new_list += [o for o in PluginVersion.objects.raw(sql % {
+                'pv_table': PluginVersion._meta.db_table,
+                'p_table': Plugin._meta.db_table,
+                'qg_version': qg_version,
+                'experimental': 'True',
+                'trusted_users_ids': str(trusted_users_ids),
+            })]
+
+        # Check code to make sure the fast lane gives the same output as the old one
+        """
+        ol = { v.id: v.version for v in object_list }
+        olnew = { v.id: v.version for v in object_list_new_list }
+        for i, v in ol.items():
+            try:
+                assert olnew[i] == v, "id %s v %s not found. SQL = %s"  % (i, v, str(object_list_new.query))
+            except:
+                raise Exception("id %s v %s not found. SQL = %s"  % (i, v, str(object_list_new.query)))
+        """
+
+    return render_to_response('plugins/plugins.xml', {'object_list': object_list_new}, content_type='text/xml', context_instance=RequestContext(request))
