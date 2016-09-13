@@ -1020,12 +1020,11 @@ def xml_plugins_new(request, qg_version=None, stable_only=None, package_name=Non
             'trusted_users_ids': str(trusted_users_ids),
         })
 
-        # Do the query
-        object_list_new_list = [o for o in object_list_new]
 
         if stable_only != '1':
-            object_list_new_list = [o for o in object_list_new]
-            object_list_new_list += [o for o in PluginVersion.objects.raw(sql % {
+            # Do the query
+            object_list_new = [o for o in object_list_new]
+            object_list_new += [o for o in PluginVersion.objects.raw(sql % {
                 'pv_table': PluginVersion._meta.db_table,
                 'p_table': Plugin._meta.db_table,
                 'qg_version': qg_version,
