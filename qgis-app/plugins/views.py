@@ -46,13 +46,25 @@ except ImportError:
 staff_required = user_passes_test(lambda u: u.is_staff)
 
 
+
+def send_mail_wrapper(subject,
+        message,
+        mail_from,
+        recipients,
+        fail_silently=True):
+    if settings.DEBUG:
+        logging.debug("Mail not sent (DEBUG=True)")
+    else:
+        send_mail(subject,
+            message,
+            mail_from,
+            recipients,
+            fail_silently)
+
 def plugin_notify(plugin):
     """
     Sends a message to staff on new plugins
     """
-    if settings.DEBUG:
-        return
-
     recipients = [u.email for u in User.objects.filter(is_staff=True, email__isnull=False).exclude(email='')]
     recipients.append(settings.QGIS_DEV_MAILING_LIST_ADDRESS)
 
@@ -60,7 +72,7 @@ def plugin_notify(plugin):
       domain = Site.objects.get_current().domain
       mail_from = settings.DEFAULT_FROM_EMAIL
 
-      send_mail(
+      send_mail_wrapper(
           unicode(_('A new plugin has been created by %s.') % plugin.created_by),
           unicode(_('\r\nPlugin name is: %s\r\nPlugin description is: %s\r\nLink: http://%s%s\r\n') % (plugin.name, plugin.description, domain, plugin.get_absolute_url())),
           mail_from,
@@ -69,6 +81,30 @@ def plugin_notify(plugin):
       logging.debug('Sending email notification for %s plugin, recipients:  %s' % (plugin, recipients))
     else:
       logging.warning('No recipients found for %s plugin notification' % plugin)
+
+
+def version_notify(plugin_version):
+    """
+    Sends a message to staff on new plugin versions
+    """
+    plugin = plugin_version.plugin
+
+    recipients = [u.email for u in User.objects.filter(is_staff=True, email__isnull=False).exclude(email='')]
+    recipients.append(settings.QGIS_DEV_MAILING_LIST_ADDRESS)
+
+    if recipients:
+        domain = Site.objects.get_current().domain
+        mail_from = settings.DEFAULT_FROM_EMAIL
+
+        send_mail_wrapper(
+            unicode(_('A new plugin version has been uploaded by %s.') % plugin.created_by),
+            unicode(_('\r\nPlugin name is: %s\r\nPlugin description is: %s\r\nLink: http://%s%s\r\n') % (plugin.name, plugin.description, domain, plugin_version.get_absolute_url())),
+            mail_from,
+            recipients,
+            fail_silently=True)
+        logging.debug('Sending email notification for %s plugin version, recipients:  %s' % (plugin_version, recipients))
+    else:
+        logging.warning('No recipients found for %s plugin version notification' % plugin_version)
 
 
 
@@ -92,7 +128,7 @@ def plugin_approve_notify(plugin, msg, user):
         domain = Site.objects.get_current().domain
         mail_from = settings.DEFAULT_FROM_EMAIL
         logging.debug('Sending email %s notification for %s plugin, recipients:  %s' % (approval_state, plugin, recipients))
-        send_mail(
+        send_mail_wrapper(
           unicode(_('Plugin %s %s notification.') % (plugin, approval_state)),
           unicode(_('\r\nPlugin %s %s by %s.\r\n%s\r\nLink: http://%s%s\r\n') % (plugin.name, approval_state, user, msg, domain, plugin.get_absolute_url())),
           mail_from,
@@ -123,7 +159,7 @@ def user_trust_notify(user):
                 message = unicode(_('\r\nYou cannot approve any plugin.\r\n'))
 
             logging.debug('Sending email trust change notification to %s' % recipients)
-            send_mail(
+            send_mail_wrapper(
             subject,
             message,
             mail_from,
@@ -305,6 +341,8 @@ def plugin_upload(request):
                 if not request.user.has_perm('plugins.can_approve'):
                     msg = _("Your plugin is awaiting approval from a staff member and will be approved as soon as possible.")
                     warnings.append(msg)
+                    if not is_new:
+                        version_notify(new_version)
                 if not  form.cleaned_data.get('metadata_source') == 'metadata.txt':
                     msg = _("Your plugin does not contain a metadata.txt file, metadata have been read from the __init__.py file. This is deprecated and its support will eventually cease.")
                     warnings.append(msg)
@@ -701,6 +739,7 @@ def version_create(request, package_name):
                     new_object.approved = False
                     new_object.save()
                     messages.warning(request, _('You do not have approval permissions, plugin version has been set unapproved.'), fail_silently=True)
+                    version_notify(new_object)
                 if form.cleaned_data.get('icon_file'):
                     form.cleaned_data['icon'] = form.cleaned_data.get('icon_file')
                 _main_plugin_update(request, new_object.plugin, form)

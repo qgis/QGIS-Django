@@ -45,7 +45,7 @@ def plugin_upload(package, **kwargs):
             cleaned_data = dict(validator(package))
         except ValidationError, e:
             msg = unicode(_('File upload must be a valid QGIS Python plugin compressed archive.'))
-            raise ValidationError("%s %s" % (msg, ','.join(e.messages)))
+            raise Fault(1, "%s %s" % (msg, ','.join(e.messages)))
 
         plugin_data = {
             'name'              : cleaned_data['name'],
@@ -117,6 +117,8 @@ def plugin_upload(package, **kwargs):
         raise Fault(1, e.message)
     except ValidationError as e:
         raise Fault(1, e.message)
+    except Exception as e:
+        raise Fault(1, "%s" % e)
 
     return (plugin.pk, new_version.pk)
 
