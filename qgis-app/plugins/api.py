@@ -25,10 +25,7 @@ from django.db import connection
 @rpcmethod(name='plugin.maintainers', signature=['string'], login_required=True)
 def plugin_maintaners(**kwargs):
     """
-
     Returns a CSV list of plugin maintainers
-
-
     """
     request = kwargs.get('request')
     if not request.user.is_superuser:
@@ -38,11 +35,8 @@ def plugin_maintaners(**kwargs):
 @rpcmethod(name='plugin.upload', signature=['array', 'base64'], login_required=True)
 def plugin_upload(package, **kwargs):
     """
-
     Creates a new plugin or updates an existing one
-
     Returns an array containing the ID (primary key) of the plugin and the ID of the version.
-
     """
     try:
         request = kwargs.get('request')
@@ -116,11 +110,13 @@ def plugin_upload(package, **kwargs):
         new_version = PluginVersion(**version_data)
         new_version.clean()
         new_version.save()
-    except IntegrityError:
+    except IntegrityError as e:
         # Avoids error: current transaction is aborted, commands ignored until
         # end of transaction block
         connection.close()
-        raise
+        raise Fault(1, e.message)
+    except ValidationError as e:
+        raise Fault(1, e.message)
 
     return (plugin.pk, new_version.pk)
 
@@ -165,4 +161,3 @@ def plugin_vote(plugin_id, vote, **kwargs):
             if len(rating):
                 cookies = {cookie_name: rating[0].cookie}
     return [plugin.rating.add(score=int(vote), user=request.user, ip_address=request.META['REMOTE_ADDR'], cookies=cookies)]
-

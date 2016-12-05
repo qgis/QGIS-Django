@@ -7,7 +7,7 @@ import xmlrpclib, sys, os
 import getpass
 from optparse import OptionParser
 
-# Configuration
+# Default Configuration
 PROTOCOL='http'
 SERVER='plugins.qgis.org'
 PORT='80'
@@ -25,17 +25,17 @@ def main(options, args):
         plugin_id, version_id = server.plugin.upload(xmlrpclib.Binary(open(args[0]).read()))
         print "Plugin ID: %s" % plugin_id
         print "Version ID: %s" % version_id
-    except xmlrpclib.ProtocolError, err:
+    except xmlrpclib.ProtocolError as err:
         print "A protocol error occurred"
         print "URL: %s" % hidepassword(err.url, 0)
         print "HTTP/HTTPS headers: %s" % err.headers
         print "Error code: %d" % err.errcode
         print "Error message: %s" % err.errmsg
-    except xmlrpclib.Fault, err:
+    except xmlrpclib.Fault as err:
         print "A fault occurred"
         print "Fault code: %d" % err.faultCode
         print "Fault string: %s" % err.faultString
-    except Exception, err:
+    except Exception as err:
         print "Error occourred"
         print "Error message: %s" % err
 
