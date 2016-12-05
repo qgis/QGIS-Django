@@ -55,6 +55,7 @@ def plugin_upload(package, **kwargs):
             'icon'              : cleaned_data['icon_file'],
             'author'            : cleaned_data['author'],
             'email'             : cleaned_data['email'],
+            'about'             : cleaned_data['about'],
         }
 
         # Gets existing plugin
