@@ -338,7 +338,7 @@ def plugin_upload(request):
                 new_version.save()
                 msg = _("The Plugin has been successfully created.")
                 messages.success(request, msg, fail_silently=True)
-                if not request.user.has_perm('plugins.can_approve'):
+                if not new_version.approved:
                     msg = _("Your plugin is awaiting approval from a staff member and will be approved as soon as possible.")
                     warnings.append(msg)
                     if not is_new:
