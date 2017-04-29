@@ -4,9 +4,6 @@
 # and save it in /home/plugins/cached_xmls/plugins as plugins_x.x.xml
 # It serves as a cache, and will be served by the plugins django app.
 #
-# NOTE: we save with underscore first because wget will create a zero-byte file
-# during the wait for the total result...
-#
 # This script is to be run via crontab every 10 minutes:
 #
 # */10 * * * * cd /home/plugins/QGIS-Django/scripts;./get_plugins_xml;
@@ -18,6 +15,12 @@ DEST_DIR="/home/plugins/cached_xmls/plugins"
 BASE_URL="http://plugins.qgis.org/plugins/plugins_new.xml"
 
 for VERSION in 1.8 2.0 2.2 2.4 2.6 2.8 2.10 2.12 2.14 2.15 2.16 2.17 2.18 2.99 3.0 3.1 3.2 3.3; do
-  wget -q -O $DEST_DIR/plugins_${VERSION}.xml "$BASE_URL?qgis=${VERSION}"
-  sleep 5s
+    if [[ -f $DEST_DIR/plugins_${VERSION}.xml.temp ]]; then
+        rm $DEST_DIR/plugins_${VERSION}.xml.temp
+    fi
+    wget -q -O $DEST_DIR/plugins_${VERSION}.xml.temp "$BASE_URL?qgis=${VERSION}"
+    if [[ -s $DEST_DIR/plugins_${VERSION}.xml.temp ]]; then
+        mv $DEST_DIR/plugins_${VERSION}.xml.temp $DEST_DIR/plugins_${VERSION}.xml
+        sleep 5s
+    fi
 done;
