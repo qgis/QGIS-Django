@@ -142,8 +142,8 @@
                         {% trans "Tags"%}
                     </dt>
                     <dd>
-                        {% for tag in object.tags.all %}<a href="{% url "tags_plugins" tag.slug %}">{{tag}}</a>
-                        {% if not forloop.last %},&nbsp;{% endif %}{% endfor %}
+                        {% for tag in object.tags.all %}{% if tag.slug %}<a href="{% url "tags_plugins" tag.slug %}">{{tag}}</a>
+                        {% if not forloop.last %},&nbsp;{% endif %}{% endif %}{% endfor %}
                     </dd>
                     {% endif %}
                     {% if object.homepage %}

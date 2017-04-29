@@ -3,8 +3,8 @@
 {% get_plugins_tagcloud as tags %}
 
 <div class="tag_cloud">
-{% for tag in tags %}
+{% for tag in tags %}{% if tag.slug %}
 <a style="font-size:{{tag.weight|floatformat:0}}px" href="{% url "tags_plugins" tag.slug|iriencode %}">{{tag}}</a>
-{% endfor %}
+{% endif %}{% endfor %}
 <div style="clear:both"></div>
 </div>
