@@ -1,4 +1,3 @@
-import datetime
 from haystack import indexes
 from plugins.models import Plugin
 
@@ -11,6 +10,7 @@ class PluginIndex(indexes.SearchIndex, indexes.Indexable):
     name_auto = indexes.EdgeNgramField(model_attr='name')
     description_auto = indexes.EdgeNgramField(model_attr='description')
     about_auto = indexes.EdgeNgramField(model_attr='about', default='')
+    package_name_auto = indexes.EdgeNgramField(model_attr='package_name', default='')
 
     def get_model(self):
         return Plugin
@@ -18,5 +18,3 @@ class PluginIndex(indexes.SearchIndex, indexes.Indexable):
     def index_queryset(self, using=None):
         """Only search in approved plugins."""
         return Plugin.approved_objects.all()
-
-

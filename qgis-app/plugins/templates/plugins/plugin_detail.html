@@ -44,13 +44,26 @@
 {{ block.super }}
 {% endblock %}
 {% block content %}
-   <h2>{% trans "Plugin" %}: {{ object.name }}
-   {% if object.icon and object.icon.file %}
-        {% thumbnail object.icon "128x128" upscale=False format="PNG" as im %}
-            <img class="pull-right plugin-icon" alt="{% trans "Plugin icon" %}" src="{{ im.url }}" width="{{ im.x }}" height="{{ im.y }}" />
-        {% endthumbnail %}
-    {% endif %}
-    </h2>
+    <div class="row">
+        {% if object.stable or object.experimental %}
+        <div class="span2">
+            <h2>
+            <a class="btn btn-block btn-primary" href="{% if object.stable %}{{ object.stable.get_download_url }}{% else %}{{ object.experimental.get_download_url }}{% endif %}"><i class="icon-download icon-white icon-2x" style=" vertical-align: middle;"></i>&nbsp;{% trans "Download latest" %}</a>
+            </h2>
+        </div>
+        <div class="span10">
+        {% else %}
+        <div class="span12">
+        {% endif %}
+            <h2>{{ object.name }}
+            {% if object.icon and object.icon.file %}
+                {% thumbnail object.icon "128x128" upscale=False format="PNG" as im %}
+                    <img class="pull-right plugin-icon" alt="{% trans "Plugin icon" %}" src="{{ im.url }}" width="{{ im.x }}" height="{{ im.y }}" />
+                {% endthumbnail %}
+            {% endif %}
+            </h2>
+        </div>
+    </div>
     <div>
         {% if not object.experimental and not object.stable %}
         <div class="alert alert-warning">

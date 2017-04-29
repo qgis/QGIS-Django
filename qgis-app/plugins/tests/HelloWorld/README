@@ -3,7 +3,8 @@ Test plugins.
 Some can contain errors:
 
 1.0_spaced (space in folder name)
-1.2_md_txt_incomplete (metadata.txt with missin fields)
+1.2_md_txt_incomplete (metadata.txt with missing fields)
+1.2_wierdname to test for package name whoos search
 1.8_author_slashes_error (slashes in author name: invalid)
 1.9_full-md-max_qgs_version test max qgs version
 2.0_full-md-empty-max_qgs_version test max qgs version empty
