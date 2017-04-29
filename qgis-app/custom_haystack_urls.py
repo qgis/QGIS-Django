@@ -16,7 +16,8 @@ class SearchWithRequest(SearchView):
             sqs1 = SearchQuerySet().filter(description_auto=self.request.GET.get('q', ''))
             sqs2 = SearchQuerySet().filter(name_auto=self.request.GET.get('q', ''))
             sqs3 = SearchQuerySet().filter(text=self.request.GET.get('q', ''))
-            form_kwargs['searchqueryset'] = sqs1 | sqs2 | sqs3
+            sqs4 = SearchQuerySet().filter(package_name_auto=self.request.GET.get('q', ''))
+            form_kwargs['searchqueryset'] = sqs1 | sqs2 | sqs3 | sqs4
 
         return super(SearchWithRequest, self).build_form(form_kwargs)
 
