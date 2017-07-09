@@ -230,6 +230,7 @@ select#languages option {
 }
 .navbar .brand {
     background: url("logo.png") no-repeat scroll 0 0 transparent !important;
+    background-size:60px !important;
     display: block;
     height: 60px;
     padding: 0 !important;
