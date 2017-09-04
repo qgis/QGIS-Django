@@ -66,7 +66,6 @@ def plugin_notify(plugin):
     Sends a message to staff on new plugins
     """
     recipients = [u.email for u in User.objects.filter(is_staff=True, email__isnull=False).exclude(email='')]
-    recipients.append(settings.QGIS_DEV_MAILING_LIST_ADDRESS)
 
     if recipients:
       domain = Site.objects.get_current().domain
@@ -90,7 +89,6 @@ def version_notify(plugin_version):
     plugin = plugin_version.plugin
 
     recipients = [u.email for u in User.objects.filter(is_staff=True, email__isnull=False).exclude(email='')]
-    recipients.append(settings.QGIS_DEV_MAILING_LIST_ADDRESS)
 
     if recipients:
         domain = Site.objects.get_current().domain
