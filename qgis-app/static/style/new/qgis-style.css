@@ -754,7 +754,7 @@ img.overflow-img, #processing {
 section.sponsors {
     padding: 30px 0;
     text-align: center;
-    background: #333333 url('http://www.qgis.org/en/_static/images/paper-texture.png') repeat;
+    background: #333333 url('//www.qgis.org/en/_static/images/paper-texture.png') repeat;
 }
 
 /* votes in plugin listing */
