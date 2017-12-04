@@ -20,6 +20,8 @@ for VERSION in 1.8 2.0 2.2 2.4 2.6 2.8 2.10 2.12 2.14 2.15 2.16 2.17 2.18 2.99 3
     fi
     wget -q -O $DEST_DIR/plugins_${VERSION}.xml.temp "$BASE_URL?qgis=${VERSION}"
     if [[ -s $DEST_DIR/plugins_${VERSION}.xml.temp ]]; then
+        # we want all download url's to be https, search/replace in file
+        sed -i'' 's,<download_url>http:,<download_url>https:,' $DEST_DIR/plugins_${VERSION}.xml.temp
         mv $DEST_DIR/plugins_${VERSION}.xml.temp $DEST_DIR/plugins_${VERSION}.xml
         sleep 5s
     fi
