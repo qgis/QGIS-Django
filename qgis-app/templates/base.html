@@ -15,13 +15,9 @@
     <link type="text/css" href="/static/style/style.css" rel="stylesheet" />
     {% block extracss %}{% endblock %}
 
-    <script src="//code.jquery.com/jquery.js"></script>
-<!--
-    <script src="//ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js"></script>
--->
+    <script type="text/javascript" src="//static/js/jquery.min.js"></script>
     <script type="text/javascript" src="/static/bootstrap/js/bootstrap.min.js"></script>
-
-   {% block extrajs %}{% endblock %}
+    {% block extrajs %}{% endblock %}
 
 </head>
 <body id="page_bg" {% block onload %}{% endblock %}>
