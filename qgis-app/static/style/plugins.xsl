@@ -1,30 +1,22 @@
-<?xml version="1.0" encoding="ISO-8859-1"?>
+<?xml version='1.0' encoding='UTF-8'?>
 <xsl:stylesheet version="1.0" xmlns:xsl="http://www.w3.org/1999/XSL/Transform">
 
 <xsl:template match="plugins">
 
 <html>
 <head>
-<title>Qgis Plugins - Official 1.0 Repository</title>
-<!--link href="xsl.css" rel="stylesheet" type="text/css" /-->
+<title>QGIS Plugins - Official Repository</title>
 
 <style>
 body  {
-   font-family:Verdana, Arial, Helvetica, sans-serif;
-width: 45em;
- }
-
-div.plugin {
- background-color:#C3FbFF;
- border:1px solid #8FDF8F;
- clear:both;
- display:block;
- padding:0 0 0.5em;
- margin:1em;
+  font-family:Verdana, Arial, Helvetica, sans-serif;
+  width: 45em;
 }
-
+a{
+  color:black;
+}
 div.head {
-  background-color:#79B3Ec;
+  background-color:#589632;
   border-bottom-width:0;
   color:#0;
   display:block;
@@ -33,11 +25,19 @@ div.head {
   margin:0;
   padding:0.3em 1em;
 }
+div.plugin {
+  _background-color:#ddfb63;
+  border: solid 1px gray;
+  clear:both;
+  display:block;
+  padding:0 0 0.5em;
+  margin:1em;
+}
 div.menu{
-	display:block;
-	text-align: left;
-	font-size:100%;
-	}
+  display:block;
+  text-align: left;
+  font-size:100%;
+}
 div.description{
   display: block;
   float:none;
@@ -48,9 +48,8 @@ div.description{
   font-size:85%;
   font-weight:normal;
   font-style: italic;
- }
-
- div.about{
+}
+div.about{
   display: block;
   float:none;
   margin:0;
@@ -70,32 +69,41 @@ div.download, div.author, div.branch{
   padding: 0em 0em 0em 1em;
  }
 td.menu_panel {
- 	width: 180px;
-	font-size: 80%;
-	}
+  width: 25%;
+  font-size: 80%;
+}
 </style>
 
 </head>
 <body>
-<h2>Quantum GIS Python Plugins</h2>
+<img src="https://qgis.org/en/_downloads/qgis-icon64.png"/>
+<h2>QGIS Python Plugins</h2>
+<p>
+NOTE: The preferred way to install QGIS plugins is via the <a href="https://docs.qgis.org/testing/en/docs/user_manual/plugins/plugins.html">Plugin Manager</a> in QGIS itself!
+QGIS will download this list automatically and make it possible to install a plugin with one click.
+</p>
+<p>
+NOTE: Here you only see a representation of the plugins working for the requested version (defined by the "<code>?qgis=x.y.z</code>" part of the url).
+</p>
 <table>
 <tr>
 
 <td valign="top" class="menu_panel">
-Download:
 <xsl:for-each select="/plugins/pyqgis_plugin">
-<div class="menu">
-<xsl:element name="a">
- <xsl:attribute name="href">
-  <xsl:value-of select="download_url" />
- </xsl:attribute>
- <xsl:value-of select="@name" /> - <xsl:value-of select="@version" />
-</xsl:element>
-</div>
+  <xsl:sort select="@name" />
+    <div class="menu">
+    <xsl:element name="a">
+    <xsl:attribute name="href">
+    <xsl:value-of select="download_url" />
+    </xsl:attribute>
+    <xsl:value-of select="@name" />
+    </xsl:element>
+    </div>
 </xsl:for-each>
 </td>
-<td>
+<td class="body_panel">
 <xsl:for-each select="/plugins/pyqgis_plugin">
+<xsl:sort select="@name"/>
 <div class="plugin">
 <div class="head">
 <!--
@@ -116,8 +124,7 @@ Download:
 <xsl:value-of select="about" />
 </div>
 <div class="tags">
-Tags:
-<xsl:value-of select="tags" />
+Tags: <xsl:value-of select="tags" />
 </div>
 <div class="download">
 Download:
