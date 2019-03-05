@@ -89,10 +89,10 @@ class FreshPlugins(BasePluginManager):
 
 class UnapprovedPlugins(BasePluginManager):
     """
-    Shows only unapproved plugins
+    Shows only unapproved and not deprecated plugins
     """
     def get_queryset(self):
-        return super(UnapprovedPlugins, self).get_queryset().filter(pluginversion__approved=False).distinct()
+        return super(UnapprovedPlugins, self).get_queryset().filter(pluginversion__approved=False, deprecated=False).distinct()
 
 
 class DeprecatedPlugins(BasePluginManager):
