@@ -88,7 +88,7 @@ class PluginVersionForm(ModelForm):
                     msg = unicode(_("The 'experimental' flag in the form does not match the 'experimental' flag in the plugins package metadata.<br />"))
                     raise ValidationError(mark_safe("%s" % msg))
                 self.cleaned_data.update(cleaned_data)
-            except ValidationError, e:
+            except ValidationError as e:
                 msg = unicode(_("There were errors reading plugin package (please check also your plugin's metadata).<br />"))
                 raise ValidationError(mark_safe("%s %s" % (msg, '<br />'.join(e.messages))))
             # Populate instance
@@ -113,7 +113,7 @@ class PackageUploadForm(forms.Form):
     Single step upload for new plugins
     """
     experimental = forms.BooleanField(required=False, label=_('Experimental'), help_text=_('Please check this box if the plugin is experimental. Please note that this field might be overridden by metadata (if present).'))
-    package = forms.FileField(_('QGIS compressed plugin package'), label=_('Plugin package'), help_text=_('Please select the zipped file of the plugin.'))
+    package = forms.FileField(label=_('Plugin package'), help_text=_('Please select the zipped file of the plugin.'))
 
     def clean_package(self):
         """
@@ -122,7 +122,7 @@ class PackageUploadForm(forms.Form):
         package         = self.cleaned_data.get('package')
         try:
             self.cleaned_data.update(validator(package))
-        except ValidationError, e:
+        except ValidationError as e:
             msg = unicode(_("There were errors reading plugin package (please check also your plugin's metadata)."))
             raise ValidationError(mark_safe("%s %s" % (msg, ','.join(e.messages))))
         # Disabled: now the PackageUploadForm also accepts updates

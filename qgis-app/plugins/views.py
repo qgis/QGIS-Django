@@ -11,7 +11,7 @@ from django.http import Http404, HttpResponse, HttpResponseRedirect
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required, user_passes_test
 from django.contrib.auth.models import User
-from django.core.urlresolvers import reverse
+from django.urls import reverse
 from django.core.exceptions import FieldDoesNotExist
 from django.conf import settings
 from django.contrib.auth.models import User, Permission
@@ -350,7 +350,7 @@ def plugin_upload(request):
                     messages.warning(request, _('<p><strong>Warnings:</strong></p>') + '\n'.join(["<p>%s</p>" % unicode(w) for w in warnings]), fail_silently=True)
 
 
-            except (IntegrityError, ValidationError, DjangoUnicodeDecodeError), e:
+            except (IntegrityError, ValidationError, DjangoUnicodeDecodeError) as e:
                 connection.close()
                 messages.error(request, e, fail_silently=True)
                 if not plugin.pk:
@@ -743,7 +743,7 @@ def version_create(request, package_name):
                 _main_plugin_update(request, new_object.plugin, form)
                 _check_optional_metadata(form, request)
                 return HttpResponseRedirect(new_object.plugin.get_absolute_url())
-            except (IntegrityError, ValidationError, DjangoUnicodeDecodeError), e:
+            except (IntegrityError, ValidationError, DjangoUnicodeDecodeError) as e:
                 messages.error(request, e, fail_silently=True)
                 connection.close()
             return HttpResponseRedirect(plugin.get_absolute_url())
@@ -776,7 +776,7 @@ def version_update(request, package_name, version):
                 _main_plugin_update(request, new_object.plugin, form)
                 msg = _("The Plugin Version has been successfully updated.")
                 messages.success(request, msg, fail_silently=True)
-            except (IntegrityError, ValidationError, DjangoUnicodeDecodeError), e:
+            except (IntegrityError, ValidationError, DjangoUnicodeDecodeError) as e:
                 messages.error(request, e, fail_silently=True)
                 connection.close()
             return HttpResponseRedirect(plugin.get_absolute_url())

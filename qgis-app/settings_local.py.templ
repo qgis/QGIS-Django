@@ -1,5 +1,5 @@
 ADMINS = (
-  ('Tim Sutton', 'tim@linfiniti.com'),
+  ('ElPaso', 'elpaso@itopen.it'),
 )
 
 MANAGERS = ADMINS
@@ -21,9 +21,9 @@ DATABASES = {
     'default': {
         # Newer django versions may require you to use the postgis backed
 
-        'ENGINE': 'django.contrib.gis.db.backends.postgis', # Add 'postgresql_psycopg2', 'postgresql', 'mysql', 'sqlite3' or 'oracle'.
-        #'ENGINE': 'django.db.backends.postgresql', # Add 'postgresql_psycopg2', 'postgresql', 'mysql', 'sqlite3' or 'oracle'.
-        'NAME': '',                      # Or path to database file if using sqlite3.
+        #'ENGINE': 'django.contrib.gis.db.backends.postgis', # Add 'postgresql_psycopg2', 'postgresql', 'mysql', 'sqlite3' or 'oracle'.
+        'ENGINE': 'django.db.backends.sqlite3', # Add 'postgresql_psycopg2', 'postgresql', 'mysql', 'sqlite3' or 'oracle'.
+        'NAME': 'qgis-django-plugins.db',                      # Or path to database file if using sqlite3.
         'USER': '',                      # Not used with sqlite3.
         'PASSWORD': '',                  # Not used with sqlite3.
         'HOST': '',                      # Set to empty string for localhost. Not used with sqlite3.
@@ -59,3 +59,30 @@ HAYSTACK_WHOOSH_PATH = '/home/web/qgis-django/search-index'
 EMAIL_HOST = 'localhost'
 #EMAIL_PORT =
 DEFAULT_FROM_EMAIL = 'noreply@qgis.org'
+
+INSTALLED_APPS = [
+    'django.contrib.auth',
+    'django.contrib.contenttypes',
+    'django.contrib.sessions',
+    'django.contrib.sites',
+    'django.contrib.messages',
+    # Uncomment the next line to enable the admin:
+     'django.contrib.admin',
+    # Uncomment the next line to enable admin documentation:
+    # 'django.contrib.admindocs',
+    'django.contrib.staticfiles',
+    'django.contrib.flatpages',
+
+    # ABP:
+    'plugins',
+    'django.contrib.humanize',
+    'django.contrib.syndication',
+
+    'taggit',
+    'taggit_autosuggest',
+    'taggit_templatetags',
+    #'haystack',
+    'simplemenu',
+    'tinymce',
+    'rpc4django',
+]

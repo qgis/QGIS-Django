@@ -57,12 +57,12 @@ TEMPLATE_LOADERS = (
     'django.template.loaders.eggs.Loader', #Tim: needed on live server for CAB
 )
 
-MIDDLEWARE_CLASSES = (
+MIDDLEWARE = [
+    'django.middleware.security.SecurityMiddleware',
     'django.middleware.cache.UpdateCacheMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
-    #'django.middleware.csrf.CsrfResponseMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.auth.middleware.SessionAuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
@@ -72,10 +72,9 @@ MIDDLEWARE_CLASSES = (
     'pagination.middleware.PaginationMiddleware',
     'django.contrib.flatpages.middleware.FlatpageFallbackMiddleware',
     # Added by Tim for advanced loggin options
-    'debug_toolbar.middleware.DebugToolbarMiddleware',
     'django.middleware.cache.FetchFromCacheMiddleware',
     'middleware.XForwardedForMiddleware',
-)
+]
 
 ROOT_URLCONF = 'urls'
 
@@ -87,22 +86,7 @@ TEMPLATE_DIRS = (
 )
 
 
-DEBUG_TOOLBAR_PANELS = [
-    'debug_toolbar.panels.versions.VersionsPanel',
-    'debug_toolbar.panels.timer.TimerPanel',
-    'debug_toolbar.panels.settings.SettingsPanel',
-    'debug_toolbar.panels.headers.HeadersPanel',
-    'debug_toolbar.panels.request.RequestPanel',
-    'debug_toolbar.panels.sql.SQLPanel',
-    'debug_toolbar.panels.staticfiles.StaticFilesPanel',
-    'debug_toolbar.panels.templates.TemplatesPanel',
-    'debug_toolbar.panels.cache.CachePanel',
-    'debug_toolbar.panels.signals.SignalsPanel',
-    'debug_toolbar.panels.logging.LoggingPanel',
-    'debug_toolbar.panels.redirects.RedirectsPanel',
-]
-
-INSTALLED_APPS = (
+INSTALLED_APPS = [
     'django.contrib.auth',
     'django.contrib.contenttypes',
     'django.contrib.sessions',
@@ -130,7 +114,6 @@ INSTALLED_APPS = (
     'tinymce',
     # Tim for django snippets app support
     #'cab', #the django snippets app itself
-    # Tim for Debug toolbar
     'debug_toolbar',
     # Tim for command extensions so we can run feedjack cron using python manage.py runscript
     'django_extensions',
@@ -157,7 +140,7 @@ INSTALLED_APPS = (
     'bootstrapform',
     'rest_framework',
     'rest_framework_gis',
-)
+]
 
 TEMPLATES = [
     {
@@ -168,11 +151,6 @@ TEMPLATES = [
             'context_processors' : (
                 "django.contrib.auth.context_processors.auth",
                 'django.contrib.messages.context_processors.messages',
-                # old django "django.core.context_processors.auth",
-                "django.core.context_processors.debug",
-                "django.core.context_processors.i18n",
-                "django.core.context_processors.media",
-                "django.core.context_processors.request",
                 # ABP: adds DEBUG and BASE_TEMPLATE vars
                 "qgis_context_processor.additions",
             ),
@@ -260,7 +238,7 @@ THUMBNAIL_ENGINE='sorl.thumbnail.engines.convert_engine.Engine'
 USER_MAP = {
     'project_name': 'QGIS',
     'favicon_file': '/static/images/qgis-icon-32x32.png',
-    'login_view': 'fe_login',
+    'login_view': 'login',
     'marker': {
         'iconUrl': '/static/images/qgis-icon-32x32.png',
         'iconSize': [32, 32],
@@ -324,3 +302,25 @@ try:
     from settings_local import *
 except ImportError:
     pass
+
+
+# Local settings might have enabled DEBUG, load additional modules here
+
+if DEBUG:
+    INSTALLED_APPS.append('debug_toolbar')
+    MIDDLEWARE.append('debug_toolbar.middleware.DebugToolbarMiddleware')
+    DEBUG_TOOLBAR_PANELS = [
+        'debug_toolbar.panels.versions.VersionsPanel',
+        'debug_toolbar.panels.timer.TimerPanel',
+        'debug_toolbar.panels.settings.SettingsPanel',
+        'debug_toolbar.panels.headers.HeadersPanel',
+        'debug_toolbar.panels.request.RequestPanel',
+        'debug_toolbar.panels.sql.SQLPanel',
+        'debug_toolbar.panels.staticfiles.StaticFilesPanel',
+        'debug_toolbar.panels.templates.TemplatesPanel',
+        'debug_toolbar.panels.cache.CachePanel',
+        'debug_toolbar.panels.signals.SignalsPanel',
+        'debug_toolbar.panels.logging.LoggingPanel',
+        'debug_toolbar.panels.redirects.RedirectsPanel',
+    ]
+

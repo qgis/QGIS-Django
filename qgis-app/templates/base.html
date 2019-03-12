@@ -37,12 +37,14 @@
                     {% if user.is_authenticated %}
                     <a id="user-tooltip" href="{% url "fe_logout" %}" data-toggle="tooltip" data-placement="bottom" title="{{ user.username }}" style="float: right !important"><i class="icon-user icon-3x"></i></a>
                     {% else %}
-                    <a href="{% url "fe_login" %}"><i class="icon-signin icon-3x"></i></a>
+                    <a href="{% url "login" %}"><i class="icon-signin icon-3x"></i></a>
                     {% endif %}
 
+                    {% comment "Disable haystack" %}
                     <form class="navbar-search" action="{% url "haystack_search" %}" method="get">
                       <input type="text"  id="id_q" name="q" class="search-query" placeholder="Search" />
                     </form>
+                    {% endcomment %}
 
                     {% get_simplemenu as menu %}
                      <div class="nav-collapse collapse">
@@ -51,9 +53,9 @@
                             <li><a href="{{ item.page.url }}">{{ item.name }}</a></li>
                         {% endfor %}
                             {% if user.is_authenticated %}
-                            <li><a href="{% url "fe_logout" %}">{% trans "Logout" %}</a></li>
+                            <li><a href="{% url "logout" %}">{% trans "Logout" %}</a></li>
                             {% else %}
-                            <li><a href="{% url "fe_login" %}">{% trans "Login" %}</a></li>
+                            <li><a href="{% url "login" %}">{% trans "Login" %}</a></li>
                             {% endif %}
                             {% block navigation_extra %}
                             {% endblock %}

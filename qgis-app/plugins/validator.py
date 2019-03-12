@@ -6,8 +6,8 @@ import zipfile
 import mimetypes
 import re
 import os
-import ConfigParser
-import StringIO
+import configparser
+from io import StringIO
 import codecs
 from django.conf import settings
 from django.utils.translation import ugettext_lazy as _
@@ -119,7 +119,7 @@ def validator(package):
             if not parser.has_section('general'):
                 raise ValidationError(_("Cannot find a section named 'general' in %s") % metadataname)
             metadata.extend(parser.items('general'))
-        except Exception, e:
+        except Exception as e:
             raise ValidationError(_("Errors parsing %s. %s") % (metadataname, e))
         metadata.append(('metadata_source', 'metadata.txt'))
     else:
@@ -167,7 +167,7 @@ def validator(package):
             initmetadata = _read_from_init(initcontent, initname)
             initmetadata.append(('metadata_source', '__init__.py'))
             _check_required_metadata(initmetadata)
-        except ValidationError, e:
+        except ValidationError as e:
             raise ValidationError(_("qgisMinimumVersion is set to less than  1.8 (%s) and there were errors reading metadata from the __init__.py file. This can lead to errors in versions of QGIS less than 1.8, please either set the qgisMinimumVersion to 1.8 or specify the metadata also in the __init__.py file. Reported error was: %s") % (min_qgs_version, ','.join(e.messages)))
 
     zip.close()
@@ -187,6 +187,6 @@ def validator(package):
                 checked_metadata.append((k, v.strip()))
             else:
                 checked_metadata.append((k, v))
-        except UnicodeDecodeError, e:
+        except UnicodeDecodeError as e:
             raise ValidationError(_("There was an error converting metadata '%s' to UTF-8 . Reported error was: %s") % (k, e))
     return checked_metadata

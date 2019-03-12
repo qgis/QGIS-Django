@@ -2,9 +2,6 @@
 # Fix an error in try/except block and adds per_page
 
 
-from pagination.templatetags.pagination_tags import paginate
-
-
 try:
     set
 except NameError:

@@ -8,7 +8,7 @@ from django.contrib.auth.models import User
 # i18n
 from django.utils.translation import ugettext_lazy as _
 # For permalinks
-from django.core.urlresolvers import reverse
+from django.urls import reverse
 from django.conf import settings
 from djangoratings.fields import AnonymousRatingField
 
@@ -167,7 +167,7 @@ class Plugin (models.Model):
     modified_on     = models.DateTimeField(_('Modified on'), editable=False )
 
     # owners
-    created_by      = models.ForeignKey(User, verbose_name=_('Created by'), related_name = 'plugins_created_by')
+    created_by      = models.ForeignKey(User, verbose_name=_('Created by'), related_name = 'plugins_created_by', on_delete=models.CASCADE)
     author          = models.CharField(_('Author'), help_text=_('This is the plugin\'s original author, if different from the uploader, this field will appear in the XML and in the web GUI'), max_length=256)
     email           = models.EmailField(_('Author email'))
     homepage        = models.URLField(_('Plugin homepage'), blank=True, null=True)
@@ -411,7 +411,7 @@ class VersionField(models.CharField):
 
     description = 'Field to store version strings ("a.b.c.d") in a way it is sortable'
 
-    __metaclass__ = models.SubfieldBase
+    #__metaclass__ = models.SubfieldBase
 
     def get_prep_value(self, value):
         return vjust(value, fillchar='0')
@@ -428,7 +428,7 @@ class QGVersionZeroForcedField(models.CharField) :
     description = 'Field to store version strings ("a.b.c.d") in a way it \
     is sortable and QGIS scheme compatible (x.y.z).'
 
-    __metaclass__ = models.SubfieldBase
+    #__metaclass__ = models.SubfieldBase
 
     def get_prep_value(self, value):
         return vjust(value,fillchar='0',level=2,force_zero=True)
@@ -445,13 +445,13 @@ class PluginVersion (models.Model):
     """
 
     # link to parent
-    plugin          = models.ForeignKey ( Plugin )
+    plugin          = models.ForeignKey (Plugin, on_delete=models.CASCADE)
     # dates
     created_on      = models.DateTimeField(_('Created on'),  auto_now_add=True, editable=False )
     # download counter
     downloads       = models.IntegerField(_('Downloads'), default=0, editable=False)
     # owners
-    created_by      = models.ForeignKey(User, verbose_name=_('Created by'))
+    created_by      = models.ForeignKey(User, verbose_name=_('Created by'), on_delete=models.CASCADE)
     # version info, the first should be read from plugin
     min_qg_version  = QGVersionZeroForcedField(_('Minimum QGIS version'), max_length=32, db_index=True)
     max_qg_version  = QGVersionZeroForcedField(_('Maximum QGIS version'), max_length=32, null=True, blank=True, db_index=True)

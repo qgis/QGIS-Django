@@ -5,6 +5,7 @@ from django.utils.translation import ugettext_lazy as _
 from django.contrib.auth.decorators import login_required, user_passes_test
 from plugins.models import Plugin, PluginVersion
 from plugins.views import *
+from rpc4django.views import serve_rpc_request
 
 # Plugins filtered views (need user parameter from request)
 urlpatterns = [
@@ -69,7 +70,7 @@ urlpatterns += [
 # RPC
 urlpatterns += [
     # rpc4django will need to be in your Python path
-    url(r'^RPC2/$', 'rpc4django.views.serve_rpc_request'),
+    url(r'^RPC2/$', serve_rpc_request),
 ]
 
 
