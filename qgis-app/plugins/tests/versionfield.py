@@ -16,9 +16,9 @@
 import re
 
 
-VERSION_RE=r'(^|(?<=\.))0+(?!\.)|\.#+'
+VERSION_RE = r'(^|(?<=\.))0+(?!\.)|\.#+'
 
-TEST_CASES=(
+TEST_CASES = (
     '1.0.0',
     '1.0.1',
     '0.0.0',
@@ -36,6 +36,7 @@ TEST_CASES=(
     '1.1b',
     '1.9.0',
 )
+
 
 def vjust(str, level=4, delim='.', bitsize=4, fillchar=' ', force_zero=False):
     """
@@ -63,12 +64,10 @@ def vjust(str, level=4, delim='.', bitsize=4, fillchar=' ', force_zero=False):
     parts = []
     for v in str.split(delim)[:level+1]:
         if not v:
-            parts.append(v.rjust(bitsize,'#'))
+            parts.append(v.rjust(bitsize, '#'))
         else:
-            parts.append(v.rjust(bitsize,fillchar))
+            parts.append(v.rjust(bitsize, fillchar))
     return delim.join(parts)
-
-
 
 
 def test():
@@ -77,20 +76,16 @@ def test():
         vj = vjust(v, level=5, fillchar='0')
         transformed.append(vj)
         ck = re.sub(VERSION_RE, '', vj)
-        print "Testing\t %s (%s)\t\t %s" % (v, ck, vj)
+        print ("Testing\t %s (%s)\t\t %s" % (v, ck, vj))
         if v != ck:
-            print "!!! failed !!!"
+            print ("!!! failed !!!")
 
     # Test sorting
     transformed.sort()
-    print "Sorted:"
+    print ("Sorted:")
     for v in transformed:
-        print v
-
-
-
+        print (v)
 
 
 if __name__ == "__main__":
     test()
-

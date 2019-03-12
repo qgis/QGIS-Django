@@ -1,4 +1,4 @@
-{% load i18n simplemenu_tags %}<!DOCTYPE html>
+{% load i18n simplemenu_tags static %}<!DOCTYPE html>
 <html xmlns="http://www.w3.org/1999/xhtml">
 <head>
   <title>QGIS {% block extratitle %}Plugins{% endblock %}</title>
@@ -6,17 +6,17 @@
   <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-    <link rel="stylesheet" href="/static/style/new/basic.css" type="text/css" />
-    <link rel="stylesheet" href="/static/bootstrap/css/bootstrap.min.css" type="text/css" />
-    <link rel="stylesheet" href="/static/style/new/qgis-style.css" type="text/css" />
-    <link rel="stylesheet" href="/static/style/new/bootstrap-sphinx.css" type="text/css" />
-    <link rel="stylesheet" href="/static/bootstrap/css/bootstrap-responsive.min.css" type="text/css" />
-    <link rel="stylesheet" href="/static/font-awesome/css/font-awesome.min.css">
-    <link type="text/css" href="/static/style/style.css" rel="stylesheet" />
+    <link rel="stylesheet" href="{% static "style/new/basic.css" %}" type="text/css" />
+    <link rel="stylesheet" href="{% static "bootstrap/css/bootstrap.min.css" %}" type="text/css" />
+    <link rel="stylesheet" href="{% static "style/new/qgis-style.css" %}" type="text/css" />
+    <link rel="stylesheet" href="{% static "style/new/bootstrap-sphinx.css" %}" type="text/css" />
+    <link rel="stylesheet" href="{% static "bootstrap/css/bootstrap-responsive.min.css" %}" type="text/css" />
+    <link rel="stylesheet" href="{% static "font-awesome/css/font-awesome.min.css" %}">
+    <link type="text/css" href="{% static "style/style.css" %}" rel="stylesheet" />
     {% block extracss %}{% endblock %}
 
-    <script type="text/javascript" src="//static/js/jquery.min.js"></script>
-    <script type="text/javascript" src="/static/bootstrap/js/bootstrap.min.js"></script>
+    <script type="text/javascript" src="{% static "js/jquery-1.11.1.min.js" %}"></script>
+    <script type="text/javascript" src="{% static "bootstrap/js/bootstrap.min.js" %}"></script>
     {% block extrajs %}{% endblock %}
 
 </head>
@@ -35,7 +35,7 @@
 
                     <a class="brand" href="http://www.qgis.org">QGIS</a>
                     {% if user.is_authenticated %}
-                    <a id="user-tooltip" href="{% url "fe_logout" %}" data-toggle="tooltip" data-placement="bottom" title="{{ user.username }}" style="float: right !important"><i class="icon-user icon-3x"></i></a>
+                    <a id="user-tooltip" href="{% url "logout" %}" data-toggle="tooltip" data-placement="bottom" title="{{ user.username }}" style="float: right !important"><i class="icon-user icon-3x"></i></a>
                     {% else %}
                     <a href="{% url "login" %}"><i class="icon-signin icon-3x"></i></a>
                     {% endif %}

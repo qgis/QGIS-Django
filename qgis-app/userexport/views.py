@@ -15,7 +15,7 @@ def export(request, **kwargs):
     response['Content-Disposition'] = 'attachment; filename=plugins_users_list.csv'
     writer = csv.writer(response)
     for u in User.objects.all():
-        writer.writerow([unicode(u.username).encode("utf-8"), u.email, unicode(u.get_full_name()).encode("utf-8"), u.date_joined])
+        writer.writerow([u.username, u.email, u.get_full_name(), u.date_joined])
     return response
 
 def export_bad(request, **kwargs):
@@ -28,7 +28,7 @@ def export_bad(request, **kwargs):
     writer = csv.writer(response, dialect='excel-tab')
     writer.writerow(['Name', 'Author email', 'Maintainer email', 'Approved', 'Deprecated', 'Tracker', 'Repository', 'About'])
     for p in Plugin.approved_objects.filter(Q(about__isnull=True) | Q(about='') | Q(description__isnull=True) | Q(description='') |  Q(tracker__isnull=True) | Q(tracker='')):
-        writer.writerow([unicode(p.name).encode("utf-8"), unicode(p.created_by.email).encode("utf-8"), p.email, p.approved, p.deprecated, p.tracker, p.repository, unicode(p.about).encode("utf-8")])
+        writer.writerow([p.name, p.created_by.email, p.email, p.approved, p.deprecated, p.tracker, p.repository, p.about])
     return response
 
 
@@ -42,5 +42,5 @@ def export_plugin_maintainers(request, **kwargs):
     writer = csv.writer(response, dialect='excel-tab')
     #writer.writerow(['email'])
     for u in User.objects.filter(plugins_created_by__isnull=False, email__isnull=False).exclude(email='').order_by('email').distinct():
-        writer.writerow([unicode(u.email).encode("utf-8")])
+        writer.writerow([u.email])
     return response

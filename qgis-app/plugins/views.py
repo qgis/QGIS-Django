@@ -5,7 +5,7 @@ from django.db import connection
 from django.db.models import Q, Max
 from django.db.models.functions import Lower
 from django.db.models.expressions import RawSQL
-from django.shortcuts import get_object_or_404, render_to_response
+from django.shortcuts import get_object_or_404, render
 from django.template import RequestContext
 from django.http import Http404, HttpResponse, HttpResponseRedirect
 from django.contrib import messages
@@ -72,8 +72,8 @@ def plugin_notify(plugin):
       mail_from = settings.DEFAULT_FROM_EMAIL
 
       send_mail_wrapper(
-          unicode(_('A new plugin has been created by %s.') % plugin.created_by),
-          unicode(_('\r\nPlugin name is: %s\r\nPlugin description is: %s\r\nLink: http://%s%s\r\n') % (plugin.name, plugin.description, domain, plugin.get_absolute_url())),
+          _('A new plugin has been created by %s.') % plugin.created_by,
+          _('\r\nPlugin name is: %s\r\nPlugin description is: %s\r\nLink: http://%s%s\r\n') % (plugin.name, plugin.description, domain, plugin.get_absolute_url()),
           mail_from,
           recipients,
           fail_silently=True)
@@ -95,8 +95,8 @@ def version_notify(plugin_version):
         mail_from = settings.DEFAULT_FROM_EMAIL
 
         send_mail_wrapper(
-            unicode(_('A new plugin version has been uploaded by %s.') % plugin.created_by),
-            unicode(_('\r\nPlugin name is: %s\r\nPlugin description is: %s\r\nLink: http://%s%s\r\n') % (plugin.name, plugin.description, domain, plugin_version.get_absolute_url())),
+            _('A new plugin version has been uploaded by %s.') % plugin.created_by,
+            _('\r\nPlugin name is: %s\r\nPlugin description is: %s\r\nLink: http://%s%s\r\n') % (plugin.name, plugin.description, domain, plugin_version.get_absolute_url()),
             mail_from,
             recipients,
             fail_silently=True)
@@ -127,8 +127,8 @@ def plugin_approve_notify(plugin, msg, user):
         mail_from = settings.DEFAULT_FROM_EMAIL
         logging.debug('Sending email %s notification for %s plugin, recipients:  %s' % (approval_state, plugin, recipients))
         send_mail_wrapper(
-          unicode(_('Plugin %s %s notification.') % (plugin, approval_state)),
-          unicode(_('\r\nPlugin %s %s by %s.\r\n%s\r\nLink: http://%s%s\r\n') % (plugin.name, approval_state, user, msg, domain, plugin.get_absolute_url())),
+          _('Plugin %s %s notification.') % (plugin, approval_state),
+          _('\r\nPlugin %s %s by %s.\r\n%s\r\nLink: http://%s%s\r\n') % (plugin.name, approval_state, user, msg, domain, plugin.get_absolute_url()),
           mail_from,
           recipients,
           fail_silently=True)
@@ -150,11 +150,11 @@ def user_trust_notify(user):
             mail_from = settings.DEFAULT_FROM_EMAIL
 
             if user.has_perm('plugins.can_approve'):
-                subject = unicode(_('User trust notification.'))
-                message = unicode(_('\r\nYou can now approve your own plugins and the plugins you can edit.\r\n'))
+                subject = _('User trust notification.')
+                message = _('\r\nYou can now approve your own plugins and the plugins you can edit.\r\n')
             else:
-                subject = unicode(_('User untrust notification.'))
-                message = unicode(_('\r\nYou cannot approve any plugin.\r\n'))
+                subject = _('User untrust notification.')
+                message = _('\r\nYou cannot approve any plugin.\r\n')
 
             logging.debug('Sending email trust change notification to %s' % recipients)
             send_mail_wrapper(
@@ -212,7 +212,7 @@ def plugin_create(request):
         form = PluginForm()
         form.fields['owners'].queryset = User.objects.exclude(pk=request.user.pk).order_by('username')
 
-    return render_to_response('plugins/plugin_form.html', { 'form' : form , 'form_title' : _('New plugin')}, context_instance=RequestContext(request))
+    return render(request, 'plugins/plugin_form.html', { 'form' : form , 'form_title' : _('New plugin')})
 
 
 
@@ -270,7 +270,7 @@ def plugin_upload(request):
                 try:
                     plugin = Plugin.objects.get(package_name=plugin_data['package_name'])
                     if not check_plugin_access(request.user, plugin):
-                        return render_to_response('plugins/plugin_permission_deny.html', {}, context_instance=RequestContext(request))
+                        return render(request, 'plugins/plugin_permission_deny.html', {})
                     # Apply new values
                     plugin.name         = plugin_data['name']
                     plugin.description  = plugin_data['description']
@@ -347,19 +347,19 @@ def plugin_upload(request):
 
                 # Grouped messages:
                 if warnings:
-                    messages.warning(request, _('<p><strong>Warnings:</strong></p>') + '\n'.join(["<p>%s</p>" % unicode(w) for w in warnings]), fail_silently=True)
+                    messages.warning(request, _('<p><strong>Warnings:</strong></p>') + '\n'.join([("<p>%s</p>" % w) for w in warnings]), fail_silently=True)
 
 
             except (IntegrityError, ValidationError, DjangoUnicodeDecodeError) as e:
                 connection.close()
                 messages.error(request, e, fail_silently=True)
                 if not plugin.pk:
-                    return render_to_response('plugins/plugin_upload.html', { 'form' : form }, context_instance=RequestContext(request))
+                    return render(request, 'plugins/plugin_upload.html', { 'form' : form })
             return HttpResponseRedirect(plugin.get_absolute_url())
     else:
         form = PackageUploadForm()
 
-    return render_to_response('plugins/plugin_upload.html', { 'form' : form }, context_instance=RequestContext(request))
+    return render(request, 'plugins/plugin_upload.html', { 'form' : form })
 
 
 
@@ -394,13 +394,13 @@ class PluginDetailView(DetailView):
 def plugin_delete(request, package_name):
     plugin = get_object_or_404(Plugin, package_name=package_name)
     if not check_plugin_access(request.user, plugin):
-        return render_to_response('plugins/plugin_permission_deny.html', {}, context_instance=RequestContext(request))
+        return render(request, 'plugins/plugin_permission_deny.html', {})
     if 'delete_confirm' in request.POST:
         plugin.delete()
         msg = _("The Plugin has been successfully deleted.")
         messages.success(request, msg, fail_silently=True)
         return HttpResponseRedirect(reverse('approved_plugins'))
-    return render_to_response('plugins/plugin_delete_confirm.html', { 'plugin' : plugin }, context_instance=RequestContext(request))
+    return render(request, 'plugins/plugin_delete_confirm.html', { 'plugin' : plugin })
 
 
 def _check_optional_metadata(form, request):
@@ -418,7 +418,7 @@ def plugin_update(request, package_name):
     """
     plugin = get_object_or_404(Plugin, package_name=package_name)
     if not check_plugin_access(request.user, plugin):
-        return render_to_response('plugins/plugin_permission_deny.html', {}, context_instance=RequestContext(request))
+        return render(request, 'plugins/plugin_permission_deny.html', {})
     if request.method == 'POST':
         form = PluginForm(request.POST, request.FILES, instance=plugin)
         form.fields['owners'].queryset = User.objects.exclude(pk=plugin.created_by.pk).order_by('username')
@@ -442,7 +442,7 @@ def plugin_update(request, package_name):
         form = PluginForm(instance = plugin)
         form.fields['owners'].queryset = User.objects.exclude(pk=plugin.created_by.pk).order_by('username')
 
-    return render_to_response('plugins/plugin_form.html', { 'form' : form , 'form_title' : _('Edit plugin'), 'plugin' : plugin}, context_instance=RequestContext(request))
+    return render(request, 'plugins/plugin_form.html', { 'form' : form , 'form_title' : _('Edit plugin'), 'plugin' : plugin})
 
 
 
@@ -621,7 +621,7 @@ def user_block(request, username):
     # Disable
     user.is_active = False
     user.save()
-    msg = unicode(_("The user %s is now blocked." % user))
+    msg = _("The user %s is now blocked." % user)
     messages.success(request, msg, fail_silently=True)
     return HttpResponseRedirect(reverse('user_details', args=[user.username]))
 
@@ -636,7 +636,7 @@ def user_unblock(request, username):
     # Enable
     user.is_active = True
     user.save()
-    msg = unicode(_("The user %s is now unblocked." % user))
+    msg = _("The user %s is now unblocked." % user)
     messages.success(request, msg, fail_silently=True)
     return HttpResponseRedirect(reverse('user_details', args=[user.username]))
 
@@ -649,7 +649,7 @@ def user_trust(request, username):
     """
     user = get_object_or_404(User, username=username)
     user.user_permissions.add(Permission.objects.get(codename='can_approve', content_type=ContentType.objects.get(app_label="plugins", model='plugin')))
-    msg = unicode(_("The user %s is now a trusted user." % user))
+    msg = _("The user %s is now a trusted user." % user)
     messages.success(request, msg, fail_silently=True)
     user_trust_notify(user)
     return HttpResponseRedirect(reverse('user_details', args=[user.username]))
@@ -663,7 +663,7 @@ def user_untrust(request, username):
     """
     user = get_object_or_404(User, username=username)
     user.user_permissions.remove(Permission.objects.get(codename='can_approve', content_type=ContentType.objects.get(app_label="plugins", model='plugin')))
-    msg = unicode(_("The user %s is now an untrusted user." % user))
+    msg = _("The user %s is now an untrusted user." % user)
     messages.success(request, msg, fail_silently=True)
     user_trust_notify(user)
     return HttpResponseRedirect(reverse('user_details', args=[user.username]))
@@ -720,7 +720,7 @@ def version_create(request, package_name):
     """
     plugin = get_object_or_404(Plugin, package_name=package_name)
     if not check_plugin_access(request.user, plugin):
-        return render_to_response('plugins/version_permission_deny.html', { 'plugin' : plugin }, context_instance=RequestContext(request))
+        return render(request, 'plugins/version_permission_deny.html', { 'plugin' : plugin })
 
     version = PluginVersion(plugin = plugin, created_by = request.user)
     if request.method == 'POST':
@@ -750,11 +750,11 @@ def version_create(request, package_name):
     else:
         form = PluginVersionForm(is_trusted=request.user.has_perm('plugins.can_approve'))
 
-    return render_to_response('plugins/version_form.html', {
+    return render(request, 'plugins/version_form.html', {
         'form' : form,
         'plugin' : plugin,
         'form_title' : _('New version for plugin')
-    }, context_instance=RequestContext(request))
+    })
 
 
 @login_required
@@ -765,7 +765,7 @@ def version_update(request, package_name, version):
     plugin =  get_object_or_404(Plugin, package_name=package_name)
     version = get_object_or_404(PluginVersion, plugin=plugin, version=version)
     if not check_plugin_access(request.user, plugin):
-        return render_to_response('plugins/version_permission_deny.html', { 'plugin' : plugin }, context_instance=RequestContext(request))
+        return render(request, 'plugins/version_permission_deny.html', { 'plugin' : plugin })
 
     if request.method == 'POST':
         form = PluginVersionForm(request.POST, request.FILES, instance=version, is_trusted=request.user.has_perm('plugins.can_approve'))
@@ -783,12 +783,12 @@ def version_update(request, package_name, version):
     else:
         form = PluginVersionForm(instance=version, is_trusted=request.user.has_perm('plugins.can_approve'))
 
-    return render_to_response('plugins/version_form.html', {
+    return render(request, 'plugins/version_form.html', {
         'form' : form,
         'plugin' : plugin,
         'version' : version,
         'form_title' : _('Edit version for plugin')
-    }, context_instance=RequestContext(request))
+    })
 
 
 
@@ -797,13 +797,13 @@ def version_delete(request, package_name, version):
     plugin =  get_object_or_404(Plugin, package_name=package_name)
     version = get_object_or_404(PluginVersion, plugin=plugin, version=version)
     if not check_plugin_access(request.user, plugin):
-        return render_to_response('plugins/version_permission_deny.html', {}, context_instance=RequestContext(request))
+        return render(request, 'plugins/version_permission_deny.html', {})
     if 'delete_confirm' in request.POST:
         version.delete()
         msg = _("The Plugin Version has been successfully deleted.")
         messages.success(request, msg, fail_silently=True)
         return HttpResponseRedirect(reverse('plugin_detail', args=(plugin.package_name,)))
-    return render_to_response('plugins/version_delete_confirm.html', { 'plugin' : plugin, 'version' : version }, context_instance=RequestContext(request))
+    return render(request, 'plugins/version_delete_confirm.html', { 'plugin' : plugin, 'version' : version })
 
 
 
@@ -821,7 +821,7 @@ def version_approve(request, package_name, version):
         return HttpResponseRedirect(version.get_absolute_url())
     version.approved = True
     version.save()
-    msg = unicode(_("The plugin version \"%s\" is now approved" % version))
+    msg = _("The plugin version \"%s\" is now approved" % version)
     messages.success(request, msg, fail_silently=True)
     plugin_approve_notify(version.plugin, msg, request.user)
     try:
@@ -845,7 +845,7 @@ def version_unapprove(request, package_name, version):
         return HttpResponseRedirect(version.get_absolute_url())
     version.approved = False
     version.save()
-    msg = unicode(_("The plugin version \"%s\" is now unapproved" % version))
+    msg = _("The plugin version \"%s\" is now unapproved" % version)
     messages.success(request, msg, fail_silently=True)
     plugin_approve_notify(version.plugin, msg, request.user)
     try:
@@ -896,7 +896,7 @@ def version_detail(request, package_name, version):
     """
     plugin =  get_object_or_404(Plugin, package_name=package_name)
     version = get_object_or_404(PluginVersion, plugin=plugin, version=version)
-    return render_to_response('plugins/version_detail.html', {'version' : version }, context_instance=RequestContext(request))
+    return render(request, 'plugins/version_detail.html', {'version' : version })
 
 
 ###############################################
@@ -950,11 +950,8 @@ def xml_plugins(request, qg_version=None, stable_only=None, package_name=None):
             pass
     else:
 
-        # Old way to retrieve plugins: much slower.
-
-        trusted_users_ids = zip(*User.objects.filter(Q(user_permissions__codename='can_approve', user_permissions__content_type__app_label='plugins') | Q(is_superuser=True)).distinct().values_list('id'))[0]
-
-        qs = Plugin.approved_objects.filter(**filters).annotate(is_trusted=RawSQL('%s.created_by_id in %%s' % Plugin._meta.db_table, (trusted_users_ids,)))
+        trusted_users_ids = list(zip(*User.objects.filter(Q(user_permissions__codename='can_approve', user_permissions__content_type__app_label='plugins') | Q(is_superuser=True)).distinct().values_list('id')))[0]
+        qs = Plugin.approved_objects.filter(**filters).annotate(is_trusted=RawSQL('%s.created_by_id in (%s)' % (Plugin._meta.db_table, (',').join([str(tu) for tu in trusted_users_ids])), ()))
         for plugin in qs:
             plugin_version_filters = copy.copy(version_filters)
             plugin_version_filters.update({'plugin_id' : plugin.pk})
@@ -972,9 +969,7 @@ def xml_plugins(request, qg_version=None, stable_only=None, package_name=None):
                 except IndexError:
                     pass
 
-    return render_to_response('plugins/plugins.xml', {'object_list': object_list}, content_type='text/xml', context_instance=RequestContext(request))
-
-
+    return render(request, 'plugins/plugins.xml', {'object_list': object_list}, content_type='text/xml')
 
 
 @cache_page(60 * 15)
@@ -1070,4 +1065,4 @@ def xml_plugins_new(request, qg_version=None, stable_only=None, package_name=Non
             })]
 
 
-    return render_to_response('plugins/plugins.xml', {'object_list': object_list_new}, content_type='text/xml', context_instance=RequestContext(request))
+    return render(request, 'plugins/plugins.xml', {'object_list': object_list_new}, content_type='text/xml')

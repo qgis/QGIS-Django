@@ -7,7 +7,7 @@ from django.utils.safestring import mark_safe
 from django.forms import CharField
 
 from plugins.validator import validator
-from plugins.models import *
+from plugins.models import PluginVersion, Plugin
 from taggit.forms import *
 
 import re
@@ -85,11 +85,11 @@ class PluginVersionForm(ModelForm):
                 if ('experimental' in dict(cleaned_data)
                     and 'experimental' in self.cleaned_data
                     and dict(cleaned_data)['experimental'] != self.cleaned_data['experimental']):
-                    msg = unicode(_("The 'experimental' flag in the form does not match the 'experimental' flag in the plugins package metadata.<br />"))
+                    msg = _("The 'experimental' flag in the form does not match the 'experimental' flag in the plugins package metadata.<br />")
                     raise ValidationError(mark_safe("%s" % msg))
                 self.cleaned_data.update(cleaned_data)
             except ValidationError as e:
-                msg = unicode(_("There were errors reading plugin package (please check also your plugin's metadata).<br />"))
+                msg = _("There were errors reading plugin package (please check also your plugin's metadata).<br />")
                 raise ValidationError(mark_safe("%s %s" % (msg, '<br />'.join(e.messages))))
             # Populate instance
             self.instance.min_qg_version = self.cleaned_data.get('qgisMinimumVersion')
@@ -123,7 +123,7 @@ class PackageUploadForm(forms.Form):
         try:
             self.cleaned_data.update(validator(package))
         except ValidationError as e:
-            msg = unicode(_("There were errors reading plugin package (please check also your plugin's metadata)."))
+            msg = _("There were errors reading plugin package (please check also your plugin's metadata).")
             raise ValidationError(mark_safe("%s %s" % (msg, ','.join(e.messages))))
         # Disabled: now the PackageUploadForm also accepts updates
         #if Plugin.objects.filter(package_name = self.cleaned_data['package_name']).count():

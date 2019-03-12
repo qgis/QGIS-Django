@@ -47,6 +47,13 @@ ADMIN_MEDIA_PREFIX = '/admin/'
 STATIC_URL='/static_media/'
 STATIC_ROOT=SITE_ROOT + '/static_media/'
 
+
+STATICFILES_DIRS = [
+    os.path.join(SITE_ROOT, "static"),
+]
+
+
+
 # Make this unique, and don't share it with anybody.
 SECRET_KEY = 'y2vu=4qarl)p=g_blq_c4afk!p6u_cor1gy1k@05ro=+tf7+)g'
 
@@ -64,12 +71,10 @@ MIDDLEWARE = [
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
-    'django.contrib.auth.middleware.SessionAuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     # Needed by rpc4django
     'plugins.middleware.HttpAuthMiddleware',
     'django.contrib.auth.middleware.RemoteUserMiddleware',
-    'pagination.middleware.PaginationMiddleware',
     'django.contrib.flatpages.middleware.FlatpageFallbackMiddleware',
     # Added by Tim for advanced loggin options
     'django.middleware.cache.FetchFromCacheMiddleware',
@@ -151,6 +156,7 @@ TEMPLATES = [
             'context_processors' : (
                 "django.contrib.auth.context_processors.auth",
                 'django.contrib.messages.context_processors.messages',
+                'django.template.context_processors.request',
                 # ABP: adds DEBUG and BASE_TEMPLATE vars
                 "qgis_context_processor.additions",
             ),

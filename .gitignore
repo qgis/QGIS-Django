@@ -32,7 +32,7 @@ django-amazon-resources
 djangosnippets.org
 qgis-snippets
 search-index
-# ABP: sqlite support
-init_spatialite-2.4.sql
-qgis-django.sqlite3
+
 qgis/user-pics/*
+qgis-app/static/cache
+static_media

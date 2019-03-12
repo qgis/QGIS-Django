@@ -3,13 +3,13 @@ XML-RPC webservices for the plugin web application
 """
 
 from rpc4django import rpcmethod
-from xmlrpclib import Fault
+from xmlrpc.server import Fault
 
 from plugins.validator import validator
 from plugins.models import *
 from plugins.views import plugin_notify
 
-import StringIO
+from io import BytesIO
 from taggit.models import Tag
 
 from django.db import IntegrityError
@@ -39,12 +39,14 @@ def plugin_upload(package, **kwargs):
     Returns an array containing the ID (primary key) of the plugin and the ID of the version.
     """
     try:
+
         request = kwargs.get('request')
-        package = StringIO.StringIO(package.data)
+        package = BytesIO(package)
+        package.len = package.getbuffer().nbytes
         try:
             cleaned_data = dict(validator(package))
-        except ValidationError, e:
-            msg = unicode(_('File upload must be a valid QGIS Python plugin compressed archive.'))
+        except ValidationError as e:
+            msg = _('File upload must be a valid QGIS Python plugin compressed archive.')
             raise Fault(1, "%s %s" % (msg, ','.join(e.messages)))
 
         plugin_data = {
@@ -57,6 +59,7 @@ def plugin_upload(package, **kwargs):
             'email'             : cleaned_data['email'],
             'about'             : cleaned_data['about'],
         }
+
 
         # Gets existing plugin
         try:
@@ -141,15 +144,15 @@ def plugin_vote(plugin_id, vote, **kwargs):
     try:
         request = kwargs.get('request')
     except:
-        msg = unicode(_('Invalid request.'))
+        msg = _('Invalid request.')
         raise ValidationError(msg)
     try:
         plugin = Plugin.objects.get(pk=plugin_id)
     except Plugin.DoesNotExist:
-        msg = unicode(_('Plugin with id %s does not exists.') % plugin_id)
+        msg = _('Plugin with id %s does not exists.') % plugin_id
         raise ValidationError(msg)
     if not int(vote) in range(1, 6):
-        msg = unicode(_('%s is not a valid vote (1-5).') % vote)
+        msg = _('%s is not a valid vote (1-5).') % vote
         raise ValidationError(msg)
     cookies=request.COOKIES
     if request.user.is_anonymous:

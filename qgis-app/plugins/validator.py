@@ -87,7 +87,7 @@ def validator(package):
         try:
             raise ValidationError( _('Bad zip (maybe a CRC error) on file %s') %  bad_file )
         except UnicodeDecodeError:
-            raise ValidationError( _('Bad zip (maybe unicode filename) on file %s') %  unicode( bad_file, errors='replace'))
+            raise ValidationError( _('Bad zip (maybe unicode filename) on file %s') %   bad_file, errors='replace')
 
     # Checks that package_name  exists
     namelist = zip.namelist()
@@ -113,9 +113,9 @@ def validator(package):
     # First parse metadata.txt
     if metadataname in namelist:
         try:
-            parser = ConfigParser.ConfigParser()
+            parser = configparser.ConfigParser()
             parser.optionxform = str
-            parser.readfp(StringIO.StringIO(codecs.decode(zip.read(metadataname), "utf8")))
+            parser.readfp(StringIO(codecs.decode(zip.read(metadataname), "utf8")))
             if not parser.has_section('general'):
                 raise ValidationError(_("Cannot find a section named 'general' in %s") % metadataname)
             metadata.extend(parser.items('general'))
@@ -125,7 +125,7 @@ def validator(package):
     else:
         # Then parse __init__
         # Ugly RE: regexp guru wanted!
-        initcontent = zip.read(initname)
+        initcontent = zip.read(initname).decode('utf8')
         metadata.extend(_read_from_init(initcontent, initname))
         if not metadata:
             raise ValidationError(_('Cannot find valid metadata in %s') % initname)
@@ -162,7 +162,7 @@ def validator(package):
     min_qgs_version = dict(metadata).get('qgisMinimumVersion')
     max_qgs_version = dict(metadata).get('qgisMaximumVersion')
     if tuple(min_qgs_version.split('.')) < tuple('1.8'.split('.')) and metadataname in namelist:
-        initcontent = zip.read(initname)
+        initcontent = zip.read(initname).decode('utf8')
         try:
             initmetadata = _read_from_init(initcontent, initname)
             initmetadata.append(('metadata_source', '__init__.py'))
