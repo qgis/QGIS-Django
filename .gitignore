@@ -36,3 +36,5 @@ search-index
 qgis/user-pics/*
 qgis-app/static/cache
 static_media
+
+.vagrant
