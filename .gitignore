@@ -7,7 +7,7 @@ venv
 *.webprj
 *.session
 # ABP: ignore local settings
-settings_local.py
+qgis-app/settings_local.py
 # ABP: ignore pyc
 *.pyc
 # ABP: ignore zips

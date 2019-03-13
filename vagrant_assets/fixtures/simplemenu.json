@@ -1,0 +1,41 @@
+[
+{
+    "model": "simplemenu.menu",
+    "pk": 1,
+    "fields": {
+        "name": "Main menu"
+    }
+},
+{
+    "model": "simplemenu.menuitem",
+    "pk": 1,
+    "fields": {
+        "name": "Plugins",
+        "menu": 1,
+        "rank": 0,
+        "urlobj_content_type": null,
+        "urlobj_id": null,
+        "urlstr": "/plugins/"
+    }
+},
+{
+    "model": "simplemenu.menuitem",
+    "pk": 2,
+    "fields": {
+        "name": "Plugins XML 3.4",
+        "menu": 1,
+        "rank": 1,
+        "urlobj_content_type": 17,
+        "urlobj_id": 2,
+        "urlstr": ""
+    }
+},
+{
+    "model": "simplemenu.urlitem",
+    "pk": 2,
+    "fields": {
+        "name": "Plugins XML 3.4",
+        "url": "/plugins/plugins.xml?qgis=3.4"
+    }
+}
+]

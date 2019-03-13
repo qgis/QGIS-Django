@@ -62,7 +62,7 @@
             <tr>
                 <th>&nbsp;</th>
                 <th>{% anchor name %}</th>
-                {% if not user.is_anonymous %}<th><img title="{% trans "Approved" %}" src="{% static "images/tick_16.png" alt="{% trans "Approved" %}"/></th>{% endif %}
+                {% if not user.is_anonymous %}<th><img title="{% trans "Approved" %}" src="{% static "images/tick_16.png" %}" alt="{% trans "Approved" %}"/></th>{% endif %}
                 <th>{% anchor featured %}</th>
                 <th>{% anchor downloads %}</th>
                 <th>{% anchor author "Author" %}</th>
@@ -85,12 +85,12 @@
                     <img class="plugin-icon" alt="{% trans "Plugin icon" %}" src="{{ im.url }}" width="{{ im.x }}" height="{{ im.y }}" />
                 {% endthumbnail %}
                 {% else %}
-                    <img height="32" width="32" class="plugin-icon" src="{% static "images/qgis-icon-32x32.png" alt="{% trans "Plugin icon" %}" />
+                    <img height="32" width="32" class="plugin-icon" src="{% static "images/qgis-icon-32x32.png" %}" alt="{% trans "Plugin icon" %}" />
                 {% endif %}
                 </a></td>
                 <td><a title="{% if object.deprecated %} [DEPRECATED] {% endif %}{% trans "Click here for plugin details" %}"  href="{% url "plugin_detail" object.package_name %}">{{ object.name }}</a></td>
-                {% if not user.is_anonymous %}<td>{% if object.approved %}<img src="{% static "images/tick_16.png" />{% else %}&mdash;{% endif %}</td>{% endif %}
-                <td>{% if object.featured%}<img src="{% static "images/tick_16.png" />{% else %}&mdash;{% endif %}</td>
+                {% if not user.is_anonymous %}<td>{% if object.approved %}<img src="{% static "images/tick_16.png" %}" />{% else %}&mdash;{% endif %}</td>{% endif %}
+                <td>{% if object.featured%}<img src="{% static "images/tick_16.png" %}" />{% else %}&mdash;{% endif %}</td>
                 <td>{{ object.downloads }}</td>
                 <td><a title="{% trans "See all plugins by"%} {{ object.author }}" href="{% url "author_plugins" object.author %}">{{ object.author }}</a></td>
 <!--

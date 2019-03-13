@@ -1,18 +1,20 @@
-from django.urls import include, path
+import simplemenu
 from django.conf import settings
 from django.conf.urls import url
+# Uncomment the next two lines to enable the admin:
+from django.contrib import admin
+from django.contrib.flatpages.models import FlatPage
+from django.urls import include, path
 from django.views.generic.base import RedirectView
 from django.views.static import serve
+
 # to find users app views
 #from users.views import *
 from homepage import homepage
-from django.contrib.flatpages.models import FlatPage
 
-# Uncomment the next two lines to enable the admin:
-from django.contrib import admin
 admin.autodiscover()
 
-urlpatterns =[
+urlpatterns = [
     # Example:
     # (r'^qgis/', include('qgis.foo.urls')),
 
@@ -44,7 +46,7 @@ urlpatterns =[
 ]
 
 # ABP: temporary home page
-#urlpatterns += patterns('django.views.generic.simple',
+# urlpatterns += patterns('django.views.generic.simple',
 #    url(r'^$', 'direct_to_template', {'template': 'index.html'}, name = 'index'),
 #)
 
@@ -52,7 +54,8 @@ urlpatterns =[
 # serving static media
 if settings.SERVE_STATIC_MEDIA:
     urlpatterns += [
-        url(r'^static/(?P<path>.*)$', serve, {'document_root': settings.MEDIA_ROOT}),
+        url(r'^static/(?P<path>.*)$', serve,
+            {'document_root': settings.MEDIA_ROOT}),
     ]
 
 
@@ -79,3 +82,13 @@ if settings.DEBUG:
     urlpatterns += [
         url(r'^__debug__/', include(debug_toolbar.urls)),
     ]
+
+
+simplemenu.register(
+    '/admin/',
+#    '/planet/',
+#    '/community-map/',
+    '/plugins/',
+    FlatPage.objects.all(),
+    simplemenu.models.URLItem.objects.all(),
+)

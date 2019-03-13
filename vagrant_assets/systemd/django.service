@@ -1,0 +1,14 @@
+[Unit]
+Description=Unit for starting a QGIS Django app
+
+[Service]
+Restart=on-failure
+WorkingDirectory=##INSTALL_DIR##/qgis-app
+ExecStart=##INSTALL_DIR##/venv/bin/gunicorn wsgi -b 0.0.0.0:8001 --reload
+User=www-data
+Group=www-data
+Environment="DJANGO_SETTINGS_MODULE=settings_local_vagrant"
+
+
+[Install]
+WantedBy=multi-user.target

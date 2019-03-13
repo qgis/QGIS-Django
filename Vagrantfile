@@ -21,12 +21,12 @@ Vagrant.configure("2") do |config|
 
   # Install the required software
   config.vm.provision "shell",
-    path: "scripts/provision_setup.sh",
+    path: "vagrant_assets/provision_setup.sh",
     args: ENV['SHELL_ARGS']
 
   # Run every time the VM starts
   config.vm.provision "shell",
-    path: "scripts/provision_job.sh",
+    path: "vagrant_assets/provision_job.sh",
     args: ENV['SHELL_ARGS'],
     run: "always"
 

@@ -1,0 +1,54 @@
+[
+{
+    "model": "djangoratings.vote",
+    "pk": 1,
+    "fields": {
+        "content_type": 9,
+        "object_id": 2,
+        "key": "2c5504ab9a86164db22a92dc8793843d",
+        "score": 4,
+        "user": 1,
+        "ip_address": "127.0.0.1",
+        "cookie": "20190312114819676853",
+        "date_added": "2019-03-12T11:48:19.679",
+        "date_changed": "2019-03-12T11:48:19.679"
+    }
+},
+{
+    "model": "djangoratings.vote",
+    "pk": 2,
+    "fields": {
+        "content_type": 9,
+        "object_id": 3,
+        "key": "2c5504ab9a86164db22a92dc8793843d",
+        "score": 4,
+        "user": 1,
+        "ip_address": "127.0.0.1",
+        "cookie": "20190313030305142014",
+        "date_added": "2019-03-13T03:03:05.145",
+        "date_changed": "2019-03-13T03:03:05.145"
+    }
+},
+{
+    "model": "djangoratings.score",
+    "pk": 1,
+    "fields": {
+        "content_type": 9,
+        "object_id": 2,
+        "key": "2c5504ab9a86164db22a92dc8793843d",
+        "score": 4,
+        "votes": 1
+    }
+},
+{
+    "model": "djangoratings.score",
+    "pk": 2,
+    "fields": {
+        "content_type": 9,
+        "object_id": 3,
+        "key": "2c5504ab9a86164db22a92dc8793843d",
+        "score": 4,
+        "votes": 1
+    }
+}
+]

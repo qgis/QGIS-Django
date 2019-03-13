@@ -1,0 +1,46 @@
+[
+{
+    "model": "plugins.plugin",
+    "pk": 3,
+    "fields": {
+        "created_on": "2019-03-12T11:38:33.575",
+        "modified_on": "2019-03-13T03:03:05.148",
+        "created_by": 1,
+        "author": "Alessandro Primo",
+        "email": "email@email.com",
+        "homepage": "http://www.itopen.it",
+        "repository": "http://www.itopen.it/repo",
+        "tracker": "http://bugs.itopen.it",
+        "package_name": "HelloWorld",
+        "name": "HelloWorld",
+        "description": "This is a plugin for greeting the\n(going multiline) world",
+        "about": "An Hello World Plugin: nothing more",
+        "icon": "packages/2019/icon_eCcQd39.png",
+        "downloads": 0,
+        "featured": false,
+        "deprecated": false,
+        "server": false,
+        "rating_votes": 1,
+        "rating_score": 4,
+        "owners": []
+    }
+},
+{
+    "model": "plugins.pluginversion",
+    "pk": 3,
+    "fields": {
+        "plugin": 3,
+        "created_on": "2019-03-12T11:38:33.760",
+        "downloads": 0,
+        "created_by": 1,
+        "min_qg_version": "3.0.0",
+        "max_qg_version": "3.99.0",
+        "version": "1.2",
+        "changelog": "this is a very\nvery<br/>\nvery\nvery\nvery\nvery long multiline changelog",
+        "package": "packages/2019/HelloWorld.zip",
+        "experimental": false,
+        "approved": true,
+        "external_deps": null
+    }
+}
+]
