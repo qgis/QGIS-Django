@@ -2,6 +2,9 @@ import os
 SITE_ROOT = os.path.dirname(os.path.realpath(__file__))
 
 DEBUG = True
+THUMBNAIL_DEBUG = DEBUG   # sorl.thumbnail verbose debug
+
+ALLOWED_HOSTS = ['*']
 
 # Local time zone for this installation. Choices can be found here:
 # http://en.wikipedia.org/wiki/List_of_tz_zones_by_name
@@ -28,7 +31,10 @@ USE_L10N = True
 
 # Absolute path to the directory that holds media.
 # Example: "/home/media/media.lawrence.com/"
-MEDIA_ROOT = SITE_ROOT + '/static/'
+
+# Override assets for Vagrant
+# User uploaded files
+MEDIA_ROOT = "##MEDIA_ROOT##"
 
 # URL that handles the media served from MEDIA_ROOT. Make sure to use a
 # trailing slash if there is a path component (optional in other cases).
@@ -43,11 +49,6 @@ ADMIN_MEDIA_PREFIX = '/admin/'
 
 STATIC_URL='/static_media/'
 STATIC_ROOT=SITE_ROOT + '/static_media/'
-
-
-STATICFILES_DIRS = [
-    os.path.join(SITE_ROOT, "static"),
-]
 
 
 # Make this unique, and don't share it with anybody.
@@ -85,6 +86,28 @@ TEMPLATE_DIRS = (
     # Don't forget to use absolute paths, not relative paths.
     os.path.join(SITE_ROOT, 'templates'),
 )
+
+
+STATICFILES_DIRS = [
+    os.path.join(SITE_ROOT, "static"),
+]
+
+TEMPLATES = [
+    {
+        'BACKEND': 'django.template.backends.django.DjangoTemplates',
+        'DIRS': ['templates'],
+        'APP_DIRS': True,
+        'OPTIONS': {
+            'context_processors' : (
+                "django.contrib.auth.context_processors.auth",
+                'django.contrib.messages.context_processors.messages',
+                'django.template.context_processors.request',
+                # ABP: adds DEBUG and BASE_TEMPLATE vars
+                "qgis_context_processor.additions",
+            ),
+        },
+    },
+]
 
 
 ADMINS = (
@@ -163,6 +186,8 @@ INSTALLED_APPS = [
     'tinymce',
     'rpc4django',
 ]
+
+PLUGIN_MAX_UPLOAD_SIZE=1024*1024*20
 
 if DEBUG:
     INSTALLED_APPS.append('django_extensions')

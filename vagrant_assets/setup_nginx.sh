@@ -6,7 +6,7 @@
 
 set -e
 
-. /vagrant/vagrant_assets/config.sh
+. /vagrant/vagrant_assets/setup_config.sh
 
 . ${INSTALL_DIR}/venv/bin/activate
 pip3 install gunicorn || true
@@ -23,7 +23,7 @@ systemctl start django
 
 # Nginx
 cp ${VAGRANT_ASSETS_DIR}/nginx/django.conf /etc/nginx/sites-enabled/default
-for var in INSTALL_DIR; do
+for var in INSTALL_DIR MEDIA_ROOT; do
     sed -i -e "s@##${var}##@${!var}@g" /etc/nginx/sites-enabled/default
 done
 

@@ -6,7 +6,7 @@
 
 set -e
 
-. /vagrant/vagrant_assets/config.sh
+. /vagrant/vagrant_assets/setup_config.sh
 
 apt-get update && apt-get -y upgrade
 

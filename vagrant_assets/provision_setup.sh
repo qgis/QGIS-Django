@@ -7,17 +7,18 @@
 
 set -e
 
-. /vagrant/vagrant_assets/config.sh
+. /vagrant/vagrant_assets/setup_config.sh
 
 
-${VAGRANT_ASSETS_DIR}/install_deps.sh
-${VAGRANT_ASSETS_DIR}/db_setup.sh
-${VAGRANT_ASSETS_DIR}/django_setup.sh
-${VAGRANT_ASSETS_DIR}/load_initial_data.sh
+${VAGRANT_ASSETS_DIR}/setup_install_deps.sh
+${VAGRANT_ASSETS_DIR}/setup_db.sh
+${VAGRANT_ASSETS_DIR}/setup_django.sh
+${VAGRANT_ASSETS_DIR}/setup_nginx.sh
+${VAGRANT_ASSETS_DIR}/setup_load_initial_data.sh
 
 
-# Fix permissions
-chown -R www-data.www-data ${INSTALL_DIR}
+# Fix permissions on upload folder
+chown -R www-data.www-data ${MEDIA_ROOT}/packages
 
 # Clean up
 echo "Cleaning up ..."

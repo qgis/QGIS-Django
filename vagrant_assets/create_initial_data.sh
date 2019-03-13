@@ -4,7 +4,7 @@
 
 THIS_SCRIPT_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" >/dev/null 2>&1 && pwd )"
 ROOT_DIR=${THIS_SCRIPT_DIR}/..
-APPS="auth simplemenu plugins contenttypes djangoratings"
+APPS="auth simplemenu"
 
 cp -r ${ROOT_DIR}/qgis-app/static_media/packages/ ${THIS_SCRIPT_DIR}
 
