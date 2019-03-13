@@ -8,7 +8,7 @@ BOX_URL = "https://cloud-images.ubuntu.com/bionic/current/bionic-server-cloudimg
 Vagrant.configure("2") do |config|
   config.vm.box = BOX
   config.vm.box_url = BOX_URL
-  config.disksize.size = '20GB'
+  #config.disksize.size = '20GB'
 
   config.vm.network "forwarded_port", guest: 80, host: 8080 # nginx fastcgi
 
