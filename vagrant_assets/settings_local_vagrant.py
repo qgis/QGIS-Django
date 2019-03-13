@@ -144,7 +144,7 @@ DATABASES = {
 GOOGLE_API_KEY='ABQIAAAAyZw9WlHOs4CazzwUByOgZxQok5WFiNcwymBq4ClbhSeQY6fSMhTl0KHT2Donh18dLk3P4AC4ddOarA'
 
 PAGINATION_DEFAULT_PAGINATION=5
-
+LOGIN_REDIRECT_URL='/'
 SERVE_STATIC_MEDIA = DEBUG
 
 # TIM: Place where search indexes are stored for snippets - should be non web accessible
