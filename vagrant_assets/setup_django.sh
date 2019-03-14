@@ -7,7 +7,9 @@
 
 set -e
 
-. /vagrant/vagrant_assets/setup_config.sh
+# Source configuration
+THIS_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" >/dev/null 2>&1 && pwd )"
+. ${THIS_DIR}/setup_config.sh
 
 cd ${INSTALL_DIR}
 
@@ -32,7 +34,7 @@ pip3 install wheel
 # Not really necessary, but useful for development:
 pip3 install ipython
 pip3 install -r qgis-app/REQUIREMENTS_plugins.txt
-cp ${VAGRANT_ASSETS_DIR}/settings_local_vagrant.py ${INSTALL_DIR}/qgis-app
+cp ${THIS_DIR}/settings_local_vagrant.py ${INSTALL_DIR}/qgis-app
 for var in DB_NAME DB_USER DB_PASSWORD MEDIA_ROOT; do
     sed -i -e "s@##${var}##@${!var}@" ${INSTALL_DIR}/qgis-app/settings_local_vagrant.py
 done

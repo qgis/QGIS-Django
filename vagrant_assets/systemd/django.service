@@ -1,14 +1,23 @@
 [Unit]
 Description=Unit for starting a QGIS Django app
+After = network.target
 
 [Service]
+PermissionsStartOnly = true
 Restart=on-failure
+ExecStartPre = /bin/mkdir /run/django
+ExecStartPre = /bin/chown -R www-data:www-data /run/django
 WorkingDirectory=##INSTALL_DIR##/qgis-app
-ExecStart=##INSTALL_DIR##/venv/bin/gunicorn wsgi -b 0.0.0.0:8001 --reload
+ExecStart=##INSTALL_DIR##/venv/bin/gunicorn wsgi -b 0.0.0.0:8001 --workers=##GUNICORN_WORKERS## --reload \
+    --bind unix:/run/django/django.socket \
+    --pid /run/django/django.pid
 User=www-data
 Group=www-data
 Environment="DJANGO_SETTINGS_MODULE=settings_local_vagrant"
-
+ExecReload=/bin/kill -s HUP $MAINPID
+ExecStop=/bin/kill -s TERM $MAINPID
+ExecStopPost = /bin/rm -rf /run/django
+PrivateTmp=true
 
 [Install]
 WantedBy=multi-user.target

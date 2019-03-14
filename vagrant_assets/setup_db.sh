@@ -6,7 +6,9 @@
 
 set -e
 
-. /vagrant/vagrant_assets/setup_config.sh
+# Source configuration
+THIS_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" >/dev/null 2>&1 && pwd )"
+. ${THIS_DIR}/setup_config.sh
 
 
 # DB setup

@@ -3,7 +3,6 @@
 
 export INSTALL_DIR=/var/qgis_plugins
 export MEDIA_ROOT=${INSTALL_DIR}/vagrant_static/
-export VAGRANT_ASSETS_DIR=/vagrant/vagrant_assets/
 # Set to something different than "0" to install QGIS-Django from GIT instead of
 # using the local repo (mounted from Vagrant)
 export FETCH_FROM_GIT="0"

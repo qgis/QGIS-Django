@@ -6,7 +6,10 @@
 
 set -e
 
-. /vagrant/vagrant_assets/setup_config.sh
+# Source configuration
+THIS_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" >/dev/null 2>&1 && pwd )"
+. ${THIS_DIR}/setup_config.sh
+
 . ${INSTALL_DIR}/venv/bin/activate
 
 cd ${INSTALL_DIR}/qgis-app
@@ -14,7 +17,7 @@ cd ${INSTALL_DIR}/qgis-app
 # Load initial data
 APPS="auth simplemenu"
 for app in ${APPS}; do
-    python manage.py loaddata --settings=settings_local_vagrant --app ${app} ${VAGRANT_ASSETS_DIR}/fixtures/${app}.json
+    python manage.py loaddata --settings=settings_local_vagrant --app ${app} ${THIS_DIR}/fixtures/${app}.json
 done
 
 # Install test plugin

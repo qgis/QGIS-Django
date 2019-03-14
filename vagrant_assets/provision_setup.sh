@@ -7,8 +7,11 @@
 
 set -e
 
-. /vagrant/vagrant_assets/setup_config.sh
+# Directory of the provisioning scripts
+VAGRANT_ASSETS_DIR=/vagrant/vagrant_assets
 
+# Configuration: is sourced by each script
+. ${VAGRANT_ASSETS_DIR}/setup_config.sh
 
 ${VAGRANT_ASSETS_DIR}/setup_install_deps.sh
 ${VAGRANT_ASSETS_DIR}/setup_db.sh
