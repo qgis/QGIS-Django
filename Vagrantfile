@@ -1,13 +1,13 @@
 # -*- mode: ruby -*-
 # vi: set ft=ruby :
 
-BOX = "bionic-canonical-64"
-BOX_URL = "https://cloud-images.ubuntu.com/bionic/current/bionic-server-cloudimg-amd64-vagrant.box"
-
+#BOX = "bionic-canonical-64"
+#BOX_URL = "https://cloud-images.ubuntu.com/bionic/current/bionic-server-cloudimg-amd64-vagrant.box"
+BOX = "debian/stretch64"
 
 Vagrant.configure("2") do |config|
   config.vm.box = BOX
-  config.vm.box_url = BOX_URL
+  #config.vm.box_url = BOX_URL
   #config.disksize.size = '20GB'
 
   config.vm.network "forwarded_port", guest: 80, host: 8080 # nginx fastcgi

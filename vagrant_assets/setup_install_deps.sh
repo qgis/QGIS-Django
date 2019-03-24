@@ -13,6 +13,9 @@ THIS_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" >/dev/null 2>&1 && pwd )"
 apt-get update && apt-get -y upgrade
 
 apt-get install -y \
+    bc \
+    build-essential \
+    git \
     nginx \
     libldap2-dev \
     libsasl2-dev \
