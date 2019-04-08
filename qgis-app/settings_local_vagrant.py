@@ -34,7 +34,7 @@ USE_L10N = True
 
 # Override assets for Vagrant
 # User uploaded files
-MEDIA_ROOT = "##MEDIA_ROOT##"
+MEDIA_ROOT = "/var/qgis_plugins/vagrant_static/"
 
 # URL that handles the media served from MEDIA_ROOT. Make sure to use a
 # trailing slash if there is a path component (optional in other cases).
@@ -131,9 +131,9 @@ DATABASES = {
         #'ENGINE': 'django.db.backends.sqlite3', # Add 'postgresql_psycopg2', 'postgresql', 'mysql', 'sqlite3' or 'oracle'.
         'ENGINE': 'django.db.backends.postgresql_psycopg2', # Add 'postgresql_psycopg2', 'postgresql', 'mysql', 'sqlite3' or 'oracle'.
         #'NAME': 'qgis-django-plugins.db',                      # Or path to database file if using sqlite3.
-        'NAME': '##DB_NAME##',                      # Or path to database file if using sqlite3.
-        'USER': '##DB_USER##',                      # Not used with sqlite3.
-        'PASSWORD': '##DB_PASSWORD##',                  # Not used with sqlite3.
+        'NAME': 'qgis_django',                      # Or path to database file if using sqlite3.
+        'USER': 'qgis_django',                      # Not used with sqlite3.
+        'PASSWORD': 'qgis_django',                  # Not used with sqlite3.
         'HOST': '127.0.0.1',                      # Set to empty string for localhost. Not used with sqlite3.
         'PORT': '5432',                      # Set to empty string for default. Not used with sqlite3.
     }
@@ -181,7 +181,7 @@ INSTALLED_APPS = [
     'taggit',
     'taggit_autosuggest',
     'taggit_templatetags',
-    'haystack',
+    #'haystack',
     'simplemenu',
     'tinymce',
     'rpc4django',

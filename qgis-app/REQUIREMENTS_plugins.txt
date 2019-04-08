@@ -21,3 +21,5 @@ django-sortable-listview
 sorl-thumbnail
 django-extensions
 django-debug-toolbar
+whoosh
+django-haystack

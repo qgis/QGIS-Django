@@ -30,8 +30,8 @@ urlpatterns = [
     #(r'^bookmarks/', include('cab.urls.bookmarks')),
     #(r'^languages/', include('cab.urls.languages')),
     #(r'^popular/', include('cab.urls.popular')),
-    #url(r'^search/', include('custom_haystack_urls')),
-    #url(r'^search/', include('haystack.urls')),
+    url(r'^search/', include('custom_haystack_urls')),
+    url(r'^search/', include('haystack.urls')),
 
     # AG: User Map
     #url(r'^community-map/', include('user_map.urls', namespace='user_map')),

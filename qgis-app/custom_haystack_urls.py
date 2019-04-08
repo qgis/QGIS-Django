@@ -2,11 +2,11 @@
 
 from haystack.views import SearchView
 from haystack.query import SearchQuerySet
-from django.conf.urls import patterns, include, url
+from django.conf.urls import include, url
 
 class SearchWithRequest(SearchView):
 
-    __name__ = 'SearchWithRequest'
+    __qualname__ = 'SearchWithRequest'
 
     def build_form(self, form_kwargs=None):
         if form_kwargs is None:
@@ -28,6 +28,6 @@ class SearchWithRequest(SearchView):
         return self.form.searchqueryset
 
 
-urlpatterns = patterns('haystack.views',
-    url(r'^$', SearchWithRequest(load_all=False), name='haystack_search'),
-)
+urlpatterns = [
+    url(r'^$', SearchWithRequest(load_all=False), {}, name='haystack_search'),
+]
