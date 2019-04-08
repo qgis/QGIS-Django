@@ -33,14 +33,13 @@ from django.views.decorators.csrf import csrf_protect, ensure_csrf_cookie
 from django.core.mail import send_mail
 from django.contrib.sites.models import Site
 import logging
-import urllib
 import copy
 
 try:
-    from urllib import urlencode
+    from urllib import urlencode, unquote
     from urlparse import urlparse, parse_qs
 except ImportError:
-    from urllib.parse import urlencode, urlparse, parse_qs
+    from urllib.parse import urlencode, urlparse, parse_qs, unquote
 
 # Decorator
 staff_required = user_passes_test(lambda u: u.is_staff)
@@ -542,12 +541,12 @@ class UserPluginsList(PluginsList):
 class AuthorPluginsList(PluginsList):
 
     def get_queryset(self):
-        return Plugin.approved_objects.filter(author=urllib.unquote(self.kwargs['author']))
+        return Plugin.approved_objects.filter(author=unquote(self.kwargs['author']))
 
     def get_context_data(self, **kwargs):
         context = super(AuthorPluginsList, self).get_context_data(**kwargs)
         context.update({
-            'title' : _('Plugins by %s') % urllib.unquote(self.kwargs['author']),
+            'title' : _('Plugins by %s') % unquote(self.kwargs['author']),
         })
         return context
 
