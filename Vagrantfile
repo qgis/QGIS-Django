@@ -11,6 +11,7 @@ Vagrant.configure("2") do |config|
   #config.disksize.size = '20GB'
 
   config.vm.network "forwarded_port", guest: 80, host: 8080 # nginx fastcgi
+  config.vm.post_up_message = "Plugin site is available on http://localhost:8080"
 
   config.vm.provider "virtualbox" do |v|
     #v.gui = true
