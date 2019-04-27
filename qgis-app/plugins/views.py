@@ -576,12 +576,12 @@ class UserDetailsPluginsList(PluginsList):
 class TagsPluginsList(PluginsList):
 
     def get_queryset(self):
-        return Plugin.approved_objects.filter(tagged_items__tag__slug=urllib.unquote(self.kwargs['tags']))
+        return Plugin.approved_objects.filter(tagged_items__tag__slug=unquote(self.kwargs['tags']))
 
     def get_context_data(self, **kwargs):
         context = super(TagsPluginsList, self).get_context_data(**kwargs)
         context.update({
-            'title' : _('Plugins tagged with: %s') % urllib.unquote(self.kwargs['tags']),
+            'title' : _('Plugins tagged with: %s') % unquote(self.kwargs['tags']),
         })
         return context
 

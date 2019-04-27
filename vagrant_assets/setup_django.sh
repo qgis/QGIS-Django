@@ -39,6 +39,10 @@ for var in DB_NAME DB_USER DB_PASSWORD MEDIA_ROOT; do
     sed -i -e "s@##${var}##@${!var}@" ${INSTALL_DIR}/qgis-app/settings_local_vagrant.py
 done
 
+# Required for Whoosh indexing
+mkdir ${INSTALL_DIR}/qgis-app/whoosh_index
+# Fix permissions on Whoosh index parent folder
+chown -R www-data.www-data ${INSTALL_DIR}/qgis-app
 
 cd ${INSTALL_DIR}/qgis-app
 rm -rf /vagrant/qgis-app/static_media

@@ -40,11 +40,9 @@
                     <a href="{% url "login" %}"><i class="icon-signin icon-3x"></i></a>
                     {% endif %}
 
-                    {% comment "Disable haystack" %}
                     <form class="navbar-search" action="{% url "haystack_search" %}" method="get">
                       <input type="text"  id="id_q" name="q" class="search-query" placeholder="Search" />
                     </form>
-                    {% endcomment %}
 
                     {% get_simplemenu as menu %}
                      <div class="nav-collapse collapse">

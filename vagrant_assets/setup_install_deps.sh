@@ -17,6 +17,7 @@ apt-get install -y \
     build-essential \
     git \
     nginx \
+    libpq-dev \
     libldap2-dev \
     libsasl2-dev \
     libxml2-dev \

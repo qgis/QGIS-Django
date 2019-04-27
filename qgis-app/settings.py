@@ -106,7 +106,7 @@ INSTALLED_APPS = [
 
     # ABP:
     'plugins',
-    'pagination',
+    #'pagination',
     'django.contrib.humanize',
     #'django.contrib.markup',
     'django.contrib.syndication',

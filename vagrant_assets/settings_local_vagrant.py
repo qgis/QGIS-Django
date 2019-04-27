@@ -148,7 +148,12 @@ LOGIN_REDIRECT_URL='/'
 SERVE_STATIC_MEDIA = DEBUG
 
 # TIM: Place where search indexes are stored for snippets - should be non web accessible
-HAYSTACK_WHOOSH_PATH = '/var/qgis_plugins/search-index'
+HAYSTACK_CONNECTIONS = {
+    'default': {
+        'ENGINE': 'haystack.backends.whoosh_backend.WhooshEngine',
+        'PATH': os.path.join(os.path.dirname(__file__), 'whoosh_index'),
+    },
+}
 
 # Tim Email settings
 EMAIL_HOST = 'localhost'
