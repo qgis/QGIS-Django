@@ -16,6 +16,7 @@ apt-get install -y \
     bc \
     build-essential \
     git \
+    vim \
     nginx \
     libpq-dev \
     libldap2-dev \

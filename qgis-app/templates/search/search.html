@@ -17,7 +17,7 @@
         {% for field in form %}
         <div class="fieldWrapper">
             {{ field.errors }}
-            {% if field.field.widget|klass = 'CheckboxSelectMultiple' %}
+            {% if field.field.widget|klass == 'CheckboxSelectMultiple' %}
             {% comment %}
 <!--
             ABP: does not work!
