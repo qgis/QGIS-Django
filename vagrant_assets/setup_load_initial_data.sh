@@ -25,4 +25,5 @@ cd ${INSTALL_DIR}/qgis-app/plugins/tests/
 python3 upload_test.py
 
 # Reindex
+cd ${INSTALL_DIR}/qgis-app
 python manage.py  rebuild_index --settings=settings_local_vagrant
