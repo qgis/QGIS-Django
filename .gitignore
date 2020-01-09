@@ -41,3 +41,4 @@ static_media
 .idea
 dockerize/static
 dockerize/media
+dockerize/logs
