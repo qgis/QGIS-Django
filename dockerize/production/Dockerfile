@@ -10,7 +10,7 @@ ARG BRANCH_TAG=develop
 RUN mkdir -p /usr/src; mkdir -p /home/web && \
             git clone --depth=1 git://github.com/dimasciput/QGIS-Django.git --branch ${BRANCH_TAG} /usr/src/plugins/ && \
             rm -rf /home/web/django_project && \
-	        ln -s /usr/src/plugins/django_project /home/web/django_project
+	        ln -s /usr/src/plugins/qgis-app /home/web/django_project
 
 RUN cd /usr/src/plugins/dockerize/docker && \
 	pip install -r REQUIREMENTS.txt && \
