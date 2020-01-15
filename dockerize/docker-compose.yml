@@ -5,6 +5,8 @@ db:
     - ALLOW_IP_RANGE=0.0.0.0/0
     - POSTGRES_USER=docker
     - POSTGRES_PASS=docker
+  volumes:
+    - ./backups:/backups
   restart: unless-stopped
 
 web:

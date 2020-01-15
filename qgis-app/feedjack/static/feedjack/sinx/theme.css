@@ -1,0 +1,180 @@
+
+body {
+    background: #F8F8F8 url(fade.png) repeat-x scroll top left;
+}
+
+#header {
+    background: #224;
+    border-bottom: 2px solid #CCC;
+    padding: 1em;
+}
+
+#header .tit {
+    float: left;
+    width: 45%;
+}
+
+#header .tit * {
+    color: #EEE;
+}
+
+#header .tit a, #header .tit a:visited, #header .tit a:hover {
+    background: none;
+    text-decoration: none;
+}
+
+#header .tit h1 {
+    display: inline;
+    font-style: italic;
+    border-bottom: 2px solid #7891DE;
+    padding: 0 1em;
+}
+
+#header .tit p {
+    font-size: 80%;
+    font-style: italic;
+}
+
+#header .googlead {
+    float: right;
+    background: #FFF;
+    width: 40%;
+    border: 1px solid #CCC;
+}
+
+a { color: #00F; }
+a:hover { color: #FFF; background: #00F; }
+a:visited { color: #A0C; }
+a:active { color: #F00; }
+
+a img {
+    border: 0;
+    padding: 1px;
+}
+
+#right, #left {
+    font-size: 80%;
+    text-align: justify;
+    border-left: 1px solid #DDD;
+}
+
+#right h2 {
+    border-bottom: 1px solid #BBB;
+    border-top: 1px solid #BBB;
+    padding: 2px;
+    text-align: right;
+    font-style: italic;
+    font-size: 110%;
+}
+
+.suscribers p {
+    padding: 1px;
+    margin: 0;
+}
+
+#buttons { text-align: justify; }
+
+#center {
+    padding: 10px;
+    color: #444;
+    border: 1px solid #DDD;
+    border-width: 0 1px;
+    background: #F8F8F8;
+}
+
+#center .content a { color: #0000CD; }
+#center .content a:visited { color: #6A5ACD; }
+#center .content a:active { color: #CD5C5C; }
+#center .content a:hover { color: #FFF; background: #0000CD; }
+
+.entry p.date {
+    color: #AAA;
+    font-size: 80%;
+    text-align: center;
+    clear: both;
+}
+
+.entry p.date a {
+    color: #7C7CB8;
+}
+
+.entry p.date a:hover {
+    color: #FFF;
+    background: #7C7CB8;
+}
+
+#footer {
+    background: #DDD url(fade.png) repeat-x scroll top left;
+    border-top: 2px solid #27408B;
+    padding: 1em;
+    font-size: 80%;
+    color: #444;
+}
+
+#footer .welcome{
+    float: left;
+    width: 40%;
+    margin-left: 5%;
+}
+
+#footer .credits {
+    float: right;
+    width: 40%;
+    margin-right: 5%;
+}
+
+#footer p.paginator{
+    text-align: center;
+}
+
+#footer p.paginator a {
+    padding: 3px;
+    color: #00C;
+}
+
+#footer p.paginator a:hover {
+    background: #EEE;
+}
+
+#footer p.paginator a:visited {
+    color: #00C;
+}
+
+.planetarium {
+    list-style-type: none;
+    text-align: right;
+    margin:0; padding:0;
+}
+
+#cloud {
+    margin: 0;
+    padding: 0;
+    white-space: normal;
+    text-align: justify;
+}
+#cloud a.cloud_5 {
+    font-size:200%;
+    color:#000;
+}
+#cloud a.cloud_4 {
+    font-size:175%;
+    color:#222;
+}
+#cloud a.cloud_3 {
+    font-size:150%;
+    color:#444;
+}
+#cloud a.cloud_2 {
+    font-size:125%;
+    color:#666;
+}
+#cloud a.cloud_1 {
+    font-size:80%;
+    color:#888;
+}
+#cloud a:hover {
+    color: #F00;
+    background: #FF0;
+}
+
+.clear { clear: both; }

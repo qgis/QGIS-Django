@@ -1,0 +1,145 @@
+{% load i18n %}
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    <meta http-equiv="Content-Type" content="application/xhtml+xml" />
+    <title>{{ site.title }}</title>
+    <link rel="stylesheet" href="{{ media_url }}/default.css" type="text/css"/>
+    <link rel="alternate" type="application/rss+xml" title="RSS 2.0" href="/feed/rss/" />
+    {% block extrastyle %}{% endblock %}
+    {% block extrahead %}{% endblock %}
+</head>
+
+<body>
+<div id="header">
+<div class="tit">
+<h1><a href="{{ site.url }}" title="{{ site.name }}">{{ site.name }}</a></h1>
+<p>{% blocktrans %}A <a href="http://www.feedjack.org/" class="love_feedjack" title="Feedjack Powered">Feedjack</a> powered Planet{% endblocktrans %}</p>
+</div>
+<!--div class="googlead">
+Insert here your google ad code ;)
+</div-->
+<br class="clear"/>
+</div>
+
+<div id="container">
+
+<div id="center" class="column">
+
+{% for item in object_list %}
+{% ifchanged %}
+<h1>{{ item.date_modified|date:"F j, Y" }}</h1>
+{% endifchanged %}
+
+{% ifchanged %}<!-- {{ item.date_modified|date:"F j, Y" }} -->
+<div class="channel">
+    <h2><a href="{{ item.feed.link }}" title="{{ item.feed.title }}">{{ item.feed.title }}</a></h2>
+    <div class="face"><img src="{{ media_url }}/img/faces/{{ item.subscriber.shortname}}.png" alt="{{ item.suscriber.shortname}}"/><p>{{ item.feed.name }}</p></div>
+{% endifchanged %}
+    <div class="entry">
+        {% if item.title %}
+        <h3><a href="{{ item.link }}">{{ item.title }}</a></h3> 
+        {% else %}
+        <h3><a href="{{ item.link }}">{{ item.subscriber.name }}</a></h3> 
+        {% endif %}
+        <div class="content">
+        {{ item.content|safe }}
+        <!-- End .content -->
+        </div>
+        <p class="date"><a href="{{ item.link }}" title="{% trans "Author link" %}">{% if item.author %}{% blocktrans with item.author as author %}by {{ author }} at{% endblocktrans %}{% endif %}{{ item.date_modified|date:"g:i A" }}</a>{% for tag in item.qtags %}{% if forloop.first %} {% trans "under" %} {% endif %}<a href="{{ site.url }}/tag/{{ tag.name }}" title="Tag">{{ tag.name }}</a>{% if not forloop.last %}, {% endif %}{% endfor %}
+        {% if item.comments %}<a href="{{ item.comments }}" title="{% trans "Comments" %}">({% trans "Comments" %})</a> {% endif %}
+        </p>
+    <!-- End .entry -->
+    </div>
+{% ifchanged %}
+<!-- {{ item.date_modified|date:"F j, Y" }} {{ item.feed.link }} -->
+
+<!-- End .channel -->
+<br class="clear"/>
+</div>
+{% endifchanged %}
+{% endfor %}
+
+<!-- End #center -->
+</div>
+
+<div id="left" class="column">
+<!-- End #left -->
+</div>
+
+<div id="right" class="column">
+<p id="buttons">
+    <a href="/feed/rss/" title="RSS"><img class="button" src="{{ media_url }}/img/rss20.png" width="80" height="15" alt="[RSS 2.0 Feed]"/></a>
+    <a href="http://www.aureal.com.pe/" title="Aureal Systems"><img class="button" src="http://www.aureal.com.pe/aureal_button.png" alt="Alojamiento gracias a Aureal Systems" title="Alojamiento gracias a Aureal Systems"/></a>
+    <a href="http://www.catb.org/hacker-emblem/" title="Hacker"><img class="button" src="{{ media_url }}/img/hacker.png" width="80" height="15" alt="[Hacker]"/></a>
+    <a href="http://www.djangoproject.com/" title="Django Powered"><img src="{{ media_url }}/img/django_80x15.png" width="80" height="15" alt="Powered by Django." title="Powered by Django."/></a>
+    <a href="http://jigsaw.w3.org/css-validator/" title="This page validates as CSS"><img src="{{ media_url }}/img/css.png" alt="CSS Valid" width="80px" height="15px"/></a>
+    <a href="http://validator.w3.org/check/referer" title="This page validates as XHTML 1.1 Transitional"><img src="{{ media_url }}/img/xhtml.png" alt="XHTML Valid" width="80px" height="15px"/></a>
+</p>
+
+<h2>{% trans "Tag soup" %}</h2>
+<p id="cloud">
+{% for tag in tagcloud %}
+      <a
+      {% if user_id %}
+      href="{{ site.url }}/user/{{ user_id }}/tag/{{ tag.tagname|urlencode }}/"
+      {% else %}
+      href="{{ site.url }}/tag/{{ tag.tagname|urlencode }}/"
+      {% endif %}
+      title="{% blocktrans count tag.count as posts %}{{ posts }} post{% plural %}{{ posts }} posts{% endblocktrans %}"
+      class="cloud_{{ tag.weight }}">{{ tag.tagname }}</a>
+{% endfor %}
+</p>
+
+<h2>{% trans "Friends" %}</h2>
+<div class="suscribers">
+{% for feed in subscribers %}
+<p>
+<a href="{{ feed.feed.url }}"
+   title="{{ feed.feed.title }}"><img src="{{ media_url}}/smiley.png" alt=":)"></a>
+<a class="nombre" href="{{ site.url }}/user/{{ feed.feed.id }}"
+  title="{{ feed.feed.title }}">{{ feed.name }}</a>
+</p>
+{% endfor %}
+</div>
+{% if site.links %}
+<h2>{% trans "Links" %}</h2>
+<ul class="planetarium">
+{% for link in site.links.all %}<li><a href="{{ link.link }}">{{ link.name }}</a></li>
+{% endfor %}
+</ul>
+{% endif %}
+<!--p>Last modification:<br/><strong>{{ last_modified }}</strong></p-->
+
+<!-- End #right -->
+</div>
+
+<!-- End #container -->
+</div>
+
+<div>
+<div id="footer">
+{% if site.welcome %}
+<div class="welcome">
+<h2>{% trans "Welcome" %}</h2>
+{{ site.welcome|safe }}
+</div>
+{% endif %}
+{% if site.greets %}
+<div class="credits">
+<h2>{% trans "Credits" %}</h2> 
+{{ site.greets|safe }}
+</div>
+{% endif %}
+
+<p class="paginator clear">
+  Page {{ page }} of {{ pages }} (
+    {% blocktrans count hits as posts %}{{ posts }} post{% plural %}{{ posts }} posts{% endblocktrans %}
+  ) <br/>
+{% if has_previous %}<a href="?page={{ previous }}">&lt;&lt; {% trans "Back" %}</a>{% endif %} {% if has_next %}<a href="?page={{ next }}">{% trans "Forward" %} &gt;&gt;</a>{% endif %}</p>
+</div>
+
+</body>
+
+</html>

@@ -38,7 +38,7 @@ urlpatterns = [
     # Fix broken URLS in feedjack
     #url(r'^planet/feed/$', RedirectView.as_view(url='/planet/feed/atom/')),
     # Tim: Feedjack feed aggregator / planet
-    #url(r'^planet/', include('feedjack.urls')),
+    url(r'^planet/', include('feedjack.urls')),
     # ABP: autosuggest for tags
     url(r'^taggit_autosuggest/', include('taggit_autosuggest.urls')),
     url(r'^userexport/', include('userexport.urls')),
@@ -86,7 +86,7 @@ if settings.DEBUG:
 
 simplemenu.register(
     '/admin/',
-#    '/planet/',
+    '/planet/',
 #    '/community-map/',
     '/plugins/',
     FlatPage.objects.all(),

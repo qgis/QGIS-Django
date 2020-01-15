@@ -1,0 +1,338 @@
+msgid ""
+msgstr ""
+"Project-Id-Version: Feedjack Serbian (latin) translation v1.0\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2006-11-20 18:01+0100\n"
+"PO-Revision-Date: 2006-11-20 18:03+0100\n"
+"Last-Translator: Petar Marić <petar.maric@gmail.com>\n"
+"Language-Team: Petar Marić <petar.maric@gmail.com>\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=3; plural=n%10==1 && n%100!=11 ? 0 : n%10>=2 && n%10<=4 && (n%100<10 || n%100>=20) ? 1 : 2;\n"
+"X-Poedit-Country: YUGOSLAVIA\n"
+"X-Poedit-SourceCharset: utf-8\n"
+"X-Poedit-Basepath: ../../../\n"
+
+#: .\models.py:16
+msgid "Date published."
+msgstr "Datum objavljivanja."
+
+#: .\models.py:17
+msgid "Date the post was first obtained."
+msgstr "Datum kada je unos prvi put pokupljen."
+
+#: .\models.py:21
+#: .\models.py:36
+#: .\models.py:94
+#: .\models.py:132
+#: .\models.py:183
+msgid "name"
+msgstr "ime"
+
+#: .\models.py:22
+#: .\models.py:25
+#: .\models.py:101
+#: .\models.py:148
+msgid "link"
+msgstr "veza"
+
+#: .\models.py:26
+#: .\models.py:56
+msgid "links"
+msgstr "veze"
+
+#: .\models.py:37
+msgid "url"
+msgstr "url"
+
+#: .\models.py:38
+msgid "Example"
+msgstr "Primer"
+
+#: .\models.py:40
+#: .\models.py:99
+#: .\models.py:147
+msgid "title"
+msgstr "naslov"
+
+#: .\models.py:41
+msgid "description"
+msgstr "opis"
+
+#: .\models.py:42
+msgid "welcome"
+msgstr "dobrodošli"
+
+#: .\models.py:43
+msgid "greets"
+msgstr "pozdravi"
+
+#: .\models.py:45
+msgid "default site"
+msgstr "podrazumevani sajt"
+
+#: .\models.py:46
+msgid "posts per page"
+msgstr "unosa po stranici"
+
+#: .\models.py:47
+msgid "order posts by"
+msgstr "poređaj unose po"
+
+#: .\models.py:49
+msgid "tagcloud level"
+msgstr "nivo prikaza oblaka tagova"
+
+#: .\models.py:50
+msgid "show tagcloud"
+msgstr "prikaži oblak tagova"
+
+#: .\models.py:52
+msgid "use internal cache"
+msgstr "koristi interni keš"
+
+#: .\models.py:53
+msgid "cache duration"
+msgstr "dužina važenja keša"
+
+#: .\models.py:54
+msgid "Duration in seconds of the cached pages and data."
+msgstr "Dužina važenja (u sekundama) keširanih stranica i podataka."
+
+#: .\models.py:58
+msgid "template"
+msgstr "templejt"
+
+#: .\models.py:59
+msgid "This template must be a directory in your feedjack templates directory. Leave blank to use the default template."
+msgstr "Ovaj templejt mora biti u Vašem feedjack templates direktorijumu. Ostavite prazno za podrazumevani templejt."
+
+#: .\models.py:66
+#: .\models.py:180
+msgid "site"
+msgstr "sajt"
+
+#: .\models.py:67
+msgid "sites"
+msgstr "sajtovi"
+
+#: .\models.py:92
+msgid "feed url"
+msgstr "url feeda"
+
+#: .\models.py:95
+#: .\models.py:185
+msgid "shortname"
+msgstr "skraćeno ime"
+
+#: .\models.py:96
+#: .\models.py:187
+msgid "is active"
+msgstr "je aktivan"
+
+#: .\models.py:97
+msgid "If disabled, this feed will not be further updated."
+msgstr "Ako ovo onemogućite, feed se više neće ažurirati."
+
+#: .\models.py:100
+msgid "tagline"
+msgstr "opis"
+
+#: .\models.py:104
+msgid "etag"
+msgstr "etag"
+
+#: .\models.py:105
+msgid "last modified"
+msgstr "poslednja izmena"
+
+#: .\models.py:106
+msgid "last checked"
+msgstr "poslednja provera"
+
+#: .\models.py:113
+msgid "Fields updated automatically by Feedjack"
+msgstr "Feedjack automatski ažurira ova polja"
+
+#: .\models.py:121
+#: .\models.py:146
+#: .\models.py:181
+#: .\templates\feedjack\default\post_list.html.py:189
+msgid "feed"
+msgstr "feed"
+
+#: .\models.py:122
+msgid "feeds"
+msgstr "feedovi"
+
+#: .\models.py:135
+msgid "tag"
+msgstr "tag"
+
+#: .\models.py:136
+#: .\models.py:155
+msgid "tags"
+msgstr "tagovi"
+
+#: .\models.py:149
+msgid "content"
+msgstr "sadržaj"
+
+#: .\models.py:150
+msgid "date modified"
+msgstr "datum izmene"
+
+#: .\models.py:151
+msgid "guid"
+msgstr "guid"
+
+#: .\models.py:152
+msgid "author"
+msgstr "autor"
+
+#: .\models.py:153
+msgid "author email"
+msgstr "email autora"
+
+#: .\models.py:154
+msgid "comments"
+msgstr "komentari"
+
+#: .\models.py:156
+msgid "date created"
+msgstr "datum kreiranja"
+
+#: .\models.py:164
+msgid "post"
+msgstr "unos"
+
+#: .\models.py:165
+msgid "posts"
+msgstr "unosi"
+
+#: .\models.py:184
+msgid "Keep blank to use the Feed's original name."
+msgstr "Ostavite prazno za originalno ime feed-a."
+
+#: .\models.py:186
+msgid "Keep blank to use the Feed's original shortname."
+msgstr "Ostavite prazno za originalno skraćeno ime feed-a."
+
+#: .\models.py:188
+msgid "If disabled, this subscriber will not appear in the site or in the site's feed."
+msgstr "Ako je onemogućeno, pretplatnik se neće prikazati na sajtu ili njegovom feed-u."
+
+#: .\models.py:196
+msgid "subscriber"
+msgstr "pretplatnik"
+
+#: .\models.py:197
+msgid "subscribers"
+msgstr "pretplatnici"
+
+#: .\templates\feedjack\default\post_list.html.py:28
+#: .\templates\feedjack\sinx\post_list.html.py:18
+msgid "A <a href=\"http://www.feedjack.org/\" class=\"love_feedjack\" title=\"Feedjack Powered\">Feedjack</a> powered Planet"
+msgstr "Ovu Planetu pokreće <a href=\"http://www.feedjack.org/\" class=\"love_feedjack\">Feedjack</a>"
+
+#: .\templates\feedjack\default\post_list.html.py:39
+#: .\templates\feedjack\default\post_list.html.py:73
+#: .\templates\feedjack\default\post_list.html.py:108
+#: .\templates\feedjack\default\post_list.html.py:167
+#: .\templates\feedjack\default\post_list.html.py:212
+#: .\templates\feedjack\sinx\post_list.html.py:90
+#: .\templates\feedjack\sinx\post_list.html.py:138
+#, python-format
+msgid "%(posts)s post"
+msgid_plural "%(posts)s posts"
+msgstr[0] "%(posts)s unos"
+msgstr[1] "%(posts)s unosa"
+msgstr[2] "%(posts)s unosa"
+
+#: .\templates\feedjack\default\post_list.html.py:46
+msgid "talks about"
+msgstr "priča o"
+
+#: .\templates\feedjack\default\post_list.html.py:101
+msgid "is about"
+msgstr "je o"
+
+#: .\templates\feedjack\default\post_list.html.py:130
+#: .\templates\feedjack\sinx\post_list.html.py:50
+#, python-format
+msgid "by %(author)s at"
+msgstr "od %(author)s u"
+
+#: .\templates\feedjack\default\post_list.html.py:133
+#: .\templates\feedjack\sinx\post_list.html.py:50
+msgid "under"
+msgstr "pod"
+
+#: .\templates\feedjack\default\post_list.html.py:138
+#: .\templates\feedjack\sinx\post_list.html.py:51
+msgid "Comments"
+msgstr "Komentari"
+
+#: .\templates\feedjack\default\post_list.html.py:152
+#, python-format
+msgid "What %(person)s talks about"
+msgstr "O čemu %(person)s priča"
+
+#: .\templates\feedjack\default\post_list.html.py:154
+msgid "What people talk about"
+msgstr "O čemu ljudi pričaju"
+
+#: .\templates\feedjack\default\post_list.html.py:173
+msgid "Meta"
+msgstr "Meta"
+
+#: .\templates\feedjack\default\post_list.html.py:175
+msgid "Last update"
+msgstr "Poslednje ažuriranje"
+
+#: .\templates\feedjack\default\post_list.html.py:180
+msgid "People"
+msgstr "Ljudi"
+
+#: .\templates\feedjack\default\post_list.html.py:187
+#, python-format
+msgid "feed (last modified: %(last_modified)s)"
+msgstr "feed (poslednja izmena: %(last_modified)s)"
+
+#: .\templates\feedjack\default\post_list.html.py:199
+msgid "Greetings"
+msgstr "Pozdravi"
+
+#: .\templates\feedjack\sinx\post_list.html.py:50
+msgid "Author link"
+msgstr "Autorov sajt"
+
+#: .\templates\feedjack\sinx\post_list.html.py:81
+msgid "Tag soup"
+msgstr "Spisak tagova"
+
+#: .\templates\feedjack\sinx\post_list.html.py:95
+msgid "Friends"
+msgstr "Prijatelji"
+
+#: .\templates\feedjack\sinx\post_list.html.py:107
+msgid "Links"
+msgstr "Veze"
+
+#: .\templates\feedjack\sinx\post_list.html.py:125
+msgid "Welcome"
+msgstr "Dobrodošli"
+
+#: .\templates\feedjack\sinx\post_list.html.py:131
+msgid "Credits"
+msgstr "Zasluge"
+
+#: .\templates\feedjack\sinx\post_list.html.py:140
+msgid "Back"
+msgstr "Nazad"
+
+#: .\templates\feedjack\sinx\post_list.html.py:140
+msgid "Forward"
+msgstr "Napred"
+

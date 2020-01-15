@@ -1,0 +1,52 @@
+/*
+ * A List Apart's Holy Grail layout
+ * http://www.alistapart.com/articles/holygrail
+ */
+
+@import url(posts.css);
+@import url(theme.css);
+
+body {
+    min-width: 500px;
+    padding:0; margin:0;
+}
+
+#header {
+    top: 0;
+    margin: 0;
+}
+
+#container {
+    padding-left: 5%;
+    padding-right: 25%;
+}
+
+#container .column {
+    position: relative;
+    float: left;
+}
+
+#center {
+    width: 100%;
+}
+
+#left {
+    width: 5%;
+    right: 5%;
+    margin-left: -100%;
+}
+
+#right {
+    width: 25%;
+    margin-right: -100%;
+    padding: 5px;
+}
+
+#footer {
+    clear: both;
+}
+
+/*** IE6 Fix ***/
+* html #left {
+    left: 5%;
+}
