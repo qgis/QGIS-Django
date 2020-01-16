@@ -5,6 +5,8 @@ db:
     - ALLOW_IP_RANGE=0.0.0.0/0
     - POSTGRES_USER=docker
     - POSTGRES_PASS=docker
+  volumes:
+    - ./backups:/backups
   restart: unless-stopped
 
 web:
@@ -20,10 +22,11 @@ web:
     - DJANGO_SETTINGS_MODULE=settings_docker
     - VIRTUAL_HOST=plugins.kartoza.com
     - VIRTUAL_PORT=8080
+    - DEBUG=False
   volumes:
     - ../qgis-app:/home/web/django_project
     - ./static:/home/web/static:rw
-    - ./media:/home/web/media:rw
+    - ./static:/home/web/media:rw
   links:
     - db:db
   restart: unless-stopped
@@ -46,7 +49,7 @@ devweb:
   volumes:
     - ../qgis-app:/home/web/django_project
     - ./static:/home/web/static:rw
-    - ./media:/home/web/media:rw
+    - ./static:/home/web/media:rw
   links:
     - db:db
   restart: unless-stopped
@@ -66,7 +69,7 @@ nginx:
     - ./sites-enabled:/etc/nginx/conf.d:ro
     # I dont use volumes_from as I want to use the ro modifier
     - ./static:/home/web/static:ro
-    - ./media:/home/web/media:ro
+    - ./static:/home/web/media:ro
     - ./logs:/var/log/nginx
   links:
     - web:uwsgi

@@ -23,3 +23,11 @@ django-extensions
 django-debug-toolbar
 whoosh
 django-haystack
+
+# Feedjack==0.9.18
+# So use George's fork rather
+# git+https://github.com/Erve1879/feedjack.git
+# George's is also broken: use my fork (django 1.8 ready)
+# git+https://github.com/elpaso/feedjack.git
+# His is also broken, use mine (django 2.2 ready)
+git+https://github.com/dimasciput/feedjack.git
