@@ -1,8 +1,9 @@
 from settings import *
+import ast
 import os
 SITE_ROOT = os.path.dirname(os.path.realpath(__file__))
 
-DEBUG = True
+DEBUG = ast.literal_eval(os.environ.get('DEBUG', 'True'))
 THUMBNAIL_DEBUG = DEBUG
 ALLOWED_HOSTS = ['*']
 
