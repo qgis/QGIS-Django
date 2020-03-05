@@ -38,3 +38,7 @@ qgis-app/static/cache
 static_media
 
 .vagrant
+.idea
+dockerize/static
+dockerize/media
+dockerize/logs

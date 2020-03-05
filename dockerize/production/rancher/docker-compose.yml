@@ -1,0 +1,100 @@
+version: '2'
+volumes:
+  nginx-conf-data: {}
+  postgis-history-data: {}
+  postgis-data: {}
+  django-statics-data: {}
+  django-media-data: {}
+services:
+  web:
+    image: nginx
+    entrypoint:
+      - /etc/nginx/sites-available/docker-entrypoint.sh
+    volumes:
+      - nginx-conf-data:/etc/nginx/sites-available
+      - django-statics-data:/home/web/static:ro
+      - django-media-data:/home/web/media:ro
+    links:
+      - uwsgi:uwsgi
+    command:
+      - prod
+  nginx-conf:
+    image: kartoza/ford3_nginx_conf:v1.0.3-20190728
+    environment:
+      TARGET: /etc/nginx/sites-available
+    volumes:
+      - nginx-conf-data:/etc/nginx/sites-available
+    labels:
+      io.rancher.container.pull_image: always
+      io.rancher.container.start_once: 'true'
+  SFTP:
+    image: atmoz/sftp
+    stdin_open: true
+    working_dir: /
+    volumes:
+      - postgis-history-data:/home/kartoza/ftp/postgis-history/
+      - django-statics-data:/home/web/static
+      - django-media-data:/home/web/media
+    tty: true
+    ports:
+      - 2222:22/tcp
+    command:
+      - kartoza:kartoza_admin:1001
+    labels:
+      io.rancher.container.pull_image: always
+  uwsgi:
+    image: dimasciput/qgis-plugins-uwsgi:latest
+    environment:
+      ADMIN_EMAIL: dimas@kartoza.com
+      DATABASE_HOST: db
+      DATABASE_NAME: gis
+      DATABASE_PASSWORD: docker
+      DATABASE_USERNAME: docker
+      DEBUG: 'False'
+      DEFAULT_FROM_EMAIL: noreply@kartoza.com
+      DJANGO_ALLOWED_HOSTS: ''
+      DJANGO_LOG_LEVEL: INFO
+      DJANGO_SETTINGS_MODULE: settings_docker
+      PYTHONPATH: /home/web/django_project
+      SITEURL: www.kartoza.com
+    working_dir: /home/web/django_project
+    volumes:
+      - django-statics-data:/home/web/static:rw
+      - django-media-data:/home/web/media:rw
+      - django-reports:/home/web/reports
+      - django-logs:/var/log/
+    links:
+      - db:db
+    labels:
+      io.rancher.container.start_once: 'true'
+  db:
+    image: kartoza/postgis:9.6-2.4
+    environment:
+      ALLOW_IP_RANGE: 0.0.0.0/0
+      PGDBNAME: gis
+      PGHOST: localhost
+      PGPASSWORD: docker
+      PGUSER: docker
+      POSTGRES_DBNAME: gis
+      POSTGRES_PASSWORD: docker
+      POSTGRES_USER: docker
+      USERNAME: docker
+      PASS: docker
+    volumes:
+      - postgis-data:/var/lib/postgresql
+      - postgis-history-data:/backups
+  dbbackups:
+    image: kartoza/pg-backup:9.6
+    environment:
+      DUMPPREFIX: PG_QGIS_PLUGINS
+      PGDATABASE: gis
+      PGHOST: db
+      PGPASSWORD: docker
+      PGPORT: '5432'
+      PGUSER: docker
+    volumes:
+      - postgis-history-data:/backups
+    links:
+      - db:db
+    command:
+      - /start.sh

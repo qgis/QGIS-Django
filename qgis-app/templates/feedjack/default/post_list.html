@@ -23,7 +23,7 @@
     </ul>
     <ul>
       {% if user %}
-      <li class="username"><a href="{{ user.feed.link }}">{{ user.name }}</a>{% trans "talks about" %} »</li>
+      <li class="username"><a href="{{ user.feed.link }}">{{ user.name }}</a>&nbsp;{% trans "talks about" %} »</li>
       {% endif %}
       {% if tag %}
       <li class="tagname">{{ tag.name }}</li>
