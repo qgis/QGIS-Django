@@ -331,3 +331,7 @@ if DEBUG:
         'debug_toolbar.panels.redirects.RedirectsPanel',
     ]
 
+BROKER_URL = 'amqp://guest:guest@%s:5672//' % os.environ['RABBITMQ_HOST']
+RESULT_BACKEND = BROKER_URL
+CELERY_BROKER_URL = BROKER_URL
+CELERY_RESULT_BACKEND = CELERY_BROKER_URL

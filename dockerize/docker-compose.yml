@@ -23,12 +23,15 @@ web:
     - VIRTUAL_HOST=plugins.kartoza.com
     - VIRTUAL_PORT=8080
     - DEBUG=False
+    - RABBITMQ_HOST=rabbitmq
   volumes:
     - ../qgis-app:/home/web/django_project
     - ./static:/home/web/static:rw
     - ./static:/home/web/media:rw
   links:
     - db:db
+    - rabbitmq:rabbitmq
+    - worker:worker
   restart: unless-stopped
   user: root
   command: uwsgi --ini /uwsgi.conf
@@ -46,12 +49,15 @@ devweb:
     - DJANGO_SETTINGS_MODULE=settings_docker
     - VIRTUAL_HOST=plugins.kartoza.com
     - VIRTUAL_PORT=8080
+    - RABBITMQ_HOST=rabbitmq
   volumes:
     - ../qgis-app:/home/web/django_project
     - ./static:/home/web/static:rw
     - ./static:/home/web/media:rw
   links:
     - db:db
+    - rabbitmq:rabbitmq
+    - worker:worker
   restart: unless-stopped
   user: root
   ports:
@@ -59,6 +65,39 @@ devweb:
     - "62202:8080"
     # for ssh
     - "62203:22"
+
+rabbitmq:
+  image: library/rabbitmq:3.6
+  hostname: rabbitmq
+  environment:
+    - RABBIT_PASSWORD=rabbit_test_password
+    - USER=rabbit_user
+    - RABBITMQ_NODENAME=rabbit
+  restart: unless-stopped
+
+worker:
+  # Note you cannot scale if you use container_name
+  container_name: qgis-plugins-worker
+  build: docker
+  hostname: uwsgi
+  working_dir: /home/web/django_project
+  command: celery -A plugins worker -l info
+  environment:
+    - DATABASE_NAME=gis
+    - DATABASE_USERNAME=docker
+    - DATABASE_PASSWORD=docker
+    - DATABASE_HOST=db
+    - DJANGO_SETTINGS_MODULE=settings_docker
+    - VIRTUAL_HOST=plugins.kartoza.com
+    - VIRTUAL_PORT=8080
+    - RABBITMQ_HOST=rabbitmq
+  volumes:
+    - ../qgis-app:/home/web/django_project
+    - ./static:/home/web/static:rw
+    - ./static:/home/web/media:rw
+  links:
+    - db:db
+    - rabbitmq:rabbitmq
 
 nginx:
   # Note you cannot scale if you use container_name

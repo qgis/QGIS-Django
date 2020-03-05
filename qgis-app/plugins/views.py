@@ -1,16 +1,14 @@
 # Create your views here.
-from django.core.exceptions import NON_FIELD_ERRORS
+import os
 from django.db import IntegrityError
 from django.db import connection
 from django.db.models import Q, Max
 from django.db.models.functions import Lower
 from django.db.models.expressions import RawSQL
 from django.shortcuts import get_object_or_404, render
-from django.template import RequestContext
 from django.http import Http404, HttpResponse, HttpResponseRedirect
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required, user_passes_test
-from django.contrib.auth.models import User
 from django.urls import reverse
 from django.core.exceptions import FieldDoesNotExist
 from django.conf import settings
@@ -43,7 +41,7 @@ except ImportError:
 
 # Decorator
 staff_required = user_passes_test(lambda u: u.is_staff)
-
+from plugins.tasks.generate_plugins_xml import generate_plugins_xml
 
 
 def send_mail_wrapper(subject,
@@ -335,6 +333,10 @@ def plugin_upload(request):
                 new_version.save()
                 msg = _("The Plugin has been successfully created.")
                 messages.success(request, msg, fail_silently=True)
+
+                # Update plugins cached xml
+                generate_plugins_xml.delay()
+
                 if not new_version.approved:
                     msg = _("Your plugin is awaiting approval from a staff member and will be approved as soon as possible.")
                     warnings.append(msg)
@@ -933,7 +935,19 @@ def xml_plugins(request, qg_version=None, stable_only=None, package_name=None):
         filters.update({'pluginversion__max_qg_version__gte' : qg_version})
         version_filters.update({'max_qg_version__gte' : qg_version})
 
-    # Get all versions for the given plugin
+    # Checked the cached plugins
+    qgis_version = request.GET.get('qgis', None)
+    qgis_filename = 'plugins_{}.xml'.format(qgis_version)
+    folder_name = os.path.join(
+        settings.MEDIA_ROOT,
+        'cached_xmls'
+    )
+    path_file = os.path.join(folder_name, qgis_filename)
+    if os.path.exists(path_file):
+        return HttpResponse(
+            open(path_file).read(), content_type='application/xml')
+
+    # Get all versions for the given plugin)
     if package_name:
         filters.update({'package_name' : package_name})
         try:
