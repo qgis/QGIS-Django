@@ -4,6 +4,7 @@ FROM kartoza/django-base:3.7
 MAINTAINER Dimas Ciputra<dimas@kartoza.com>
 
 #RUN  ln -s /bin/true /sbin/initctl
+RUN apt-get clean all
 RUN apt-get update && apt-get install -y libsasl2-dev python-dev libldap2-dev libssl-dev
 
 ARG BRANCH_TAG=develop
