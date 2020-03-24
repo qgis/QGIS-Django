@@ -1,6 +1,6 @@
 #!/bin/bash
 
-SOURCE=/home/backups/backups/test
+SOURCE=/home/backups/backups
 DEST=$1
 OBJECTIVE=$2
 REMOVE_FILE=$3
