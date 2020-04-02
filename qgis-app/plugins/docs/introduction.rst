@@ -92,7 +92,7 @@ PLUGIN_OPTIONAL_METADATA   [#f2]_        used in validator
 ========================== ============= =======================
 
 
-Plugins XMl
+Plugins XML
 ===========
 
 Plugins XML is available at `http://plugins.qgis.org/plugins/plugins.xml`
@@ -100,6 +100,7 @@ Plugins XML is available at `http://plugins.qgis.org/plugins/plugins.xml`
 accepted parameters:
     * qgis: qgis version
     * stable_only: 0/1, default to 0
+    * package_name: package name (to get all versions for the given plugin)
 
 
 .. rubric:: Footnotes
