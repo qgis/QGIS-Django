@@ -29,4 +29,4 @@ echo 'Source :' $SOURCE
 echo 'Destination :' $DEST
 echo 'Objective :' $OBJECTIVE
 
-lftp -u kartoza, sftp://plugins.qgis.org -e "mirror $REMOVE_FILE -R $SOURCE $DEST; bye"
+lftp -u kartoza, sftp://plugins.qgis.org -e "mirror $REMOVE_FILE $SOURCE $DEST; bye"
