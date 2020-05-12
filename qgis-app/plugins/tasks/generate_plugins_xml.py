@@ -5,12 +5,17 @@ from django.conf import settings
 
 
 @shared_task
-def generate_plugins_xml(site = 'http://plugins.qgis.org'):
+def generate_plugins_xml(site = ''):
     """
     Fetch the xml list of plugins from the plugin site.
     :param site: site domain where the plugins will be fetched, default to
                  http://plugins.qgis.org
     """
+    if not site:
+        if settings.DEFAULT_PLUGINS_SITE:
+            site = settings.DEFAULT_PLUGINS_SITE
+        else:
+            site = 'http://plugins.qgis.org'
     plugins_url = '{}/plugins/plugins_new.xml'.format(site)
     versions = [
         1.8, 2.0, 2.2, 2.4, 2.6, 2.8, 2.10,
