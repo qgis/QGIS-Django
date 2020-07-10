@@ -34,7 +34,7 @@ lftp -u kartoza, sftp://plugins.qgis.org -e "mirror $REMOVE_FILE $SOURCE $DEST; 
 
 
 #Next the plugin backups on the remote server
-SOURCE=/mnt/HC_Volume_4113256/static
+SOURCE=/mnt/HC_Volume_4113256/packages
 DEST=static
 OBJECTIVE=$2
 REMOVE_FILE=$3
