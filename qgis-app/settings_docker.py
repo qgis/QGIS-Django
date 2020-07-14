@@ -80,3 +80,17 @@ PAGINATION_DEFAULT_PAGINATION=5
 LOGIN_REDIRECT_URL='/'
 SERVE_STATIC_MEDIA = DEBUG
 DEFAULT_PLUGINS_SITE = os.environ.get('DEFAULT_PLUGINS_SITE', '')
+
+# See fig.yml file for postfix container definition
+#
+EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+# Host for sending e-mail.
+EMAIL_HOST = 'smtp'
+# Port for sending e-mail.
+EMAIL_PORT = 25
+# SMTP authentication information for EMAIL_HOST.
+# See fig.yml for where these are defined
+EMAIL_HOST_USER = 'noreply'
+EMAIL_HOST_PASSWORD = 'docker'
+EMAIL_USE_TLS = False
+EMAIL_SUBJECT_PREFIX = '[QGIS Plugins]'
