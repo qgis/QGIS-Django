@@ -15,7 +15,7 @@ from django.forms import ValidationError
 from django.core.files.uploadedfile import SimpleUploadedFile
 
 
-PLUGIN_MAX_UPLOAD_SIZE=getattr(settings, 'PLUGIN_MAX_UPLOAD_SIZE', 1048576)
+PLUGIN_MAX_UPLOAD_SIZE=getattr(settings, 'PLUGIN_MAX_UPLOAD_SIZE', 25000000) # 25 mb
 PLUGIN_REQUIRED_METADATA=getattr(settings, 'PLUGIN_REQUIRED_METADATA', ('name', 'description', 'version', 'qgisMinimumVersion', 'author', 'email', 'about', 'tracker', 'repository'))
 
 PLUGIN_OPTIONAL_METADATA=getattr(settings, 'PLUGIN_OPTIONAL_METADATA', ( 'homepage', 'changelog', 'qgisMaximumVersion', 'tags', 'deprecated', 'experimental', 'external_deps', 'server'))
@@ -68,10 +68,10 @@ def validator(package):
     """
     try:
         if package.size > PLUGIN_MAX_UPLOAD_SIZE:
-            raise ValidationError( _("File is too big. Max size is %s Bytes") % PLUGIN_MAX_UPLOAD_SIZE )
+            raise ValidationError( _("File is too big. Max size is %s Megabytes") % ( PLUGIN_MAX_UPLOAD_SIZE / 1000000 ) )
     except AttributeError:
         if package.len  > PLUGIN_MAX_UPLOAD_SIZE:
-            raise ValidationError( _("File is too big. Max size is %s Bytes") % PLUGIN_MAX_UPLOAD_SIZE )
+            raise ValidationError( _("File is too big. Max size is %s Megabytes") % ( PLUGIN_MAX_UPLOAD_SIZE / 1000000 ) )
 
     try:
         zip = zipfile.ZipFile( package )
