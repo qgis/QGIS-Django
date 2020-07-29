@@ -2,10 +2,9 @@
 Updates 2019
 ================================================================================
 
-Migration to Python 3 / Django 2 is in progress and it
-was completed for the main application (the Pugins application).
+Migration to Python 3 / Django 2 is completed.
 
-ALL OTHER APPLICATIONS HAVE BEEN DISABLED AND REQUIRE MIGRATION
+
 
 A Vagrant setup with the requirements for the migrated Plugins application
 is available.
