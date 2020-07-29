@@ -1,0 +1,21 @@
+[
+{
+    "model": "simplemenu.menu",
+    "pk": 1,
+    "fields": {
+        "name": "Main menu"
+    }
+},
+{
+    "model": "simplemenu.menuitem",
+    "pk": 1,
+    "fields": {
+        "name": "Plugins",
+        "menu": 1,
+        "rank": 0,
+        "urlobj_content_type": null,
+        "urlobj_id": null,
+        "urlstr": "/plugins/"
+    }
+}
+]

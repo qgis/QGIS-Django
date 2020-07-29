@@ -1,5 +1,5 @@
 from plugins.models import Plugin, PluginVersion #, PluginCrashReport
-from django.contrib.gis import admin
+from django.contrib import admin
 
 
 class PluginAdmin (admin.ModelAdmin):

@@ -6,8 +6,8 @@ import zipfile
 import mimetypes
 import re
 import os
-import ConfigParser
-import StringIO
+import configparser
+from io import StringIO
 import codecs
 from django.conf import settings
 from django.utils.translation import ugettext_lazy as _
@@ -15,7 +15,7 @@ from django.forms import ValidationError
 from django.core.files.uploadedfile import SimpleUploadedFile
 
 
-PLUGIN_MAX_UPLOAD_SIZE=getattr(settings, 'PLUGIN_MAX_UPLOAD_SIZE', 1048576)
+PLUGIN_MAX_UPLOAD_SIZE=getattr(settings, 'PLUGIN_MAX_UPLOAD_SIZE', 25000000) # 25 mb
 PLUGIN_REQUIRED_METADATA=getattr(settings, 'PLUGIN_REQUIRED_METADATA', ('name', 'description', 'version', 'qgisMinimumVersion', 'author', 'email', 'about', 'tracker', 'repository'))
 
 PLUGIN_OPTIONAL_METADATA=getattr(settings, 'PLUGIN_OPTIONAL_METADATA', ( 'homepage', 'changelog', 'qgisMaximumVersion', 'tags', 'deprecated', 'experimental', 'external_deps', 'server'))
@@ -68,10 +68,10 @@ def validator(package):
     """
     try:
         if package.size > PLUGIN_MAX_UPLOAD_SIZE:
-            raise ValidationError( _("File is too big. Max size is %s Bytes") % PLUGIN_MAX_UPLOAD_SIZE )
+            raise ValidationError( _("File is too big. Max size is %s Megabytes") % ( PLUGIN_MAX_UPLOAD_SIZE / 1000000 ) )
     except AttributeError:
         if package.len  > PLUGIN_MAX_UPLOAD_SIZE:
-            raise ValidationError( _("File is too big. Max size is %s Bytes") % PLUGIN_MAX_UPLOAD_SIZE )
+            raise ValidationError( _("File is too big. Max size is %s Megabytes") % ( PLUGIN_MAX_UPLOAD_SIZE / 1000000 ) )
 
     try:
         zip = zipfile.ZipFile( package )
@@ -87,7 +87,7 @@ def validator(package):
         try:
             raise ValidationError( _('Bad zip (maybe a CRC error) on file %s') %  bad_file )
         except UnicodeDecodeError:
-            raise ValidationError( _('Bad zip (maybe unicode filename) on file %s') %  unicode( bad_file, errors='replace'))
+            raise ValidationError( _('Bad zip (maybe unicode filename) on file %s') %   bad_file, errors='replace')
 
     # Checks that package_name  exists
     namelist = zip.namelist()
@@ -113,19 +113,19 @@ def validator(package):
     # First parse metadata.txt
     if metadataname in namelist:
         try:
-            parser = ConfigParser.ConfigParser()
+            parser = configparser.ConfigParser()
             parser.optionxform = str
-            parser.readfp(StringIO.StringIO(codecs.decode(zip.read(metadataname), "utf8")))
+            parser.readfp(StringIO(codecs.decode(zip.read(metadataname), "utf8")))
             if not parser.has_section('general'):
                 raise ValidationError(_("Cannot find a section named 'general' in %s") % metadataname)
             metadata.extend(parser.items('general'))
-        except Exception, e:
+        except Exception as e:
             raise ValidationError(_("Errors parsing %s. %s") % (metadataname, e))
         metadata.append(('metadata_source', 'metadata.txt'))
     else:
         # Then parse __init__
         # Ugly RE: regexp guru wanted!
-        initcontent = zip.read(initname)
+        initcontent = zip.read(initname).decode('utf8')
         metadata.extend(_read_from_init(initcontent, initname))
         if not metadata:
             raise ValidationError(_('Cannot find valid metadata in %s') % initname)
@@ -162,12 +162,12 @@ def validator(package):
     min_qgs_version = dict(metadata).get('qgisMinimumVersion')
     max_qgs_version = dict(metadata).get('qgisMaximumVersion')
     if tuple(min_qgs_version.split('.')) < tuple('1.8'.split('.')) and metadataname in namelist:
-        initcontent = zip.read(initname)
+        initcontent = zip.read(initname).decode('utf8')
         try:
             initmetadata = _read_from_init(initcontent, initname)
             initmetadata.append(('metadata_source', '__init__.py'))
             _check_required_metadata(initmetadata)
-        except ValidationError, e:
+        except ValidationError as e:
             raise ValidationError(_("qgisMinimumVersion is set to less than  1.8 (%s) and there were errors reading metadata from the __init__.py file. This can lead to errors in versions of QGIS less than 1.8, please either set the qgisMinimumVersion to 1.8 or specify the metadata also in the __init__.py file. Reported error was: %s") % (min_qgs_version, ','.join(e.messages)))
 
     zip.close()
@@ -187,6 +187,6 @@ def validator(package):
                 checked_metadata.append((k, v.strip()))
             else:
                 checked_metadata.append((k, v))
-        except UnicodeDecodeError, e:
+        except UnicodeDecodeError as e:
             raise ValidationError(_("There was an error converting metadata '%s' to UTF-8 . Reported error was: %s") % (k, e))
     return checked_metadata

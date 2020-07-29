@@ -6,6 +6,7 @@ description=This is a plugin for greeting the
 version=version 1.2
 author=Alessandro Primo
 email=email@email.com
+about=An Hello World Plugin: nothing more
 
 changelog=this is a very
     very<br/>

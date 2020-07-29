@@ -2,7 +2,7 @@
     <fieldset>
 {% for field in form %}
         <div class="fieldWrapper {{ field.css_classes }}">
-            {% if field.field.widget|klass = 'CheckboxInput' %}
+            {% ifequal field.field.widget|klass 'CheckboxInput' %}
             <label for="{{ field.html_name }}" class="{{ field.css_classes }}">
                 {{ field.label }}
                 {% if field.errors %}
@@ -20,7 +20,7 @@
             </div>
             {% endif %}
             {{ field }}
-            {% endif %}
+            {% endifequal %}
             <div class="help">{{ field.help_text }}</div>
         </div>
 {% endfor %}

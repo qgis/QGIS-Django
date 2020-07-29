@@ -1,21 +1,20 @@
-from django.conf.urls import include, url
-from django.conf import settings
-from django.views.generic.base import RedirectView
-from django.views.static import serve
-from django.contrib.auth.views import login, logout
-# to find users app views
-from users.views import *
-from homepage import homepage
-# Menu system, registration of views is at the end of this file
 import simplemenu
-from django.contrib.flatpages.models import FlatPage
-
+from django.conf import settings
+from django.conf.urls import url
 # Uncomment the next two lines to enable the admin:
 from django.contrib import admin
+from django.contrib.flatpages.models import FlatPage
+from django.urls import include, path
+from django.views.generic.base import RedirectView
+from django.views.static import serve
+
+# to find users app views
+#from users.views import *
+from homepage import homepage
+
 admin.autodiscover()
 
-
-urlpatterns =[
+urlpatterns = [
     # Example:
     # (r'^qgis/', include('qgis.foo.urls')),
 
@@ -23,7 +22,7 @@ urlpatterns =[
     # (r'^admin/doc/', include('django.contrib.admindocs.urls')),
 
     # Uncomment the next line to enable the admin:
-    url(r'^admin/', include(admin.site.urls)),
+    url(r'^admin/', admin.site.urls),
 
     # ABP: plugins app
     url(r'^plugins/', include('plugins.urls')),
@@ -35,9 +34,9 @@ urlpatterns =[
     url(r'^search/', include('haystack.urls')),
 
     # AG: User Map
-    url(r'^community-map/', include('user_map.urls', namespace='user_map')),
+    #url(r'^community-map/', include('user_map.urls', namespace='user_map')),
     # Fix broken URLS in feedjack
-    url(r'^planet/feed/$', RedirectView.as_view(url='/planet/feed/atom/')),
+    #url(r'^planet/feed/$', RedirectView.as_view(url='/planet/feed/atom/')),
     # Tim: Feedjack feed aggregator / planet
     url(r'^planet/', include('feedjack.urls')),
     # ABP: autosuggest for tags
@@ -47,22 +46,22 @@ urlpatterns =[
 ]
 
 # ABP: temporary home page
-#urlpatterns += patterns('django.views.generic.simple',
+# urlpatterns += patterns('django.views.generic.simple',
 #    url(r'^$', 'direct_to_template', {'template': 'index.html'}, name = 'index'),
 #)
 
 
 # serving static media
+from django.conf.urls.static import static
 if settings.SERVE_STATIC_MEDIA:
-    urlpatterns += [
-        url(r'^static/(?P<path>.*)$', serve, {'document_root': settings.MEDIA_ROOT}),
-    ]
+    urlpatterns += static(
+        settings.MEDIA_URL, document_root=settings.MEDIA_ROOT
+    )
 
 
 # auth
 urlpatterns += [
-    url(r'^accounts/login/$',  login, {}, name = 'fe_login'),
-    url(r'^accounts/logout/$', logout, {}, name = 'fe_logout'),
+    path('accounts/', include('django.contrib.auth.urls')),
 ]
 
 # tinymce
@@ -76,10 +75,19 @@ urlpatterns += [
     url(r'^$', homepage),
 ]
 
+
+if settings.DEBUG:
+    import debug_toolbar
+
+    urlpatterns += [
+        url(r'^__debug__/', include(debug_toolbar.urls)),
+    ]
+
+
 simplemenu.register(
     '/admin/',
     '/planet/',
-    '/community-map/',
+#    '/community-map/',
     '/plugins/',
     FlatPage.objects.all(),
     simplemenu.models.URLItem.objects.all(),

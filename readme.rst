@@ -1,17 +1,31 @@
+
+Updates 2019
+================================================================================
+
+Migration to Python 3 / Django 2 is in progress and it
+was completed for the main application (the Pugins application).
+
+ALL OTHER APPLICATIONS HAVE BEEN DISABLED AND REQUIRE MIGRATION
+
+A Vagrant setup with the requirements for the migrated Plugins application
+is available.
+
+
+
 Introduction
 ================================================================================
 
-This directory contains the source code for django apps used in the QGIS 
+This directory contains the source code for django apps used in the QGIS
 project.
 
 For licensing information, please read COPYING file included in this directory.
 
-For setup and installation notes, please read INSTALL included in this 
+For setup and installation notes, please read INSTALL included in this
 directory.
 
 To contribute to this project, please contact Tim Sutton - tim@linfiniti.com
 
-Tim Sutton 
+Tim Sutton
 
 November 2010
 
@@ -39,7 +53,7 @@ For a readonly checkout do::
 .. note::  Important note: the server currently use python 2.5, due to some
    strange incompatibilities between compressed egg format and Django
    init machinery, in order to recognise "haystack" search stuff, the
-   cab EGG must be uncompressed such as the final directories (in the 
+   cab EGG must be uncompressed such as the final directories (in the
    virtualenv) are::
 
      venv/lib/python2.5/site-packages/cab-0.2.0-py2.5.egg/cab
@@ -58,7 +72,7 @@ Then run the createdb script::
 
   ./createdb.sh
 
-.. note:: If you already have postgis installed in your template1 db, 
+.. note:: If you already have postgis installed in your template1 db,
    just do the following command rather than running the createdb script::
 
       createdb qgis-trunk
@@ -89,10 +103,10 @@ Deploying a live site using wsgi
 We need to configure Apache for having wsgi support::
 
   cd /etc/apache/sites-available
-  sudo cp <path to qgis-django>/apache/apache.virtenv.conf.example 
+  sudo cp <path to qgis-django>/apache/apache.virtenv.conf.example
     qgis-django.conf
 
-Now modify qgis-django.conf to your needs (making sure paths and web url are 
+Now modify qgis-django.conf to your needs (making sure paths and web url are
 correct) then::
 
   sudo a2ensite qgis-django.conf
@@ -112,14 +126,14 @@ There after they should be updated regularly e.g. using a 5 min cron job::
 Cache setup
 --------------------------------------------------------------------------------
 
-We will use database based caching here (see `django (caching) 
+We will use database based caching here (see `django (caching)
 <http://docs.djangoproject.com/en/dev/topics/cache/>`.
 
 Make sure your virtual env is set up and then create a cache table::
 
   python manage.py createcachetable cache_table
 
-.. note:: The cache backend is required for the planet / feedjack to work 
+.. note:: The cache backend is required for the planet / feedjack to work
    properly
 
 Feedjack Update
@@ -129,14 +143,14 @@ The Blog Planet requires feedjack_update.py to run at regular intervals to keep
 the site fresh. The update_planet.sh shell script sets up the environment and
 runs feedjack_update.py.
 
-The script requires you to set SITE_DIR to point at the Django site directory 
+The script requires you to set SITE_DIR to point at the Django site directory
 prior to first use.
 
 The script must be run by a user that has permissions to the site directory.
 
 To install as a cron, use the following (adjust the paths for your site)::
 
-  */15 * * * * cd /home/plugins/QGIS-Django;./update_planet.sh \ 
+  */15 * * * * cd /home/plugins/QGIS-Django;./update_planet.sh \
   1>>/tmp/planet_update.log 2>>/tmp/planet_update.err
 
 

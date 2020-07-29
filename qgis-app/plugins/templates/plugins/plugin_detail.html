@@ -1,8 +1,8 @@
-{% extends 'plugins/plugin_base.html' %}{% load i18n  thumbnail %}
+{% extends 'plugins/plugin_base.html' %}{% load i18n static thumbnail %}
 {% block extrajs %}
 {{ block.super }}
-<script type="text/javascript" src="/static/js/jquery.cookie.js"></script>
-<script type="text/javascript" src="/static/jquery-ratings/jquery.ratings.js"></script>
+<script type="text/javascript" src="{% static "js/jquery.cookie.js" %}"></script>
+<script type="text/javascript" src="{% static "jquery-ratings/jquery.ratings.js" %}"></script>
 <script type="text/javascript">
 
     function csrfSafeMethod(method) {
@@ -40,7 +40,7 @@
 </script>
 {% endblock %}
 {% block extracss %}
-<link type="text/css" href="/static/jquery-ratings/jquery.ratings.css" rel="stylesheet" />
+<link type="text/css" href="{% static "jquery-ratings/jquery.ratings.css" %}" rel="stylesheet" />
 {{ block.super }}
 {% endblock %}
 {% block content %}

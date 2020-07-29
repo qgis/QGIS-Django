@@ -1,6 +1,6 @@
-import xmlrpclib
-server = xmlrpclib.ServerProxy('http://admin:admin@localhost:8000/plugins/RPC2/')
+from xmlrpc import client
+server = client.ServerProxy('http://admin:admin@localhost:80/plugins/RPC2/')
 handle = open("HelloWorld.zip", "rb")
-blob = xmlrpclib.Binary(handle.read())
+blob = client.Binary(handle.read())
 server.plugin.upload(blob)
 
