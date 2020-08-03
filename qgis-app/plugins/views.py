@@ -1026,6 +1026,7 @@ def xml_plugins_new(request, qg_version=None, stable_only=None, package_name=Non
                     object_list.append(plugin_version)
         except Plugin.DoesNotExist:
             pass
+        object_list_new = object_list
     else:
 
         # Fast lane: uses raw queries
