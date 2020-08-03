@@ -935,17 +935,6 @@ def xml_plugins(request, qg_version=None, stable_only=None, package_name=None):
         filters.update({'pluginversion__max_qg_version__gte' : qg_version})
         version_filters.update({'max_qg_version__gte' : qg_version})
 
-    # Checked the cached plugins
-    qgis_version = request.GET.get('qgis', None)
-    qgis_filename = 'plugins_{}.xml'.format(qgis_version)
-    folder_name = os.path.join(
-        settings.MEDIA_ROOT,
-        'cached_xmls'
-    )
-    path_file = os.path.join(folder_name, qgis_filename)
-    if os.path.exists(path_file):
-        return HttpResponse(
-            open(path_file).read(), content_type='application/xml')
 
     # Get all versions for the given plugin)
     if package_name:
@@ -962,6 +951,18 @@ def xml_plugins(request, qg_version=None, stable_only=None, package_name=None):
         except Plugin.DoesNotExist:
             pass
     else:
+
+        # Checked the cached plugins
+        qgis_version = request.GET.get('qgis', None)
+        qgis_filename = 'plugins_{}.xml'.format(qgis_version)
+        folder_name = os.path.join(
+            settings.MEDIA_ROOT,
+            'cached_xmls'
+        )
+        path_file = os.path.join(folder_name, qgis_filename)
+        if os.path.exists(path_file):
+            return HttpResponse(
+                open(path_file).read(), content_type='application/xml')
 
         trusted_users_ids = list(zip(*User.objects.filter(Q(user_permissions__codename='can_approve', user_permissions__content_type__app_label='plugins') | Q(is_superuser=True)).distinct().values_list('id')))[0]
         qs = Plugin.approved_objects.filter(**filters).annotate(is_trusted=RawSQL('%s.created_by_id in (%s)' % (Plugin._meta.db_table, (',').join([str(tu) for tu in trusted_users_ids])), ()))
