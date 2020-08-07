@@ -9,7 +9,7 @@ RUN apt-get update && apt-get install -y libsasl2-dev python-dev libldap2-dev li
 
 ARG BRANCH_TAG=develop
 RUN mkdir -p /usr/src; mkdir -p /home/web && \
-            git clone --depth=1 git://github.com/kartoza/QGIS-Django.git --branch ${BRANCH_TAG} /usr/src/plugins/ && \
+            git clone --depth=1 git://github.com/qgis/QGIS-Django.git --branch ${BRANCH_TAG} /usr/src/plugins/ && \
             rm -rf /home/web/django_project && \
 	        ln -s /usr/src/plugins/qgis-app /home/web/django_project
 
