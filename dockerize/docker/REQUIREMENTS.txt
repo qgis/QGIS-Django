@@ -30,6 +30,7 @@ django-haystack
 # George's is also broken: use my fork (django 1.8 ready)
 # git+https://github.com/elpaso/feedjack.git
 # His is also broken, use mine (django 2.2 ready)
+feedparser==5.1.3
 git+https://github.com/dimasciput/feedjack.git
 celery==4.3.0
 requests==2.23.0
