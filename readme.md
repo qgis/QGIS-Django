@@ -27,10 +27,11 @@ Tim Sutton 2010
 This application is based on Django, written in python and deployed on the server using
 docker and rancher.
 
-# For developers
-
-A Vagrant setup with the requirements for the migrated Plugins application
-is available.
-
 
 # Contributing
+
+Please contact tim@kartoza.com if you want to contribute, or simply make a Pull Request or Issue report.
+
+# QGIS.org
+
+This project is part of the QGIS community effort to make the greatest GIS application in the world. Join our efforts at [QGIS.org](https://qgis.org).
