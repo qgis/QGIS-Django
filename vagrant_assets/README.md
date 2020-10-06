@@ -37,7 +37,7 @@ Django will run with `DEBUG=True` unless you change it in `settings_local_vagran
 
 ## Endpoint
 
-The plugin app will be availble from your Host machine as:
+The plugin app will be available from your Host machine as:
 
 http://localhost:8080/
 
