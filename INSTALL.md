@@ -3,22 +3,24 @@
 - Clone git repo `git clone https://github.com/qgis/QGIS-Django.git`
 > run `$ pwd` in order to get your current directory
 >
->your repo path should be `<your current directory>/QGIS-Django `
+> path to your repo should be `<your current directory>/QGIS-Django `
 - Go to dockerize directory
 `$ cd QGIS-Django/dockerize`
 
-- Build and spin docker-compose
+- Build and spin container
 ```
-$ docker-compose build
-$ docker-compose up -d
+$ make build
+$ make devweb
 ```
 
-- Run migrate in web container
-`docker-compose exec web python manage.py migrate`
+- Run migrate in devweb container
+```
+$ make migrate-devweb
+```
 
 - Set up python interpreter in PyCharm or just runserver from devweb container:
-`$ docker-compose exec devweb python manage.py runserver 0.0.0.0:8080`
-and now, you can see your site at `http://0.0.0.0:62202`
+`$make devweb-runserver`
+and now, you can see your site at `http://0.0.0.0:62202` (skip this step if you are using PyCharm interpreter)
 
 ---
 
