@@ -32,5 +32,5 @@ django-haystack
 # His is also broken, use mine (django 2.2 ready)
 git+https://github.com/dimasciput/feedjack.git
 feedparser==5.2.1
-celery==4.3.0
+celery==4.3.1
 requests==2.23.0
