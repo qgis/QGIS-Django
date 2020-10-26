@@ -1,12 +1,12 @@
 import tempfile
 from django.test import TestCase
 from django.contrib.auth.models import User
-from resources.models import Resource, ResourceType
+from styles.models import Style, StyleType
 
 
 class TestCRUD(TestCase):
     """
-    Test Resource models
+    Test Styles models
     """
 
     def setUp(self):
@@ -16,10 +16,12 @@ class TestCRUD(TestCase):
         # https: // stackoverflow.com / a / 32814129 / 10268058
         self.image_temp = tempfile.NamedTemporaryFile(suffix=".png").name
         self.xml_temp = tempfile.NamedTemporaryFile(suffix=".xml").name
-        self.marker_type = ResourceType.objects.create(name="marker",
+        self.marker_type = StyleType.objects.create(symbol="marker",
+                                 name="Marker",
                                  description="a marker for testing purpose",
                                  icon=self.image_temp)
-        self.line_type = ResourceType.objects.create(name="line",
+        self.line_type = StyleType.objects.create(symbol="line",
+                                 name="Line",
                                  description="a line for testing purpose",
                                  icon=self.image_temp)
         self.user_staff = User.objects.create(username='usertest_staff',
@@ -30,31 +32,32 @@ class TestCRUD(TestCase):
                                         is_active=True,
                                         is_staff=True,
                                         is_superuser=False)
-        self.resource_zero = Resource.objects.create(name="resource_zero",
-            description="a resource for testing purpose",
+        self.style_zero = Style.objects.create(name="style_zero",
+            description="a style for testing purpose",
             creator=self.user_staff,
             thumbnail_image=self.image_temp,
             xml_file=self.xml_temp)
-        self.resource_zero.resource_types.add(self.marker_type)
+        self.style_zero.style_types.add(self.marker_type)
 
-    def test_create_resource_type(self):
-        fill_type = ResourceType.objects.create(name="fill",
+    def test_create_style_type(self):
+        fill_type = StyleType.objects.create(symbol="fill",
+                                 name="Fill",
                                  description="a fill for testing purpose",
                                  icon=self.image_temp)
-        self.assertEqual(fill_type.__str__(), "fill")
+        self.assertEqual(fill_type.__str__(), "Fill")
 
-    def test_create_resource(self):
-        resource_one = Resource.objects.create(name="resource_one",
-                                description="a resource for testing purpose",
+    def test_create_style(self):
+        style_one = Style.objects.create(name="style_one",
+                                description="a style for testing purpose",
                                 creator=self.user_staff,
                                 thumbnail_image=self.image_temp,
                                 xml_file=self.xml_temp)
-        resource_one.resource_types.add(self.line_type)
-        self.assertEqual(resource_one.name, "resource_one")
-        self.assertEqual(resource_one.creator.first_name, "first_name_staff")
-        self.assertEqual(resource_one.resource_types.first().name, "line")
+        style_one.style_types.add(self.line_type)
+        self.assertEqual(style_one.name, "style_one")
+        self.assertEqual(style_one.creator.first_name, "first_name_staff")
+        self.assertEqual(style_one.style_types.first().name, "Line")
 
-    def test_update_resource(self):
-        self.assertEqual(self.resource_zero.resource_types.count(), 1)
-        self.resource_zero.resource_types.add(self.line_type)
-        self.assertEqual(self.resource_zero.resource_types.count(), 2)
+    def test_update_style(self):
+        self.assertEqual(self.style_zero.style_types.count(), 1)
+        self.style_zero.style_types.add(self.line_type)
+        self.assertEqual(self.style_zero.style_types.count(), 2)

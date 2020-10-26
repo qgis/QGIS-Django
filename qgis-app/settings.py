@@ -147,8 +147,8 @@ INSTALLED_APPS = [
     'rest_framework',
     'rest_framework_gis',
 
-    # resource:
-    'resources',
+    # styles:
+    'styles',
 ]
 
 TEMPLATES = [

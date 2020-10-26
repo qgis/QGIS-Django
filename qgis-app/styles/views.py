@@ -2,4 +2,4 @@ from django.http import HttpResponse
 
 
 def home_page_view(request):
-    return HttpResponse('Hello from resources package')
+    return HttpResponse('Hello from styles package')

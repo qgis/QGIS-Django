@@ -61,8 +61,8 @@ INSTALLED_APPS = [
 
     'feedjack',
 
-    # resource:
-    'resources',
+    # styles:
+    'styles',
 ]
 
 DATABASES = {

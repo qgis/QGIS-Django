@@ -4,16 +4,22 @@ from django.conf import settings
 from django.contrib.auth.models import User
 from django.utils.translation import ugettext_lazy as _
 
-RESOURCES_STORAGE_PATH = getattr(settings,
-                                 'PLUGINS_STORAGE_PATH', 'resources/%Y')
+STYLES_STORAGE_PATH = getattr(settings,
+                                 'PLUGINS_STORAGE_PATH', 'styles/%Y')
 
 
-class ResourceType(models.Model):
+class StyleType(models.Model):
     """
-    ResourceType model
+    Style Type model
     """
 
-    # name and desc
+    # symbol, name and desc
+    # symbol e.g. "line"
+    # name e.g. "Line"
+    symbol = models.CharField(_('Symbol'),
+                            help_text=_('Must be unique'),
+                            max_length=256,
+                            unique=True)
     name = models.CharField(_('Name'),
                             help_text=_('Must be unique'),
                             max_length=256,
@@ -22,9 +28,9 @@ class ResourceType(models.Model):
 
     # icon image
     icon = models.ImageField(_('Icon'),
-                             upload_to=RESOURCES_STORAGE_PATH)
+                             upload_to=STYLES_STORAGE_PATH)
 
-    # ordering for Resource instance
+    # ordering for Style instance
     order = models.IntegerField(_('Order'),
                                 default=0)
 
@@ -38,9 +44,9 @@ class ResourceType(models.Model):
         return self.__unicode__()
 
 
-class Resource(models.Model):
+class Style(models.Model):
     """
-    Resource model
+    Style model
     """
 
     # date
@@ -50,11 +56,11 @@ class Resource(models.Model):
 
     # creator
     creator = models.ForeignKey(User, verbose_name=_('Created by'),
-                                related_name='resources_created_by',
+                                related_name='styles_created_by',
                                 on_delete=models.CASCADE)
 
-    # resource type
-    resource_types = models.ManyToManyField(ResourceType,
+    # style type
+    style_types = models.ManyToManyField(StyleType,
                                       verbose_name=_('Type'),
                                       blank=True)
 
@@ -67,11 +73,11 @@ class Resource(models.Model):
 
     # thumbnail
     thumbnail_image = models.ImageField(_('Thumbnail'), blank=True,
-                             null=True, upload_to=RESOURCES_STORAGE_PATH)
+                             null=True, upload_to=STYLES_STORAGE_PATH)
 
     # file
-    xml_file = models.FileField(_('Resource file'),
-                                upload_to=RESOURCES_STORAGE_PATH,
+    xml_file = models.FileField(_('Style file'),
+                                upload_to=STYLES_STORAGE_PATH,
                                 null=False)
 
     # counter
@@ -79,8 +85,8 @@ class Resource(models.Model):
                                          default=0,
                                          editable=False)
 
-    def get_resource_types(self):
-        return ", ".join([_.name for _ in self.resource_types.all()])
+    def get_style_types(self):
+        return ", ".join([_.name for _ in self.style_types.all()])
 
     def __unicode__(self):
         return "%s" % (self.name)
