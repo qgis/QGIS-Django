@@ -43,6 +43,8 @@ urlpatterns = [
     url(r'^taggit_autosuggest/', include('taggit_autosuggest.urls')),
     url(r'^userexport/', include('userexport.urls')),
 
+    # Resource
+    url(r'^resources/', include('resources.urls'))
 ]
 
 # ABP: temporary home page
@@ -89,6 +91,7 @@ simplemenu.register(
     '/planet/',
 #    '/community-map/',
     '/plugins/',
+    '/resources/',
     FlatPage.objects.all(),
     simplemenu.models.URLItem.objects.all(),
 )

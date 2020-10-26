@@ -146,6 +146,9 @@ INSTALLED_APPS = [
     'bootstrapform',
     'rest_framework',
     'rest_framework_gis',
+
+    # resource:
+    'resources',
 ]
 
 TEMPLATES = [
