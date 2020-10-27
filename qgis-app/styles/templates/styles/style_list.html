@@ -1,0 +1,52 @@
+{% extends 'styles/style_base.html' %}{% load i18n bootstrap_pagination humanize static sort_anchor range_filter thumbnail %}
+
+{% block content %}
+    <h2>{% if title %}{{title}}{% else %}{% trans "All Styles" %}{% endif %}</h2>
+
+
+    <table class="table table-striped plugins">
+        <thead>
+            <tr>
+                <th></th>
+                <th>Name</th>
+                <th>Type</th>
+                <th><img src="{% static "images/down_16.png" %}" alt="{% trans "Download Count" %}"/></th>
+                <th>Creator</th>
+                <th>Upload Date</th>
+                <th></th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for style in style_list %}
+                <tr>
+                    <td>
+                        {% thumbnail style.thumbnail_image "32x32" format="PNG" as im %}
+                            <img class="plugin-icon" alt="{% trans "Style icon" %}" src="{{ im.url }}" width="{{ im.x }}" height="{{ im.y }}" />
+                        {% endthumbnail %}
+                    </td>
+                    <td><a href="{% url "style_detail" style.name %}">{{ style.name }}</a></td>
+                    {% for type in style.style_types.all %}
+                    <td>{{ type }}</td>
+                    {% endfor %}
+                    <td>{{ style.download_count }}</td>
+                    <td>{{ style.creator }}</td>
+                    <td>{{ style.upload_date|date:"d F Y" }}</td>
+                    <td><form method="post" action="#">
+                        {% csrf_token %}
+                        <a class="btn btn-primary btn-mini" href="#" title="{% trans "Edit" %}"><i class="icon-pencil icon-white"></i></a>&nbsp
+                        <a class="btn btn-danger btn-mini delete" href="#" title="{% trans "Delete" %}"><i class="icon-remove icon-white"></i></a>
+                    </form></td>
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+    <div class="pagination">
+    {% include 'sortable_listview/pagination.html' %}
+    </div>
+
+
+    <script type="text/javascript">
+        jQuery('.popover').popover();
+    </script>
+{% endblock %}
+

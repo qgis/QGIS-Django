@@ -1,0 +1,39 @@
+{% extends 'styles/style_base.html' %}{% load i18n static thumbnail %}
+
+{% block content %}
+        <div class="row">
+            <div class="span6 text-center mb-5">
+                {% thumbnail style_detail.thumbnail_image "420x420" format="PNG" as im %}
+                    <img class="plugin-icon" alt="{% trans "Style icon" %}" src="{{ im.url }}" width="{{ im.x }}" height="{{ im.y }}" />
+                {% endthumbnail %}
+            </div>
+            <div class="span6">
+                <dl class="dl-horizontal">
+                    <dt>Name</dt>
+                    <dd>{{ style_detail.name }}</dd>
+                    <dt>Description</dt>
+                    <dd>{{ style_detail.description }}</dd>
+                    <dt>Upload Date</dt>
+                    <dd>{{ style_detail.upload_date|date:"d F Y" }}</dd>
+                    <dt>Creator</dt>
+                    <dd>{{ style_detail.creator }}</dd>
+                    <dt>Style Type</dt>
+                    <dd>
+                        {% for type in style_detail.style_types.all %}
+                            {{ type.name }}
+                        {% endfor %}
+                    </dd>
+                    <dt></dt>
+                    <dd>
+                        <div>
+                            <a class="btn btn-primary" href="{% url 'style_download' style_detail.name %}"><i class="icon-download icon-white icon-2x" style=" vertical-align: middle;"></i>&nbsp;{% trans "Download Style" %}</a>
+                        </div>
+                    </dd>
+
+                </dl>
+
+            </div>
+            <div class="span12"></div>
+
+        </div>
+{% endblock %}

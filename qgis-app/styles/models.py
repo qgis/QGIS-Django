@@ -1,8 +1,10 @@
 from django.db import models
-from django.core.validators import FileExtensionValidator
 from django.conf import settings
 from django.contrib.auth.models import User
+from django.core.validators import FileExtensionValidator
+from django.urls import reverse
 from django.utils.translation import ugettext_lazy as _
+
 
 STYLES_STORAGE_PATH = getattr(settings,
                                  'PLUGINS_STORAGE_PATH', 'styles/%Y')
@@ -129,6 +131,9 @@ class Style(models.Model):
                     'This is updated automatically.'),
         default=0,
         editable=False)
+
+    def get_absolute_url(self):
+        return reverse('style_detail', args=(self.name,))
 
     def __unicode__(self):
         return "%s" % (self.name)
