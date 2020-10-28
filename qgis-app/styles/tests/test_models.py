@@ -36,8 +36,8 @@ class TestCRUD(TestCase):
             description="a style for testing purpose",
             creator=self.user_staff,
             thumbnail_image=self.image_temp,
-            xml_file=self.xml_temp)
-        self.style_zero.style_types.add(self.marker_type)
+            xml_file=self.xml_temp,
+            style_type=self.marker_type)
 
     def test_create_style_type(self):
         fill_type = StyleType.objects.create(symbol="fill",
@@ -51,13 +51,13 @@ class TestCRUD(TestCase):
                                 description="a style for testing purpose",
                                 creator=self.user_staff,
                                 thumbnail_image=self.image_temp,
-                                xml_file=self.xml_temp)
-        style_one.style_types.add(self.line_type)
+                                xml_file=self.xml_temp,
+                                style_type=self.line_type)
         self.assertEqual(style_one.name, "style_one")
         self.assertEqual(style_one.creator.first_name, "first_name_staff")
-        self.assertEqual(style_one.style_types.first().name, "Line")
+        self.assertEqual(style_one.style_type.name, "Line")
 
     def test_update_style(self):
-        self.assertEqual(self.style_zero.style_types.count(), 1)
-        self.style_zero.style_types.add(self.line_type)
-        self.assertEqual(self.style_zero.style_types.count(), 2)
+        self.assertEqual(self.style_zero.style_type.name, "Marker")
+        self.style_zero.style_type = self.line_type
+        self.assertEqual(self.style_zero.style_type.name, "Line")

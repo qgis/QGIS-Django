@@ -12,7 +12,7 @@ class StyleAdmin(admin.ModelAdmin):
                     'description',
                     'creator',
                     'upload_date',
-                    'get_style_types')
+                    'style_type')
 
 
 admin.site.register(Style, StyleAdmin)

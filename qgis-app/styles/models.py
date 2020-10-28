@@ -60,9 +60,11 @@ class Style(models.Model):
                                 on_delete=models.CASCADE)
 
     # style type
-    style_types = models.ManyToManyField(StyleType,
+    style_type = models.ForeignKey(StyleType,
                                       verbose_name=_('Type'),
-                                      blank=True)
+                                      blank=True,
+                                      null=True,
+                                      on_delete=models.CASCADE)
 
     # name and desc
     name = models.CharField(_('Name'),
@@ -84,9 +86,6 @@ class Style(models.Model):
     download_count = models.IntegerField(_('Downloads'),
                                          default=0,
                                          editable=False)
-
-    def get_style_types(self):
-        return ", ".join([_.name for _ in self.style_types.all()])
 
     def __unicode__(self):
         return "%s" % (self.name)
