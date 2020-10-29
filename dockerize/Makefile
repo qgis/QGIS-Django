@@ -80,12 +80,25 @@ rm-only: kill
 	@echo "------------------------------------------------------------------"
 	@docker-compose -p $(PROJECT_ID) rm
 
+
+
 dbrestore:
 	@echo
 	@echo "------------------------------------------------------------------"
 	@echo "Restore dump from backups/latest.dmp in production mode"
 	@echo "------------------------------------------------------------------"
 	@# - prefix causes command to continue even if it fails
-	-@docker-compose exec db su - postgres -c "dropdb gis"
-	@docker-compose exec db su - postgres -c "createdb -O docker -T template_postgis gis"
-	@docker-compose exec db bash -c 'pg_restore /backups/latest.dmp | su - postgres -c "psql gis"'
+	@echo "stopping web container"
+	@docker-compose -p $(PROJECT_ID) stop web
+	@echo "dropping gis"
+	@docker exec -t $(PROJECT_ID)-db su - postgres -c "dropdb gis"
+	@echo "creating gis"
+	@docker exec -t $(PROJECT_ID)-db su - postgres -c "createdb -O docker -T template_postgis gis"
+	@echo "restoring gis"
+	@# Because we pipe from one docker command to another and we are going
+	@# to execute this Make command from a remote server at times, we need to using use interactive mode (-i)
+	@# in the first command and not use terminal (-t) in the second. Please do not change these!
+	@docker exec -t  $(PROJECT_ID)-db pg_restore /backups/latest.dmp | docker exec -i $(PROJECT_ID)-db su - postgres -c "psql gis"
+	@docker-compose -p $(PROJECT_ID) start web
+	@echo "starting web container"
+
