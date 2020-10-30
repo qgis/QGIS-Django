@@ -16,11 +16,11 @@ class TestCRUD(TestCase):
         # https: // stackoverflow.com / a / 32814129 / 10268058
         self.image_temp = tempfile.NamedTemporaryFile(suffix=".png").name
         self.xml_temp = tempfile.NamedTemporaryFile(suffix=".xml").name
-        self.marker_type = StyleType.objects.create(symbol="marker",
+        self.marker_type = StyleType.objects.create(symbol_type="marker",
                                  name="Marker",
                                  description="a marker for testing purpose",
                                  icon=self.image_temp)
-        self.line_type = StyleType.objects.create(symbol="line",
+        self.line_type = StyleType.objects.create(symbol_type="line",
                                  name="Line",
                                  description="a line for testing purpose",
                                  icon=self.image_temp)
@@ -40,7 +40,7 @@ class TestCRUD(TestCase):
             style_type=self.marker_type)
 
     def test_create_style_type(self):
-        fill_type = StyleType.objects.create(symbol="fill",
+        fill_type = StyleType.objects.create(symbol_type="fill",
                                  name="Fill",
                                  description="a fill for testing purpose",
                                  icon=self.image_temp)
