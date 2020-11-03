@@ -18,13 +18,15 @@ class StyleType(models.Model):
     # name e.g. "Line"
     symbol_type = models.CharField(
         _('Symbol type'),
-        help_text=_('This Symbol will be used to identify the type of a style '
-                    'based on an attribute value in the uploaded XML file.'),
+        help_text=_('This will be used to identify the type of a style. '
+                    'The value will be extracted automatically from '
+                    'the uploaded QGIS style XML file.'),
         max_length=256,
         unique=True)
     name = models.CharField(
         _('Name'),
-        help_text=_('An unique name of this style type.'),
+        help_text=_('Default to the title case string of symbol_type. '
+                    'e.g. line would become Line.'),
         max_length=256,
         unique=True)
     description = models.TextField(
@@ -37,10 +39,13 @@ class StyleType(models.Model):
     # icon image
     icon = models.ImageField(
         _('Icon'),
-        help_text=_('An icon for this style type.'),
-        upload_to=STYLES_STORAGE_PATH)
+        help_text=_('Please ensure the icon file is 500x500 px '
+                    'and in PNG format.'),
+        upload_to=STYLES_STORAGE_PATH,
+        blank=True,
+        null=True)
 
-    # ordering for Style instance
+    # Ordering for StyleType instance
     order = models.IntegerField(
         _('Order'),
         help_text=_('Order value for custom ordering.'),
@@ -58,13 +63,15 @@ class StyleType(models.Model):
 
 class Style(models.Model):
     """
-    Style model
+    Style Model.
+
+    A style is an XML document exported from the QGIS Style manager.
     """
 
     # date
     upload_date = models.DateTimeField(
         _('Uploaded on'),
-        help_text=_('The upload date.'),
+        help_text=_('The upload date. Automatically added on file upload.'),
         auto_now_add=True,
         editable=False)
 
@@ -72,21 +79,24 @@ class Style(models.Model):
     creator = models.ForeignKey(
         User,
         verbose_name=_('Created by'),
-        help_text=_('The user who upload this style.'),
+        help_text=_('The user who uploaded this style.'),
         related_name='styles_created_by',
         on_delete=models.CASCADE)
 
     # style type
     style_type = models.ForeignKey(StyleType,
         verbose_name=_('Type'),
-        help_text=_('The type of this style.'),
+        help_text=_('The type of this style, this will automatically be read '
+                    'from the XML file.'),
         blank=True,
         null=True,
         on_delete=models.CASCADE)
 
     # name and desc
     name = models.CharField(_('Name'),
-        help_text=_('An unique name for this style'),
+        help_text=_('A unique name for this style. This will be initially '
+                    'automatically taken from the uploaded XML file, but may '
+                    'need manual revision if the name is not unique.'),
         max_length=256,
         unique=True)
     description = models.TextField(
@@ -98,7 +108,8 @@ class Style(models.Model):
     # thumbnail
     thumbnail_image = models.ImageField(
         _('Thumbnail'),
-        help_text=_('Please upload an image that represent this style.'),
+        help_text=_('Please upload an image that represents this style. '
+                    'The image should be square when uploaded.'),
         blank=True,
         null=True,
         upload_to=STYLES_STORAGE_PATH)
@@ -106,7 +117,7 @@ class Style(models.Model):
     # file
     xml_file = models.FileField(
         _('Style file'),
-        help_text=_('A style file in XML format'),
+        help_text=_('A QGIS style file in XML format.'),
         upload_to=STYLES_STORAGE_PATH,
         validators=[FileExtensionValidator(allowed_extensions=['xml'])],
         null=False)
@@ -114,7 +125,8 @@ class Style(models.Model):
     # counter
     download_count = models.IntegerField(
         _('Downloads'),
-        help_text=_('The number of times this style has been downloaded.'),
+        help_text=_('The number of times this style has been downloaded. '
+                    'This is updated automatically.'),
         default=0,
         editable=False)
 
