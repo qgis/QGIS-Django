@@ -13,11 +13,11 @@ addons:
 
 env:
   global:
-    - RABBITMQ_HOST = 'rabbitmq'
-    - DATABASE_NAME = 'travis_ci_test'
-    - DATABASE_USERNAME = 'postgres'
-    - DATABASE_PASSWORD = ''
-    - DATABASE_HOST = 'localhost'
+    - RABBITMQ_HOST=rabbitmq
+    - DATABASE_NAME=travis_ci_test
+    - DATABASE_USERNAME=postgres
+    - DATABASE_PASSWORD=''
+    - DATABASE_HOST=localhost
     - DJANGO_SETTINGS_MODULE=settings_docker
 
 dist: xenial
