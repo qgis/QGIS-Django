@@ -59,7 +59,10 @@ INSTALLED_APPS = [
     'tinymce',
     'rpc4django',
 
-    'feedjack'
+    'feedjack',
+
+    # styles:
+    'styles',
 ]
 
 DATABASES = {
