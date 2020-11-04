@@ -13,8 +13,12 @@ addons:
 
 env:
   global:
-    - DATABASE_URL='postgres://postgres:@localhost:5432/travis_ci_test'
-    - DJANGO_SETTINGS_MODULE=settings_travis
+    - RABBITMQ_HOST = 'rabbitmq'
+    - DATABASE_NAME = 'travis_ci_test'
+    - DATABASE_USERNAME = 'postgres'
+    - DATABASE_PASSWORD = ''
+    - DATABASE_HOST = 'localhost'
+    - DJANGO_SETTINGS_MODULE=settings_docker
 
 dist: xenial
 
