@@ -1,0 +1,50 @@
+language: python
+python:
+  - 3.7
+
+services:
+  - postgresql
+
+addons:
+  postgresql: "9.4"
+  apt:
+    packages:
+    - postgresql-9.4-postgis-2.4
+
+env:
+  global:
+    - DATABASE_URL='postgres://postgres:@localhost:5432/travis_ci_test'
+    - DJANGO_SETTINGS_MODULE=settings_travis
+
+dist: xenial
+
+before_install:
+  - python --version
+  - pip install -U pip
+  - pip install codecov
+
+install:
+  - pip install -r ./dockerize/docker/REQUIREMENTS.txt
+  - pip install flake8
+  - pip install coverage
+
+before_script:
+  - psql -c 'create database travis_ci_test;' -U postgres
+  - psql -c 'create extension postgis;' -U postgres -d travis_ci_test
+  - sudo apt-get -y install python-gdal
+  - sudo apt-get -y install python-geoip
+
+script:
+  - cd qgis-app
+  - >
+    flake8
+    --ignore=E203,E121,E122,E123,E124,E125,E126,E127,E128,E402
+    --max-line-length 79
+    --exclude='./migrations/',
+    ./styles
+  - python manage.py makemigrations
+  - python manage.py migrate
+  - coverage run manage.py test styles
+
+after_success:
+  - codecov
