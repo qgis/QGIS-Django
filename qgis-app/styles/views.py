@@ -111,6 +111,11 @@ class StyleUnapprovedListView(LoginRequiredMixin, StyleListView):
             return Style.unapproved_objects.all()
         return Style.unapproved_objects.filter(creator=user).all()
 
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['title'] = 'Waiting Review'
+        return context
+
 
 class StyleRequireActionListView(LoginRequiredMixin, StyleListView):
     context_object_name = 'style_list'
@@ -120,6 +125,11 @@ class StyleRequireActionListView(LoginRequiredMixin, StyleListView):
         if user.is_staff:
             return Style.requireaction_objects.all()
         return Style.requireaction_objects.filter(creator=user).all()
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['title'] = 'Requiring Update'
+        return context
 
 
 class StyleDetailView(DetailView):
