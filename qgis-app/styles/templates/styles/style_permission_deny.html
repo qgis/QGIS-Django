@@ -1,0 +1,6 @@
+{% extends 'styles/style_base.html' %}{% load i18n %}
+{% block content %}
+    <h4 class="text-error">{% trans "Permission Denined"%}</h4>
+    <p>{% trans context %}: {{ style_name }}.</p>
+    <p><a class="btn btn-primary" href="{% url 'style_list' %}">{% trans "Back" %}</a></p>
+{% endblock %}

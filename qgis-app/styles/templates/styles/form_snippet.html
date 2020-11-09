@@ -1,0 +1,15 @@
+{% load i18n %}
+    <fieldset>
+{% for field in form %}
+        <div class="fieldWrapper {{ field.css_classes }}">
+            {{ field.label_tag }}
+            {% if field.errors %}
+            <div class="alert alert-error">
+            {{ field.errors }}
+            </div>
+            {% endif %}
+            {{ field }}
+            <div class="help">{{ field.help_text }}</div>
+        </div>
+{% endfor %}
+    </fieldset>

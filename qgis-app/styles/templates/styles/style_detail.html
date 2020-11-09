@@ -1,35 +1,48 @@
 {% extends 'styles/style_base.html' %}{% load i18n static thumbnail %}
 
 {% block content %}
+        <h3 class="style-title">{{ style_detail.name|title }}</h3>
+        {% if user == style_detail.creator or user.is_staff %}
+        <div class="row pull-right">
+            <a class="btn btn-primary btn-mini" href="{% url 'style_update' style_detail.id %}" title="{% trans "Edit" %}"><i class="icon-pencil icon-white"></i></a>&nbsp
+            <a class="btn btn-danger btn-mini" href="{% url 'style_delete' style_detail.id %}" title="{% trans "Delete" %}"><i class="icon-remove icon-white"></i></a>&nbsp
+        </div>
+        {% endif %}
+        <hr />
         <div class="row">
-            <div class="span6 text-center mb-5">
-                {% thumbnail style_detail.thumbnail_image "420x420" format="PNG" as im %}
-                    <img class="plugin-icon" alt="{% trans "Style icon" %}" src="{{ im.url }}" width="{{ im.x }}" height="{{ im.y }}" />
-                {% endthumbnail %}
+            <div class="span6 mb-5">
+                <div class="style-polaroid">
+                    {% thumbnail style_detail.thumbnail_image "420x420" format="PNG" as im %}
+                    <img class="" alt="{% trans "Style icon" %}" src="{{ im.url }}" width="{{ im.x }}" height="{{ im.y }}" />
+                    {% endthumbnail %}
+
+                </div>
+
             </div>
             <div class="span6">
                 <dl class="dl-horizontal">
+                    <dd></dd>
                     <dt>Name</dt>
                     <dd>{{ style_detail.name }}</dd>
                     <dt>Description</dt>
                     <dd>{{ style_detail.description }}</dd>
-                    <dt>Upload Date</dt>
+                    <dt>Uploaded Date</dt>
                     <dd>{{ style_detail.upload_date|date:"d F Y" }}</dd>
+                    <dt>Approved Date</dt>
+                    <dd>{{ style_detail.stylereview_set.last.review_date|date:"d F Y"}}</dd>
                     <dt>Creator</dt>
-                    <dd>{{ style_detail.creator }}</dd>
-                    <dt>Style Type</dt>
+                    <dd>{{ style_detail.get_creator_name|title }}</dd>
+                    <dt>Type</dt>
                     <dd>
-                        {% for type in style_detail.style_types.all %}
-                            {{ type.name }}
-                        {% endfor %}
-                    </dd>
-                    <dt></dt>
-                    <dd>
-                        <div>
-                            <a class="btn btn-primary" href="{% url 'style_download' style_detail.name %}"><i class="icon-download icon-white icon-2x" style=" vertical-align: middle;"></i>&nbsp;{% trans "Download Style" %}</a>
-                        </div>
+                        {{ style_detail.style_type.name }}
                     </dd>
 
+                    <dt>Style File</dt>
+                    <dd>
+                        <div>
+                             <a class="btn btn-primary btn-mini" href="{% url 'style_download' style_detail.id %}" title="{% trans "Download" %}"><i class="icon-download-alt"></i> Download</a>
+                        </div>
+                    </dd>
                 </dl>
 
             </div>

@@ -1,18 +1,40 @@
-{% extends 'styles/style_base.html' %}{% load i18n bootstrap_pagination humanize static sort_anchor range_filter thumbnail %}
+{% extends 'styles/style_base.html' %}{% load i18n bootstrap_pagination humanize static thumbnail %}
 
 {% block content %}
     <h2>{% if title %}{{title}}{% else %}{% trans "All Styles" %}{% endif %}</h2>
 
-
+    {% if not style_list %}
+    <p>No style.</p>
+    {% else %}
     <table class="table table-striped plugins">
         <thead>
             <tr>
                 <th></th>
-                <th>Name</th>
-                <th>Type</th>
-                <th><img src="{% static "images/down_16.png" %}" alt="{% trans "Download Count" %}"/></th>
-                <th>Creator</th>
-                <th>Upload Date</th>
+                <th>
+                    Name
+                    <a href="{{ request.get_path }}?order_by=name"><i class="icon-arrow-up"></i></a>
+                    <a href="{{ request.get_path }}?order_by=-name"><i class="icon-arrow-down"></i></a>
+                </th>
+                <th>
+                    Type
+                    <a href="{{ request.get_path }}?order_by=type"><i class="icon-arrow-up"></i></a>
+                    <a href="{{ request.get_path }}?order_by=-type"><i class="icon-arrow-down"></i></a>
+                </th>
+                <th>
+                    <img src="{% static "images/down_16.png" %}" alt="{% trans "Download Count" %}"/>
+                    <a href="{{ request.get_path }}?order_by=download_count"><i class="icon-arrow-up"></i></a>
+                    <a href="{{ request.get_path }}?order_by=-download_count"><i class="icon-arrow-down"></i></a>
+                </th>
+                <th>
+                    Creator
+                    <a href="{{ request.get_path }}?order_by=creator"><i class="icon-arrow-up"></i></a>
+                    <a href="{{ request.get_path }}?order_by=-creator"><i class="icon-arrow-down"></i></a>
+                </th>
+                <th>
+                    Upload Date
+                    <a href="{{ request.get_path }}?order_by=upload_date"><i class="icon-arrow-up"></i></a>
+                    <a href="{{ request.get_path }}?order_by=-upload_date"><i class="icon-arrow-down"></i></a>
+                </th>
                 <th></th>
             </tr>
         </thead>
@@ -24,17 +46,16 @@
                             <img class="plugin-icon" alt="{% trans "Style icon" %}" src="{{ im.url }}" width="{{ im.x }}" height="{{ im.y }}" />
                         {% endthumbnail %}
                     </td>
-                    <td><a href="{% url "style_detail" style.name %}">{{ style.name }}</a></td>
-                    {% for type in style.style_types.all %}
-                    <td>{{ type }}</td>
-                    {% endfor %}
+                    <td><a href="{% url 'style_detail' style.id %}">{{ style.name|title }}</a></td>
+                    <td>{{ style.style_type.name|title }}</td>
                     <td>{{ style.download_count }}</td>
-                    <td>{{ style.creator }}</td>
+                    <td>{{ style.get_creator_name|title }}</td>
                     <td>{{ style.upload_date|date:"d F Y" }}</td>
                     <td><form method="post" action="#">
                         {% csrf_token %}
-                        <a class="btn btn-primary btn-mini" href="#" title="{% trans "Edit" %}"><i class="icon-pencil icon-white"></i></a>&nbsp
-                        <a class="btn btn-danger btn-mini delete" href="#" title="{% trans "Delete" %}"><i class="icon-remove icon-white"></i></a>
+                        <a class="btn btn-primary btn-mini" href="{% url 'style_update' style.id %}" title="{% trans "Edit" %}"><i class="icon-pencil icon-white"></i></a>&nbsp
+                        <a class="btn btn-danger btn-mini delete" href="{% url 'style_delete' style.id %}" title="{% trans "Delete" %}"><i class="icon-remove icon-white"></i></a>&nbsp
+                        <a class="btn btn-primary btn-mini delete" href="{% url 'style_download' style.id %}" title="{% trans "Download" %}"><i class="icon-download-alt"></i></a>
                     </form></td>
                 </tr>
             {% endfor %}
@@ -43,6 +64,8 @@
     <div class="pagination">
     {% include 'sortable_listview/pagination.html' %}
     </div>
+
+    {% endif %}
 
 
     <script type="text/javascript">
