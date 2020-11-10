@@ -1,5 +1,5 @@
 from django.contrib import admin
-from .models import Style, StyleType
+from .models import Style, StyleType, StyleReview
 
 
 class StyleTypeAdmin(admin.ModelAdmin):
@@ -12,8 +12,10 @@ class StyleAdmin(admin.ModelAdmin):
                     'description',
                     'creator',
                     'upload_date',
+                    'modified_date',
                     'style_type')
 
 
 admin.site.register(Style, StyleAdmin)
 admin.site.register(StyleType, StyleTypeAdmin)
+admin.site.register(StyleReview)

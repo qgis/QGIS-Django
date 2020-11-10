@@ -1,0 +1,144 @@
+<!DOCTYPE qgis_style>
+<qgis_style version="2">
+  <symbols>
+    <symbol type="fill" name="topo swamp" clip_to_extent="1" tags="Topology,Showcase" force_rhr="0" alpha="1">
+      <layer locked="0" class="SimpleFill" enabled="1" pass="0">
+        <prop k="border_width_map_unit_scale" v="3x:0,0,0,0,0,0"/>
+        <prop k="color" v="163,205,185,255"/>
+        <prop k="joinstyle" v="bevel"/>
+        <prop k="offset" v="0,0"/>
+        <prop k="offset_map_unit_scale" v="3x:0,0,0,0,0,0"/>
+        <prop k="offset_unit" v="MM"/>
+        <prop k="outline_color" v="114,133,132,255"/>
+        <prop k="outline_style" v="no"/>
+        <prop k="outline_width" v="0.26"/>
+        <prop k="outline_width_unit" v="MM"/>
+        <prop k="style" v="solid"/>
+        <data_defined_properties>
+          <Option type="Map">
+            <Option type="QString" name="name" value=""/>
+            <Option name="properties"/>
+            <Option type="QString" name="type" value="collection"/>
+          </Option>
+        </data_defined_properties>
+      </layer>
+      <layer locked="0" class="PointPatternFill" enabled="1" pass="0">
+        <prop k="displacement_x" v="5"/>
+        <prop k="displacement_x_map_unit_scale" v="3x:0,0,0,0,0,0"/>
+        <prop k="displacement_x_unit" v="MM"/>
+        <prop k="displacement_y" v="1.6"/>
+        <prop k="displacement_y_map_unit_scale" v="3x:0,0,0,0,0,0"/>
+        <prop k="displacement_y_unit" v="MM"/>
+        <prop k="distance_x" v="11.4"/>
+        <prop k="distance_x_map_unit_scale" v="3x:0,0,0,0,0,0"/>
+        <prop k="distance_x_unit" v="MM"/>
+        <prop k="distance_y" v="6.6"/>
+        <prop k="distance_y_map_unit_scale" v="3x:0,0,0,0,0,0"/>
+        <prop k="distance_y_unit" v="MM"/>
+        <prop k="offset_x" v="0"/>
+        <prop k="offset_x_map_unit_scale" v="3x:0,0,0,0,0,0"/>
+        <prop k="offset_x_unit" v="MM"/>
+        <prop k="offset_y" v="0"/>
+        <prop k="offset_y_map_unit_scale" v="3x:0,0,0,0,0,0"/>
+        <prop k="offset_y_unit" v="MM"/>
+        <prop k="outline_width_map_unit_scale" v="3x:0,0,0,0,0,0"/>
+        <prop k="outline_width_unit" v="MM"/>
+        <data_defined_properties>
+          <Option type="Map">
+            <Option type="QString" name="name" value=""/>
+            <Option name="properties"/>
+            <Option type="QString" name="type" value="collection"/>
+          </Option>
+        </data_defined_properties>
+        <symbol type="marker" name="@topo swamp@1" clip_to_extent="1" force_rhr="0" alpha="1">
+          <layer locked="0" class="SimpleMarker" enabled="1" pass="0">
+            <prop k="angle" v="90"/>
+            <prop k="color" v="255,0,0,255"/>
+            <prop k="horizontal_anchor_point" v="1"/>
+            <prop k="joinstyle" v="bevel"/>
+            <prop k="name" v="line"/>
+            <prop k="offset" v="0.80000000000000004,1.39999999999999991"/>
+            <prop k="offset_map_unit_scale" v="3x:0,0,0,0,0,0"/>
+            <prop k="offset_unit" v="MM"/>
+            <prop k="outline_color" v="111,155,204,255"/>
+            <prop k="outline_style" v="solid"/>
+            <prop k="outline_width" v="0.4"/>
+            <prop k="outline_width_map_unit_scale" v="3x:0,0,0,0,0,0"/>
+            <prop k="outline_width_unit" v="MM"/>
+            <prop k="scale_method" v="diameter"/>
+            <prop k="size" v="2.2"/>
+            <prop k="size_map_unit_scale" v="3x:0,0,0,0,0,0"/>
+            <prop k="size_unit" v="MM"/>
+            <prop k="vertical_anchor_point" v="1"/>
+            <data_defined_properties>
+              <Option type="Map">
+                <Option type="QString" name="name" value=""/>
+                <Option name="properties"/>
+                <Option type="QString" name="type" value="collection"/>
+              </Option>
+            </data_defined_properties>
+          </layer>
+          <layer locked="0" class="SimpleMarker" enabled="1" pass="0">
+            <prop k="angle" v="90"/>
+            <prop k="color" v="255,0,0,255"/>
+            <prop k="horizontal_anchor_point" v="1"/>
+            <prop k="joinstyle" v="bevel"/>
+            <prop k="name" v="line"/>
+            <prop k="offset" v="0,0"/>
+            <prop k="offset_map_unit_scale" v="3x:0,0,0,0,0,0"/>
+            <prop k="offset_unit" v="MM"/>
+            <prop k="outline_color" v="111,155,204,255"/>
+            <prop k="outline_style" v="solid"/>
+            <prop k="outline_width" v="0.4"/>
+            <prop k="outline_width_map_unit_scale" v="3x:0,0,0,0,0,0"/>
+            <prop k="outline_width_unit" v="MM"/>
+            <prop k="scale_method" v="diameter"/>
+            <prop k="size" v="3.8"/>
+            <prop k="size_map_unit_scale" v="3x:0,0,0,0,0,0"/>
+            <prop k="size_unit" v="MM"/>
+            <prop k="vertical_anchor_point" v="1"/>
+            <data_defined_properties>
+              <Option type="Map">
+                <Option type="QString" name="name" value=""/>
+                <Option name="properties"/>
+                <Option type="QString" name="type" value="collection"/>
+              </Option>
+            </data_defined_properties>
+          </layer>
+          <layer locked="0" class="SimpleMarker" enabled="1" pass="0">
+            <prop k="angle" v="90"/>
+            <prop k="color" v="255,0,0,255"/>
+            <prop k="horizontal_anchor_point" v="1"/>
+            <prop k="joinstyle" v="bevel"/>
+            <prop k="name" v="line"/>
+            <prop k="offset" v="-0.80000000000000004,1.79999999999999982"/>
+            <prop k="offset_map_unit_scale" v="3x:0,0,0,0,0,0"/>
+            <prop k="offset_unit" v="MM"/>
+            <prop k="outline_color" v="111,155,204,255"/>
+            <prop k="outline_style" v="solid"/>
+            <prop k="outline_width" v="0.4"/>
+            <prop k="outline_width_map_unit_scale" v="3x:0,0,0,0,0,0"/>
+            <prop k="outline_width_unit" v="MM"/>
+            <prop k="scale_method" v="diameter"/>
+            <prop k="size" v="3.8"/>
+            <prop k="size_map_unit_scale" v="3x:0,0,0,0,0,0"/>
+            <prop k="size_unit" v="MM"/>
+            <prop k="vertical_anchor_point" v="1"/>
+            <data_defined_properties>
+              <Option type="Map">
+                <Option type="QString" name="name" value=""/>
+                <Option name="properties"/>
+                <Option type="QString" name="type" value="collection"/>
+              </Option>
+            </data_defined_properties>
+          </layer>
+        </symbol>
+      </layer>
+    </symbol>
+  </symbols>
+  <colorramps/>
+  <textformats/>
+  <labelsettings/>
+  <legendpatchshapes/>
+  <symbols3d/>
+</qgis_style>

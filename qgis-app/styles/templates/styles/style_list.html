@@ -1,0 +1,77 @@
+{% extends 'styles/style_base.html' %}{% load i18n bootstrap_pagination humanize static thumbnail %}
+
+{% block content %}
+    <h2>{% if title %}{{title}}{% else %}{% trans "All Styles" %}{% endif %}</h2>
+
+    {% if not style_list %}
+    <p>No data.</p>
+    {% else %}
+        <p>{{ style_list.count }} record{{ style_list.count|pluralize:"s" }} found.</p>
+    <table class="table table-striped plugins">
+        <thead>
+            <tr>
+                <th></th>
+                <th>
+                    Name
+                    <a href="{{ request.get_path }}?order_by=name"><i class="icon-arrow-up"></i></a>
+                    <a href="{{ request.get_path }}?order_by=-name"><i class="icon-arrow-down"></i></a>
+                </th>
+                <th>
+                    Type
+                    <a href="{{ request.get_path }}?order_by=type"><i class="icon-arrow-up"></i></a>
+                    <a href="{{ request.get_path }}?order_by=-type"><i class="icon-arrow-down"></i></a>
+                </th>
+                <th>
+                    <img src="{% static "images/down_16.png" %}" alt="{% trans "Download Count" %}"/>
+                    <a href="{{ request.get_path }}?order_by=download_count"><i class="icon-arrow-up"></i></a>
+                    <a href="{{ request.get_path }}?order_by=-download_count"><i class="icon-arrow-down"></i></a>
+                </th>
+                <th>
+                    Creator
+                    <a href="{{ request.get_path }}?order_by=creator"><i class="icon-arrow-up"></i></a>
+                    <a href="{{ request.get_path }}?order_by=-creator"><i class="icon-arrow-down"></i></a>
+                </th>
+                <th>
+                    Upload Date
+                    <a href="{{ request.get_path }}?order_by=upload_date"><i class="icon-arrow-up"></i></a>
+                    <a href="{{ request.get_path }}?order_by=-upload_date"><i class="icon-arrow-down"></i></a>
+                </th>
+                <th></th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for style in style_list %}
+                <tr>
+                    <td>
+                        {% thumbnail style.thumbnail_image "32x32" format="PNG" as im %}
+                            <img class="plugin-icon" alt="{% trans "Style icon" %}" src="{{ im.url }}" width="{{ im.x }}" height="{{ im.y }}" />
+                        {% endthumbnail %}
+                    </td>
+                    <td><a href="{% url 'style_detail' style.id %}">{{ style.name|title }}</a></td>
+                    <td>{{ style.style_type.name|title }}</td>
+                    <td>{{ style.download_count }}</td>
+                    <td>{{ style.get_creator_name|title }}</td>
+                    <td>{{ style.upload_date|date:"d F Y" }}</td>
+                    <td>
+                        {% if user.is_staff or user == style.creator %}
+                        <a class="btn btn-primary btn-mini" href="{% url 'style_update' style.id %}" title="{% trans "Edit" %}"><i class="icon-pencil icon-white"></i></a>&nbsp
+                        <a class="btn btn-danger btn-mini delete" href="{% url 'style_delete' style.id %}" title="{% trans "Delete" %}"><i class="icon-remove icon-white"></i></a>&nbsp
+                        {% endif %}
+                        <a class="btn btn-primary btn-mini pull-right" href="{% url 'style_download' style.id %}" title="{% trans "Download" %}"><i class="icon-download-alt"></i></a>
+                    </td>
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+    <div class="pagination">
+    {% include 'sortable_listview/pagination.html' %}
+    </div>
+
+    {% endif %}
+
+
+    <script type="text/javascript">
+        jQuery('.popover').popover();
+    </script>
+{% endblock %}
+

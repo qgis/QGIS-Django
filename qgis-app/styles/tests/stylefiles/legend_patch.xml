@@ -1,0 +1,13 @@
+<!DOCTYPE qgis_style>
+<qgis_style version="2">
+  <symbols/>
+  <colorramps/>
+  <textformats/>
+  <labelsettings/>
+  <legendpatchshapes>
+    <legendpatchshape name="Building 3" tags="Construction,klas-karlsson-patches">
+      <definition type="2" preserveAspect="1" wkt="MultiPolygon (((117 16, 86 16, 92 18, 87 37, 47 27, 50 16, 24 16, 19 37, 105 59, 117 16)),((158 72, 158 56, 147 53, 152 33, 158 35, 158 21, 140 16, 132 16, 120 63, 158 72)),((108 108, 132 108, 135 97, 152 102, 156 88, 116 78, 108 108)),((6 88, 6 101, 33 108, 93 108, 101 74, 15 52, 6 88),(36 72, 76 82, 71 101, 31 91, 36 72)))"/>
+    </legendpatchshape>
+  </legendpatchshapes>
+  <symbols3d/>
+</qgis_style>

@@ -13,7 +13,7 @@ class TestCRUD(TestCase):
         """
         Sets up before each test
         """
-        # https: // stackoverflow.com / a / 32814129 / 10268058
+        # https://stackoverflow.com/a/32814129/10268058
         self.image_temp = tempfile.NamedTemporaryFile(suffix=".png").name
         self.xml_temp = tempfile.NamedTemporaryFile(suffix=".xml").name
         self.marker_type = StyleType.objects.create(symbol_type="marker",

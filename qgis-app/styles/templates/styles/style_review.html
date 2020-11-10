@@ -1,0 +1,90 @@
+{% extends 'styles/style_base.html' %}{% load i18n static thumbnail humanize %}
+
+{% block extrajs %}
+    {{ block.super }}
+<style type="text/css">
+    dl.dl-horizontal::before {
+        content: none;
+    }
+    .radio.inline{
+        padding-top: 0;
+    }
+
+</style>
+{% endblock %}
+
+{% block content %}
+    <h3>{{ style_detail.name|title }} <small>in review</small></h3>
+    {% if user == style_detail.creator or user.is_staff %}
+        <div class="row pull-right">
+            <a class="btn btn-primary btn-mini" href="{% url 'style_update' style_detail.id %}" title="{% trans "Edit" %}"><i class="icon-pencil icon-white"></i></a>&nbsp
+            <a class="btn btn-danger btn-mini" href="{% url 'style_delete' style_detail.id %}" title="{% trans "Delete" %}"><i class="icon-remove icon-white"></i></a>&nbsp
+        </div>
+    {% endif %}
+    <hr />
+    <div class="row">
+        <div class="span6 text-center mb-5">
+            <div class="style-polaroid">
+               {% thumbnail style_detail.thumbnail_image "420x420" format="PNG" as im %}
+                   <img class="style-polaroid" alt="{% trans "Style icon" %}" src="{{ im.url }}" width="{{ im.x }}" height="{{ im.y }}" />
+                {% endthumbnail %}
+            </div>
+        </div>
+        <div class="span6">
+            <dl class="dl-horizontal">
+                <dt>Name</dt>
+                <dd>{{ style_detail.name }}</dd>
+                <dt>Description</dt>
+                <dd>{{ style_detail.description }}</dd>
+                <dt>Upload Date</dt>
+                <dd>{{ style_detail.upload_date|date:"d F Y" }}</dd>
+                <dt>Modified Date</dt>
+                <dd>{{ style_detail.modified_date|date:"d F Y" }}</dd>
+                <dt>Creator</dt>
+                <dd>{{ style_detail.get_creator_name|title }}</dd>
+                <dt>Type</dt>
+                <dd>{{ style_detail.style_type.name }}</dd>
+                <dt>Style File</dt>
+                <dd>
+                    <a class="btn btn-primary btn-mini delete" href="{% url 'style_download' style_detail.id %}" title="{% trans "Download" %}"><i class="icon-download-alt"></i> Download</a>
+                </dd>
+
+                <hr />
+                {% if reviewer %}
+                    {% with review=style_detail.stylereview_set.last %}
+                    <dt>Last Review</dt>
+                    <dd>{{ review.comment }}<br/>
+                        <i><small>Reviewed by {{ reviewer|title }} {{ review.review_date|naturaltime }}</small></i>
+                    </dd>
+                    {% endwith %}
+                {% endif %}
+
+                {% if user.is_staff %}
+                <form method="post" action="{% url 'style_review' pk=style_detail.id %}">{% csrf_token %}
+                    <dt>Approval</dt>
+                    <dd>
+                        <label class="radio inline">
+                            {{ form.approval.0 }}
+                        </label>
+                        <label class="radio inline">
+                            {{ form.approval.1 }}
+                        </label>
+                    </dd>
+                    <dt>Comment</dt>
+                    <dd>
+                        {{ form.comment }}
+                        <br />
+                        <input type="submit" class="btn btn-primary" value="Submit Review"/>
+                    </dd>
+                </form>
+                {% endif %}
+
+            </dl>
+        </div>
+        <div class="span12"></div>
+
+    </div>
+    <script>
+
+    </script>
+{% endblock %}
