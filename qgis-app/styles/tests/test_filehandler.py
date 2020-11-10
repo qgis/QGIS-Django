@@ -28,14 +28,22 @@ class XMLFileReadTest(TestCase):
         """
         Setup before each test.
         """
-        self.label_setting_file = os.path.join(STYLEFILE_DIR, "labelsettings.xml")
-        self.legend_patch_file = os.path.join(STYLEFILE_DIR, "legend_patch.xml")
-        self.color_ramp_file = os.path.join(STYLEFILE_DIR, "colorramp_blue.xml")
-        self.symbol3d_file = os.path.join(STYLEFILE_DIR, "3d_cube.xml")
-        self.text_format_file = os.path.join(STYLEFILE_DIR, "text-format.xml")
-        self.symbol_line_file = os.path.join(STYLEFILE_DIR, "cattrail.xml")
-        self.symbol_fill_file = os.path.join(STYLEFILE_DIR, "topo_swamp.xml")
-        self.symbol_marker_file = os.path.join(STYLEFILE_DIR, "dotblack_marker.xml")
+        self.label_setting_file = os.path.join(
+            STYLEFILE_DIR, "labelsettings.xml")
+        self.legend_patch_file = os.path.join(
+            STYLEFILE_DIR, "legend_patch.xml")
+        self.color_ramp_file = os.path.join(
+            STYLEFILE_DIR, "colorramp_blue.xml")
+        self.symbol3d_file = os.path.join(
+            STYLEFILE_DIR, "3d_cube.xml")
+        self.text_format_file = os.path.join(
+            STYLEFILE_DIR, "text-format.xml")
+        self.symbol_line_file = os.path.join(
+            STYLEFILE_DIR, "cattrail.xml")
+        self.symbol_fill_file = os.path.join(
+            STYLEFILE_DIR, "topo_swamp.xml")
+        self.symbol_marker_file = os.path.join(
+            STYLEFILE_DIR, "dotblack_marker.xml")
 
     def test_read_label_setting_file(self):
         read_file = read_xml_style(self.label_setting_file)
@@ -127,7 +135,6 @@ class TestXMLValidator(TestCase):
         tf.seek(0)
         validation = validator(tf)
         self.assertEqual(validation, True)
-        assert validation == True
         tf.close()
 
     def test_invalid_xml(self):
@@ -154,7 +161,8 @@ class TestXMLValidator(TestCase):
         tf.seek(0)
         self.assertRaises(ValidationError, validator, tf)
         with self.assertRaisesMessage(ValidationError,
-            "Cannot parse the style file. Please ensure your file is correct."):
+            "Cannot parse the style file. Please ensure your file is correct."
+        ):
             validator(tf)
         tf.close()
 
@@ -169,8 +177,9 @@ class TestXMLValidator(TestCase):
               <prop k="color2" v="8,48,107,255"/>
               <prop k="discrete" v="0"/>
               <prop k="rampType" v="gradient"/>
-              <prop k="stops" v="0.13;222,235,247,255:0.26;198,219,239,255:0.39;
-              158,202,225,255:0.52;107,174,214,255:0.65;66,146,198,255:0.78;
+              <prop k="stops" v="0.13;222,235,247,255:0.26;
+              198,219,239,255:0.39;158,202,225,255:0.52;
+              107,174,214,255:0.65;66,146,198,255:0.78;
               33,113,181,255:0.9;8,81,156,255"/>
             </colorramp>
           </colorramps>
@@ -182,8 +191,8 @@ class TestXMLValidator(TestCase):
                 """)
         tf.seek(0)
         # self.assertRaises(ValidationError, validator, tf)
-        with self.assertRaisesMessage(ValidationError,
-            "Invalid root tag of style file. Please ensure your file is correct."):
+        with self.assertRaisesMessage(ValidationError, "Invalid root tag of "
+            "style file. Please ensure your file is correct."):
             validator(tf)
         tf.close()
 
@@ -198,8 +207,9 @@ class TestXMLValidator(TestCase):
               <prop k="color2" v="8,48,107,255"/>
               <prop k="discrete" v="0"/>
               <prop k="rampType" v="gradient"/>
-              <prop k="stops" v="0.13;222,235,247,255:0.26;198,219,239,255:0.39;
-              158,202,225,255:0.52;107,174,214,255:0.65;66,146,198,255:0.78;
+              <prop k="stops" v="0.13;222,235,247,255:0.26;
+              198,219,239,255:0.39;158,202,225,255:0.52;
+              107,174,214,255:0.65;66,146,198,255:0.78;
               33,113,181,255:0.9;8,81,156,255"/>
             </colorramp>
           </colorramps>
@@ -220,8 +230,8 @@ class TestXMLValidator(TestCase):
         tf.write("""<!DOCTYPE qgis_style>
 <qgis_style version="2">
   <symbols>
-    <symbol name="cat trail" clip_to_extent="1" tags="Showcase" force_rhr="0" alpha="1">
-      
+    <symbol name="cat trail" clip_to_extent="1"
+    tags="Showcase" force_rhr="0" alpha="1">
     </symbol>
   </symbols>
   <colorramps/>

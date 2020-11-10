@@ -1,4 +1,4 @@
-{% extends BASE_TEMPLATE %}{% load i18n %}
+{% extends BASE_TEMPLATE %}{% load i18n static thumbnail %}
 {% block extratitle %}{% trans "Style"%}{% endblock %}
 {% block app_title %}
 <h2 xmlns="http://www.w3.org/1999/html">{% trans "QGIS Style"%}</h2>
@@ -49,11 +49,18 @@
                 }
             })
             $.ajax({
+                type: 'GET',
                 url: "{% url 'style_nav_typelist' %}",
                 success: function (response){
-                    $.each(response, function(i, val){
+                    let icon_url = response.icon_url;
+                    $.each(response.qs, function(i, val){
                         let name = val.fields.name
-                        $("#styleList").append("<li>"+ name +"</li>");
+                        let icon = val.fields.icon
+                        if(icon){
+                            $("#styleList").append('<li><a href="/styles/types/' + name + '/"><img src="'+ icon_url+ icon +'" width="12" height="12">&nbsp;' + name + '</li>');
+                        } else {
+                            $("#styleList").append('<li><a href="/styles/types/' + name + '/">' + name + '</li>');
+                        }
                     })
                 }
             })
@@ -62,5 +69,5 @@
 {% endblock %}
 
 {% block "credits" %}
-{% trans "This web application was developed by:" %}&nbsp;<a href="https://www.itopen.it">Alessandro Pasotti</a>
+{% trans "This web application was developed by:" %}&nbsp;<a href="https://www.itopen.it">Alessandro Pasotti</a> and &nbsp;<a href="https://kartoza.com"><img src="{% static 'images/kartoza-logo-only.png' %}" alt="Kartoza icon" width="16" height="16">Kartoza</a>.
 {% endblock %}

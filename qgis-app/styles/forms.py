@@ -28,7 +28,8 @@ class StyleUploadForm(forms.ModelForm):
         if xml_file:
             style = validator(xml_file.file)
             if not style:
-                raise ValidationError(_('Undefined style type. Please register your style type.'))
+                raise ValidationError(_('Undefined style type. '
+                                        'Please register your style type.'))
         return xml_file
 
 
@@ -37,3 +38,12 @@ class StyleUpdateForm(StyleUploadForm):
         model = Style
         fields = ['name', 'xml_file', 'thumbnail_image', 'description', ]
 
+
+class StyleReviewForm(forms.Form):
+    CHOICES = [('approve', 'Approve'), ('reject', 'Reject')]
+    approval = forms.ChoiceField(required=True, choices=CHOICES,
+                                 widget=forms.RadioSelect, initial='approve')
+    comment = forms.CharField(widget=forms.Textarea(
+        attrs={'placeholder': 'Please provide clear feedback '
+                              'if you decided to not approve this style.',
+               'rows': "5"}))

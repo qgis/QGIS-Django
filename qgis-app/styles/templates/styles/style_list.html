@@ -6,6 +6,7 @@
     {% if not style_list %}
     <p>No data.</p>
     {% else %}
+        <p>{{ style_list.count }} record{{ style_list.count|pluralize:"s" }} found.</p>
     <table class="table table-striped plugins">
         <thead>
             <tr>
@@ -51,12 +52,13 @@
                     <td>{{ style.download_count }}</td>
                     <td>{{ style.get_creator_name|title }}</td>
                     <td>{{ style.upload_date|date:"d F Y" }}</td>
-                    <td><form method="post" action="#">
-                        {% csrf_token %}
+                    <td>
+                        {% if user.is_staff or user == style.creator %}
                         <a class="btn btn-primary btn-mini" href="{% url 'style_update' style.id %}" title="{% trans "Edit" %}"><i class="icon-pencil icon-white"></i></a>&nbsp
                         <a class="btn btn-danger btn-mini delete" href="{% url 'style_delete' style.id %}" title="{% trans "Delete" %}"><i class="icon-remove icon-white"></i></a>&nbsp
-                        <a class="btn btn-primary btn-mini delete" href="{% url 'style_download' style.id %}" title="{% trans "Download" %}"><i class="icon-download-alt"></i></a>
-                    </form></td>
+                        {% endif %}
+                        <a class="btn btn-primary btn-mini pull-right" href="{% url 'style_download' style.id %}" title="{% trans "Download" %}"><i class="icon-download-alt"></i></a>
+                    </td>
                 </tr>
             {% endfor %}
         </tbody>

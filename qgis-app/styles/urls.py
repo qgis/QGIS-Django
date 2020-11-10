@@ -1,13 +1,13 @@
-from django.conf.urls import url
 from django.urls import path
 
-from .views import(StyleListView,
+from styles.views import (StyleListView,
                    StyleCreateView,
                    StyleDetailView,
                    StyleDeleteView,
                    StyleUpdateView,
                    StyleUnapprovedListView,
                    StyleRequireActionListView,
+                   StyleByTypeListView,
                    style_download,
                    style_review,
                    style_nav_content,
@@ -21,8 +21,12 @@ urlpatterns = [
     path('<int:pk>/delete/', StyleDeleteView.as_view(), name='style_delete'),
     path('<int:pk>/update/', StyleUpdateView.as_view(), name='style_update'),
 
-    path('unapproved/', StyleUnapprovedListView.as_view(), name='style_unapproved'),
-    path('require_action/', StyleRequireActionListView.as_view(), name='style_require_action'),
+    path('unapproved/', StyleUnapprovedListView.as_view(),
+         name='style_unapproved'),
+    path('require_action/', StyleRequireActionListView.as_view(),
+         name='style_require_action'),
+    path('types/<style_type>/', StyleByTypeListView.as_view(),
+         name='style_by_type'),
     path('<int:pk>/review/', style_review, name='style_review'),
 
     # JSON

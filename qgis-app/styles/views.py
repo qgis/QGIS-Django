@@ -1,7 +1,9 @@
+import json
+
+from django.conf import settings
 from django.contrib import messages
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.core import serializers
-from django.core.exceptions import PermissionDenied
 from django.http import HttpResponse, HttpResponseRedirect, JsonResponse
 from django.shortcuts import get_object_or_404, render
 from django.urls import reverse, reverse_lazy
@@ -9,10 +11,14 @@ from django.utils.translation import ugettext_lazy as _
 from django.utils.decorators import method_decorator
 from django.utils.crypto import get_random_string
 from django.views.decorators.cache import never_cache
-from django.views.generic import CreateView, DetailView, DeleteView, ListView, UpdateView
+from django.views.generic import (CreateView,
+                                  DetailView,
+                                  DeleteView,
+                                  ListView,
+                                  UpdateView)
 
-from .models import Style, StyleType, StyleReview
-from .forms import StyleUploadForm, StyleUpdateForm
+from styles.models import Style, StyleType, StyleReview
+from styles.forms import StyleUploadForm, StyleUpdateForm, StyleReviewForm
 
 from styles.file_handler import read_xml_style
 
@@ -57,20 +63,24 @@ class StyleCreateView(LoginRequiredMixin, CreateView):
             # check if name exists
             name_exist = Style.objects.filter(name=xml_parse['name']).exists()
             if name_exist:
-                obj.name = "%s_%s" % (xml_parse['name'].title(), get_random_string(length=5))
+                obj.name = "%s_%s" % (xml_parse['name'].title(),
+                                      get_random_string(length=5))
             else:
                 obj.name = xml_parse['name'].title()
-            style_type = StyleType.objects.filter(symbol_type=xml_parse['type']).first()
+            style_type = StyleType.objects \
+                .filter(symbol_type=xml_parse['type']).first()
             if not style_type:
                 style_type = StyleType.objects.create(
                     symbol_type=xml_parse['type'],
                     name=xml_parse['type'].title(),
-                    description="Automatically created from an uploaded Style file")
+                    description="Automatically created from '"
+                                "'an uploaded Style file")
             obj.style_type = style_type
         obj.save()
         msg = _("The Style has been successfully created.")
-        messages.success(self.request, msg, 'success',fail_silently=True)
-        return HttpResponseRedirect(reverse('style_detail', kwargs={'pk': obj.id}))
+        messages.success(self.request, msg, 'success', fail_silently=True)
+        return HttpResponseRedirect(reverse('style_detail',
+                                            kwargs={'pk': obj.id}))
 
 
 @method_decorator(never_cache, name='dispatch')
@@ -78,13 +88,12 @@ class StyleListView(ListView):
     """
     Style ListView.
 
-    TODO:
-    - ensure that page will refresh if there's a new styles uploaded/ downloaded
     """
     model = Style
     queryset = Style.approved_objects.all()
     context_object_name = 'style_list'
     template_name = 'styles/style_list.html'
+    paginate_by = settings.PAGINATION_DEFAULT_PAGINATION
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
@@ -100,6 +109,15 @@ class StyleListView(ListView):
             elif order_by == "type":
                 qs = qs.order_by('style_type__name')
         return qs
+
+
+class StyleByTypeListView(StyleListView):
+    context_object_name = 'style_list'
+
+    def get_queryset(self):
+        qs = super().get_queryset()
+        style_type = self.kwargs['style_type']
+        return qs.filter(style_type__name=style_type)
 
 
 class StyleUnapprovedListView(LoginRequiredMixin, StyleListView):
@@ -137,6 +155,15 @@ class StyleDetailView(DetailView):
     queryset = Style.objects.all()
     context_object_name = 'style_detail'
 
+    def dispatch(self, request, *args, **kwargs):
+        style = self.get_object()
+        user = self.request.user
+        if not check_styles_access(user, style):
+            return render(request, 'styles/style_permission_deny.html',
+                {'style_name': style.name,
+                 'context': "This style is in review"})
+        return super().dispatch(request, *args, **kwargs)
+
     def get_template_names(self):
         style = self.get_object()
         if not style.approved:
@@ -157,8 +184,11 @@ class StyleDetailView(DetailView):
                     self.object.stylereview_set.last().reviewer.first_name,
                     self.object.stylereview_set.last().reviewer.last_name)
             else:
-                reviewer = self.object.stylereview_set.last().reviewer.username
+                reviewer = self.object.stylereview_set.last().reviewer \
+                    .username
             context['reviewer'] = reviewer
+        if self.request.user.is_staff:
+            context['form'] = StyleReviewForm()
         return context
 
 
@@ -177,7 +207,7 @@ class StyleUpdateView(LoginRequiredMixin, UpdateView):
         if not check_styles_access(user, style):
             return render(request, 'styles/style_permission_deny.html',
                 {'style_name': style.name,
-                 'context':  "You cannot modify this style"})
+                 'context': "You cannot modify this style"})
         return super().dispatch(request, *args, **kwargs)
 
     def form_valid(self, form):
@@ -187,20 +217,20 @@ class StyleUpdateView(LoginRequiredMixin, UpdateView):
         obj = form.save(commit=False)
         xml_parse = read_xml_style(obj.xml_file)
         if xml_parse:
-            obj.style_type = StyleType.objects.filter(symbol_type=xml_parse['type']).first()
-        obj.require_action=False
+            obj.style_type = StyleType.objects \
+                .filter(symbol_type=xml_parse['type']).first()
+        obj.require_action = False
         obj.save()
         msg = _("The Style has been successfully updated.")
         messages.success(self.request, msg, 'success', fail_silently=True)
-        return HttpResponseRedirect(reverse_lazy('style_detail', kwargs={'pk': obj.id}))
+        return HttpResponseRedirect(reverse_lazy('style_detail',
+                                                 kwargs={'pk': obj.id}))
 
 
-class StyleDeleteView(DeleteView):
+class StyleDeleteView(LoginRequiredMixin, DeleteView):
     """
-    Delete a style
+    Delete a style.
 
-    TODO:
-    ensure only the owner of the style who can delete its style
     """
     model = Style
     context_object_file = 'style'
@@ -214,7 +244,7 @@ class StyleDeleteView(DeleteView):
         if not check_styles_access(user, style):
             return render(request, 'styles/style_permission_deny.html',
                 {'style_name': style.name,
-                 'context':  "You cannot delete this style"})
+                 'context': "You cannot delete this style"})
         return super().dispatch(request, *args, **kwargs)
 
 
@@ -244,25 +274,31 @@ def style_download(request, pk):
 
 
 def style_review(request, pk):
+    """Review POST request"""
     style = get_object_or_404(Style, pk=pk)
-    review = StyleReview.objects.create(
-        style=style,
-        reviewer=request.user,
-        comment=request.POST['comment'])
-    if request.POST['approval'] == 'approve':
-        style.approved = True
-        style.require_action = False
-        msg = _("The Style has been approved.")
-        messages.success(request, msg, 'success', fail_silently=True)
-    else:
-        style.approved = False
-        style.require_action = True
-        msg = _("The Style has been rejected.")
-        messages.success(request, msg, 'error', fail_silently=True)
-    style.save()
+    if request.method == 'POST':
+        form = StyleReviewForm(request.POST)
+        if form.is_valid():
+            data = form.cleaned_data
+            StyleReview.objects.create(
+                style=style,
+                reviewer=request.user,
+                comment=data['comment'])
+            if data['approval'] == 'approve':
+                style.approved = True
+                style.require_action = False
+                msg = _("The Style has been approved.")
+                messages.success(request, msg, 'success', fail_silently=True)
+            else:
+                style.approved = False
+                style.require_action = True
+                msg = _("The Style has been rejected.")
+                messages.success(request, msg, 'error', fail_silently=True)
+            style.save()
     return HttpResponseRedirect(reverse('style_detail', kwargs={'pk': pk}))
 
 
+@never_cache
 def style_nav_content(request):
     """Provides data for sidebar style navigation"""
     # TODO
@@ -275,16 +311,22 @@ def style_nav_content(request):
         waiting_review = Style.unapproved_objects.distinct().count()
         require_action = Style.requireaction_objects.distinct().count()
     elif user.is_authenticated:
-        waiting_review = Style.unapproved_objects.filter(creator=user).distinct().count()
-        require_action = Style.requireaction_objects.filter(creator=user).distinct().count()
+        waiting_review = Style.unapproved_objects.filter(creator=user) \
+            .distinct().count()
+        require_action = Style.requireaction_objects.filter(creator=user) \
+            .distinct().count()
     number_style = {'all': all,
                     'waiting_review': waiting_review,
                     'require_action': require_action}
     return JsonResponse(number_style, status=200)
 
 
+@never_cache
 def style_type_list(request):
+    media_path = getattr(settings, 'MEDIA_URL')
     qs = StyleType.objects.all()
     qs_json = serializers.serialize('json', qs)
+    qs_load = json.loads(qs_json)
+    qs_add = {'qs': qs_load, 'icon_url': media_path}
+    qs_json = json.dumps(qs_add)
     return HttpResponse(qs_json, content_type='application/json')
-

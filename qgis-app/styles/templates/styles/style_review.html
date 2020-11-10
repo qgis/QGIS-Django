@@ -64,16 +64,17 @@
                     <dt>Approval</dt>
                     <dd>
                         <label class="radio inline">
-                            <input type="radio" name="approval" value="approve" checked> Approve
+                            {{ form.approval.0 }}
                         </label>
                         <label class="radio inline">
-                            <input type="radio" name="approval" value="reject"> Reject
+                            {{ form.approval.1 }}
                         </label>
                     </dd>
                     <dt>Comment</dt>
                     <dd>
-                        <textarea name="comment" placeholder="Please provide clear feedback if you decided to not approve this style." rows="5"></textarea>
-                        <input type="submit" class="btn btn-primary" />
+                        {{ form.comment }}
+                        <br />
+                        <input type="submit" class="btn btn-primary" value="Submit Review"/>
                     </dd>
                 </form>
                 {% endif %}

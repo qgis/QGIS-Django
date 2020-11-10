@@ -1,7 +1,6 @@
 import datetime
 
 from django.db import models
-from django.db.models import F, Q
 from django.conf import settings
 from django.contrib.auth.models import User
 from django.core.validators import FileExtensionValidator
@@ -24,7 +23,8 @@ class StyleUnapprovedManager(models.Manager):
 class StyleApprovedManager(models.Manager):
     """Custom Queryset Manager for Unapproved Style"""
     def get_queryset(self):
-        return super().get_queryset().filter(approved=True).order_by('upload_date')
+        return super().get_queryset().filter(approved=True) \
+            .order_by('upload_date')
 
 
 class StyleRequireactionManager(models.Manager):
@@ -241,8 +241,7 @@ class StyleReview(models.Model):
         null=True,)
 
     class Meta:
-        ordering = ['review_date',]
-
+        ordering = ['review_date']
 
     def __str__(self):
         return self.comment
