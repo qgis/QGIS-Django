@@ -155,15 +155,6 @@ class StyleDetailView(DetailView):
     queryset = Style.objects.all()
     context_object_name = 'style_detail'
 
-    def dispatch(self, request, *args, **kwargs):
-        style = self.get_object()
-        user = self.request.user
-        if not check_styles_access(user, style):
-            return render(request, 'styles/style_permission_deny.html',
-                {'style_name': style.name,
-                 'context': "This style is in review"})
-        return super().dispatch(request, *args, **kwargs)
-
     def get_template_names(self):
         style = self.get_object()
         if not style.approved:
