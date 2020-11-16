@@ -61,7 +61,8 @@ class StyleCreateView(LoginRequiredMixin, CreateView):
         xml_parse = read_xml_style(obj.xml_file)
         if xml_parse:
             # check if name exists
-            name_exist = Style.objects.filter(name=xml_parse['name']).exists()
+            name_exist = Style.objects \
+                .filter(name__iexact=xml_parse['name']).exists()
             if name_exist:
                 obj.name = "%s_%s" % (xml_parse['name'].title(),
                                       get_random_string(length=5))
