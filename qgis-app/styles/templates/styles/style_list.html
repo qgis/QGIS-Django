@@ -1,4 +1,4 @@
-{% extends 'styles/style_base.html' %}{% load i18n bootstrap_pagination humanize static thumbnail %}
+{% extends 'styles/style_base.html' %}{% load i18n bootstrap_pagination humanize static thumbnail styles_custom_tags %}
 
 {% block extrajs %}
 {{ block.super }}
@@ -28,31 +28,14 @@
         <thead>
             <tr>
                 <th></th>
+                <th> {% anchor_sort_arrow 'Name' 'name' order_by %} </th>
+                <th> {% anchor_sort_arrow 'Type' 'type' order_by %} </th>
                 <th>
-                    Name
-                    <a href="{{ request.get_path }}?order_by=name" {% if order_by == "name" %}class="sorted"{% endif %}><i class="icon-arrow-up"></i></a>
-                    <a href="{{ request.get_path }}?order_by=-name" {% if order_by == "-name" %}class="sorted"{% endif %}><i class="icon-arrow-down"></i></a>
+                    <i class="icon-download-alt" title="{% trans 'Download Count' %}"></i>
+                    {% anchor_sort_arrow '' 'download_count' order_by %}
                 </th>
-                <th>
-                    Type
-                    <a href="{{ request.get_path }}?order_by=type" {% if order_by == "type" %}class="sorted"{% endif %}><i class="icon-arrow-up"></i></a>
-                    <a href="{{ request.get_path }}?order_by=-type" {% if order_by == "-type" %}class="sorted"{% endif %}><i class="icon-arrow-down"></i></a>
-                </th>
-                <th>
-                    <img src="{% static "images/down_16.png" %}" alt="{% trans "Download Count" %}"/>
-                    <a href="{{ request.get_path }}?order_by=download_count" {% if order_by == "download_count" %}class="sorted"{% endif %}><i class="icon-arrow-up"></i></a>
-                    <a href="{{ request.get_path }}?order_by=-download_count" {% if order_by == "-download_count" %}class="sorted"{% endif %}><i class="icon-arrow-down"></i></a>
-                </th>
-                <th>
-                    Creator
-                    <a href="{{ request.get_path }}?order_by=creator" {% if order_by == "creator" %}class="sorted"{% endif %}><i class="icon-arrow-up"></i></a>
-                    <a href="{{ request.get_path }}?order_by=-creator" {% if order_by == "-creator" %}class="sorted"{% endif %}><i class="icon-arrow-down"></i></a>
-                </th>
-                <th>
-                    Upload Date
-                    <a href="{{ request.get_path }}?order_by=upload_date" {% if order_by == "upload_date" %}class="sorted"{% endif %}><i class="icon-arrow-up"></i></a>
-                    <a href="{{ request.get_path }}?order_by=-upload_date" {% if order_by == "-upload_date" %}class="sorted"{% endif %}><i class="icon-arrow-down"></i></a>
-                </th>
+                <th> {% anchor_sort_arrow 'Creator' 'creator' order_by %} </th>
+                <th> {% anchor_sort_arrow 'Upload Date' 'upload_date' order_by %} </th>
                 <th></th>
             </tr>
         </thead>
