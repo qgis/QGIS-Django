@@ -23,15 +23,17 @@ def anchor_sort_arrow(name, order_by, current_order):
         class_arrow = ""
 
     if not desc_current_order:
-        result = '%s <a href="?order_by=%s" class="%s">' \
-                '<i class="icon-arrow-up"></i></a>' \
-                '<a href="?order_by=-%s" class="">' \
-                '<i class="icon-arrow-down"></i></a>' \
-                 % (name, order_by, class_arrow, order_by)
+        result = (
+            '%s <a href="?order_by=%s" class="%s">'
+            '<i class="icon-arrow-up"></i></a>'
+            '<a href="?order_by=-%s" class="">'
+            '<i class="icon-arrow-down"></i></a>' % (
+            name, order_by, class_arrow, order_by))
     else:
-        result = '%s <a href="?order_by=%s" class="">' \
-                '<i class="icon-arrow-up"></i></a>' \
-                '<a href="?order_by=-%s" class="%s">' \
-                '<i class="icon-arrow-down"></i></a>' \
-                 % (name, order_by, order_by, class_arrow)
+        result = (
+            '%s <a href="?order_by=%s" class="">'
+            '<i class="icon-arrow-up"></i></a>'
+            '<a href="?order_by=-%s" class="%s">'
+            '<i class="icon-arrow-down"></i></a>' % (
+            name, order_by, order_by, class_arrow))
     return mark_safe(result)
