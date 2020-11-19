@@ -9,11 +9,8 @@ from styles.file_handler import validator
 class StyleUploadForm(forms.ModelForm):
     """
     Style Upload Form.
-
-    TODO:
-    - how if styletype doesn't exist?
-      - create stylestype if it is one of 6 type supported in QGIS
     """
+
     class Meta:
         model = Style
         fields = ['xml_file', 'thumbnail_image', 'description', ]
@@ -34,12 +31,20 @@ class StyleUploadForm(forms.ModelForm):
 
 
 class StyleUpdateForm(StyleUploadForm):
+    """
+       Style Update Form.
+    """
+
     class Meta:
         model = Style
         fields = ['name', 'xml_file', 'thumbnail_image', 'description', ]
 
 
 class StyleReviewForm(forms.Form):
+    """
+       Style Review Form.
+    """
+
     CHOICES = [('approve', 'Approve'), ('reject', 'Reject')]
     approval = forms.ChoiceField(required=True, choices=CHOICES,
                                  widget=forms.RadioSelect, initial='approve')

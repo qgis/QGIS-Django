@@ -46,11 +46,8 @@ def check_styles_access(user, style):
 class StyleCreateView(LoginRequiredMixin, CreateView):
     """
     Create a new style
-
-    TODO:
-    - check if style name is already exist, if it is,
-    rename the style name = style name + author name
     """
+
     form_class = StyleUploadForm
     template_name = 'styles/style_form.html'
     success_message = "Style was created successfully."
@@ -61,7 +58,8 @@ class StyleCreateView(LoginRequiredMixin, CreateView):
         xml_parse = read_xml_style(obj.xml_file)
         if xml_parse:
             # check if name exists
-            name_exist = Style.objects.filter(name=xml_parse['name']).exists()
+            name_exist = Style.objects \
+                .filter(name__iexact=xml_parse['name']).exists()
             if name_exist:
                 obj.name = "%s_%s" % (xml_parse['name'].title(),
                                       get_random_string(length=5))
@@ -86,9 +84,9 @@ class StyleCreateView(LoginRequiredMixin, CreateView):
 @method_decorator(never_cache, name='dispatch')
 class StyleListView(ListView):
     """
-    Style ListView.
-
+    Style ListView
     """
+
     model = Style
     queryset = Style.approved_objects.all()
     context_object_name = 'style_list'
@@ -97,6 +95,8 @@ class StyleListView(ListView):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
+        context['count'] = self.get_queryset().count()
+        context['order_by'] = self.request.GET.get('order_by', None)
         return context
 
     def get_queryset(self):
@@ -118,6 +118,17 @@ class StyleByTypeListView(StyleListView):
         qs = super().get_queryset()
         style_type = self.kwargs['style_type']
         return qs.filter(style_type__name=style_type)
+
+    def get_context_data(self, **kwargs):
+        """
+        Override get_context_data.
+
+        Add 'title' to be displayed as page title
+        """
+
+        context = super(StyleByTypeListView, self).get_context_data(**kwargs)
+        context['title'] = "%s Styles" % (self.kwargs['style_type'],)
+        return context
 
 
 class StyleUnapprovedListView(LoginRequiredMixin, StyleListView):
@@ -187,6 +198,7 @@ class StyleUpdateView(LoginRequiredMixin, UpdateView):
     """
     Update a style
     """
+
     model = Style
     form_class = StyleUpdateForm
     context_object_name = 'style'
@@ -205,6 +217,7 @@ class StyleUpdateView(LoginRequiredMixin, UpdateView):
         """
         Update the style type according to the style XML file.
         """
+
         obj = form.save(commit=False)
         xml_parse = read_xml_style(obj.xml_file)
         if xml_parse:
@@ -221,8 +234,8 @@ class StyleUpdateView(LoginRequiredMixin, UpdateView):
 class StyleDeleteView(LoginRequiredMixin, DeleteView):
     """
     Delete a style.
-
     """
+
     model = Style
     context_object_file = 'style'
     success_url = reverse_lazy('style_list')
@@ -241,11 +254,9 @@ class StyleDeleteView(LoginRequiredMixin, DeleteView):
 
 def style_download(request, pk):
     """
-    Download style file and update download_count in Style model.
-
-    TODO:
-    - ensure download counter is increased when it hit.
+    Download style file and update download_count in Style model
     """
+
     style = get_object_or_404(Style, pk=pk)
     if not style.approved:
         if not check_styles_access(request.user, style):
@@ -265,7 +276,10 @@ def style_download(request, pk):
 
 
 def style_review(request, pk):
-    """Review POST request"""
+    """
+    Submit a style review
+    """
+
     style = get_object_or_404(Style, pk=pk)
     if request.method == 'POST':
         form = StyleReviewForm(request.POST)
@@ -291,9 +305,10 @@ def style_review(request, pk):
 
 @never_cache
 def style_nav_content(request):
-    """Provides data for sidebar style navigation"""
-    # TODO
-    # get number of approval
+    """
+    Provides data for sidebar style navigation
+    """
+
     user = request.user
     all = Style.approved_objects.count()
     waiting_review = 0
