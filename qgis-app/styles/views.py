@@ -17,7 +17,6 @@ from django.views.generic import (CreateView,
                                   DeleteView,
                                   ListView,
                                   UpdateView)
-from django.views.generic.edit import FormMixin
 
 from styles.models import Style, StyleType, StyleReview
 from styles.forms import (StyleUploadForm,
@@ -29,7 +28,8 @@ from styles.file_handler import read_xml_style
 
 
 def check_styles_access(user, style):
-    """Check if user is the creator of the style or is_staff
+    """
+    Check if user is the creator of the style or is_staff
 
     Parameters
     ----------
@@ -86,7 +86,6 @@ class StyleCreateView(LoginRequiredMixin, CreateView):
                                             kwargs={'pk': obj.id}))
 
 
-
 @method_decorator(never_cache, name='dispatch')
 class StyleListView(ListView):
     """
@@ -98,7 +97,6 @@ class StyleListView(ListView):
     context_object_name = 'style_list'
     template_name = 'styles/style_list.html'
     paginate_by = settings.PAGINATION_DEFAULT_PAGINATION
-    paginate_by = 5
     form_class = StyleSearchForm
 
     def get_context_data(self, **kwargs):
@@ -111,7 +109,7 @@ class StyleListView(ListView):
 
     def get_queryset(self):
         qs = super().get_queryset()
-        q = self.request.GET.get('q')
+        q = self.request.GET.get('q', None)
         if q:
             queries = q.split(" ")
             if queries:
@@ -125,9 +123,7 @@ class StyleListView(ListView):
                             | Q(creator__last_name__search=query)
                     )
                 qs = qs.filter(query_filter)
-
         order_by = self.request.GET.get('order_by', None)
-        # qs = super().get_queryset()
         if order_by:
             qs = qs.order_by(order_by)
             if order_by == "-type":

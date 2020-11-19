@@ -17,9 +17,9 @@ class StyleUploadForm(forms.ModelForm):
 
     def clean_xml_file(self):
         """
-        Cleaning xml_file field datas
-        https://docs.djangoproject.com/en/3.1/ref/forms/validation/#cleaning-a-specific-field-attribute
+        Cleaning xml_file field data.
         """
+
         xml_file = self.cleaned_data['xml_file']
 
         if xml_file:
@@ -59,5 +59,5 @@ class StyleSearchForm(forms.Form):
     Search Form
     """
 
-    q = forms.CharField(widget=forms.TextInput(
+    q = forms.CharField(required=False, widget=forms.TextInput(
         attrs={'class': 'search-query', 'placeholder': 'Search'}))
