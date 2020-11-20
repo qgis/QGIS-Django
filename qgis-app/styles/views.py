@@ -21,8 +21,7 @@ from django.views.generic import (CreateView,
 from styles.models import Style, StyleType, StyleReview
 from styles.forms import (StyleUploadForm,
                           StyleUpdateForm,
-                          StyleReviewForm,
-                          StyleSearchForm)
+                          StyleReviewForm)
 
 from styles.file_handler import read_xml_style
 
@@ -97,13 +96,11 @@ class StyleListView(ListView):
     context_object_name = 'style_list'
     template_name = 'styles/style_list.html'
     paginate_by = settings.PAGINATION_DEFAULT_PAGINATION
-    form_class = StyleSearchForm
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         context['count'] = self.get_queryset().count()
         context['order_by'] = self.request.GET.get('order_by', None)
-        context['form'] = self.form_class
         context['queries'] = self.request.GET.get('q', None)
         return context
 

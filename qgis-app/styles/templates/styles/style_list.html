@@ -19,23 +19,17 @@
 {% block content %}
     <h2>{% if title %}{{title}}{% else %}{% trans "All Styles" %}{% endif %}</h2>
 
-    {% if not style_list %}
+    {% if not style_list and not queries %}
         <p>No data.</p>
-        {% if queries %}
-            <div class="search">
-                {% include 'styles/_style_search.html' %}
-            </div>
-        {% endif %}
+    {% elif not style_list and queries %}
+        <p>
+            Keyword: "<strong>{{ queries }}</strong>" <br /> Search result: no record found.
+        </p>
     {% else %}
         <p>
-            {% if queries %}Keyword: "<strong>{{ queries }}</strong>" <br /> Search result: {% endif %}
+            Keyword: "<strong>{{ queries }}</strong>" <br /> Search result:
             {{ count }} record{{ style_list.count|pluralize:"s" }} found.
         </p>
-
-        <div class="search">
-            {% include 'styles/_style_search.html' %}
-        </div>
-
         <table class="table table-striped plugins">
         <thead>
             <tr>
@@ -104,6 +98,9 @@
                 $(this).closest("th").addClass("sorted-name")
             }
         })
+
+        // edit search input from base template, in order to use it for styles
+        $("form.navbar-search").attr("action", "");
 
     })
     </script>
