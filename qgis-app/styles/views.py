@@ -133,7 +133,6 @@ class StyleListView(ListView):
 class StyleByTypeListView(StyleListView):
     context_object_name = 'style_list'
 
-
     def get_queryset(self):
         qs = super().get_queryset()
         style_type = self.kwargs['style_type']
