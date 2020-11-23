@@ -27,7 +27,9 @@
         </p>
     {% else %}
         <p>
-            Keyword: "<strong>{{ queries }}</strong>" <br /> Search result:
+            {%  if queries %}
+                Keyword: "<strong>{{ queries }}</strong>" <br /> Search result:
+            {% endif %}
             {{ count }} record{{ style_list.count|pluralize:"s" }} found.
         </p>
         <table class="table table-striped plugins">

@@ -261,3 +261,61 @@ class TestDownloadStyles(TestCase):
         # download_count should be increased
         style = Style.objects.get(pk=1)
         self.assertEqual(style.download_count, 1)
+
+
+@override_settings(MEDIA_ROOT="styles/tests/stylefiles/")
+class TestSearch(TestCase):
+    fixtures = ['fixtures/styles.json', 'fixtures/auth.json']
+
+    def setUp(self):
+        self.staff = User.objects.get(pk=3)
+        # set staff's password to password
+        self.staff.set_password("password")
+        self.staff.save()
+        # change value of imageFile
+        obj = Style.objects.get(pk=1)
+        obj.thumbnail_image = "thumbnail.png"
+        obj.save()
+        obj = Style.objects.get(pk=2)
+        obj.thumbnail_image = "thumbnail.png"
+        obj.save()
+        obj = Style.objects.get(pk=3)
+        obj.thumbnail_image = "thumbnail.png"
+        obj.save()
+
+    def test_search_approved_styles_list(self):
+        url = reverse('style_list')
+        response = self.client.get(url)
+        self.assertNotContains(response, 'Keyword: "None"')
+        url = reverse('style_list') + '?q=cube'
+        response = self.client.get(url)
+        self.assertContains(
+            response, '<p>Keyword: "<strong>cube</strong>" <br> '
+                      'Search result: 1 record found.</p>', html=True)
+
+    def test_search_waiting_review_styles_list(self):
+        self.client.login(username="staff", password="password")
+        url = reverse('style_unapproved')
+        response = self.client.get(url)
+        self.assertNotContains(response, 'Keyword: "None"')
+        url = reverse('style_unapproved') + '?q=new'
+        response = self.client.get(url)
+        self.assertContains(
+            response, '<p>Keyword: "<strong>new</strong>" <br> '
+                      'Search result: 1 record found.</p>', html=True)
+
+    def test_search_requiring_update_styles_list(self):
+        self.client.login(username="staff", password="password")
+        url = reverse('style_require_action')
+        response = self.client.get(url)
+        self.assertNotContains(response, 'Keyword: "None"')
+        url = reverse('style_require_action') + '?q=another'
+        response = self.client.get(url)
+        self.assertContains(
+            response, '<p>Keyword: "<strong>another</strong>" <br> '
+                      'Search result: 1 record found.</p>', html=True)
+        url = reverse('style_require_action') + '?q=new'
+        response = self.client.get(url)
+        self.assertContains(
+            response, '<p>Keyword: "<strong>new</strong>" <br> '
+                      'Search result: no record found.</p>', html=True)

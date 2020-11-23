@@ -106,7 +106,7 @@ class StyleListView(ListView):
 
     def get_queryset(self):
         qs = super().get_queryset()
-        q = self.request.GET.get('q', None)
+        q = self.request.GET.get('q')
         if q:
             queries = q.split(" ")
             if queries:
