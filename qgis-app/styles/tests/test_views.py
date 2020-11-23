@@ -2,11 +2,13 @@ import os
 import tempfile
 
 from django.conf import settings
+from django.core import mail
 from django.test import TestCase, Client, override_settings
 from django.urls import reverse
+from django.contrib.auth.models import User, Group
 
-from django.contrib.auth.models import User
 from styles.models import Style, StyleType
+from styles.views import style_approval_notify, style_notify
 
 STYLE_DIR = os.path.join(os.path.dirname(__file__), "stylefiles")
 
@@ -35,7 +37,13 @@ class TestUploadStyle(TestCase):
         self.creator = User.objects.get(pk=2)
         # set creator password to password
         self.creator.set_password("password")
+        self.creator.email = "creator@email.com"
         self.creator.save()
+        self.staff = User.objects.get(pk=3)
+        self.staff.email = "staff@email.com"
+        self.staff.save()
+        self.group = Group.objects.create(name="Style Managers")
+        self.group.user_set.add(self.staff)
         # user is logging in to upload page
         self.client.login(username="creator", password="password")
         url = reverse('style_create')
@@ -44,8 +52,9 @@ class TestUploadStyle(TestCase):
     def test_upload_page_with_login(self):
         self.assertEqual(self.response.status_code, 200)
         self.assertTemplateUsed(self.response, 'styles/style_form.html')
-        self.assertContains(self.response, "To upload a new style, "
-            "you can specify the xml file in this form.")
+        self.assertContains(self.response,
+                            "To upload a new style, you can specify "
+                            "the xml file in this form.")
 
     @override_settings(MEDIA_ROOT=tempfile.mkdtemp())
     def test_upload_xml_file(self):
@@ -71,6 +80,8 @@ class TestUploadStyle(TestCase):
         self.assertContains(self.response, "No data.")
 
 
+@override_settings(
+    EMAIL_BACKEND='django.core.mail.backends.console.EmailBackend')
 class TestModeration(TestCase):
     fixtures = ['fixtures/auth.json']
 
@@ -81,11 +92,16 @@ class TestModeration(TestCase):
         cls.creator = User.objects.get(pk=2)
         # set creator's password to password
         cls.creator.set_password("password")
+        cls.creator.email = "creator@email.com"
         cls.creator.save()
         cls.staff = User.objects.get(pk=3)
         # set staff's password to password
         cls.staff.set_password("password")
+        cls.staff.email = "staff@email.com"
         cls.staff.save()
+        # create group
+        cls.group = Group.objects.create(name="Style Managers")
+        cls.group.user_set.add(cls.staff)
         # upload a style xml
         c = Client()
         c.login(username="creator", password="password")
@@ -119,11 +135,13 @@ class TestModeration(TestCase):
     def test_user_anonymous_should_redirect_from_moderation(self):
         url = reverse('style_unapproved')
         response = self.client.get(url)
-        self.assertRedirects(response,
+        self.assertRedirects(
+            response,
             '/accounts/login/?next=/styles/unapproved/')
         url = reverse('style_require_action')
         response = self.client.get(url)
-        self.assertRedirects(response,
+        self.assertRedirects(
+            response,
             '/accounts/login/?next=/styles/require_action/')
 
     def test_creator_should_see_moderation_list(self):
@@ -148,7 +166,8 @@ class TestModeration(TestCase):
         self.assertContains(response, "in review")
         self.assertNotContains(response, '<textarea name="comment"')
         self.assertNotContains(response, '<input type="submit" '
-            'class="btn btn-primary" value="Submit Review">', html=True)
+                                         'class="btn btn-primary" '
+                                         'value="Submit Review">', html=True)
         # go to requiring update page
         url = reverse('style_require_action')
         response = self.client.get(url)
@@ -178,7 +197,8 @@ class TestModeration(TestCase):
         self.assertEqual(response.status_code, 200)
         self.assertContains(response, '<textarea name="comment"')
         self.assertContains(response, '<input type="submit" '
-            'class="btn btn-primary" value="Submit Review">', html=True)
+                                      'class="btn btn-primary" '
+                                      'value="Submit Review">', html=True)
         self.client.logout()
 
     def test_staff_reject_and_submit_comment(self):
@@ -186,14 +206,14 @@ class TestModeration(TestCase):
         url = reverse('style_review', kwargs={'pk': self.uploaded_style.id})
         response = self.client.post(url, {
             'approval': 'reject',
-            'comment' : 'This should be in requiring update page.'
+            'comment': 'This should be in requiring update page.'
         })
         url = reverse('style_detail', kwargs={'pk': self.uploaded_style.id})
         self.assertRedirects(response, url)
         response = self.client.get(url)
         self.assertEqual(response.status_code, 200)
         self.assertContains(response,
-            'This should be in requiring update page.')
+                            'This should be in requiring update page.')
         self.assertContains(response, 'Reviewed by Staff now')
         self.client.logout()
         # creator should find the rejected styles in requiring update page
@@ -261,6 +281,49 @@ class TestDownloadStyles(TestCase):
         # download_count should be increased
         style = Style.objects.get(pk=1)
         self.assertEqual(style.download_count, 1)
+
+
+class TestStyleApprovalNotify(TestCase):
+    fixtures = ['fixtures/auth.json', 'fixtures/styles.json']
+
+    def setUp(self):
+        self.creator = User.objects.get(pk=2)
+        self.creator.email = 'creator@example.com'
+        self.creator.save()
+        self.staff = User.objects.get(pk=3)
+        self.staff.email = 'staff@example.com'
+        self.staff.save()
+        self.style_approved = Style.objects.get(pk=1)
+        self.style_rejected = Style.objects.get(pk=2)
+        self.style_new = Style.objects.get(pk=3)
+        self.group = Group.objects.create(name="Style Managers")
+        self.group.user_set.add(self.staff)
+
+    def test_send_email_new_style_notification(self):
+        style_notify(self.style_new)
+        self.assertEqual(len(mail.outbox), 1)
+        self.assertEqual(mail.outbox[0].subject,
+                         "A new style has been created by creator.")
+        self.assertIn("Style name is: New Cube Style",
+                      mail.outbox[0].body)
+        self.assertIn("Style description is: This is a new cube",
+                      mail.outbox[0].body)
+
+    def test_send_email_approved_style_notification(self):
+        style_approval_notify(self.style_approved, self.creator, self.staff)
+        self.assertEqual(len(mail.outbox), 1)
+        self.assertEqual(mail.outbox[0].subject,
+                         "Style Cube approved notification.")
+        self.assertIn("This style is approved for testing purpose",
+                      mail.outbox[0].body)
+
+    def test_send_email_rejected_style_notification(self):
+        style_approval_notify(self.style_rejected, self.creator, self.staff)
+        self.assertEqual(len(mail.outbox), 1)
+        self.assertEqual(mail.outbox[0].subject,
+                         "Style Another Cube rejected notification.")
+        self.assertIn("This style is rejected for testing purpose",
+                      mail.outbox[0].body)
 
 
 @override_settings(MEDIA_ROOT="styles/tests/stylefiles/")
