@@ -59,7 +59,7 @@
                     {% endwith %}
                 {% endif %}
 
-                {% if user.is_staff %}
+                {% if form %}
                 <form method="post" action="{% url 'style_review' pk=style_detail.id %}">{% csrf_token %}
                     <dt>Approval</dt>
                     <dd>
