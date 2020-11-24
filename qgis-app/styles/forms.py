@@ -17,9 +17,9 @@ class StyleUploadForm(forms.ModelForm):
 
     def clean_xml_file(self):
         """
-        Cleaning xml_file field datas
-        https://docs.djangoproject.com/en/3.1/ref/forms/validation/#cleaning-a-specific-field-attribute
+        Cleaning xml_file field data.
         """
+
         xml_file = self.cleaned_data['xml_file']
 
         if xml_file:
@@ -32,7 +32,7 @@ class StyleUploadForm(forms.ModelForm):
 
 class StyleUpdateForm(StyleUploadForm):
     """
-       Style Update Form.
+    Style Update Form.
     """
 
     class Meta:
@@ -42,7 +42,7 @@ class StyleUpdateForm(StyleUploadForm):
 
 class StyleReviewForm(forms.Form):
     """
-       Style Review Form.
+    Style Review Form.
     """
 
     CHOICES = [('approve', 'Approve'), ('reject', 'Reject')]
@@ -52,3 +52,12 @@ class StyleReviewForm(forms.Form):
         attrs={'placeholder': 'Please provide clear feedback '
                               'if you decided to not approve this style.',
                'rows': "5"}))
+
+
+class StyleSearchForm(forms.Form):
+    """
+    Search Form
+    """
+
+    q = forms.CharField(required=False, widget=forms.TextInput(
+        attrs={'class': 'search-query', 'placeholder': 'Search'}))

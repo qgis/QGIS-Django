@@ -1,17 +1,17 @@
 from django.urls import path
 
 from styles.views import (StyleListView,
-                   StyleCreateView,
-                   StyleDetailView,
-                   StyleDeleteView,
-                   StyleUpdateView,
-                   StyleUnapprovedListView,
-                   StyleRequireActionListView,
-                   StyleByTypeListView,
-                   style_download,
-                   style_review,
-                   style_nav_content,
-                   style_type_list)
+                          StyleCreateView,
+                          StyleDetailView,
+                          StyleDeleteView,
+                          StyleUpdateView,
+                          StyleUnapprovedListView,
+                          StyleRequireActionListView,
+                          StyleByTypeListView,
+                          style_download,
+                          style_review,
+                          style_nav_content,
+                          style_type_list)
 
 urlpatterns = [
     path('', StyleListView.as_view(), name='style_list'),

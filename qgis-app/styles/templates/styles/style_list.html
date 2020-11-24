@@ -16,26 +16,34 @@
 </style>
 {% endblock %}
 
-
 {% block content %}
     <h2>{% if title %}{{title}}{% else %}{% trans "All Styles" %}{% endif %}</h2>
 
-    {% if not style_list %}
-    <p>No data.</p>
+    {% if not style_list and not queries %}
+        <p>No data.</p>
+    {% elif not style_list and queries %}
+        <p>
+            Keyword: "<strong>{{ queries }}</strong>" <br /> Search result: no record found.
+        </p>
     {% else %}
-        <p>{{ count }} record{{ style_list.count|pluralize:"s" }} found.</p>
-    <table class="table table-striped plugins">
+        <p>
+            {%  if queries %}
+                Keyword: "<strong>{{ queries }}</strong>" <br /> Search result:
+            {% endif %}
+            {{ count }} record{{ style_list.count|pluralize:"s" }} found.
+        </p>
+        <table class="table table-striped plugins">
         <thead>
             <tr>
                 <th></th>
-                <th> {% anchor_sort_arrow 'Name' 'name' order_by %} </th>
-                <th> {% anchor_sort_arrow 'Type' 'type' order_by %} </th>
+                <th> {% anchor_sort_arrow 'Name' 'name' order_by queries %} </th>
+                <th> {% anchor_sort_arrow 'Type' 'type' order_by queries %} </th>
                 <th>
                     <i class="icon-download-alt" title="{% trans 'Download Count' %}"></i>
-                    {% anchor_sort_arrow '' 'download_count' order_by %}
+                    {% anchor_sort_arrow '' 'download_count' order_by queries %}
                 </th>
-                <th> {% anchor_sort_arrow 'Creator' 'creator' order_by %} </th>
-                <th> {% anchor_sort_arrow 'Upload Date' 'upload_date' order_by %} </th>
+                <th> {% anchor_sort_arrow 'Creator' 'creator' order_by queries %} </th>
+                <th> {% anchor_sort_arrow 'Upload Date' 'upload_date' order_by queries %} </th>
                 <th></th>
             </tr>
         </thead>
@@ -72,12 +80,17 @@
 
     <script type="text/javascript">
     $(document).ready(function(){
-        // Add order_by argument in pagination
-        const orderBy = new URLSearchParams(window.location.search)
-                .get("order_by");
+        // Add arguments in pagination
+        const orderBy = new URLSearchParams(window.location.search).get("order_by");
+        const queries = new URLSearchParams(window.location.search).get("q");
         if (orderBy){
             $(".pagination li a").each(function(){
-                this.href += 'order_by=' + orderBy;
+                this.href += 'order_by=' + orderBy +'&&';
+            })
+        }
+        if (queries){
+            $(".pagination li a").each(function(){
+                this.href += 'q=' + queries +'&&';
             })
         }
 
@@ -87,6 +100,9 @@
                 $(this).closest("th").addClass("sorted-name")
             }
         })
+
+        // edit search input from base template, in order to use it for styles
+        $("form.navbar-search").attr("action", "");
 
     })
     </script>

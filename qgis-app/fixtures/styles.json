@@ -1,0 +1,94 @@
+[
+  {
+    "model": "styles.styletype",
+    "pk": 1,
+    "fields": {
+      "symbol_type": "symbol3d",
+      "name": "Symbol 3D",
+      "description": "Automatically created from ''an uploaded Style file",
+      "icon": "",
+      "order": 0
+    }
+  },
+  {
+    "model": "styles.style",
+    "pk": 1,
+    "fields": {
+      "upload_date": "2020-11-17T00:59:37.341",
+      "modified_date": "2020-11-18T21:43:28.195",
+      "creator": 2,
+      "style_type": 1,
+      "name": "Cube",
+      "description": "This a cube",
+      "thumbnail_image": "styles/2020/thumbnail.png",
+      "xml_file": "styles/2020/3d_cube.xml",
+      "download_count": 1,
+      "approved": true,
+      "require_action": false
+    }
+  },
+  {
+    "model": "styles.style",
+    "pk": 2,
+    "fields": {
+      "upload_date": "2020-08-17T00:59:37.341",
+      "modified_date": "2020-10-18T21:43:28.195",
+      "creator": 2,
+      "style_type": 1,
+      "name": "Another Cube",
+      "description": "This is another cube",
+      "thumbnail_image": "styles/2020/thumbnail.png",
+      "xml_file": "styles/2020/3d_cube.xml",
+      "download_count": 1,
+      "approved": false,
+      "require_action": true
+    }
+  },
+  {
+    "model": "styles.style",
+    "pk": 3,
+    "fields": {
+      "upload_date": "2020-08-17T00:59:37.341",
+      "modified_date": "2020-08-17T21:43:28.195",
+      "creator": 2,
+      "style_type": 1,
+      "name": "New Cube Style",
+      "description": "This is a new cube",
+      "thumbnail_image": "styles/2020/thumbnail.png",
+      "xml_file": "styles/2020/3d_cube.xml",
+      "download_count": 0,
+      "approved": false,
+      "require_action": false
+    }
+  },
+  {
+    "model": "styles.stylereview",
+    "pk": 1,
+    "fields": {
+      "review_date": "2020-11-18T21:16:24.104",
+      "reviewer": 3,
+      "style": 1,
+      "comment": "This style is approved for testing purpose"
+    }
+  },
+  {
+    "model": "styles.stylereview",
+    "pk": 2,
+    "fields": {
+      "review_date": "2020-09-18T21:16:24.104",
+      "reviewer": 3,
+      "style": 2,
+      "comment": "This comment should not be appear."
+    }
+  },
+  {
+    "model": "styles.stylereview",
+    "pk": 3,
+    "fields": {
+      "review_date": "2020-11-18T21:16:24.104",
+      "reviewer": 3,
+      "style": 2,
+      "comment": "This style is rejected for testing purpose."
+    }
+  }
+]

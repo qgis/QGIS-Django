@@ -14,6 +14,7 @@ class StyleAdmin(admin.ModelAdmin):
                     'upload_date',
                     'modified_date',
                     'style_type')
+    search_fields = ('name', 'description')
 
 
 admin.site.register(Style, StyleAdmin)

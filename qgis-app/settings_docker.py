@@ -40,6 +40,8 @@ INSTALLED_APPS = [
     # 'django.contrib.admindocs',
     'django.contrib.staticfiles',
     'django.contrib.flatpages',
+    # full text search postgres
+    'django.contrib.postgres',
 
     # ABP:
     'plugins',

@@ -5,6 +5,7 @@ from django.contrib import messages
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.core import serializers
 from django.http import HttpResponse, HttpResponseRedirect, JsonResponse
+from django.db.models import Q
 from django.shortcuts import get_object_or_404, render
 from django.urls import reverse, reverse_lazy
 from django.utils.translation import ugettext_lazy as _
@@ -18,13 +19,16 @@ from django.views.generic import (CreateView,
                                   UpdateView)
 
 from styles.models import Style, StyleType, StyleReview
-from styles.forms import StyleUploadForm, StyleUpdateForm, StyleReviewForm
+from styles.forms import (StyleUploadForm,
+                          StyleUpdateForm,
+                          StyleReviewForm)
 
 from styles.file_handler import read_xml_style
 
 
 def check_styles_access(user, style):
-    """Check if user is the creator of the style or is_staff
+    """
+    Check if user is the creator of the style or is_staff
 
     Parameters
     ----------
@@ -35,7 +39,7 @@ def check_styles_access(user, style):
     Returns
     -------
     bool
-        Return True if yser is_staff or user is style's creator
+        Return True if user is_staff or user is style's creator
     """
 
     if user.is_staff or style.creator == user:
@@ -58,15 +62,15 @@ class StyleCreateView(LoginRequiredMixin, CreateView):
         xml_parse = read_xml_style(obj.xml_file)
         if xml_parse:
             # check if name exists
-            name_exist = Style.objects \
-                .filter(name__iexact=xml_parse['name']).exists()
+            name_exist = Style.objects.filter(
+                name__iexact=xml_parse['name']).exists()
             if name_exist:
                 obj.name = "%s_%s" % (xml_parse['name'].title(),
                                       get_random_string(length=5))
             else:
                 obj.name = xml_parse['name'].title()
-            style_type = StyleType.objects \
-                .filter(symbol_type=xml_parse['type']).first()
+            style_type = StyleType.objects.filter(
+                symbol_type=xml_parse['type']).first()
             if not style_type:
                 style_type = StyleType.objects.create(
                     symbol_type=xml_parse['type'],
@@ -97,11 +101,26 @@ class StyleListView(ListView):
         context = super().get_context_data(**kwargs)
         context['count'] = self.get_queryset().count()
         context['order_by'] = self.request.GET.get('order_by', None)
+        context['queries'] = self.request.GET.get('q', None)
         return context
 
     def get_queryset(self):
-        order_by = self.request.GET.get('order_by', None)
         qs = super().get_queryset()
+        q = self.request.GET.get('q')
+        if q:
+            queries = q.split(" ")
+            if queries:
+                query_filter = Q()
+                for query in queries:
+                    query_filter &= (
+                            Q(name__search=query)
+                            | Q(description__search=query)
+                            | Q(creator__username__search=query)
+                            | Q(creator__first_name__search=query)
+                            | Q(creator__last_name__search=query)
+                    )
+                qs = qs.filter(query_filter)
+        order_by = self.request.GET.get('order_by', None)
         if order_by:
             qs = qs.order_by(order_by)
             if order_by == "-type":
@@ -133,12 +152,14 @@ class StyleByTypeListView(StyleListView):
 
 class StyleUnapprovedListView(LoginRequiredMixin, StyleListView):
     context_object_name = 'style_list'
+    queryset = Style.unapproved_objects.all()
 
     def get_queryset(self):
+        qs = super().get_queryset()
         user = self.request.user
         if user.is_staff:
-            return Style.unapproved_objects.all()
-        return Style.unapproved_objects.filter(creator=user).all()
+            return qs
+        return qs.filter(creator=user)
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
@@ -148,12 +169,14 @@ class StyleUnapprovedListView(LoginRequiredMixin, StyleListView):
 
 class StyleRequireActionListView(LoginRequiredMixin, StyleListView):
     context_object_name = 'style_list'
+    queryset = Style.requireaction_objects.all()
 
     def get_queryset(self):
+        qs = super().get_queryset()
         user = self.request.user
         if user.is_staff:
-            return Style.requireaction_objects.all()
-        return Style.requireaction_objects.filter(creator=user).all()
+            return qs
+        return qs.filter(creator=user)
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)

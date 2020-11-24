@@ -64,7 +64,10 @@
                     })
                 }
             })
-        })
+
+            // edit search input from base template, in order to use it for styles
+            $("form.navbar-search").attr("action", "/styles/");
+            })
     </script>
 {% endblock %}
 
