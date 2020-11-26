@@ -29,7 +29,12 @@ class BasePluginManager(models.Manager):
     def get_queryset(self):
         return super(BasePluginManager, self).get_queryset().extra(
             select={
-                'average_vote': 'rating_score/(rating_votes+0.001)'
+                'average_vote': 'rating_score/(rating_votes+0.001)',
+                'latest_version': (
+                    'SELECT created_on FROM plugins_pluginversion WHERE '
+                    'plugins_pluginversion.plugin_id = plugins_plugin.id '
+                    'ORDER BY created_on DESC LIMIT 1'
+                )
             })
 
 
