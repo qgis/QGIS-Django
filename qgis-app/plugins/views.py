@@ -473,7 +473,7 @@ class PluginsList(ListView):
             else:
                 _sort_by = sort_by
 
-            if _sort_by == "latest_version":
+            if _sort_by == "latest_version_date":
                 return qs.order_by(sort_by)
 
             # Check if the sort criterion is a field or 'average_vote'

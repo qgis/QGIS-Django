@@ -13,11 +13,11 @@
             </ul>
         </div>
         {% endif %}
-        {% if fresh %}
+        {% if latest %}
         <div class="module_menu">
             <h3>{% trans "Latest plugins" %}</h3>
             <ul class="nav nav-list">
-                {% for plugin in fresh  %}<li><a href="{% url "plugin_detail" plugin.package_name %}">{{ plugin.name }}</a></li>{% endfor %}
+                {% for plugin in latest  %}<li><a href="{% url "plugin_detail" plugin.package_name %}">{{ plugin.name }}</a></li>{% endfor %}
             </ul>
         </div>
         {% endif %}

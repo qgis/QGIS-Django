@@ -38,6 +38,7 @@ urlpatterns = [
     url(r'^unapproved/$', PluginsList.as_view(queryset=Plugin.unapproved_objects.all(), additional_context={'title' : _('Unapproved plugins')}), name='unapproved_plugins'),
     url(r'^deprecated/$', PluginsList.as_view(queryset=Plugin.deprecated_objects.all(), additional_context={'title' : _('Deprecated plugins')}), name='deprecated_plugins'),
     url(r'^fresh/$', PluginsList.as_view(queryset=Plugin.fresh_objects.all(), additional_context={'title' : _('Fresh plugins')}), name='fresh_plugins'),
+    url(r'^latest/$', PluginsList.as_view(queryset=Plugin.latest_objects.all(), additional_context={'title' : _('Latest plugins')}), name='latest_plugins'),
     url(r'^stable/$', PluginsList.as_view(queryset=Plugin.stable_objects.all(), additional_context={'title' : _('Stable plugins')}), name='stable_plugins'),
     url(r'^experimental/$', PluginsList.as_view(queryset=Plugin.experimental_objects.all(), additional_context={'title' : _('Experimental plugins')}), name='experimental_plugins'),
     url(r'^popular/$', PluginsList.as_view(queryset=Plugin.popular_objects.all(), additional_context={'title' : _('Popular plugins')}), name='popular_plugins'),

@@ -30,9 +30,10 @@ class BasePluginManager(models.Manager):
         return super(BasePluginManager, self).get_queryset().extra(
             select={
                 'average_vote': 'rating_score/(rating_votes+0.001)',
-                'latest_version': (
+                'latest_version_date': (
                     'SELECT created_on FROM plugins_pluginversion WHERE '
                     'plugins_pluginversion.plugin_id = plugins_plugin.id '
+                    'AND deprecated = FALSE AND approved = TRUE '
                     'ORDER BY created_on DESC LIMIT 1'
                 )
             })
@@ -81,8 +82,7 @@ class FeaturedPlugins(BasePluginManager):
 class FreshPlugins(BasePluginManager):
     """
     Shows only approved plugins: i.e. those with "approved" version flag set
-    and modified less than "days" ago.
-    A Plugin is modified even when a new version is uploaded
+    and created less than "days" ago.
     """
 
     def __init__(self, days=PLUGINS_FRESH_DAYS, *args, **kwargs):
@@ -93,8 +93,26 @@ class FreshPlugins(BasePluginManager):
         return super(FreshPlugins, self).get_queryset().filter(
             deprecated=False,
             pluginversion__approved=True,
+            created_on__gte=datetime.datetime.now() - datetime.timedelta(days=self.days)
+        ).order_by('-created_on').distinct()
+
+
+class LatestPlugins(BasePluginManager):
+    """
+    Shows only approved plugins ordered descending by latest_version
+    and the latest_version
+    """
+
+    def __init__(self, days=PLUGINS_FRESH_DAYS, *args, **kwargs):
+        self.days = days
+        return super(LatestPlugins, self).__init__(*args, **kwargs)
+
+    def get_queryset(self):
+        return super(LatestPlugins, self).get_queryset().filter(
+            deprecated=False,
+            pluginversion__approved=True,
             modified_on__gte=datetime.datetime.now() - datetime.timedelta(days=self.days)
-        ).order_by('-modified_on').distinct()
+        ).order_by('-latest_version_date').distinct()
 
 
 class UnapprovedPlugins(BasePluginManager):
@@ -226,6 +244,7 @@ class Plugin (models.Model):
     experimental_objects = ExperimentalPlugins()
     featured_objects = FeaturedPlugins()
     fresh_objects = FreshPlugins()
+    latest_objects = LatestPlugins()
     unapproved_objects = UnapprovedPlugins()
     deprecated_objects = DeprecatedPlugins()
     popular_objects = PopularPlugins()
