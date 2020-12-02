@@ -133,7 +133,7 @@ class GeopackageCreateView(LoginRequiredMixin, CreateView):
     """
 
     form_class = GeopackageUploadForm
-    template_name = 'resources/geopackage_form.html'
+    template_name = 'geopackages/geopackage_form.html'
     success_message = "GeoPackage was uploaded successfully."
 
     def form_valid(self, form):
@@ -155,8 +155,8 @@ class GeopackageDetailView(DetailView):
     def get_template_names(self):
         gpkg = self.get_object()
         if not gpkg.approved:
-            return 'resources/geopackage_review.html'
-        return 'resources/geopackage_detail.html'
+            return 'geopackages/geopackage_review.html'
+        return 'geopackages/geopackage_detail.html'
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data()
@@ -184,13 +184,13 @@ class GeopackageUpdateView(LoginRequiredMixin, UpdateView):
     model = Geopackage
     form_class = GeopackageUpdateForm
     context_object_name = 'geopackage'
-    template_name = 'resources/geopackage_update_form.html'
+    template_name = 'geopackages/geopackage_update_form.html'
 
     def dispatch(self, request, *args, **kwargs):
         gpkg = self.get_object()
         user = self.request.user
         if not check_geopackage_access(user, gpkg):
-            return render(request, 'resources/geopackage_permission_deny.html',
+            return render(request, 'geopackages/geopackage_permission_deny.html',
                           {'geopackage_name': gpkg.name,
                            'context': "You cannot delete this GeoPackage"})
         return super().dispatch(request, *args, **kwargs)
@@ -213,7 +213,7 @@ class GeopackageListView(ListView):
     model = Geopackage
     queryset = Geopackage.approved_objects.all()
     context_object_name = 'geopackage_list'
-    template_name = 'resources/geopackage_list.html'
+    template_name = 'geopackages/geopackage_list.html'
     paginate_by = settings.PAGINATION_DEFAULT_PAGINATION
 
     def get_context_data(self, **kwargs):
@@ -287,7 +287,7 @@ class GeopackageDeleteView(LoginRequiredMixin, DeleteView):
         gpkg = self.get_object()
         user = self.request.user
         if not check_geopackage_access(user, gpkg):
-            return render(request, 'resources/geopackage_permission_deny.html',
+            return render(request, 'geopackages/geopackage_permission_deny.html',
                 {'geopackage_name': gpkg.name,
                  'context': "You cannot delete this GeoPackage"})
         return super().dispatch(request, *args, **kwargs)
@@ -332,7 +332,7 @@ def geopackage_download(request, pk):
     if not gpkg.approved:
         if not check_geopackage_access(request.user, gpkg):
             return render(
-                request, 'resources/geopackage_permission_deny.html',
+                request, 'geopackages/geopackage_permission_deny.html',
                 {'geopackage_name': gpkg.name,
                  'context': 'Download failed. This GeoPackage is not approved'})
     else:

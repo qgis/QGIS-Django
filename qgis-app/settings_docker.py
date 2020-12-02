@@ -65,7 +65,7 @@ INSTALLED_APPS = [
 
     # styles:
     'styles',
-    # resources e.g: GPKG file
+    # geopackages
     'geopackages',
 ]
 
