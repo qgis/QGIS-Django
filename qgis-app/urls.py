@@ -44,7 +44,8 @@ urlpatterns = [
     url(r'^userexport/', include('userexport.urls')),
 
     # Styles
-    url(r'^styles/', include('styles.urls'))
+    url(r'^styles/', include('styles.urls')),
+    url(r'^geopackages/', include('geopackages.urls')),
 ]
 
 # ABP: temporary home page
@@ -92,6 +93,7 @@ simplemenu.register(
 #    '/community-map/',
     '/plugins/',
     '/styles/',
+    '/geopackages/',
     FlatPage.objects.all(),
     simplemenu.models.URLItem.objects.all(),
 )
