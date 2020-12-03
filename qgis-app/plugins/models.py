@@ -33,7 +33,7 @@ class BasePluginManager(models.Manager):
                 'latest_version_date': (
                     'SELECT created_on FROM plugins_pluginversion WHERE '
                     'plugins_pluginversion.plugin_id = plugins_plugin.id '
-                    'AND deprecated = FALSE AND approved = TRUE '
+                    'AND approved = TRUE '
                     'ORDER BY created_on DESC LIMIT 1'
                 )
             })
