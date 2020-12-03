@@ -1,4 +1,4 @@
-django==2.2
+django==2.2.13
 django-auth-ldap
 python-ldap
 django-taggit
