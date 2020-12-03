@@ -94,7 +94,7 @@ def style_notify(style: Style, created=True) -> None:
                         % style.name)
 
 
-def style_approval_notify(style: Style, creator: User, staff: User) -> None:
+def style_update_notify(style: Style, creator: User, staff: User) -> None:
     """
     Email notification system for approval styles
     """
@@ -414,7 +414,7 @@ def style_review(request, pk):
                 messages.success(request, msg, 'error', fail_silently=True)
             style.save()
             # send email notification
-            style_approval_notify(style, style.creator, request.user)
+            style_update_notify(style, style.creator, request.user)
     return HttpResponseRedirect(reverse('style_detail', kwargs={'pk': pk}))
 
 

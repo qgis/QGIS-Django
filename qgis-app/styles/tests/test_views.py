@@ -8,7 +8,7 @@ from django.urls import reverse
 from django.contrib.auth.models import User, Group
 
 from styles.models import Style, StyleType
-from styles.views import style_approval_notify, style_notify
+from styles.views import style_update_notify, style_notify
 
 STYLE_DIR = os.path.join(os.path.dirname(__file__), "stylefiles")
 
@@ -310,7 +310,7 @@ class TestStyleApprovalNotify(TestCase):
                       mail.outbox[0].body)
 
     def test_send_email_approved_style_notification(self):
-        style_approval_notify(self.style_approved, self.creator, self.staff)
+        style_update_notify(self.style_approved, self.creator, self.staff)
         self.assertEqual(len(mail.outbox), 1)
         self.assertEqual(mail.outbox[0].subject,
                          "Style Cube approved notification.")
@@ -318,7 +318,7 @@ class TestStyleApprovalNotify(TestCase):
                       mail.outbox[0].body)
 
     def test_send_email_rejected_style_notification(self):
-        style_approval_notify(self.style_rejected, self.creator, self.staff)
+        style_update_notify(self.style_rejected, self.creator, self.staff)
         self.assertEqual(len(mail.outbox), 1)
         self.assertEqual(mail.outbox[0].subject,
                          "Style Another Cube rejected notification.")
