@@ -61,6 +61,7 @@ def geopackage_notify(gpkg: Geopackage, created=True) -> None:
     """
     Email notification when a new GeoPackage created.
     """
+
     recipients = [u.email for u in User.objects.filter(
         groups__name="Style Managers").exclude(email='')]
 
@@ -89,10 +90,10 @@ def geopackage_notify(gpkg: Geopackage, created=True) -> None:
                         % gpkg.name)
 
 
-def geopackage_approval_notify(gpkg: Geopackage, creator: User,
+def geopackage_update_notify(gpkg: Geopackage, creator: User,
                                staff: User) -> None:
     """
-    Email notification system for approval styles
+    Email notification system when staff approved or rejected a GeoPackage
     """
 
     recipients = [u.email for u in User.objects.filter(
