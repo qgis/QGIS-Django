@@ -66,7 +66,7 @@
                 <th>{% anchor featured %}</th>
                 <th>{% anchor downloads %}</th>
                 <th>{% anchor author "Author" %}</th>
-                <th>{% anchor modified_on "Last modified" %}</th>
+                <th>{% anchor latest_version_date "Latest Plugin Version" %}</th>
                 <th>{% anchor created_on "Created on" %}</th>
                 <th>{% anchor average_vote "Stars (votes)" %}</th>
                 <th>{% trans "Stable" %}</th>
@@ -91,7 +91,7 @@
                 <td>{% if object.featured%}<img src="{% static "images/tick_16.png" %}" />{% else %}&mdash;{% endif %}</td>
                 <td>{{ object.downloads }}</td>
                 <td><a title="{% trans "See all plugins by"%} {{ object.author }}" href="{% url "author_plugins" object.author %}">{{ object.author }}</a></td>
-                <td>{{ object.modified_on|naturalday }}</td>
+                <td>{{ object.latest_version_date|naturalday }}</td>
                 <td>{{ object.created_on|naturalday }}</td>
                 <td><div><div class="star-ratings"><span style="width:{% widthratio object.average_vote 5 100 %}%" class="rating"></span></div> ({{ object.rating_votes }})</div></td>
                 <td>{% if object.stable %}<a href="{% url "version_download" object.package_name object.stable.version %}" title="{% trans "Download the stable version" %}" >{{ object.stable.version }}</a>{% else %}&mdash;{% endif %}</td>

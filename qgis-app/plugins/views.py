@@ -474,20 +474,14 @@ class PluginsList(ListView):
                 _sort_by = sort_by
 
             # Check if the sort criterion is a field or 'average_vote'
+            # or 'latest_version_date'
             try:
-                _sort_by == 'average_vote' or self.model._meta.get_field(_sort_by)
+                (_sort_by == 'average_vote'
+                 or _sort_by == 'latest_version_date'
+                 or self.model._meta.get_field(_sort_by))
             except FieldDoesNotExist:
                 return qs
-
-            chars_fields = [field.name for field in self.model._meta.fields
-                            if field.get_internal_type() == 'CharField']
-            if _sort_by in chars_fields:
-                if sort_by[0] == '-':
-                    qs = qs.order_by(Lower(_sort_by).desc())
-                else:
-                    qs = qs.order_by(Lower(_sort_by))
-            else:
-                qs = qs.order_by(sort_by)
+            qs = qs.order_by(sort_by)
         else:
             # default
             if not qs.ordered:

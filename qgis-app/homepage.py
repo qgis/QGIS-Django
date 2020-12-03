@@ -10,7 +10,7 @@ def homepage(request):
     """
     Renders the home page
     """
-    fresh = Plugin.fresh_objects.all()[:10]
+    latest = Plugin.latest_objects.all()[:10]
     featured = Plugin.featured_objects.all()[:10]
     popular = Plugin.popular_objects.all()[:10]
     try:
@@ -20,7 +20,7 @@ def homepage(request):
 
     return render(request, 'flatpages/homepage.html', {
                 'featured' : featured,
-                'fresh' : fresh,
+                'latest' : latest,
                 'popular' : popular,
                 'content' : content,
             })
