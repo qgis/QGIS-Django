@@ -13,6 +13,31 @@
     .sorted-name {
         color: #006dcc;
     }
+
+    table > tbody > tr {
+        height: 120px;
+    }
+
+    .table td {
+        vertical-align: middle;
+    }
+
+    img.style-icon {
+        width: 100px;
+        height: 100px;
+    }
+
+    img.style-icon:hover {
+        width: 320px;
+        height: 320px;
+        position: absolute;
+
+        margin-top: -250px;
+        margin-left: -220px;
+        border-radius: 20px;
+        box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
+
+    }
 </style>
 {% endblock %}
 
@@ -51,12 +76,12 @@
             {% for style in style_list %}
                 <tr>
                     <td>
-                        {% thumbnail style.thumbnail_image "32x32" format="PNG" as im %}
-                            <img class="plugin-icon" alt="{% trans "Style icon" %}" src="{{ im.url }}" width="{{ im.x }}" height="{{ im.y }}" />
+                        {% thumbnail style.thumbnail_image "420x420" format="PNG" as im %}
+                            <img class="style-icon" alt="{% trans "Style icon" %}" src="{{ im.url }}" width="{{ im.x }}" height="{{ im.y }}" />
                         {% endthumbnail %}
                     </td>
                     <td><a href="{% url 'style_detail' style.id %}">{{ style.name|title }}</a></td>
-                    <td>{{ style.style_type.name|title }}</td>
+                    <td><span class="center-vertical">{{ style.style_type.name|title }}</span></td>
                     <td>{{ style.download_count }}</td>
                     <td>{{ style.get_creator_name|title }}</td>
                     <td>{{ style.upload_date|date:"d F Y" }}</td>
