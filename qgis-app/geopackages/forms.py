@@ -1,6 +1,5 @@
 from django.utils.translation import ugettext_lazy as _
 from django import forms
-from django.core.exceptions import ValidationError
 
 from geopackages.models import Geopackage
 from geopackages.validator import gpkg_validator
@@ -13,7 +12,7 @@ class GeopackageUploadForm(forms.ModelForm):
 
     class Meta:
         model = Geopackage
-        fields = ['gpkg_file', 'thumbnail_image', 'name','description', ]
+        fields = ['gpkg_file', 'thumbnail_image', 'name', 'description', ]
 
     def clean_gpkg_file(self):
         """
@@ -44,8 +43,8 @@ class GeopackageReviewForm(forms.Form):
     approval = forms.ChoiceField(required=True, choices=CHOICES,
                                  widget=forms.RadioSelect, initial='approve')
     comment = forms.CharField(widget=forms.Textarea(
-        attrs={'placeholder': 'Please provide clear feedback '
-                              'if you decided to not approve this GeoPackage.',
+        attrs={'placeholder': _('Please provide clear feedback if you decided '
+                                'to not approve this GeoPackage.'),
                'rows': "5"}))
 
 

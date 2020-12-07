@@ -7,7 +7,6 @@ from django.contrib.auth.models import User
 from django.contrib.sites.models import Site
 from django.contrib.postgres.search import SearchVector
 from django.core.mail import send_mail
-from django.db.models import Q
 from django.http import HttpResponse, HttpResponseRedirect, JsonResponse
 from django.shortcuts import get_object_or_404, render
 from django.urls import reverse, reverse_lazy
@@ -191,7 +190,8 @@ class GeopackageUpdateView(LoginRequiredMixin, UpdateView):
         gpkg = self.get_object()
         user = self.request.user
         if not check_geopackage_access(user, gpkg):
-            return render(request, 'geopackages/geopackage_permission_deny.html',
+            return render(request,
+                          'geopackages/geopackage_permission_deny.html',
                           {'geopackage_name': gpkg.name,
                            'context': "You cannot delete this GeoPackage"})
         return super().dispatch(request, *args, **kwargs)
@@ -265,7 +265,7 @@ class GeopackageRequireActionListView(LoginRequiredMixin, GeopackageListView):
     def get_queryset(self):
         qs = super().get_queryset()
         user = self.request.user
-        if user.is_staff or is_style_manager(user):
+        if user.is_staff or is_resources_manager(user):
             return qs
         return qs.filter(creator=user)
 
@@ -288,9 +288,10 @@ class GeopackageDeleteView(LoginRequiredMixin, DeleteView):
         gpkg = self.get_object()
         user = self.request.user
         if not check_geopackage_access(user, gpkg):
-            return render(request, 'geopackages/geopackage_permission_deny.html',
-                {'geopackage_name': gpkg.name,
-                 'context': "You cannot delete this GeoPackage"})
+            return render(request,
+                          'geopackages/geopackage_permission_deny.html',
+                          {'geopackage_name': gpkg.name,
+                           'context': "You cannot delete this GeoPackage"})
         return super().dispatch(request, *args, **kwargs)
 
 
@@ -320,8 +321,9 @@ def geopackage_review(request, pk):
                 messages.success(request, msg, 'error', fail_silently=True)
             gpkg.save()
             # send email notification
-            geopackage_approval_notify(gpkg, gpkg.creator, request.user)
-    return HttpResponseRedirect(reverse('geopackage_detail', kwargs={'pk': pk}))
+            geopackage_update_notify(gpkg, gpkg.creator, request.user)
+    return HttpResponseRedirect(reverse('geopackage_detail',
+                                        kwargs={'pk': pk}))
 
 
 def geopackage_download(request, pk):
@@ -335,7 +337,8 @@ def geopackage_download(request, pk):
             return render(
                 request, 'geopackages/geopackage_permission_deny.html',
                 {'geopackage_name': gpkg.name,
-                 'context': 'Download failed. This GeoPackage is not approved'})
+                 'context': ('Download failed. '
+                             'This GeoPackage is not approved')})
     else:
         gpkg.increase_download_counter()
         gpkg.save()
