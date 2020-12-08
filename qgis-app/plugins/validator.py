@@ -84,7 +84,7 @@ def validator(package):
             if forbidden_dir in zname.split(os.sep):
                 raise ValidationError(_("For security reasons, zip file "
                                         "cannot contain '%s' directory"
-                                        % (not_allowed_dir,)) )
+                                        % (forbidden_dir,)) )
     bad_file = zip.testzip()
     if bad_file:
         zip.close()
