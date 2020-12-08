@@ -33,7 +33,7 @@ class GeopackageApprovedManager(models.Manager):
             .order_by('upload_date')
 
 
-class GeopackageRequireactionManager(models.Manager):
+class GeopackageRequireActionManager(models.Manager):
     """Custom Queryset Manager for reviewed GeoPackage requires an action"""
     def get_queryset(self):
         qs = super().get_queryset()
@@ -130,7 +130,7 @@ class Geopackage(models.Model):
     objects = models.Manager()
     approved_objects = GeopackageApprovedManager()
     unapproved_objects = GeopackageUnapprovedManager()
-    requireaction_objects = GeopackageRequireactionManager()
+    requireaction_objects = GeopackageRequireActionManager()
 
     @property
     def get_creator_name(self):
