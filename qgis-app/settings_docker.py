@@ -65,6 +65,8 @@ INSTALLED_APPS = [
 
     # styles:
     'styles',
+    # geopackages
+    'geopackages',
 ]
 
 DATABASES = {

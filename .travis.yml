@@ -40,15 +40,11 @@ before_script:
 
 script:
   - cd qgis-app
-  - >
-    flake8
-    --ignore=E203,E121,E122,E123,E124,E125,E126,E127,E128,E402,W503
-    --max-line-length 79
-    --exclude='./*/migrations/',
-    ./styles
+  - flake8 ./styles
+  - flake8 ./geopackages
   - python manage.py makemigrations
   - python manage.py migrate
-  - coverage run manage.py test styles
+  - coverage run manage.py test styles geopackages
 
 after_success:
   - codecov

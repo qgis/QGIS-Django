@@ -1,0 +1,6 @@
+{% extends 'geopackages/geopackage_base.html' %}{% load i18n %}
+{% block content %}
+    <h4 class="text-error">{% trans "Permission Denined"%}</h4>
+    <p>{% trans context %}: {{ geopackage_name }}.</p>
+    <p><a class="btn btn-primary" href="{% url 'geopackage_list' %}">{% trans "Back" %}</a></p>
+{% endblock %}

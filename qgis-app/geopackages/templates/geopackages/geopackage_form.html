@@ -1,0 +1,20 @@
+{% extends "geopackages/geopackage_base.html" %}{% load i18n %}
+{% block content %}
+    <h2>{% trans "Upload GeoPackage" %}</h2>
+
+    {% if form.non_field_errors %}
+    <div class="alert alert-error">
+        <button type="button" class="close" data-dismiss="alert">&times;</button>
+        {% for error in form.non_field_errors %}
+            <p>{{ error }}</p>
+        {% endfor %}
+    </div>
+    {% endif %}
+
+    <form method="post" enctype="multipart/form-data">
+        {% csrf_token %}
+        {% include "geopackages/form_snippet.html" %}
+        <button class="btn btn-primary" type="submit">{% trans "Upload" %}</button>
+    </form>
+
+{% endblock %}
