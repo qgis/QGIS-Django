@@ -99,3 +99,6 @@ EMAIL_HOST_USER = 'noreply'
 EMAIL_HOST_PASSWORD = 'docker'
 EMAIL_USE_TLS = False
 EMAIL_SUBJECT_PREFIX = '[QGIS Plugins]'
+
+# django uploaded file permission
+FILE_UPLOAD_PERMISSIONS = 0o644
