@@ -4,7 +4,7 @@ from django.conf import settings
 from django.core.exceptions import ValidationError
 from django.utils.translation import ugettext_lazy as _
 
-GPKG_MAX_SIZE = getattr(settings, 'GPKG_MAX_SIZE', 5000000)  # 1MB
+GPKG_MAX_SIZE = getattr(settings, 'GPKG_MAX_SIZE', 1000000)  # 1MB
 
 
 def gpkg_validator(gpkg_file) -> bool:

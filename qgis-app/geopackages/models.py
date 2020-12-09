@@ -43,7 +43,7 @@ class Geopackage(models.Model):
     A GeoPackage should come with:
     - a proper screenshot
     - description explaining what project demonstrate
-    - filesize < 5 MB
+    - filesize < 1 MB
     """
 
     # date
@@ -93,7 +93,7 @@ class Geopackage(models.Model):
     # file
     gpkg_file = models.FileField(
         _('GeoPackage file'),
-        help_text=_('A GeoPackage file. The filesize must less than 5MB '),
+        help_text=_('A GeoPackage file. The filesize must less than 1MB '),
         upload_to=GEOPACKAGES_STORAGE_PATH,
         validators=[FileExtensionValidator(
             allowed_extensions=['gpkg', 'zip'])],

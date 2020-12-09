@@ -115,7 +115,7 @@ class TestFormValidation(SetUpTest, TestCase):
         self.assertFalse(form.is_valid())
         self.assertEqual(
             form.errors,
-            {'gpkg_file': ['File is too big. Max size is 5.0 Megabytes']}
+            {'gpkg_file': ['File is too big. Max size is 1.0 Megabytes']}
         )
 
 
