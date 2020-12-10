@@ -24,7 +24,7 @@
             let maxFileSize = 1000000;
             let fileSize = this.files[0].size
             if (fileSize > maxFileSize){
-                alert("You tried to upload "+ (fileSize/1000000).toFixed(2) +"MB file. The Project file should be less than 1MB");
+                alert('You have selected a file that is more than 1mb, files larger than this are not supported.');
                 $('#id_gpkg_file').val('');
             };
         });
