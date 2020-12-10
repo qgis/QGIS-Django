@@ -76,9 +76,13 @@
             {% for style in style_list %}
                 <tr>
                     <td>
+                    {% if style.thumbnail_image and style.thumbnail_image.file %}
                         {% thumbnail style.thumbnail_image "420x420" format="PNG" as im %}
                             <img class="style-icon" alt="{% trans "Style icon" %}" src="{{ im.url }}" width="{{ im.x }}" height="{{ im.y }}" />
                         {% endthumbnail %}
+                    {% else %}
+                        <img height="32" width="32" class="plugin-icon" src="{% static "images/qgis-icon-32x32.png" %}" alt="{% trans "Plugin icon" %}" />
+                    {% endif %}
                     </td>
                     <td><a href="{% url 'style_detail' style.id %}">{{ style.name|title }}</a></td>
                     <td><span class="center-vertical">{{ style.style_type.name|title }}</span></td>
@@ -86,7 +90,7 @@
                     <td>{{ style.get_creator_name|title }}</td>
                     <td>{{ style.upload_date|date:"d F Y" }}</td>
                     <td>
-                        {% if user.is_staff or user == style.creator %}
+                        {% if user.is_staff or user == style.creataor %}
                         <a class="btn btn-primary btn-mini" href="{% url 'style_update' style.id %}" title="{% trans "Edit" %}"><i class="icon-pencil icon-white"></i></a>&nbsp
                         <a class="btn btn-danger btn-mini delete" href="{% url 'style_delete' style.id %}" title="{% trans "Delete" %}"><i class="icon-remove icon-white"></i></a>&nbsp
                         {% endif %}

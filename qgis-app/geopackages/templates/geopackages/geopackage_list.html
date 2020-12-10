@@ -51,12 +51,16 @@
             {% for geopackage in geopackage_list %}
                 <tr>
                     <td>
+                    {% if geopackage.thumbnail_image and geopackage.thumbnail_image.file %}
                         {% thumbnail geopackage.thumbnail_image "32x32" format="PNG" as im %}
                             <img class="plugin-icon" alt="{% trans "Style icon" %}" src="{{ im.url }}" width="{{ im.x }}" height="{{ im.y }}" />
                         {% endthumbnail %}
+                    {% else %}
+                        <img height="32" width="32" class="plugin-icon" src="{% static "images/qgis-icon-32x32.png" %}" alt="{% trans "Plugin icon" %}" />
+                    {% endif %}
                     </td>
                     <td><a href="{% url 'geopackage_detail' pk=geopackage.id %}">{{ geopackage.name|title }}</a></td>
-                    <td>{{ geopackage.description|truncatewords:7 }}</a></td>
+                    <td>{{ geopackage.description|md_to_html|striptags|truncatewords:7 }}</a></td>
                     <td>{{ geopackage.download_count }}</td>
                     <td>{{ geopackage.get_creator_name|title }}</td>
                     <td>{{ geopackage.upload_date|date:"d F Y" }}</td>

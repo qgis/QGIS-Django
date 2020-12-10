@@ -345,8 +345,8 @@ def geopackage_download(request, pk):
     with open(gpkg.gpkg_file.file.name, 'rb') as gpkg_file:
         file_content = gpkg_file.read()
         response = HttpResponse(file_content, content_type='application/gpkg')
-        response['Content-Disposition'] = 'attachment; filename=%s.gpkg' % (
-            gpkg.name
+        response['Content-Disposition'] = 'attachment; filename=%s%s' % (
+            gpkg.name, gpkg.extension()
         )
         return response
 

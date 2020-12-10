@@ -1,4 +1,4 @@
-{% extends 'geopackages/geopackage_base.html' %}{% load i18n static thumbnail humanize %}
+{% extends 'geopackages/geopackage_base.html' %}{% load i18n static thumbnail humanize resources_custom_tags%}
 
 {% block extrajs %}
     {{ block.super }}
@@ -35,7 +35,7 @@
                 <dt>Name</dt>
                 <dd>{{ geopackage_detail.name }}</dd>
                 <dt>Description</dt>
-                <dd>{{ geopackage_detail.description }}</dd>
+                <dd>{{ geopackage_detail.description|md_to_html }}</dd>
                 <dt>Upload Date</dt>
                 <dd>{{ geopackage_detail.upload_date|date:"d F Y" }}</dd>
                 <dt>Modified Date</dt>

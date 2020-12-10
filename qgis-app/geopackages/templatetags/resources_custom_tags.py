@@ -1,3 +1,5 @@
+import markdown
+
 from django import template
 from django.forms import CheckboxInput
 from django.utils.safestring import mark_safe
@@ -48,3 +50,10 @@ def anchor_sort_arrow(name, order_by, current_order, current_query):
 @register.filter(name='is_checkbox')
 def is_checkbox(field):
     return isinstance(field.field.widget, CheckboxInput)
+
+
+@register.filter(name='md_to_html')
+def md_to_html(md_string):
+    md = markdown.Markdown()
+    html = md.convert(md_string)
+    return mark_safe(html)

@@ -1,4 +1,4 @@
-{% extends 'geopackages/geopackage_base.html' %}{% load i18n static thumbnail %}
+{% extends 'geopackages/geopackage_base.html' %}{% load i18n static thumbnail resources_custom_tags%}
 
 {% block content %}
         <h3 class="style-title">{{ geopackage_detail.name|title }}</h3>
@@ -25,7 +25,7 @@
                     <dt>Name</dt>
                     <dd>{{ geopackage_detail.name }}</dd>
                     <dt>Description</dt>
-                    <dd>{{ geopackage_detail.description }}</dd>
+                    <dd>{{ geopackage_detail.description|md_to_html }}</dd>
                     <dt>Uploaded Date</dt>
                     <dd>{{ geopackage_detail.upload_date|date:"d F Y" }}</dd>
                     <dt>Approved Date</dt>
