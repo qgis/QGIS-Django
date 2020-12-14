@@ -1,0 +1,6 @@
+{% extends 'modelers/modeler_base.html' %}{% load i18n %}
+{% block content %}
+    <h4 class="text-error">{% trans "Permission Denined"%}</h4>
+    <p>{% trans context %}: {{ modeler_name }}.</p>
+    <p><a class="btn btn-primary" href="{% url 'modeler_list' %}">{% trans "Back" %}</a></p>
+{% endblock %}
