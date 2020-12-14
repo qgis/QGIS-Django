@@ -14,7 +14,7 @@
 {% endblock %}
 
 {% block content %}
-    <h3>{{ geopackage_detail.name|title }} <small>in review</small></h3>
+    <h3>{{ geopackage_detail.name }} <small>in review</small></h3>
     {% if user == geopackage_detail.creator or user.is_staff %}
         <div class="row pull-right">
             <a class="btn btn-primary btn-mini" href="{% url 'geopackage_update' geopackage_detail.id %}" title="{% trans "Edit" %}"><i class="icon-pencil icon-white"></i></a>&nbsp

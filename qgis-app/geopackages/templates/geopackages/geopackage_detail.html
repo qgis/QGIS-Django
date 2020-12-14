@@ -1,7 +1,7 @@
 {% extends 'geopackages/geopackage_base.html' %}{% load i18n static thumbnail resources_custom_tags%}
 
 {% block content %}
-        <h3 class="style-title">{{ geopackage_detail.name|title }}</h3>
+        <h3 class="style-title">{{ geopackage_detail.name }}</h3>
         {% if user == geopackage_detail.creator or user.is_staff %}
         <div class="row pull-right">
             <a class="btn btn-primary btn-mini" href="{% url 'geopackage_update' geopackage_detail.id %}" title="{% trans "Edit" %}"><i class="icon-pencil icon-white"></i></a>&nbsp

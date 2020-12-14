@@ -268,4 +268,4 @@ class TestReviewGeopackage(SetUpTest, TestCase):
         response = self.client.get(url)
         self.assertEqual(response.status_code, 200)
         self.assertContains(response, "1 record found.")
-        self.assertContains(response, "Spiky Polygons")
+        self.assertContains(response, "spiky polygons")
