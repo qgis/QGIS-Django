@@ -10,16 +10,19 @@
 - Build and spin container
 ```
 $ make build
+$ make web
 $ make devweb
 ```
 
-- Run migrate in devweb container
+- Run migrate
 ```
-$ make migrate-devweb
+$ make migrate
 ```
 
 - Set up python interpreter in PyCharm or just runserver from devweb container:
-`$make devweb-runserver`
+```
+$ make devweb-runserver
+```
 and now, you can see your site at `http://0.0.0.0:62202` (skip this step if you are using PyCharm interpreter)
 
 ---
@@ -109,3 +112,52 @@ Follow these steps for setting up:
     - styles | style type | Can delete style type
     - styles | style type | Can view style type
   
+---
+## Backup and Restore
+
+- Go to repo directory and run backup.sh
+```bash
+$ ./backup.sh
+```
+- You will find dumps file in backups directory 
+```bash
+$ tree -L 3 backups
+backups
+├── 2016
+├── 2017
+├── 2018
+├── 2019
+├── 2020
+│   ├── April
+│   │   └── PG_QGIS_PLUGINS_gis.07-April-2020.dmp
+│   ├── August
+│   ├── December
+│   │   ├── PG_QGIS_PLUGINS_gis.01-December-2020.dmp
+│   │   ├── PG_QGIS_PLUGINS_gis.02-December-2020.dmp
+│   │   ├── PG_QGIS_PLUGINS_gis.03-December-2020.dmp
+│   │   ├── PG_QGIS_PLUGINS_gis.04-December-2020.dmp
+│   │   ├── PG_QGIS_PLUGINS_gis.05-December-2020.dmp
+│   │   ├── PG_QGIS_PLUGINS_gis.06-December-2020.dmp
+│   │   ├── PG_QGIS_PLUGINS_gis.07-December-2020.dmp
+│   │   ├── PG_QGIS_PLUGINS_gis.08-December-2020.dmp
+│   │   ├── PG_QGIS_PLUGINS_gis.09-December-2020.dmp
+│   │   ├── PG_QGIS_PLUGINS_gis.10-December-2020.dmp
+│   │   ├── PG_QGIS_PLUGINS_gis.11-December-2020.dmp
+│   │   ├── PG_QGIS_PLUGINS_gis.12-December-2020.dmp
+│   │   ├── PG_QGIS_PLUGINS_gis.13-December-2020.dmp
+│   │   ├── PG_QGIS_PLUGINS_gis.14-December-2020.dmp
+│   │   ├── PG_QGIS_PLUGINS_gis.15-December-2020.dmp
+│   │   └── PG_QGIS_PLUGINS_gis.16-December-2020.dmp
+│`
+```
+
+- Copy the dump file you wish to restore to dockerize/backups/latest.dmp file 
+```bash
+$ cp backups/2020/December/PG_QGIS_PLUGINS_gis.16-December-2020.dmp dockerize/backups/latest.dmp
+```
+
+- Restore the dump file
+```bash
+$ cd dockerize
+$ make dbrestore
+```
