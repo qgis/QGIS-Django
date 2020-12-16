@@ -1,8 +1,6 @@
-import datetime
 import os
 
 from django.conf import settings
-from django.contrib.auth.models import User
 from django.core.validators import FileExtensionValidator
 from django.db import models
 from django.urls import reverse
@@ -50,4 +48,3 @@ class GeopackageReview(Review):
                                    blank=False,
                                    null=False,
                                    on_delete=models.CASCADE)
-

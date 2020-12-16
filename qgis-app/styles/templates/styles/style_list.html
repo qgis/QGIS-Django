@@ -90,7 +90,7 @@
                     <td>{{ style.get_creator_name|title }}</td>
                     <td>{{ style.upload_date|date:"d F Y" }}</td>
                     <td>
-                        {% if user.is_staff or user == style.creataor %}
+                        {% if user.is_staff or user == style.creator %}
                         <a class="btn btn-primary btn-mini" href="{% url 'style_update' style.id %}" title="{% trans "Edit" %}"><i class="icon-pencil icon-white"></i></a>&nbsp
                         <a class="btn btn-danger btn-mini delete" href="{% url 'style_delete' style.id %}" title="{% trans "Delete" %}"><i class="icon-remove icon-white"></i></a>&nbsp
                         {% endif %}

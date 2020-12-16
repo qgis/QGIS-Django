@@ -61,7 +61,7 @@ class Resource(models.Model):
 
     # name and desc
     name = models.CharField(_('Name'),
-                            help_text=_('A non-unique name for this resource'),
+                            help_text=_('A unique name for this resource'),
                             max_length=256,
                             blank=False,
                             null=False,

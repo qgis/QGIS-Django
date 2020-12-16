@@ -1,8 +1,5 @@
-import datetime
-
 from django.db import models
 from django.conf import settings
-from django.contrib.auth.models import User
 from django.core.validators import FileExtensionValidator
 from django.urls import reverse
 from django.utils.translation import ugettext_lazy as _

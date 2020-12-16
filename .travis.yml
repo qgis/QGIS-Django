@@ -43,9 +43,10 @@ script:
   - flake8 ./base
   - flake8 ./styles
   - flake8 ./geopackages
+  - flake8 ./modelers
   - python manage.py makemigrations
   - python manage.py migrate
-  - coverage run manage.py test base styles geopackages
+  - coverage run manage.py test base styles geopackages modelers
 
 after_success:
   - codecov
