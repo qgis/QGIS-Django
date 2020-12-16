@@ -165,7 +165,7 @@ class GeopackageDetailView(DetailView):
         if self.object.geopackagereview_set.exists():
             if self.object.geopackagereview_set.last().reviewer.first_name:
                 reviewer = "%s %s" % (
-                    self.object.geopackagereview_set.last()\
+                    self.object.geopackagereview_set.last()
                         .reviewer.first_name,
                     self.object.geopackagereview_set.last().reviewer.last_name)
             else:
