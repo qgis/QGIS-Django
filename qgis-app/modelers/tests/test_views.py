@@ -23,10 +23,10 @@ class SetUpTest():
         self.thumbnail = os.path.join(MODEL_DIR, "thumbnail.png")
         self.thumbnail_content = open(self.thumbnail, 'rb')
         self.model_file = os.path.join(MODEL_DIR,
-                                       "flooded-buildings-extractor.model3")
+                                       "example.model3")
         self.model_file_content = open(self.model_file, 'rb')
         self.modelzip_file = os.path.join(MODEL_DIR,
-                                       "flooded-buildings-extractor.zip")
+                                       "example.zip")
         self.modelzip_file_content = open(self.modelzip_file, 'rb')
         self.model_oversize = os.path.join(MODEL_DIR, "dummy_oversize.model3")
         self.model_oversize_content = open(self.model_oversize, 'rb')
