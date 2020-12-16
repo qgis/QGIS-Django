@@ -123,8 +123,8 @@ def geopackage_update_notify(gpkg: Geopackage, creator: User,
         logging.debug('Sending email %s notification for %s GeoPackage, '
                       'recipients:  %s' % (approval_state, gpkg, recipients))
     else:
-        logging.warning('No recipients found for %s style %s notification' % (
-            gpkg, approval_state))
+        logging.warning('No recipients found for %s geopackage %s '
+                        'notification' % (gpkg, approval_state))
 
 
 class GeopackageCreateView(LoginRequiredMixin, CreateView):
@@ -165,8 +165,9 @@ class GeopackageDetailView(DetailView):
         if self.object.geopackagereview_set.exists():
             if self.object.geopackagereview_set.last().reviewer.first_name:
                 reviewer = "%s %s" % (
-                    self.object.stylereview_set.last().reviewer.first_name,
-                    self.object.stylereview_set.last().reviewer.last_name)
+                    self.object.geopackagereview_set.last()\
+                        .reviewer.first_name,
+                    self.object.geopackagereview_set.last().reviewer.last_name)
             else:
                 reviewer = self.object.geopackagereview_set.last().reviewer \
                     .username
@@ -354,7 +355,7 @@ def geopackage_download(request, pk):
 @never_cache
 def geopackage_nav_content(request):
     """
-    Provides data for sidebar style navigation
+    Provides data for sidebar geopackage navigation
     """
 
     user = request.user
@@ -369,7 +370,7 @@ def geopackage_nav_content(request):
             creator=user).distinct().count()
         require_action = Geopackage.requireaction_objects.filter(
             creator=user).distinct().count()
-    number_style = {'all': all_gpkg,
+    number_geopackage = {'all': all_gpkg,
                     'waiting_review': waiting_review,
                     'require_action': require_action}
-    return JsonResponse(number_style, status=200)
+    return JsonResponse(number_geopackage, status=200)
