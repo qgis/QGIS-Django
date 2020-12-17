@@ -1,4 +1,4 @@
-{% extends "modelers/modeler_base.html" %}{% load i18n %}
+{% extends "models/model_base.html" %}{% load i18n %}
 {% block content %}
     <h2>{% trans "Upload Model" %}</h2>
 
@@ -13,7 +13,7 @@
 
     <form method="post" enctype="multipart/form-data">
         {% csrf_token %}
-        {% include "modelers/form_snippet.html" %}
+        {% include "models/form_snippet.html" %}
         <button class="btn btn-primary" type="submit">{% trans "Upload" %}</button>
     </form>
 

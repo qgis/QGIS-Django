@@ -6,10 +6,10 @@ from django.core.files.uploadedfile import SimpleUploadedFile
 from django.test import TestCase, override_settings
 from django.urls import reverse
 from django.contrib.auth.models import User, Group
-from modelers.models import Modeler, ModelerReview
+from models.models import Model, ModelReview
 
-from modelers.views import modeler_notify, modeler_update_notify
-from modelers.forms import ModelerUploadForm
+from models.views import model_notify, model_update_notify
+from models.forms import ModelUploadForm
 
 MODEL_DIR = os.path.join(os.path.dirname(__file__), "modelfiles")
 
@@ -64,7 +64,7 @@ class TestFormValidation(SetUpTest, TestCase):
             self.model_file_content.name,
             self.model_file_content.read()
         )
-        form = ModelerUploadForm(data={})
+        form = ModelUploadForm(data={})
         self.assertFalse(form.is_valid())
         data = {
                 "name": "flooded building extractor",
@@ -74,7 +74,7 @@ class TestFormValidation(SetUpTest, TestCase):
             'thumbnail_image': uploaded_thumbnail,
             'model_file': uploaded_model
         }
-        form = ModelerUploadForm(data, file_data)
+        form = ModelUploadForm(data, file_data)
         self.assertTrue(form.is_valid())
 
     def test_form_invalid_model_file_extension(self):
@@ -94,7 +94,7 @@ class TestFormValidation(SetUpTest, TestCase):
             'thumbnail_image': uploaded_thumbnail,
             'model_file': uploaded_model
         }
-        form = ModelerUploadForm(data, file_data)
+        form = ModelUploadForm(data, file_data)
         self.assertFalse(form.is_valid())
         self.assertEqual(form.errors,
                          {'model_file': ['The submitted file is empty.']})
@@ -116,7 +116,7 @@ class TestFormValidation(SetUpTest, TestCase):
             'thumbnail_image': uploaded_thumbnail,
             'model_file': uploaded_model
         }
-        form = ModelerUploadForm(data, file_data)
+        form = ModelUploadForm(data, file_data)
         self.assertFalse(form.is_valid())
         self.assertEqual(
             form.errors,
@@ -124,7 +124,7 @@ class TestFormValidation(SetUpTest, TestCase):
         )
 
 
-@override_settings(MEDIA_ROOT="modelers/tests/modelfiles/")
+@override_settings(MEDIA_ROOT="models/tests/modelfiles/")
 class TestEmailNotification(SetUpTest, TestCase):
     """
     Send the email to console
@@ -133,29 +133,29 @@ class TestEmailNotification(SetUpTest, TestCase):
     @override_settings(
         EMAIL_BACKEND='django.core.mail.backends.console.EmailBackend')
     def test_print_email_notification_in_console(self):
-        Modeler.objects.create(
+        Model.objects.create(
             creator=self.creator,
             name="flooded buildings extractor",
             description="A Model for testing purpose",
             thumbnail_image=self.thumbnail,
             model_file=self.model_file
         )
-        model = Modeler.objects.first()
-        modeler_notify(model)
-        ModelerReview.objects.create(
+        model = Model.objects.first()
+        model_notify(model)
+        ModelReview.objects.create(
             reviewer=self.staff,
-            modeler=model,
+            model=model,
             comment="Rejected for testing purpose")
         model.require_action = True
         model.save()
-        modeler_update_notify(model, self.creator, self.staff)
-        ModelerReview.objects.create(
+        model_update_notify(model, self.creator, self.staff)
+        ModelReview.objects.create(
             reviewer=self.staff,
-            modeler=model,
+            model=model,
             comment="Approved! This is for testing purpose")
         model.approved = True
         model.save()
-        modeler_update_notify(model, self.creator, self.staff)
+        model_update_notify(model, self.creator, self.staff)
 
 
 @override_settings(MEDIA_ROOT=tempfile.mkdtemp())
@@ -164,7 +164,7 @@ class TestUploadModel(SetUpTest, TestCase):
     def test_upload_acceptable_model3_size_file(self):
         login = self.client.login(username="creator", password="password")
         self.assertTrue(login)
-        url = reverse("modeler_create")
+        url = reverse("model_create")
         uploaded_thumbnail = SimpleUploadedFile(
             self.thumbnail_content.name,
             self.thumbnail_content.read()
@@ -182,16 +182,16 @@ class TestUploadModel(SetUpTest, TestCase):
         response = self.client.post(url, data, follow=True)
         # should send email notify
         self.assertEqual(len(mail.outbox), 1)
-        model = Modeler.objects.first()
+        model = Model.objects.first()
         self.assertEqual(model.name, "flooded buildings extractor")
-        url = reverse("modeler_detail", kwargs={'pk': model.id})
+        url = reverse("model_detail", kwargs={'pk': model.id})
         response = self.client.get(url)
         self.assertEqual(response.status_code, 200)
 
     def test_upload_acceptable_zip_size_file(self):
         login = self.client.login(username="creator", password="password")
         self.assertTrue(login)
-        url = reverse("modeler_create")
+        url = reverse("model_create")
         uploaded_thumbnail = SimpleUploadedFile(
             self.thumbnail_content.name,
             self.thumbnail_content.read()
@@ -209,16 +209,16 @@ class TestUploadModel(SetUpTest, TestCase):
         response = self.client.post(url, data, follow=True)
         # should send email notify
         self.assertEqual(len(mail.outbox), 1)
-        model = Modeler.objects.first()
+        model = Model.objects.first()
         self.assertEqual(model.name, "flooded buildings extractor")
-        url = reverse("modeler_detail", kwargs={'pk': model.id})
+        url = reverse("model_detail", kwargs={'pk': model.id})
         response = self.client.get(url)
         self.assertEqual(response.status_code, 200)
 
     def test_upload_invalid_size_file(self):
         login = self.client.login(username="creator", password="password")
         self.assertTrue(login)
-        url = reverse("modeler_create")
+        url = reverse("model_create")
         uploaded_thumbnail = SimpleUploadedFile(
             self.thumbnail_content.name,
             self.thumbnail_content.read()
@@ -236,16 +236,16 @@ class TestUploadModel(SetUpTest, TestCase):
         response = self.client.post(url, data, follow=True)
         self.assertEqual(response.status_code, 200)
         # Should not create new object
-        model = Modeler.objects.first()
+        model = Model.objects.first()
         self.assertIsNone(model)
 
 
-@override_settings(MEDIA_ROOT="modelers/tests/modelfiles/")
-class TestReviewModeler(SetUpTest, TestCase):
+@override_settings(MEDIA_ROOT="models/tests/modelfiles/")
+class TestReviewModel(SetUpTest, TestCase):
 
     def setUp(self):
-        super(TestReviewModeler, self).setUp()
-        self.model_object = Modeler.objects.create(
+        super(TestReviewModel, self).setUp()
+        self.model_object = Model.objects.create(
             creator=self.creator,
             name="flooded buildings extractor",
             description="A Model for testing purpose",
@@ -254,21 +254,21 @@ class TestReviewModeler(SetUpTest, TestCase):
         )
 
     def test_review_should_be_done_by_staff(self):
-        url = reverse('modeler_review', kwargs={'pk': self.model_object.id})
+        url = reverse('model_review', kwargs={'pk': self.model_object.id})
         response = self.client.get(url)
         self.assertEqual(response.status_code, 302)
 
     def test_approve_model(self):
         login = self.client.login(username="staff", password="password")
         self.assertTrue(login)
-        url = reverse('modeler_review', kwargs={'pk': self.model_object.id})
+        url = reverse('model_review', kwargs={'pk': self.model_object.id})
         response = self.client.post(url, {
             'approval': 'approve',
             'comment': 'This should be in Approve page.'
         })
         # should send email notify
         self.assertEqual(len(mail.outbox), 1)
-        url = reverse('modeler_detail', kwargs={'pk': self.model_object.id})
+        url = reverse('model_detail', kwargs={'pk': self.model_object.id})
         self.assertRedirects(response, url)
         response = self.client.get(url)
         self.assertEqual(response.status_code, 200)
@@ -279,14 +279,14 @@ class TestReviewModeler(SetUpTest, TestCase):
     def test_reject_model(self):
         login = self.client.login(username="staff", password="password")
         self.assertTrue(login)
-        url = reverse('modeler_review', kwargs={'pk': self.model_object.id})
+        url = reverse('model_review', kwargs={'pk': self.model_object.id})
         response = self.client.post(url, {
             'approval': 'reject',
             'comment': 'This should be in requiring update page.'
         })
         # should send email notify
         self.assertEqual(len(mail.outbox), 1)
-        url = reverse('modeler_detail', kwargs={'pk': self.model_object.id})
+        url = reverse('model_detail', kwargs={'pk': self.model_object.id})
         self.assertRedirects(response, url)
         response = self.client.get(url)
         self.assertEqual(response.status_code, 200)
@@ -296,7 +296,7 @@ class TestReviewModeler(SetUpTest, TestCase):
         self.client.logout()
         # creator should find the rejected styles in requiring update page
         self.client.login(username="creator", password="password")
-        url = reverse('modeler_require_action')
+        url = reverse('model_require_action')
         response = self.client.get(url)
         self.assertEqual(response.status_code, 200)
         self.assertContains(response, "1 record found.")

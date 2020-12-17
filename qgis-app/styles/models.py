@@ -4,7 +4,7 @@ from django.core.validators import FileExtensionValidator
 from django.urls import reverse
 from django.utils.translation import ugettext_lazy as _
 
-from base.models.models_sharing_file import Resource, Review
+from base.models.processing_models import Resource, Review
 
 STYLES_STORAGE_PATH = getattr(settings,
                                  'PLUGINS_STORAGE_PATH', 'styles/%Y')

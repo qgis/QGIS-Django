@@ -19,10 +19,10 @@ from django.views.generic import (CreateView,
                                   ListView,
                                   UpdateView)
 
-from modelers.forms import (ModelerReviewForm,
-                             ModelerUpdateForm,
-                             ModelerUploadForm,)
-from modelers.models import Modeler, ModelerReview
+from models.forms import (ModelReviewForm,
+                             ModelUpdateForm,
+                             ModelUploadForm,)
+from models.models import Model, ModelReview
 
 
 def is_resources_manager(user: User) -> bool:
@@ -31,7 +31,7 @@ def is_resources_manager(user: User) -> bool:
     return user.groups.filter(name="Style Managers").exists()
 
 
-def check_modeler_access(user: User, model: Modeler) -> bool:
+def check_model_access(user: User, model: Model) -> bool:
     """Check if user is the creator of the Model or is_staff."""
 
     return user.is_staff or model.creator == user or is_resources_manager(user)
@@ -56,7 +56,7 @@ def send_mail_wrapper(subject,
                   fail_silently)
 
 
-def modeler_notify(model: Modeler, created=True) -> None:
+def model_notify(model: Model, created=True) -> None:
     """
     Email notification when a new Model created.
     """
@@ -89,7 +89,7 @@ def modeler_notify(model: Modeler, created=True) -> None:
                         % model.name)
 
 
-def modeler_update_notify(model: Modeler, creator: User,
+def model_update_notify(model: Model, creator: User,
                                staff: User) -> None:
     """
     Email notification system when staff approved or rejected a Model
@@ -106,7 +106,7 @@ def modeler_update_notify(model: Modeler, creator: User,
     else:
         approval_state = 'rejected'
 
-    review = model.modelerreview_set.last()
+    review = model.modelreview_set.last()
     comment = review.comment
 
     if recipients:
@@ -123,76 +123,76 @@ def modeler_update_notify(model: Modeler, creator: User,
         logging.debug('Sending email %s notification for %s Model, '
                       'recipients:  %s' % (approval_state, model, recipients))
     else:
-        logging.warning('No recipients found for %s style %s notification' % (
+        logging.warning('No recipients found for %s model %s notification' % (
             model, approval_state))
 
 
-class ModelerCreateView(LoginRequiredMixin, CreateView):
+class ModelCreateView(LoginRequiredMixin, CreateView):
     """
     Upload a Model File
     """
 
-    form_class = ModelerUploadForm
-    template_name = 'modelers/modeler_form.html'
+    form_class = ModelUploadForm
+    template_name = 'models/model_form.html'
     success_message = "Model was uploaded successfully."
 
     def form_valid(self, form):
         obj = form.save(commit=False)
         obj.creator = self.request.user
         obj.save()
-        modeler_notify(obj)
+        model_notify(obj)
         msg = _(self.success_message)
         messages.success(self.request, msg, 'success', fail_silently=True)
-        return HttpResponseRedirect(reverse('modeler_detail',
+        return HttpResponseRedirect(reverse('model_detail',
                                             kwargs={'pk': obj.id}))
 
 
-class ModelerDetailView(DetailView):
-    model = Modeler
-    queryset = Modeler.objects.all()
-    context_object_name = 'modeler_detail'
+class ModelDetailView(DetailView):
+    model = Model
+    queryset = Model.objects.all()
+    context_object_name = 'model_detail'
 
     def get_template_names(self):
         model = self.get_object()
         if not model.approved:
-            return 'modelers/modeler_review.html'
-        return 'modelers/modeler_detail.html'
+            return 'models/model_review.html'
+        return 'models/model_detail.html'
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data()
         user = self.request.user
         context['creator'] = self.object.get_creator_name
-        if self.object.modelerreview_set.exists():
-            if self.object.modelerreview_set.last().reviewer.first_name:
+        if self.object.modelreview_set.exists():
+            if self.object.modelreview_set.last().reviewer.first_name:
                 reviewer = "%s %s" % (
-                    self.object.stylereview_set.last().reviewer.first_name,
-                    self.object.stylereview_set.last().reviewer.last_name)
+                    self.object.modelreview_set.last().reviewer.first_name,
+                    self.object.modelreview_set.last().reviewer.last_name)
             else:
-                reviewer = self.object.modelerreview_set.last().reviewer \
+                reviewer = self.object.modelreview_set.last().reviewer \
                     .username
             context['reviewer'] = reviewer
         if user.is_staff or is_resources_manager(user):
-            context['form'] = ModelerReviewForm()
+            context['form'] = ModelReviewForm()
         return context
 
 
-class ModelerUpdateView(LoginRequiredMixin, UpdateView):
+class ModelUpdateView(LoginRequiredMixin, UpdateView):
     """
     Update a Model
     """
 
-    model = Modeler
-    form_class = ModelerUpdateForm
-    context_object_name = 'modeler'
-    template_name = 'modelers/modeler_update_form.html'
+    model = Model
+    form_class = ModelUpdateForm
+    context_object_name = 'model'
+    template_name = 'models/model_update_form.html'
 
     def dispatch(self, request, *args, **kwargs):
         model = self.get_object()
         user = self.request.user
-        if not check_modeler_access(user, model):
+        if not check_model_access(user, model):
             return render(request,
-                          'modelers/modeler_permission_deny.html',
-                          {'modeler_name': model.name,
+                          'models/model_permission_deny.html',
+                          {'model_name': model.name,
                            'context': "You cannot delete this Model"})
         return super().dispatch(request, *args, **kwargs)
 
@@ -201,20 +201,20 @@ class ModelerUpdateView(LoginRequiredMixin, UpdateView):
         obj.require_action = False
         obj.approved = False
         obj.save()
-        modeler_notify(obj, created=False)
+        model_notify(obj, created=False)
         msg = _("The Model has been successfully updated.")
         messages.success(self.request, msg, 'success', fail_silently=True)
-        return HttpResponseRedirect(reverse_lazy('modeler_detail',
+        return HttpResponseRedirect(reverse_lazy('model_detail',
                                                  kwargs={'pk': obj.id}))
 
 
 @method_decorator(never_cache, name='dispatch')
-class ModelerListView(ListView):
+class ModelListView(ListView):
 
-    model = Modeler
-    queryset = Modeler.approved_objects.all()
-    context_object_name = 'modeler_list'
-    template_name = 'modelers/modeler_list.html'
+    model = Model
+    queryset = Model.approved_objects.all()
+    context_object_name = 'model_list'
+    template_name = 'models/model_list.html'
     paginate_by = settings.PAGINATION_DEFAULT_PAGINATION
 
     def get_context_data(self, **kwargs):
@@ -241,9 +241,9 @@ class ModelerListView(ListView):
         return qs
 
 
-class ModelerUnapprovedListView(LoginRequiredMixin, ModelerListView):
-    context_object_name = 'modeler_list'
-    queryset = Modeler.unapproved_objects.all()
+class ModelUnapprovedListView(LoginRequiredMixin, ModelListView):
+    context_object_name = 'model_list'
+    queryset = Model.unapproved_objects.all()
 
     def get_queryset(self):
         qs = super().get_queryset()
@@ -258,9 +258,9 @@ class ModelerUnapprovedListView(LoginRequiredMixin, ModelerListView):
         return context
 
 
-class ModelerRequireActionListView(LoginRequiredMixin, ModelerListView):
-    context_object_name = 'modeler_list'
-    queryset = Modeler.requireaction_objects.all()
+class ModelRequireActionListView(LoginRequiredMixin, ModelListView):
+    context_object_name = 'model_list'
+    queryset = Model.requireaction_objects.all()
 
     def get_queryset(self):
         qs = super().get_queryset()
@@ -275,38 +275,38 @@ class ModelerRequireActionListView(LoginRequiredMixin, ModelerListView):
         return context
 
 
-class ModelerDeleteView(LoginRequiredMixin, DeleteView):
+class ModelDeleteView(LoginRequiredMixin, DeleteView):
     """
     Delete a Model.
     """
 
-    model = Modeler
-    context_object_file = 'modeler'
-    success_url = reverse_lazy('modeler_list')
+    model = Model
+    context_object_file = 'model'
+    success_url = reverse_lazy('model_list')
 
     def dispatch(self, request, *args, **kwargs):
         model = self.get_object()
         user = self.request.user
-        if not check_modeler_access(user, model):
+        if not check_model_access(user, model):
             return render(request,
-                          'modelers/modeler_permission_deny.html',
-                          {'modeler_name': model.name,
+                          'models/model_permission_deny.html',
+                          {'model_name': model.name,
                            'context': "You cannot delete this Model"})
         return super().dispatch(request, *args, **kwargs)
 
 
-def modeler_review(request, pk):
+def model_review(request, pk):
     """
     Submit a review and send email notification
     """
 
-    model = get_object_or_404(Modeler, pk=pk)
+    model = get_object_or_404(Model, pk=pk)
     if request.method == 'POST':
-        form = ModelerReviewForm(request.POST)
+        form = ModelReviewForm(request.POST)
         if form.is_valid():
             data = form.cleaned_data
-            ModelerReview.objects.create(
-                modeler=model,
+            ModelReview.objects.create(
+                model=model,
                 reviewer=request.user,
                 comment=data['comment'])
             if data['approval'] == 'approve':
@@ -321,22 +321,22 @@ def modeler_review(request, pk):
                 messages.success(request, msg, 'error', fail_silently=True)
             model.save()
             # send email notification
-            modeler_update_notify(model, model.creator, request.user)
-    return HttpResponseRedirect(reverse('modeler_detail',
+            model_update_notify(model, model.creator, request.user)
+    return HttpResponseRedirect(reverse('model_detail',
                                         kwargs={'pk': pk}))
 
 
-def modeler_download(request, pk):
+def model_download(request, pk):
     """
     Download Model and update its download_count value
     """
 
-    model = get_object_or_404(Modeler, pk=pk)
+    model = get_object_or_404(Model, pk=pk)
     if not model.approved:
-        if not check_modeler_access(request.user, model):
+        if not check_model_access(request.user, model):
             return render(
-                request, 'modelers/modeler_permission_deny.html',
-                {'modeler_name': model.name,
+                request, 'models/model_permission_deny.html',
+                {'model_name': model.name,
                  'context': ('Download failed. '
                              'This Model is not approved')})
     else:
@@ -352,24 +352,24 @@ def modeler_download(request, pk):
 
 
 @never_cache
-def modeler_nav_content(request):
+def model_nav_content(request):
     """
-    Provides data for sidebar style navigation
+    Provides data for sidebar model navigation
     """
 
     user = request.user
-    all_model = Modeler.approved_objects.count()
+    all_model = Model.approved_objects.count()
     waiting_review = 0
     require_action = 0
     if user.is_staff or is_resources_manager(user):
-        waiting_review = Modeler.unapproved_objects.distinct().count()
-        require_action = Modeler.requireaction_objects.distinct().count()
+        waiting_review = Model.unapproved_objects.distinct().count()
+        require_action = Model.requireaction_objects.distinct().count()
     elif user.is_authenticated:
-        waiting_review = Modeler.unapproved_objects.filter(
+        waiting_review = Model.unapproved_objects.filter(
             creator=user).distinct().count()
-        require_action = Modeler.requireaction_objects.filter(
+        require_action = Model.requireaction_objects.filter(
             creator=user).distinct().count()
-    number_style = {'all': all_model,
+    number_model = {'all': all_model,
                     'waiting_review': waiting_review,
                     'require_action': require_action}
-    return JsonResponse(number_style, status=200)
+    return JsonResponse(number_model, status=200)

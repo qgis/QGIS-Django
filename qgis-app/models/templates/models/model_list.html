@@ -1,4 +1,4 @@
-{% extends 'modelers/modeler_base.html' %}{% load i18n bootstrap_pagination humanize static thumbnail resources_custom_tags %}
+{% extends 'models/model_base.html' %}{% load i18n bootstrap_pagination humanize static thumbnail resources_custom_tags %}
 
 {% block extrajs %}
 {{ block.super }}
@@ -19,9 +19,9 @@
 {% block content %}
     <h2>{% if title %}{{title}}{% else %}{% trans "All Models" %}{% endif %}</h2>
 
-    {% if not modeler_list and not queries %}
+    {% if not model_list and not queries %}
         <p>No data.</p>
-    {% elif not modeler_list and queries %}
+    {% elif not model_list and queries %}
         <p>
             Keyword: "<strong>{{ queries }}</strong>" <br /> Search result: no record found.
         </p>
@@ -30,7 +30,7 @@
             {%  if queries %}
                 Keyword: "<strong>{{ queries }}</strong>" <br /> Search result:
             {% endif %}
-            {{ count }} record{{ modeler_list.count|pluralize:"s" }} found.
+            {{ count }} record{{ model_list.count|pluralize:"s" }} found.
         </p>
         <table class="table table-striped plugins">
         <thead>
@@ -48,28 +48,28 @@
             </tr>
         </thead>
         <tbody>
-            {% for modeler in modeler_list %}
+            {% for model in model_list %}
                 <tr>
                     <td>
-                    {% if modeler.thumbnail_image and modeler.thumbnail_image.file %}
-                        {% thumbnail modeler.thumbnail_image "32x32" format="PNG" as im %}
+                    {% if model.thumbnail_image and model.thumbnail_image.file %}
+                        {% thumbnail model.thumbnail_image "32x32" format="PNG" as im %}
                             <img class="plugin-icon" alt="{% trans "Style icon" %}" src="{{ im.url }}" width="{{ im.x }}" height="{{ im.y }}" />
                         {% endthumbnail %}
                     {% else %}
                         <img height="32" width="32" class="plugin-icon" src="{% static "images/qgis-icon-32x32.png" %}" alt="{% trans "Plugin icon" %}" />
                     {% endif %}
                     </td>
-                    <td><a href="{% url 'modeler_detail' pk=modeler.id %}">{{ modeler.name}}</a></td>
-                    <td>{{ modeler.description|md_to_html|striptags|truncatewords:7 }}</a></td>
-                    <td>{{ modeler.download_count }}</td>
-                    <td>{{ modeler.get_creator_name|title }}</td>
-                    <td>{{ modeler.upload_date|date:"d F Y" }}</td>
+                    <td><a href="{% url 'model_detail' pk=model.id %}">{{ model.name}}</a></td>
+                    <td>{{ model.description|md_to_html|striptags|truncatewords:7 }}</a></td>
+                    <td>{{ model.download_count }}</td>
+                    <td>{{ model.get_creator_name|title }}</td>
+                    <td>{{ model.upload_date|date:"d F Y" }}</td>
                     <td>
                         {% if user.is_staff or user == style.creator %}
-                        <a class="btn btn-primary btn-mini" href="{% url 'modeler_update' modeler.id %}" title="{% trans "Edit" %}"><i class="icon-pencil icon-white"></i></a>&nbsp
-                        <a class="btn btn-danger btn-mini delete" href="{% url 'modeler_delete' modeler.id %}" title="{% trans "Delete" %}"><i class="icon-remove icon-white"></i></a>&nbsp
+                        <a class="btn btn-primary btn-mini" href="{% url 'model_update' model.id %}" title="{% trans "Edit" %}"><i class="icon-pencil icon-white"></i></a>&nbsp
+                        <a class="btn btn-danger btn-mini delete" href="{% url 'model_delete' model.id %}" title="{% trans "Delete" %}"><i class="icon-remove icon-white"></i></a>&nbsp
                         {% endif %}
-                        <a class="btn btn-primary btn-mini pull-right" href="{% url 'modeler_download' modeler.id %}" title="{% trans "Download" %}"><i class="icon-download-alt"></i></a>
+                        <a class="btn btn-primary btn-mini pull-right" href="{% url 'model_download' model.id %}" title="{% trans "Download" %}"><i class="icon-download-alt"></i></a>
                     </td>
                 </tr>
             {% endfor %}

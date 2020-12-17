@@ -1,4 +1,4 @@
-{% extends 'modelers/modeler_base.html' %}{% load i18n static thumbnail humanize resources_custom_tags%}
+{% extends 'models/model_base.html' %}{% load i18n static thumbnail humanize resources_custom_tags%}
 
 {% block extrajs %}
     {{ block.super }}
@@ -14,18 +14,18 @@
 {% endblock %}
 
 {% block content %}
-    <h3>{{ modeler_detail.name }} <small>in review</small></h3>
-    {% if user == modeler_detail.creator or user.is_staff %}
+    <h3>{{ model_detail.name }} <small>in review</small></h3>
+    {% if user == model_detail.creator or user.is_staff %}
         <div class="row pull-right">
-            <a class="btn btn-primary btn-mini" href="{% url 'modeler_update' modeler_detail.id %}" title="{% trans "Edit" %}"><i class="icon-pencil icon-white"></i></a>&nbsp
-            <a class="btn btn-danger btn-mini" href="{% url 'modeler_delete' modeler_detail.id  %}" title="{% trans "Delete" %}"><i class="icon-remove icon-white"></i></a>&nbsp
+            <a class="btn btn-primary btn-mini" href="{% url 'model_update' model_detail.id %}" title="{% trans "Edit" %}"><i class="icon-pencil icon-white"></i></a>&nbsp
+            <a class="btn btn-danger btn-mini" href="{% url 'model_delete' model_detail.id  %}" title="{% trans "Delete" %}"><i class="icon-remove icon-white"></i></a>&nbsp
         </div>
     {% endif %}
     <hr />
     <div class="row">
         <div class="span6 text-center mb-5">
             <div class="style-polaroid">
-               {% thumbnail modeler_detail.thumbnail_image "420x420" format="PNG" as im %}
+               {% thumbnail model_detail.thumbnail_image "420x420" format="PNG" as im %}
                    <img class="style-polaroid" alt="{% trans "Style icon" %}" src="{{ im.url }}" width="{{ im.x }}" height="{{ im.y }}" />
                 {% endthumbnail %}
             </div>
@@ -33,23 +33,23 @@
         <div class="span6">
             <dl class="dl-horizontal">
                 <dt>Name</dt>
-                <dd>{{ modeler_detail.name }}</dd>
+                <dd>{{ model_detail.name }}</dd>
                 <dt>Description</dt>
-                <dd>{{ modeler_detail.description|md_to_html }}</dd>
+                <dd>{{ model_detail.description|md_to_html }}</dd>
                 <dt>Upload Date</dt>
-                <dd>{{ modeler_detail.upload_date|date:"d F Y" }}</dd>
+                <dd>{{ model_detail.upload_date|date:"d F Y" }}</dd>
                 <dt>Modified Date</dt>
-                <dd>{{ modeler_detail.modified_date|date:"d F Y" }}</dd>
+                <dd>{{ model_detail.modified_date|date:"d F Y" }}</dd>
                 <dt>Creator</dt>
-                <dd>{{ modeler_detail.get_creator_name|title }}</dd>
+                <dd>{{ model_detail.get_creator_name|title }}</dd>
                 <dt>Model File</dt>
                 <dd>
-                    <a class="btn btn-primary btn-mini delete" href="{% url 'modeler_download' modeler_detail.id %}" title="{% trans "Download" %}"><i class="icon-download-alt"></i> Download</a>
+                    <a class="btn btn-primary btn-mini delete" href="{% url 'model_download' model_detail.id %}" title="{% trans "Download" %}"><i class="icon-download-alt"></i> Download</a>
                 </dd>
 
                 <hr />
                 {% if reviewer %}
-                    {% with review=modeler_detail.modelerreview_set.last %}
+                    {% with review=model_detail.modelreview_set.last %}
                     <dt>Last Review</dt>
                     <dd>{{ review.comment }}<br/>
                         <i><small>Reviewed by {{ reviewer|title }} {{ review.review_date|naturaltime }}</small></i>
@@ -58,7 +58,7 @@
                 {% endif %}
 
                 {% if user.is_staff %}
-                <form method="post" action="{% url 'modeler_review' pk=modeler_detail.id %}">{% csrf_token %}
+                <form method="post" action="{% url 'model_review' pk=model_detail.id %}">{% csrf_token %}
                     <dt>Approval</dt>
                     <dd>
                         <label class="radio inline">

@@ -67,8 +67,8 @@ INSTALLED_APPS = [
     'styles',
     # geopackages
     'geopackages',
-    # modelers (sharing .model3 file feature)
-    'modelers',
+    # models (sharing .model3 file feature)
+    'models',
 ]
 
 DATABASES = {

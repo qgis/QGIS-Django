@@ -23,13 +23,13 @@
 
 {% block menu %}
 {{ block.super }}
-    <a class="btn btn-block btn-primary btn-large" href="{% url "modeler_create" %}"><i class="icon-upload icon-white icon-2x" style=" vertical-align: middle;"></i> {% trans "Upload Model" %}</a>
+    <a class="btn btn-block btn-primary btn-large" href="{% url "model_create" %}"><i class="icon-upload icon-white icon-2x" style=" vertical-align: middle;"></i> {% trans "Upload Model" %}</a>
     <h3>Model</h3>
     <ul class="nav nav-list">
-        <li><a href="{% url 'modeler_list' %}">{% trans "Approved" %} <sup><span class="badge badge-info" id="all"></span></sup></a></li>
+        <li><a href="{% url 'model_list' %}">{% trans "Approved" %} <sup><span class="badge badge-info" id="all"></span></sup></a></li>
         {% if user.is_authenticated %}
-        <li><a href="{% url 'modeler_unapproved' %}">{% trans "Waiting Review" %} <sup><span class="badge badge-info" id="waiting_review"></span></sup></a></li>
-        <li><a href="{% url 'modeler_require_action' %}">{% trans "Requiring Update" %} <sup><span class="badge badge-info" id="requiring_action"></span></sup></a></li>
+        <li><a href="{% url 'model_unapproved' %}">{% trans "Waiting Review" %} <sup><span class="badge badge-info" id="waiting_review"></span></sup></a></li>
+        <li><a href="{% url 'model_require_action' %}">{% trans "Requiring Update" %} <sup><span class="badge badge-info" id="requiring_action"></span></sup></a></li>
         {% endif %}
     </ul>
 
@@ -37,15 +37,15 @@
         $(document).ready(function(){
             $.ajax({
                 type: 'GET',
-                url: "{% url 'modeler_nav_content' %}",
+                url: "{% url 'model_nav_content' %}",
                 success: function (response){
                     if(response.waiting_review){$("#waiting_review").text(response.waiting_review)};
                     if(response.require_action){$("#requiring_action").text(response.require_action)};
                 }
             })
 
-            // edit search input from base template, in order to use it for modeler
-            $("form.navbar-search").attr("action", "{% url 'modeler_list' %}");
+            // edit search input from base template, in order to use it for model
+            $("form.navbar-search").attr("action", "{% url 'model_list' %}");
             })
     </script>
 

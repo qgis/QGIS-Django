@@ -1,17 +1,17 @@
 from django.utils.translation import ugettext_lazy as _
 from django import forms
 
-from modelers.models import Modeler
-from modelers.validator import model_validator
+from models.models import Model
+from models.validator import model_validator
 
 
-class ModelerUploadForm(forms.ModelForm):
+class ModelUploadForm(forms.ModelForm):
     """
     Model Upload Form.
     """
 
     class Meta:
-        model = Modeler
+        model = Model
         fields = ['model_file', 'thumbnail_image', 'name', 'description', ]
 
     def clean_model_file(self):
@@ -24,17 +24,17 @@ class ModelerUploadForm(forms.ModelForm):
             return model_file
 
 
-class ModelerUpdateForm(ModelerUploadForm):
+class ModelUpdateForm(ModelUploadForm):
     """
     Model Update Form.
     """
 
     class Meta:
-        model = Modeler
+        model = Model
         fields = ['name', 'model_file', 'thumbnail_image', 'description', ]
 
 
-class ModelerReviewForm(forms.Form):
+class ModelReviewForm(forms.Form):
     """
     Model Review Form.
     """
@@ -48,7 +48,7 @@ class ModelerReviewForm(forms.Form):
                'rows': "5"}))
 
 
-class ModelerSearchForm(forms.Form):
+class ModelSearchForm(forms.Form):
     """
     Search Form
     """

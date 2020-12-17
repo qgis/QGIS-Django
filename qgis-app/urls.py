@@ -46,7 +46,7 @@ urlpatterns = [
     # Styles and other files sharing
     url(r'^styles/', include('styles.urls')),
     url(r'^geopackages/', include('geopackages.urls')),
-    url(r'^models/', include('modelers.urls')),
+    url(r'^models/', include('models.urls')),
 ]
 
 # ABP: temporary home page
