@@ -13,7 +13,7 @@ from djangoratings.fields import AnonymousRatingField
 from taggit_autosuggest.managers import TaggableManager
 
 PLUGINS_STORAGE_PATH = getattr(settings, 'PLUGINS_STORAGE_PATH', 'packages/%Y')
-PLUGINS_FRESH_DAYS = getattr(settings, 'PLUGINS_FRESH_DAYS', 7)
+PLUGINS_FRESH_DAYS = getattr(settings, 'PLUGINS_FRESH_DAYS', 30)
 
 
 # Used in Version fields to transform DB value back to human readable string
@@ -111,7 +111,8 @@ class LatestPlugins(BasePluginManager):
         return super(LatestPlugins, self).get_queryset().filter(
             deprecated=False,
             pluginversion__approved=True,
-            modified_on__gte=datetime.datetime.now() - datetime.timedelta(days=self.days)
+            pluginversion__created_on__gte=(
+                datetime.datetime.now() - datetime.timedelta(days=self.days))
         ).order_by('-latest_version_date').distinct()
 
 
