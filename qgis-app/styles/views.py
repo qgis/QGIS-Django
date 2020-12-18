@@ -1,9 +1,5 @@
 import json
 import logging
-import os
-import zipfile
-
-from io import BytesIO
 
 from django.conf import settings
 from django.contrib import messages
@@ -27,15 +23,14 @@ from django.views.generic import (CreateView,
                                   ListView,
                                   UpdateView)
 
+from base.license import zipped_with_license
+
 from styles.models import Style, StyleType, StyleReview
 from styles.forms import (StyleUploadForm,
                           StyleUpdateForm,
                           StyleReviewForm)
 
 from styles.file_handler import read_xml_style
-
-LICENSE_FILE = os.path.join(os.path.dirname(os.path.dirname(__file__)),
-                            "base", "license.txt")
 
 
 def is_style_manager(user: User) -> bool:
@@ -389,20 +384,10 @@ def style_download(request, pk):
         style.save()
 
     # zip the style and license.txt
-    filenames = (style.xml_file.file.name, LICENSE_FILE)
-    in_memory_data = BytesIO()
-    zf = zipfile.ZipFile(in_memory_data, "w")
-    zip_subdir = '%s' % style.name
-
-    for fpath in filenames:
-        fdir, fname = os.path.split(fpath)
-        zip_path = os.path.join(zip_subdir, fname)
-        zf.write(fpath, zip_path)
-
-    zf.close()
+    zipfile = zipped_with_license(style.xml_file.file.name, style.name)
 
     response = HttpResponse(
-        in_memory_data.getvalue(), content_type="application/x-zip-compressed")
+        zipfile.getvalue(), content_type="application/x-zip-compressed")
     response['Content-Disposition'] = 'attachment; filename=%s.zip' % (
         slugify(style.name, allow_unicode=True)
     )
