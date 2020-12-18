@@ -28,7 +28,6 @@ from geopackages.forms import (GeopackageReviewForm,
 from geopackages.models import Geopackage, GeopackageReview
 
 
-
 def is_resources_manager(user: User) -> bool:
     """Check if user is the members of Resources Managers group."""
 
