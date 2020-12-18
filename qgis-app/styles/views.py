@@ -15,12 +15,15 @@ from django.urls import reverse, reverse_lazy
 from django.utils.translation import ugettext_lazy as _
 from django.utils.decorators import method_decorator
 from django.utils.crypto import get_random_string
+from django.utils.text import slugify
 from django.views.decorators.cache import never_cache
 from django.views.generic import (CreateView,
                                   DetailView,
                                   DeleteView,
                                   ListView,
                                   UpdateView)
+
+from base.license import zipped_with_license
 
 from styles.models import Style, StyleType, StyleReview
 from styles.forms import (StyleUploadForm,
@@ -379,13 +382,17 @@ def style_download(request, pk):
     else:
         style.increase_download_counter()
         style.save()
-    with open(style.xml_file.file.name, 'rb') as style_file:
-        file_content = style_file.read()
-        response = HttpResponse(file_content, content_type='application/xml')
-        response['Content-Disposition'] = 'attachment; filename=%s.xml' % (
-            style.name
-        )
-        return response
+
+    # zip the style and license.txt
+    zipfile = zipped_with_license(style.xml_file.file.name, style.name)
+
+    response = HttpResponse(
+        zipfile.getvalue(), content_type="application/x-zip-compressed")
+    response['Content-Disposition'] = 'attachment; filename=%s.zip' % (
+        slugify(style.name, allow_unicode=True)
+    )
+
+    return response
 
 
 def style_review(request, pk):

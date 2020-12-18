@@ -12,12 +12,15 @@ from django.shortcuts import get_object_or_404, render
 from django.urls import reverse, reverse_lazy
 from django.utils.translation import ugettext_lazy as _
 from django.utils.decorators import method_decorator
+from django.utils.text import slugify
 from django.views.decorators.cache import never_cache
 from django.views.generic import (CreateView,
                                   DetailView,
                                   DeleteView,
                                   ListView,
                                   UpdateView)
+
+from base.license import zipped_with_license
 
 from geopackages.forms import (GeopackageReviewForm,
                              GeopackageUpdateForm,
@@ -343,13 +346,17 @@ def geopackage_download(request, pk):
     else:
         gpkg.increase_download_counter()
         gpkg.save()
-    with open(gpkg.gpkg_file.file.name, 'rb') as gpkg_file:
-        file_content = gpkg_file.read()
-        response = HttpResponse(file_content, content_type='application/gpkg')
-        response['Content-Disposition'] = 'attachment; filename=%s%s' % (
-            gpkg.name, gpkg.extension()
-        )
-        return response
+
+    # zip the geopackage and license.txt
+    zipfile = zipped_with_license(gpkg.gpkg_file.file.name, gpkg.name)
+
+    response = HttpResponse(
+        zipfile.getvalue(), content_type="application/x-zip-compressed")
+    response['Content-Disposition'] = 'attachment; filename=%s.zip' % (
+        slugify(gpkg.name, allow_unicode=True)
+    )
+
+    return response
 
 
 @never_cache
