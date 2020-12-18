@@ -1,4 +1,8 @@
 import logging
+import os
+import zipfile
+
+from io import BytesIO
 
 from django.conf import settings
 from django.contrib import messages
@@ -12,6 +16,7 @@ from django.shortcuts import get_object_or_404, render
 from django.urls import reverse, reverse_lazy
 from django.utils.translation import ugettext_lazy as _
 from django.utils.decorators import method_decorator
+from django.utils.text import slugify
 from django.views.decorators.cache import never_cache
 from django.views.generic import (CreateView,
                                   DetailView,
@@ -23,6 +28,9 @@ from geopackages.forms import (GeopackageReviewForm,
                              GeopackageUpdateForm,
                              GeopackageUploadForm,)
 from geopackages.models import Geopackage, GeopackageReview
+
+LICENSE_FILE = os.path.join(os.path.dirname(os.path.dirname(__file__)),
+                            "base", "license.txt")
 
 
 def is_resources_manager(user: User) -> bool:
@@ -343,13 +351,27 @@ def geopackage_download(request, pk):
     else:
         gpkg.increase_download_counter()
         gpkg.save()
-    with open(gpkg.gpkg_file.file.name, 'rb') as gpkg_file:
-        file_content = gpkg_file.read()
-        response = HttpResponse(file_content, content_type='application/gpkg')
-        response['Content-Disposition'] = 'attachment; filename=%s%s' % (
-            gpkg.name, gpkg.extension()
-        )
-        return response
+
+    # zip the geopackage and license.txt
+    filenames = (gpkg.gpkg_file.file.name, LICENSE_FILE)
+    in_memory_data = BytesIO()
+    zf = zipfile.ZipFile(in_memory_data, "w")
+    zip_subdir = '%s' % gpkg.name
+
+    for fpath in filenames:
+        fdir, fname = os.path.split(fpath)
+        zip_path = os.path.join(zip_subdir, fname)
+        zf.write(fpath, zip_path)
+
+    zf.close()
+
+    response = HttpResponse(
+        in_memory_data.getvalue(), content_type="application/x-zip-compressed")
+    response['Content-Disposition'] = 'attachment; filename=%s.zip' % (
+        slugify(gpkg.name, allow_unicode=True)
+    )
+
+    return response
 
 
 @never_cache
