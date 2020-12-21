@@ -1,8 +1,4 @@
 import logging
-import os
-import zipfile
-
-from io import BytesIO
 
 from django.conf import settings
 from django.contrib import messages
@@ -24,13 +20,12 @@ from django.views.generic import (CreateView,
                                   ListView,
                                   UpdateView)
 
+from base.license import zipped_with_license
+
 from models.forms import (ModelReviewForm,
                              ModelUpdateForm,
                              ModelUploadForm,)
 from models.models import Model, ModelReview
-
-LICENSE_FILE = os.path.join(os.path.dirname(os.path.dirname(__file__)),
-                            "base", "license.txt")
 
 
 def is_resources_manager(user: User) -> bool:
@@ -352,20 +347,10 @@ def model_download(request, pk):
         model.save()
 
     # zip the model and license.txt
-    filenames = (model.model_file.file.name, LICENSE_FILE)
-    in_memory_data = BytesIO()
-    zf = zipfile.ZipFile(in_memory_data, "w")
-    zip_subdir = '%s' % model.name
-
-    for fpath in filenames:
-        fdir, fname = os.path.split(fpath)
-        zip_path = os.path.join(zip_subdir, fname)
-        zf.write(fpath, zip_path)
-
-    zf.close()
+    zipfile = zipped_with_license(model.model_file.file.name, model.name)
 
     response = HttpResponse(
-        in_memory_data.getvalue(), content_type="application/x-zip-compressed")
+        zipfile.getvalue(), content_type="application/x-zip-compressed")
     response['Content-Disposition'] = 'attachment; filename=%s.zip' % (
         slugify(model.name, allow_unicode=True)
     )

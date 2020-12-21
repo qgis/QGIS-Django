@@ -2,12 +2,9 @@
 Base Model for sharing file feature
 """
 import datetime
-import os
 
 from django.db import models
-from django.conf import settings
 from django.contrib.auth.models import User
-from django.core.validators import FileExtensionValidator
 from django.utils.translation import ugettext_lazy as _
 
 
