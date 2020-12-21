@@ -1,4 +1,4 @@
-{% extends "geopackages/geopackage_base.html" %}{% load i18n %}
+{% extends "geopackages/geopackage_base.html" %}{% load i18n static %}
 {% block content %}
     <h2>{% trans "Upload GeoPackage" %}</h2>
 
@@ -21,8 +21,10 @@
             </label>
         </div>
 
-        <button class="btn btn-primary" type="submit">{% trans "Upload" %}</button>
+        <button class="btn btn-primary" id="licenseAgreed" type="submit">{% trans "Upload" %}</button>
     </form>
+
+    <script type="text/javascript" src="{% static 'js/resource_upload.js' %}"></script>
 
 
     <script>
