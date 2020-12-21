@@ -1,4 +1,4 @@
-{% extends "styles/style_base.html" %}{% load i18n %}
+{% extends "styles/style_base.html" %}{% load i18n static%}
 {% block content %}
     <h2>{% trans "Upload Style" %}</h2>
     <p class="help">{% trans "To upload a new style, you can specify the xml file in this form." %}</p>
@@ -22,7 +22,9 @@
             </label>
         </div>
 
-        <button class="btn btn-primary" type="submit">{% trans "Upload" %}</button>
+        <button class="btn btn-primary" id="licenseAgreed" type="submit">{% trans "Upload" %}</button>
     </form>
+
+    <script type="text/javascript" src="{% static 'js/resource_upload.js' %}"></script>
 
 {% endblock %}
