@@ -43,9 +43,10 @@ urlpatterns = [
     url(r'^taggit_autosuggest/', include('taggit_autosuggest.urls')),
     url(r'^userexport/', include('userexport.urls')),
 
-    # Styles
+    # Styles and other files sharing
     url(r'^styles/', include('styles.urls')),
     url(r'^geopackages/', include('geopackages.urls')),
+    url(r'^models/', include('models.urls')),
 ]
 
 # ABP: temporary home page
@@ -94,6 +95,7 @@ simplemenu.register(
     '/plugins/',
     '/styles/',
     '/geopackages/',
+    '/models/',
     FlatPage.objects.all(),
     simplemenu.models.URLItem.objects.all(),
 )

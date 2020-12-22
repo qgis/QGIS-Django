@@ -1,4 +1,4 @@
-{% extends 'styles/style_base.html' %}{% load i18n bootstrap_pagination humanize static thumbnail styles_custom_tags %}
+{% extends 'models/model_base.html' %}{% load i18n bootstrap_pagination humanize static thumbnail resources_custom_tags %}
 
 {% block extrajs %}
 {{ block.super }}
@@ -13,40 +13,15 @@
     .sorted-name {
         color: #006dcc;
     }
-
-    table > tbody > tr {
-        height: 120px;
-    }
-
-    .table td {
-        vertical-align: middle;
-    }
-
-    img.style-icon {
-        width: 100px;
-        height: 100px;
-    }
-
-    img.style-icon:hover {
-        width: 320px;
-        height: 320px;
-        position: absolute;
-
-        margin-top: -250px;
-        margin-left: -220px;
-        border-radius: 20px;
-        box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
-
-    }
 </style>
 {% endblock %}
 
 {% block content %}
-    <h2>{% if title %}{{title}}{% else %}{% trans "All Styles" %}{% endif %}</h2>
+    <h2>{% if title %}{{title}}{% else %}{% trans "All Models" %}{% endif %}</h2>
 
-    {% if not style_list and not queries %}
+    {% if not model_list and not queries %}
         <p>No data.</p>
-    {% elif not style_list and queries %}
+    {% elif not model_list and queries %}
         <p>
             Keyword: "<strong>{{ queries }}</strong>" <br /> Search result: no record found.
         </p>
@@ -55,14 +30,14 @@
             {%  if queries %}
                 Keyword: "<strong>{{ queries }}</strong>" <br /> Search result:
             {% endif %}
-            {{ count }} record{{ style_list.count|pluralize:"s" }} found.
+            {{ count }} record{{ model_list.count|pluralize:"s" }} found.
         </p>
         <table class="table table-striped plugins">
         <thead>
             <tr>
                 <th></th>
                 <th> {% anchor_sort_arrow 'Name' 'name' order_by queries %} </th>
-                <th> {% anchor_sort_arrow 'Type' 'type' order_by queries %} </th>
+                <th> Description </th>
                 <th>
                     <i class="icon-download-alt" title="{% trans 'Download Count' %}"></i>
                     {% anchor_sort_arrow '' 'download_count' order_by queries %}
@@ -73,28 +48,28 @@
             </tr>
         </thead>
         <tbody>
-            {% for style in style_list %}
+            {% for model in model_list %}
                 <tr>
                     <td>
-                    {% if style.thumbnail_image and style.thumbnail_image.file %}
-                        {% thumbnail style.thumbnail_image "420x420" format="PNG" as im %}
-                            <img class="style-icon" alt="{% trans "Style icon" %}" src="{{ im.url }}" width="{{ im.x }}" height="{{ im.y }}" />
+                    {% if model.thumbnail_image and model.thumbnail_image.file %}
+                        {% thumbnail model.thumbnail_image "32x32" format="PNG" as im %}
+                            <img class="plugin-icon" alt="{% trans "Style icon" %}" src="{{ im.url }}" width="{{ im.x }}" height="{{ im.y }}" />
                         {% endthumbnail %}
                     {% else %}
                         <img height="32" width="32" class="plugin-icon" src="{% static "images/qgis-icon-32x32.png" %}" alt="{% trans "Plugin icon" %}" />
                     {% endif %}
                     </td>
-                    <td><a href="{% url 'style_detail' style.id %}">{{ style.name|title }}</a></td>
-                    <td><span class="center-vertical">{{ style.style_type.name|title }}</span></td>
-                    <td>{{ style.download_count }}</td>
-                    <td>{{ style.get_creator_name|title }}</td>
-                    <td>{{ style.upload_date|date:"d F Y" }}</td>
+                    <td><a href="{% url 'model_detail' pk=model.id %}">{{ model.name}}</a></td>
+                    <td>{{ model.description|md_to_html|striptags|truncatewords:7 }}</a></td>
+                    <td>{{ model.download_count }}</td>
+                    <td>{{ model.get_creator_name|title }}</td>
+                    <td>{{ model.upload_date|date:"d F Y" }}</td>
                     <td>
                         {% if user.is_staff or user == style.creator %}
-                        <a class="btn btn-primary btn-mini" href="{% url 'style_update' style.id %}" title="{% trans "Edit" %}"><i class="icon-pencil icon-white"></i></a>&nbsp
-                        <a class="btn btn-danger btn-mini delete" href="{% url 'style_delete' style.id %}" title="{% trans "Delete" %}"><i class="icon-remove icon-white"></i></a>&nbsp
+                        <a class="btn btn-primary btn-mini" href="{% url 'model_update' model.id %}" title="{% trans "Edit" %}"><i class="icon-pencil icon-white"></i></a>&nbsp
+                        <a class="btn btn-danger btn-mini delete" href="{% url 'model_delete' model.id %}" title="{% trans "Delete" %}"><i class="icon-remove icon-white"></i></a>&nbsp
                         {% endif %}
-                        <a class="btn btn-primary btn-mini pull-right" href="{% url 'style_download' style.id %}" title="{% trans "Download" %}"><i class="icon-download-alt"></i></a>
+                        <a class="btn btn-primary btn-mini pull-right" href="{% url 'model_download' model.id %}" title="{% trans "Download" %}"><i class="icon-download-alt"></i></a>
                     </td>
                 </tr>
             {% endfor %}
