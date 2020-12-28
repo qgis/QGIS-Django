@@ -21,6 +21,7 @@ from django.views.generic import (CreateView,
                                   UpdateView)
 
 from base.license import zipped_with_license
+from base.views.resource import ResourceBaseCreateView
 
 from geopackages.forms import (GeopackageReviewForm,
                              GeopackageUpdateForm,
@@ -129,25 +130,20 @@ def geopackage_update_notify(gpkg: Geopackage, creator: User,
         logging.warning('No recipients found for %s geopackage %s '
                         'notification' % (gpkg, approval_state))
 
+class GeopackageMixin():
+    resource_name = "GeoPackage"
 
-class GeopackageCreateView(LoginRequiredMixin, CreateView):
+
+class GeopackageCreateView(GeopackageMixin, ResourceBaseCreateView):
     """
     Upload a GeoPackage File
     """
 
     form_class = GeopackageUploadForm
     template_name = 'geopackages/geopackage_form.html'
-    success_message = "GeoPackage was uploaded successfully."
 
-    def form_valid(self, form):
-        obj = form.save(commit=False)
-        obj.creator = self.request.user
-        obj.save()
-        geopackage_notify(obj)
-        msg = _(self.success_message)
-        messages.success(self.request, msg, 'success', fail_silently=True)
-        return HttpResponseRedirect(reverse('geopackage_detail',
-                                            kwargs={'pk': obj.id}))
+    def get_success_url(self):
+        return reverse('geopackage_detail', kwargs={'pk': self.object.id})
 
 
 class GeopackageDetailView(DetailView):

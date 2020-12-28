@@ -177,6 +177,8 @@ class TestUploadGeoPackage(SetUpTest, TestCase):
         response = self.client.post(url, data, follow=True)
         # should send email notify
         self.assertEqual(len(mail.outbox), 1)
+        self.assertEqual(mail.outbox[0].subject,
+                         "A new GeoPackage has been created by creator.")
         gpkg = Geopackage.objects.first()
         self.assertEqual(gpkg.name, "spiky polygons")
         url = reverse("geopackage_detail", kwargs={'pk': gpkg.id})
