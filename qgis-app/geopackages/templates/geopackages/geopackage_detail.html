@@ -10,7 +10,7 @@
         {% endif %}
         <hr />
         <div class="row">
-            <div class="span6 mb-5">
+            <div class="span4 mb-5">
                 <div class="style-polaroid">
                     {% thumbnail geopackage_detail.thumbnail_image "420x420" format="PNG" as im %}
                     <img class="" alt="{% trans "GeoPackage image" %}" src="{{ im.url }}" width="{{ im.x }}" height="{{ im.y }}" />
@@ -19,7 +19,7 @@
                 </div>
 
             </div>
-            <div class="span6">
+            <div class="span8">
                 <dl class="dl-horizontal">
                     <dd></dd>
                     <dt>Name</dt>
@@ -41,7 +41,16 @@
                 </dl>
 
             </div>
-            <div class="span12"></div>
+            <div class="span12 license">
+              <div class="media" style="margin-top: 2rem">
+                <a class="pull-left" href="#">
+                  <img src="{% static 'images/cc-zero.svg' %}">
+                </a>
+                <div class="media-body">
+                  <p>This GeoPackage is made available under the <a href="https://creativecommons.org/publicdomain/zero/1.0/" target="_blank">CC-0 license</a>.</p>
+                </div>
+              </div>
+            </div>
 
         </div>
 {% endblock %}
