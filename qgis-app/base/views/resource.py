@@ -67,7 +67,7 @@ def send_mail_wrapper(subject,
 
 
 def resource_notify(resource: models.base,
-                    created=True, resource_type: str = "Resource") -> None:
+                    created=True, resource_type: str = 'Resource') -> None:
     """
     Email notification when a new resource created.
     """
@@ -102,8 +102,8 @@ def resource_notify(resource: models.base,
                         % (resource.name, resource_type))
 
 
-def resource_update_notify(resource: models.base, creator: User,
-                           staff: User) -> None:
+def resource_update_notify(resource: models.base, creator: User, staff: User,
+                           resource_type: str = 'Resource') -> None:
     """
     Email notification system when staff approved or rejected a resource
     """
@@ -126,14 +126,15 @@ def resource_update_notify(resource: models.base, creator: User,
         domain = Site.objects.get_current().domain
         mail_from = settings.DEFAULT_FROM_EMAIL
         send_mail_wrapper(
-          _('Resource %s %s notification.') % (resource, approval_state),
-          _('\r\nResource %s %s by %s.\r\n%s\r\nLink: http://%s%s\r\n') % (
-              resource.name, approval_state, staff, comment, domain,
-              resource.get_absolute_url()),
+          _('%s %s %s notification.') % (
+              resource_type, resource, approval_state),
+          _('\r\n%s %s %s by %s.\r\n%s\r\nLink: http://%s%s\r\n') % (
+              resource_type, resource.name, approval_state, staff, comment,
+              domain, resource.get_absolute_url()),
           mail_from,
           recipients,
           fail_silently=True)
-        logging.debug('Sending email %s notification for %s GeoPackage, '
+        logging.debug('Sending email %s notification for %s Resource, '
                       'recipients:  %s' % (approval_state, resource, recipients))
     else:
         logging.warning('No recipients found for %s geopackage %s '
@@ -171,6 +172,8 @@ class ResourceBaseCreateView(LoginRequiredMixin,
 
 
 class ResourceBaseDetailView(DetailView):
+    """Base Class for DetailView."""
+
     resource_template_review = None
     resource_template_detail = None
 
