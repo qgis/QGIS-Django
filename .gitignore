@@ -42,3 +42,9 @@ static_media
 dockerize/static
 dockerize/media
 dockerize/logs
+
+# test cache
+qgis-app/*/tests/*/cache
+
+# whoosh_index
+qgis-app/whoosh_index/
