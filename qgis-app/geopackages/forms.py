@@ -13,8 +13,8 @@ class GeopackageFormMixin(forms.ModelForm):
         fields = ['gpkg_file', 'thumbnail_image', 'name', 'description', ]
 
 
-class GeopackageUploadForm(ResourceBaseCleanFileForm, GeopackageFormMixin):
-    """GeoPackage Upload Form."""
+class UploadForm(ResourceBaseCleanFileForm, GeopackageFormMixin):
+    """Upload Form."""
 
     pass
 

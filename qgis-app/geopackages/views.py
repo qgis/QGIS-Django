@@ -25,7 +25,7 @@ from base.views.resource import ResourceBaseCreateView
 
 from geopackages.forms import (GeopackageReviewForm,
                              GeopackageUpdateForm,
-                             GeopackageUploadForm,)
+                             UploadForm,)
 from geopackages.models import Geopackage, GeopackageReview
 
 
@@ -139,7 +139,7 @@ class GeopackageCreateView(GeopackageMixin, ResourceBaseCreateView):
     Upload a GeoPackage File
     """
 
-    form_class = GeopackageUploadForm
+    form_class = UploadForm
     template_name = 'geopackages/geopackage_form.html'
 
     def get_success_url(self):

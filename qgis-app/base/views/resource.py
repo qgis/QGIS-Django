@@ -26,7 +26,7 @@ from base.license import zipped_with_license
 
 from geopackages.forms import (GeopackageReviewForm,
                              GeopackageUpdateForm,
-                             GeopackageUploadForm,)
+                             UploadForm,)
 from geopackages.models import Geopackage, GeopackageReview
 
 

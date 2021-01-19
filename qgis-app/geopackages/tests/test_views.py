@@ -9,7 +9,7 @@ from django.contrib.auth.models import User, Group
 from geopackages.models import Geopackage, GeopackageReview
 
 from geopackages.views import geopackage_notify, geopackage_update_notify
-from geopackages.forms import GeopackageUploadForm
+from geopackages.forms import UploadForm
 
 GPKG_DIR = os.path.join(os.path.dirname(__file__), "gpkgfiles")
 
@@ -59,7 +59,7 @@ class TestFormValidation(SetUpTest, TestCase):
             self.gpkg_file_content.name,
             self.gpkg_file_content.read()
         )
-        form = GeopackageUploadForm(data={})
+        form = UploadForm(data={})
         self.assertFalse(form.is_valid())
         data = {
                 "name": "spiky polygons",
@@ -69,7 +69,7 @@ class TestFormValidation(SetUpTest, TestCase):
             'thumbnail_image': uploaded_thumbnail,
             'gpkg_file': uploaded_gpkg
         }
-        form = GeopackageUploadForm(data, file_data)
+        form = UploadForm(data, file_data)
         self.assertTrue(form.is_valid())
 
     def test_form_invalid_gpkg_file_extension(self):
@@ -89,7 +89,7 @@ class TestFormValidation(SetUpTest, TestCase):
             'thumbnail_image': uploaded_thumbnail,
             'gpkg_file': uploaded_gpkg
         }
-        form = GeopackageUploadForm(data, file_data)
+        form = UploadForm(data, file_data)
         self.assertFalse(form.is_valid())
         self.assertEqual(form.errors,
                          {'gpkg_file': ['The submitted file is empty.']})
@@ -111,7 +111,7 @@ class TestFormValidation(SetUpTest, TestCase):
             'thumbnail_image': uploaded_thumbnail,
             'gpkg_file': uploaded_gpkg
         }
-        form = GeopackageUploadForm(data, file_data)
+        form = UploadForm(data, file_data)
         self.assertFalse(form.is_valid())
         self.assertEqual(
             form.errors,
