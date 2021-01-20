@@ -21,7 +21,8 @@ from django.views.generic import (CreateView,
                                   UpdateView)
 
 from base.license import zipped_with_license
-from base.views.resource import ResourceBaseCreateView
+from base.views.processing_view import (ResourceBaseCreateView,
+                                        ResourceBaseDetailView)
 
 from geopackages.forms import (GeopackageReviewForm,
                              GeopackageUpdateForm,
@@ -131,7 +132,8 @@ def geopackage_update_notify(gpkg: Geopackage, creator: User,
                         'notification' % (gpkg, approval_state))
 
 class GeopackageMixin():
-    resource_name = "GeoPackage"
+    resource_name = 'GeoPackage'
+    resource_name_url_base = 'geopackage'
 
 
 class GeopackageCreateView(GeopackageMixin, ResourceBaseCreateView):
@@ -146,34 +148,35 @@ class GeopackageCreateView(GeopackageMixin, ResourceBaseCreateView):
         return reverse('geopackage_detail', kwargs={'pk': self.object.id})
 
 
-class GeopackageDetailView(DetailView):
+class GeopackageDetailView(GeopackageMixin, ResourceBaseDetailView):
     model = Geopackage
-    queryset = Geopackage.objects.all()
-    context_object_name = 'geopackage_detail'
+    # queryset = Geopackage.objects.all()
+    # context_object_name = 'geopackage_detail'
 
-    def get_template_names(self):
-        gpkg = self.get_object()
-        if not gpkg.approved:
-            return 'geopackages/geopackage_review.html'
-        return 'geopackages/geopackage_detail.html'
 
-    def get_context_data(self, **kwargs):
-        context = super().get_context_data()
-        user = self.request.user
-        context['creator'] = self.object.get_creator_name
-        if self.object.geopackagereview_set.exists():
-            if self.object.geopackagereview_set.last().reviewer.first_name:
-                reviewer = "%s %s" % (
-                    self.object.geopackagereview_set.last()
-                        .reviewer.first_name,
-                    self.object.geopackagereview_set.last().reviewer.last_name)
-            else:
-                reviewer = self.object.geopackagereview_set.last().reviewer \
-                    .username
-            context['reviewer'] = reviewer
-        if user.is_staff or is_resources_manager(user):
-            context['form'] = GeopackageReviewForm()
-        return context
+    # def get_template_names(self):
+    #     gpkg = self.get_object()
+    #     if not gpkg.approved:
+    #         return 'geopackages/geopackage_review.html'
+    #     return 'geopackages/geopackage_detail.html'
+    #
+    # def get_context_data(self, **kwargs):
+    #     context = super().get_context_data()
+    #     user = self.request.user
+    #     context['creator'] = self.object.get_creator_name
+    #     if self.object.geopackagereview_set.exists():
+    #         if self.object.geopackagereview_set.last().reviewer.first_name:
+    #             reviewer = "%s %s" % (
+    #                 self.object.geopackagereview_set.last()
+    #                     .reviewer.first_name,
+    #                 self.object.geopackagereview_set.last().reviewer.last_name)
+    #         else:
+    #             reviewer = self.object.geopackagereview_set.last().reviewer \
+    #                 .username
+    #         context['reviewer'] = reviewer
+    #     if user.is_staff or is_resources_manager(user):
+    #         context['form'] = GeopackageReviewForm()
+    #     return context
 
 
 class GeopackageUpdateView(LoginRequiredMixin, UpdateView):

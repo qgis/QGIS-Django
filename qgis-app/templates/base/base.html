@@ -1,0 +1,57 @@
+{% extends BASE_TEMPLATE %}{% load i18n static thumbnail %}
+{% block extratitle %}{{ resource_name }}{% endblock %}
+{% block app_title %}
+<h2 xmlns="http://www.w3.org/1999/html">QGIS {{ resource_name }}</h2>
+{% endblock %}
+
+{% block extrajs %}
+    <style>
+        div.style-polaroid{
+            width: 100%;
+            box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
+            text-align: center;
+            margin-top: 23px;
+        }
+        div.style-polaroid, div.span12.license {
+            margin-left: 1em;
+        }
+        .style-title {
+            margin-bottom: 0;
+            padding-bottom: 0;
+        }
+    </style>
+{% endblock %}
+
+{% block menu %}
+{{ block.super }}
+    <a class="btn btn-block btn-primary btn-large" href="{% url url_create %}"><i class="icon-upload icon-white icon-2x" style=" vertical-align: middle;"></i> {% trans "Upload" %} {{ resource_name }}</a>
+    <h3>{{ resource_name }}</h3>
+    <ul class="nav nav-list">
+        <li><a href="{% url url_list %}">{% trans "Approved" %} <sup><span class="badge badge-info" id="all"></span></sup></a></li>
+        {% if user.is_authenticated %}
+        <li><a href="{% url url_unapproved %}">{% trans "Waiting Review" %} <sup><span class="badge badge-info" id="waiting_review"></span></sup></a></li>
+        <li><a href="{% url url_require_action %}">{% trans "Requiring Update" %} <sup><span class="badge badge-info" id="requiring_action"></span></sup></a></li>
+        {% endif %}
+    </ul>
+
+    <script type="text/javascript">
+        $(document).ready(function(){
+            $.ajax({
+                type: 'GET',
+                url: "{% url url_nav_content %}",
+                success: function (response){
+                    if(response.waiting_review){$("#waiting_review").text(response.waiting_review)};
+                    if(response.require_action){$("#requiring_action").text(response.require_action)};
+                }
+            })
+
+            // edit search input from base template, in order to use it for related app sharing
+            $("form.navbar-search").attr("action", "{% url url_list %}");
+            })
+    </script>
+
+{% endblock %}
+
+{% block "credits" %}
+{% trans "This web application was developed by:" %}&nbsp;<a href="https://www.itopen.it">Alessandro Pasotti</a> and &nbsp;<a href="https://kartoza.com"><img src="{% static 'images/kartoza-logo-only.png' %}" alt="Kartoza icon" width="16" height="16">Kartoza</a>.
+{% endblock %}

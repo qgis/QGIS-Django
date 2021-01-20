@@ -21,6 +21,9 @@ from django.views.generic import (CreateView,
                                   DeleteView,
                                   ListView,
                                   UpdateView)
+from django.views.generic.base import ContextMixin
+
+from base.forms.processing_forms import ResourceBaseReviewForm
 
 from base.license import zipped_with_license
 
@@ -146,11 +149,32 @@ class ResourceBaseMixin():
     Mixin class to provide standard settings for Resource.
     """
 
-    resource_name = "Resource"
+    resource_name = 'Resource'
+    resource_name_url_base = 'resource'
+
+
+class ResourceBaseContextMixin(ContextMixin):
+    def get_context_data(self, **kwargs):
+        context = super(ResourceBaseContextMixin, self).get_context_data()
+
+        context['resource_name'] = self.resource_name
+
+        # url
+        context['url_create'] = "%s_create" % self.resource_name_url_base
+        context['url_list'] = "%s_list" % self.resource_name_url_base
+        context['url_unapproved'] = "%s_unapproved" % self.resource_name_url_base
+        context['url_require_action'] = "%s_require_action" % self.resource_name_url_base
+        context['url_nav_content'] = "%s_nav_content" % self.resource_name_url_base
+
+        context['url_download'] = "%s_download" % self.resource_name_url_base
+        context['url_update'] = "%s_update" % self.resource_name_url_base
+        context['url_delete'] = "%s_delete" % self.resource_name_url_base
+        context['url_review'] = "%s_review" % self.resource_name_url_base
+        return context
 
 
 class ResourceBaseCreateView(LoginRequiredMixin,
-                             ResourceBaseMixin,
+                             ResourceBaseContextMixin,
                              SuccessMessageMixin,
                              CreateView):
     """
@@ -172,17 +196,20 @@ class ResourceBaseCreateView(LoginRequiredMixin,
         return "%s was uploaded successfully." % self.resource_name
 
 
-class ResourceBaseDetailView(DetailView):
+class ResourceBaseDetailView(ResourceBaseContextMixin,
+                             DetailView):
     """Base Class for DetailView."""
 
-    resource_template_review = None
-    resource_template_detail = None
+    context_object_name = 'object_detail'
 
     def get_template_names(self):
         object = self.get_object()
         if not object.approved:
-            return self.resource_template_review
-        return self.resource_template_detail
+            return 'base/review.html'
+        return 'base/detail.html'
+
+    def get_queryset(self):
+        return self.model.objects.all()
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data()
@@ -199,7 +226,7 @@ class ResourceBaseDetailView(DetailView):
                     .username
             context['reviewer'] = reviewer
         if user.is_staff or is_resources_manager(user):
-            context['form'] = GeopackageReviewForm()
+            context['form'] = ResourceBaseReviewForm()
         return context
 #
 #
