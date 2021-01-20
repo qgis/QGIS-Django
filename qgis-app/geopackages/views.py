@@ -140,7 +140,7 @@ class GeopackageCreateView(GeopackageMixin, ResourceBaseCreateView):
     """
 
     form_class = UploadForm
-    template_name = 'geopackages/geopackage_form.html'
+    # template_name = 'geopackages/geopackage_form.html'
 
     def get_success_url(self):
         return reverse('geopackage_detail', kwargs={'pk': self.object.id})

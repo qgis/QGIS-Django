@@ -157,6 +157,7 @@ class ResourceBaseCreateView(LoginRequiredMixin,
     Upload a Resource File.
 
     """
+    template_name = 'base/upload.html'
 
     def form_valid(self, form):
         self.obj = form.save(commit=False)

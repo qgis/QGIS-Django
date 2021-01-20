@@ -42,6 +42,7 @@ static_media
 dockerize/static
 dockerize/media
 dockerize/logs
+.editorconfig
 
 # test cache
 qgis-app/*/tests/*/cache
