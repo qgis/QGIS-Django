@@ -223,11 +223,6 @@ class TestReviewGeopackage(SetUpTest, TestCase):
             gpkg_file=self.gpkg_file
         )
 
-    def test_review_should_be_done_by_staff(self):
-        url = reverse('geopackage_review', kwargs={'pk': self.gpkg_object.id})
-        response = self.client.get(url)
-        self.assertEqual(response.status_code, 302)
-
     def test_approve_gpkg(self):
         login = self.client.login(username="staff", password="password")
         self.assertTrue(login)

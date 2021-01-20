@@ -20,17 +20,14 @@ from django.views.generic import (CreateView,
                                   DetailView,
                                   DeleteView,
                                   ListView,
-                                  UpdateView)
+                                  UpdateView,
+                                  View)
 from django.views.generic.base import ContextMixin
 
 from base.forms.processing_forms import ResourceBaseReviewForm
 
 from base.license import zipped_with_license
 
-from geopackages.forms import (GeopackageReviewForm,
-                             GeopackageUpdateForm,
-                             UploadForm,)
-from geopackages.models import Geopackage, GeopackageReview
 
 
 GROUP_NAME = "Style Managers"
@@ -122,7 +119,7 @@ def resource_update_notify(resource: models.base, creator: User, staff: User,
     else:
         approval_state = 'rejected'
 
-    review = resource.resourcereview_set.last()
+    review = resource.geopackagereview_set.last()
     comment = review.comment
 
     if recipients:
@@ -151,25 +148,31 @@ class ResourceBaseMixin():
 
     resource_name = 'Resource'
     resource_name_url_base = 'resource'
+    review_model = None
 
 
 class ResourceBaseContextMixin(ContextMixin):
     def get_context_data(self, **kwargs):
         context = super(ResourceBaseContextMixin, self).get_context_data()
 
+        # set the app page name
         context['resource_name'] = self.resource_name
 
-        # url
+        # url name rendered on template
         context['url_create'] = "%s_create" % self.resource_name_url_base
         context['url_list'] = "%s_list" % self.resource_name_url_base
-        context['url_unapproved'] = "%s_unapproved" % self.resource_name_url_base
-        context['url_require_action'] = "%s_require_action" % self.resource_name_url_base
-        context['url_nav_content'] = "%s_nav_content" % self.resource_name_url_base
+        context['url_unapproved'] = "%s_unapproved" % (
+            self.resource_name_url_base)
+        context['url_require_action'] = "%s_require_action" % (
+            self.resource_name_url_base)
+        context['url_nav_content'] = "%s_nav_content" % (
+            self.resource_name_url_base)
 
         context['url_download'] = "%s_download" % self.resource_name_url_base
         context['url_update'] = "%s_update" % self.resource_name_url_base
         context['url_delete'] = "%s_delete" % self.resource_name_url_base
         context['url_review'] = "%s_review" % self.resource_name_url_base
+        context['url_detail'] = "%s_detail" % self.resource_name_url_base
         return context
 
 
@@ -177,11 +180,9 @@ class ResourceBaseCreateView(LoginRequiredMixin,
                              ResourceBaseContextMixin,
                              SuccessMessageMixin,
                              CreateView):
-    """
-    Upload a Resource File.
+    """Upload a Resource File."""
 
-    """
-    template_name = 'base/upload.html'
+    template_name = 'base/upload_form.html'
 
     def form_valid(self, form):
         self.obj = form.save(commit=False)
@@ -194,6 +195,10 @@ class ResourceBaseCreateView(LoginRequiredMixin,
 
     def get_success_message(self, cleaned_data):
         return "%s was uploaded successfully." % self.resource_name
+
+    def get_success_url(self):
+        url_name = '%s_detail' % self.resource_name_url_base
+        return reverse(url_name, kwargs={'pk': self.object.id})
 
 
 class ResourceBaseDetailView(ResourceBaseContextMixin,
@@ -228,156 +233,176 @@ class ResourceBaseDetailView(ResourceBaseContextMixin,
         if user.is_staff or is_resources_manager(user):
             context['form'] = ResourceBaseReviewForm()
         return context
+
+
+class ResourceBaseUpdateView(LoginRequiredMixin,
+                             ResourceBaseContextMixin,
+                             UpdateView):
+    """Update Resource"""
+
+    context_object_name = 'object'
+    template_name = 'base/update_form.html'
+
+    def dispatch(self, request, *args, **kwargs):
+        object = self.get_object()
+        user = self.request.user
+        if not check_resources_access(user, object):
+            url_name = '%s_list' % self.resource_name_url_base
+            return HttpResponseRedirect(reverse(url_name))
+        return super().dispatch(request, *args, **kwargs)
 #
-#
-# class GeopackageUpdateView(LoginRequiredMixin, UpdateView):
-#     """
-#     Update a GeoPackage
-#     """
-#
-#     model = Geopackage
-#     form_class = GeopackageUpdateForm
-#     context_object_name = 'geopackage'
-#     template_name = 'geopackages/geopackage_update_form.html'
-#
-#     def dispatch(self, request, *args, **kwargs):
-#         gpkg = self.get_object()
-#         user = self.request.user
-#         if not check_geopackage_access(user, gpkg):
-#             return render(request,
-#                           'geopackages/geopackage_permission_deny.html',
-#                           {'geopackage_name': gpkg.name,
-#                            'context': "You cannot delete this GeoPackage"})
-#         return super().dispatch(request, *args, **kwargs)
-#
-#     def form_valid(self, form):
-#         obj = form.save(commit=False)
-#         obj.require_action = False
-#         obj.approved = False
-#         obj.save()
-#         geopackage_notify(obj, created=False)
-#         msg = _("The GeoPackage has been successfully updated.")
-#         messages.success(self.request, msg, 'success', fail_silently=True)
-#         return HttpResponseRedirect(reverse_lazy('geopackage_detail',
-#                                                  kwargs={'pk': obj.id}))
-#
-#
-# @method_decorator(never_cache, name='dispatch')
-# class GeopackageListView(ListView):
-#
-#     model = Geopackage
-#     queryset = Geopackage.approved_objects.all()
-#     context_object_name = 'geopackage_list'
-#     template_name = 'geopackages/geopackage_list.html'
-#     paginate_by = settings.PAGINATION_DEFAULT_PAGINATION
-#
-#     def get_context_data(self, **kwargs):
-#         context = super().get_context_data(**kwargs)
-#         context['count'] = self.get_queryset().count()
-#         context['order_by'] = self.request.GET.get('order_by', None)
-#         context['queries'] = self.request.GET.get('q', None)
-#         return context
-#
-#     def get_queryset(self):
-#         qs = super().get_queryset()
-#         q = self.request.GET.get('q')
-#         if q:
-#             qs = qs.annotate(
-#                 search=(SearchVector('name')
-#                         + SearchVector('description')
-#                         + SearchVector('creator__username')
-#                         + SearchVector('creator__first_name')
-#                         + SearchVector('creator__last_name'))
-#             ).filter(search=q)
-#         order_by = self.request.GET.get('order_by', None)
-#         if order_by:
-#             qs = qs.order_by(order_by)
-#         return qs
-#
-#
-# class GeopackageUnapprovedListView(LoginRequiredMixin, GeopackageListView):
-#     context_object_name = 'geopackage_list'
-#     queryset = Geopackage.unapproved_objects.all()
-#
-#     def get_queryset(self):
-#         qs = super().get_queryset()
-#         user = self.request.user
-#         if user.is_staff or is_resources_manager(user):
-#             return qs
-#         return qs.filter(creator=user)
-#
-#     def get_context_data(self, **kwargs):
-#         context = super().get_context_data(**kwargs)
-#         context['title'] = 'Waiting Review'
-#         return context
-#
-#
-# class GeopackageRequireActionListView(LoginRequiredMixin, GeopackageListView):
-#     context_object_name = 'geopackage_list'
-#     queryset = Geopackage.requireaction_objects.all()
-#
-#     def get_queryset(self):
-#         qs = super().get_queryset()
-#         user = self.request.user
-#         if user.is_staff or is_resources_manager(user):
-#             return qs
-#         return qs.filter(creator=user)
-#
-#     def get_context_data(self, **kwargs):
-#         context = super().get_context_data(**kwargs)
-#         context['title'] = 'Requiring Update'
-#         return context
-#
-#
-# class GeopackageDeleteView(LoginRequiredMixin, DeleteView):
-#     """
-#     Delete a GeoPackage.
-#     """
-#
-#     model = Geopackage
-#     context_object_file = 'geopackage'
-#     success_url = reverse_lazy('geopackage_list')
-#
-#     def dispatch(self, request, *args, **kwargs):
-#         gpkg = self.get_object()
-#         user = self.request.user
-#         if not check_geopackage_access(user, gpkg):
-#             return render(request,
-#                           'geopackages/geopackage_permission_deny.html',
-#                           {'geopackage_name': gpkg.name,
-#                            'context': "You cannot delete this GeoPackage"})
-#         return super().dispatch(request, *args, **kwargs)
-#
-#
-# def geopackage_review(request, pk):
-#     """
-#     Submit a review and send email notification
-#     """
-#
-#     gpkg = get_object_or_404(Geopackage, pk=pk)
-#     if request.method == 'POST':
-#         form = GeopackageReviewForm(request.POST)
-#         if form.is_valid():
-#             data = form.cleaned_data
-#             GeopackageReview.objects.create(
-#                 geopackage=gpkg,
-#                 reviewer=request.user,
-#                 comment=data['comment'])
-#             if data['approval'] == 'approve':
-#                 gpkg.approved = True
-#                 gpkg.require_action = False
-#                 msg = _("The GeoPackage has been approved.")
-#                 messages.success(request, msg, 'success', fail_silently=True)
-#             else:
-#                 gpkg.approved = False
-#                 gpkg.require_action = True
-#                 msg = _("The GeoPackage has been rejected.")
-#                 messages.success(request, msg, 'error', fail_silently=True)
-#             gpkg.save()
-#             # send email notification
-#             geopackage_update_notify(gpkg, gpkg.creator, request.user)
-#     return HttpResponseRedirect(reverse('geopackage_detail',
-#                                         kwargs={'pk': pk}))
+    def form_valid(self, form):
+        obj = form.save(commit=False)
+        obj.require_action = False
+        obj.approved = False
+        obj.save()
+        resource_notify(obj, resource_type=self.resource_name)
+        msg = _("The %s has been successfully updated." % self.resource_name)
+        messages.success(self.request, msg, 'success', fail_silently=True)
+        url_name = '%s_detail' % self.resource_name_url_base
+        return HttpResponseRedirect(reverse_lazy(url_name,
+                                                 kwargs={'pk': obj.id}))
+
+
+@method_decorator(never_cache, name='dispatch')
+class ResourceBaseListView(ResourceBaseContextMixin, ListView):
+
+    context_object_name = 'object_list'
+    template_name = 'base/list.html'
+    paginate_by = settings.PAGINATION_DEFAULT_PAGINATION
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['count'] = self.get_queryset().count()
+        context['order_by'] = self.request.GET.get('order_by', None)
+        context['queries'] = self.request.GET.get('q', None)
+        return context
+
+    def get_queryset(self):
+        qs = self.model.approved_objects.all()
+        q = self.request.GET.get('q')
+        if q:
+            qs = qs.annotate(
+                search=(SearchVector('name')
+                        + SearchVector('description')
+                        + SearchVector('creator__username')
+                        + SearchVector('creator__first_name')
+                        + SearchVector('creator__last_name'))
+            ).filter(search=q)
+        order_by = self.request.GET.get('order_by', None)
+        if order_by:
+            qs = qs.order_by(order_by)
+        return qs
+
+
+class ResourceBaseUnapprovedListView(LoginRequiredMixin, ResourceBaseListView):
+
+    def get_queryset(self):
+        qs = self.model.unapproved_objects.all()
+        q = self.request.GET.get('q')
+        if q:
+            qs = qs.annotate(
+                search=(SearchVector('name')
+                        + SearchVector('description')
+                        + SearchVector('creator__username')
+                        + SearchVector('creator__first_name')
+                        + SearchVector('creator__last_name'))
+            ).filter(search=q)
+        order_by = self.request.GET.get('order_by', None)
+        if order_by:
+            qs = qs.order_by(order_by)
+        user = self.request.user
+        if user.is_staff or is_resources_manager(user):
+            return qs
+        return qs.filter(creator=user)
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['title'] = 'Waiting Review'
+        return context
+
+
+class ResourceBaseRequireActionListView(LoginRequiredMixin,
+                                      ResourceBaseListView):
+
+    def get_queryset(self):
+        qs = self.model.requireaction_objects.all()
+        q = self.request.GET.get('q')
+        if q:
+            qs = qs.annotate(
+                search=(SearchVector('name')
+                        + SearchVector('description')
+                        + SearchVector('creator__username')
+                        + SearchVector('creator__first_name')
+                        + SearchVector('creator__last_name'))
+            ).filter(search=q)
+        order_by = self.request.GET.get('order_by', None)
+        if order_by:
+            qs = qs.order_by(order_by)
+        user = self.request.user
+        if user.is_staff or is_resources_manager(user):
+            return qs
+        return qs.filter(creator=user)
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['title'] = 'Requiring Update'
+        return context
+
+
+class ResourceBaseDeleteView(LoginRequiredMixin,
+                             ResourceBaseContextMixin,
+                             DeleteView):
+    """
+    Delete a resource instance.
+    """
+
+    context_object_file = 'object'
+    template_name = 'base/confirm_delete.html'
+
+    def dispatch(self, request, *args, **kwargs):
+        object = self.get_object()
+        user = self.request.user
+        if not check_resources_access(user, object):
+            url_name = '%s_list' % self.resource_name_url_base
+            return HttpResponseRedirect(reverse(url_name))
+        return super().dispatch(request, *args, **kwargs)
+
+    def get_success_url(self):
+        url_name = '%s_list' % self.resource_name_url_base
+        return reverse_lazy(url_name)
+
+
+class ResourceBaseReviewView(ResourceBaseMixin, View):
+    form_class = ResourceBaseReviewForm
+    http_method_names = ['post']
+
+    def post(self, request, *args, **kwargs):
+        object = get_object_or_404(self.model, pk=self.kwargs['pk'])
+        form = self.form_class(request.POST)
+        if form.is_valid():
+            data = form.cleaned_data
+            self.review_model.objects.create(
+                geopackage=object,
+                reviewer=request.user,
+                comment=data['comment'])
+            if data['approval'] == 'approve':
+                object.approved = True
+                object.require_action = False
+                msg = _("The %s has been approved." % self.resource_name)
+                messages.success(request, msg, 'success', fail_silently=True)
+            else:
+                object.approved = False
+                object.require_action = True
+                msg = _("The GeoPackage has been rejected.")
+                messages.success(request, msg, 'error', fail_silently=True)
+            object.save()
+            # send email notification
+            resource_update_notify(object, object.creator, request.user,
+                                   self.resource_name)
+        url_name = '%s_detail' % self.resource_name_url_base
+        return HttpResponseRedirect(
+                reverse(url_name, kwargs={'pk': self.kwargs['pk']}))
 #
 #
 # def geopackage_download(request, pk):

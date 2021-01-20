@@ -18,15 +18,22 @@ from django.views.generic import (CreateView,
                                   DetailView,
                                   DeleteView,
                                   ListView,
-                                  UpdateView)
+                                  UpdateView,
+                                  View)
 
 from base.license import zipped_with_license
 from base.views.processing_view import (ResourceBaseCreateView,
-                                        ResourceBaseDetailView)
+                                        ResourceBaseDetailView,
+                                        ResourceBaseUpdateView,
+                                        ResourceBaseListView,
+                                        ResourceBaseUnapprovedListView,
+                                        ResourceBaseRequireActionListView,
+                                        ResourceBaseDeleteView,
+                                        ResourceBaseReviewView)
 
 from geopackages.forms import (GeopackageReviewForm,
-                             GeopackageUpdateForm,
-                             UploadForm,)
+                               UpdateForm,
+                               UploadForm,)
 from geopackages.models import Geopackage, GeopackageReview
 
 
@@ -131,171 +138,55 @@ def geopackage_update_notify(gpkg: Geopackage, creator: User,
         logging.warning('No recipients found for %s geopackage %s '
                         'notification' % (gpkg, approval_state))
 
-class GeopackageMixin():
+class ResourceMixin():
+    """Mixin class for Geopackage."""
+
+    model = Geopackage
+
+    review_model = GeopackageReview
+
+    # The resource_name will be displayed as the app name on web page
     resource_name = 'GeoPackage'
+
+    # The url name in urls.py should start start with this value
     resource_name_url_base = 'geopackage'
 
 
-class GeopackageCreateView(GeopackageMixin, ResourceBaseCreateView):
-    """
-    Upload a GeoPackage File
-    """
+class GeopackageCreateView(ResourceMixin, ResourceBaseCreateView):
+    """Upload a GeoPackage File"""
 
     form_class = UploadForm
-    # template_name = 'geopackages/geopackage_form.html'
-
-    def get_success_url(self):
-        return reverse('geopackage_detail', kwargs={'pk': self.object.id})
 
 
-class GeopackageDetailView(GeopackageMixin, ResourceBaseDetailView):
-    model = Geopackage
-    # queryset = Geopackage.objects.all()
-    # context_object_name = 'geopackage_detail'
+class GeopackageDetailView(ResourceMixin, ResourceBaseDetailView):
+
+    pass
 
 
-    # def get_template_names(self):
-    #     gpkg = self.get_object()
-    #     if not gpkg.approved:
-    #         return 'geopackages/geopackage_review.html'
-    #     return 'geopackages/geopackage_detail.html'
-    #
-    # def get_context_data(self, **kwargs):
-    #     context = super().get_context_data()
-    #     user = self.request.user
-    #     context['creator'] = self.object.get_creator_name
-    #     if self.object.geopackagereview_set.exists():
-    #         if self.object.geopackagereview_set.last().reviewer.first_name:
-    #             reviewer = "%s %s" % (
-    #                 self.object.geopackagereview_set.last()
-    #                     .reviewer.first_name,
-    #                 self.object.geopackagereview_set.last().reviewer.last_name)
-    #         else:
-    #             reviewer = self.object.geopackagereview_set.last().reviewer \
-    #                 .username
-    #         context['reviewer'] = reviewer
-    #     if user.is_staff or is_resources_manager(user):
-    #         context['form'] = GeopackageReviewForm()
-    #     return context
+class GeopackageUpdateView(ResourceMixin, ResourceBaseUpdateView):
+    """Update a GeoPackage"""
+
+    form_class = UpdateForm
 
 
-class GeopackageUpdateView(LoginRequiredMixin, UpdateView):
-    """
-    Update a GeoPackage
-    """
-
-    model = Geopackage
-    form_class = GeopackageUpdateForm
-    context_object_name = 'geopackage'
-    template_name = 'geopackages/geopackage_update_form.html'
-
-    def dispatch(self, request, *args, **kwargs):
-        gpkg = self.get_object()
-        user = self.request.user
-        if not check_geopackage_access(user, gpkg):
-            return render(request,
-                          'geopackages/geopackage_permission_deny.html',
-                          {'geopackage_name': gpkg.name,
-                           'context': "You cannot delete this GeoPackage"})
-        return super().dispatch(request, *args, **kwargs)
-
-    def form_valid(self, form):
-        obj = form.save(commit=False)
-        obj.require_action = False
-        obj.approved = False
-        obj.save()
-        geopackage_notify(obj, created=False)
-        msg = _("The GeoPackage has been successfully updated.")
-        messages.success(self.request, msg, 'success', fail_silently=True)
-        return HttpResponseRedirect(reverse_lazy('geopackage_detail',
-                                                 kwargs={'pk': obj.id}))
+class GeopackageListView(ResourceMixin, ResourceBaseListView):
+    pass
 
 
-@method_decorator(never_cache, name='dispatch')
-class GeopackageListView(ListView):
-
-    model = Geopackage
-    queryset = Geopackage.approved_objects.all()
-    context_object_name = 'geopackage_list'
-    template_name = 'geopackages/geopackage_list.html'
-    paginate_by = settings.PAGINATION_DEFAULT_PAGINATION
-
-    def get_context_data(self, **kwargs):
-        context = super().get_context_data(**kwargs)
-        context['count'] = self.get_queryset().count()
-        context['order_by'] = self.request.GET.get('order_by', None)
-        context['queries'] = self.request.GET.get('q', None)
-        return context
-
-    def get_queryset(self):
-        qs = super().get_queryset()
-        q = self.request.GET.get('q')
-        if q:
-            qs = qs.annotate(
-                search=(SearchVector('name')
-                        + SearchVector('description')
-                        + SearchVector('creator__username')
-                        + SearchVector('creator__first_name')
-                        + SearchVector('creator__last_name'))
-            ).filter(search=q)
-        order_by = self.request.GET.get('order_by', None)
-        if order_by:
-            qs = qs.order_by(order_by)
-        return qs
+class GeopackageUnapprovedListView(ResourceMixin,
+                                   ResourceBaseUnapprovedListView):
+    pass
 
 
-class GeopackageUnapprovedListView(LoginRequiredMixin, GeopackageListView):
-    context_object_name = 'geopackage_list'
-    queryset = Geopackage.unapproved_objects.all()
-
-    def get_queryset(self):
-        qs = super().get_queryset()
-        user = self.request.user
-        if user.is_staff or is_resources_manager(user):
-            return qs
-        return qs.filter(creator=user)
-
-    def get_context_data(self, **kwargs):
-        context = super().get_context_data(**kwargs)
-        context['title'] = 'Waiting Review'
-        return context
+class GeopackageRequireActionListView(ResourceMixin,
+                                      ResourceBaseRequireActionListView):
+    """Geopackage Requires Action """
 
 
-class GeopackageRequireActionListView(LoginRequiredMixin, GeopackageListView):
-    context_object_name = 'geopackage_list'
-    queryset = Geopackage.requireaction_objects.all()
-
-    def get_queryset(self):
-        qs = super().get_queryset()
-        user = self.request.user
-        if user.is_staff or is_resources_manager(user):
-            return qs
-        return qs.filter(creator=user)
-
-    def get_context_data(self, **kwargs):
-        context = super().get_context_data(**kwargs)
-        context['title'] = 'Requiring Update'
-        return context
-
-
-class GeopackageDeleteView(LoginRequiredMixin, DeleteView):
+class GeopackageDeleteView(ResourceMixin, ResourceBaseDeleteView):
     """
     Delete a GeoPackage.
     """
-
-    model = Geopackage
-    context_object_file = 'geopackage'
-    success_url = reverse_lazy('geopackage_list')
-
-    def dispatch(self, request, *args, **kwargs):
-        gpkg = self.get_object()
-        user = self.request.user
-        if not check_geopackage_access(user, gpkg):
-            return render(request,
-                          'geopackages/geopackage_permission_deny.html',
-                          {'geopackage_name': gpkg.name,
-                           'context': "You cannot delete this GeoPackage"})
-        return super().dispatch(request, *args, **kwargs)
 
 
 def geopackage_review(request, pk):
@@ -327,6 +218,9 @@ def geopackage_review(request, pk):
             geopackage_update_notify(gpkg, gpkg.creator, request.user)
     return HttpResponseRedirect(reverse('geopackage_detail',
                                         kwargs={'pk': pk}))
+
+class GeopackageReviewView(ResourceMixin, ResourceBaseReviewView):
+    pass
 
 
 def geopackage_download(request, pk):
