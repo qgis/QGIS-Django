@@ -11,6 +11,7 @@ from django.core.mail import send_mail
 from django.db import models
 from django.http import HttpResponse, HttpResponseRedirect, JsonResponse
 from django.shortcuts import get_object_or_404, render
+from django.template.response import TemplateResponse
 from django.urls import reverse, reverse_lazy
 from django.utils.translation import ugettext_lazy as _
 from django.utils.decorators import method_decorator
@@ -403,56 +404,56 @@ class ResourceBaseReviewView(ResourceBaseMixin, View):
         url_name = '%s_detail' % self.resource_name_url_base
         return HttpResponseRedirect(
                 reverse(url_name, kwargs={'pk': self.kwargs['pk']}))
-#
-#
-# def geopackage_download(request, pk):
-#     """
-#     Download GeoPackage and update its download_count value
-#     """
-#
-#     gpkg = get_object_or_404(Geopackage, pk=pk)
-#     if not gpkg.approved:
-#         if not check_geopackage_access(request.user, gpkg):
-#             return render(
-#                 request, 'geopackages/geopackage_permission_deny.html',
-#                 {'geopackage_name': gpkg.name,
-#                  'context': ('Download failed. '
-#                              'This GeoPackage is not approved')})
-#     else:
-#         gpkg.increase_download_counter()
-#         gpkg.save()
-#
-#     # zip the geopackage and license.txt
-#     zipfile = zipped_with_license(gpkg.gpkg_file.file.name, gpkg.name)
-#
-#     response = HttpResponse(
-#         zipfile.getvalue(), content_type="application/x-zip-compressed")
-#     response['Content-Disposition'] = 'attachment; filename=%s.zip' % (
-#         slugify(gpkg.name, allow_unicode=True)
-#     )
-#
-#     return response
-#
-#
-# @never_cache
-# def geopackage_nav_content(request):
-#     """
-#     Provides data for sidebar geopackage navigation
-#     """
-#
-#     user = request.user
-#     all_gpkg = Geopackage.approved_objects.count()
-#     waiting_review = 0
-#     require_action = 0
-#     if user.is_staff or is_resources_manager(user):
-#         waiting_review = Geopackage.unapproved_objects.distinct().count()
-#         require_action = Geopackage.requireaction_objects.distinct().count()
-#     elif user.is_authenticated:
-#         waiting_review = Geopackage.unapproved_objects.filter(
-#             creator=user).distinct().count()
-#         require_action = Geopackage.requireaction_objects.filter(
-#             creator=user).distinct().count()
-#     number_geopackage = {'all': all_gpkg,
-#                     'waiting_review': waiting_review,
-#                     'require_action': require_action}
-#     return JsonResponse(number_geopackage, status=200)
+
+
+class ResourceBaseDownload(ResourceBaseContextMixin, View):
+    """Download resource files and zip it with license."""
+
+    template_name = 'base/permission_deny.html'
+
+    def get(self, request, *args, **kwargs):
+        object = get_object_or_404(self.model, pk=self.kwargs['pk'])
+        if not object.approved:
+            if not check_resources_access(self.request.user, object):
+                context = super(ResourceBaseDownload, self).get_context_data()
+                context['object_name'] = object.name
+                context['context'] = ('Download failed. This %s is '
+                                      'not approved' % self.resource_name)
+                return TemplateResponse(request, self.template_name, context)
+        else:
+            object.increase_download_counter()
+            object.save()
+
+        # zip the geopackage and license.txt
+        zipfile = zipped_with_license(object.gpkg_file.file.name, object.name)
+
+        response = HttpResponse(
+            zipfile.getvalue(), content_type="application/x-zip-compressed")
+        response['Content-Disposition'] = 'attachment; filename=%s.zip' % (
+            slugify(object.name, allow_unicode=True)
+        )
+        return response
+
+
+@never_cache
+def resource_nav_content(request, model):
+    """
+    Provides data for sidebar geopackage navigation
+    """
+
+    user = request.user
+    all_object = model.approved_objects.count()
+    waiting_review = 0
+    require_action = 0
+    if user.is_staff or is_resources_manager(user):
+        waiting_review = model.unapproved_objects.distinct().count()
+        require_action = model.requireaction_objects.distinct().count()
+    elif user.is_authenticated:
+        waiting_review = model.unapproved_objects.filter(
+            creator=user).distinct().count()
+        require_action = model.requireaction_objects.filter(
+            creator=user).distinct().count()
+    number_geopackage = {'all': all_object,
+                    'waiting_review': waiting_review,
+                    'require_action': require_action}
+    return JsonResponse(number_geopackage, status=200)

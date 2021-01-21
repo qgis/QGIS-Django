@@ -8,7 +8,7 @@ from django.urls import reverse
 from django.contrib.auth.models import User, Group
 from geopackages.models import Geopackage, GeopackageReview
 
-from geopackages.views import geopackage_notify, geopackage_update_notify
+from base.views.processing_view import resource_notify, resource_update_notify
 from geopackages.forms import UploadForm
 
 GPKG_DIR = os.path.join(os.path.dirname(__file__), "gpkgfiles")
@@ -136,21 +136,23 @@ class TestEmailNotification(SetUpTest, TestCase):
             gpkg_file=self.gpkg_file
         )
         gpkg = Geopackage.objects.first()
-        geopackage_notify(gpkg)
+        resource_notify(gpkg, resource_type='GeoPackage')
         GeopackageReview.objects.create(
             reviewer=self.staff,
             geopackage=gpkg,
             comment="Rejected for testing purpose")
         gpkg.require_action = True
         gpkg.save()
-        geopackage_update_notify(gpkg, self.creator, self.staff)
+        resource_update_notify(gpkg, self.creator, self.staff,
+                               resource_type='GeoPackage')
         GeopackageReview.objects.create(
             reviewer=self.staff,
             geopackage=gpkg,
             comment="Approved! This is for testing purpose")
         gpkg.approved = True
         gpkg.save()
-        geopackage_update_notify(gpkg, self.creator, self.staff)
+        resource_update_notify(gpkg, self.creator, self.staff,
+                               resource_type='GeoPackage')
 
 
 @override_settings(MEDIA_ROOT=tempfile.mkdtemp())
