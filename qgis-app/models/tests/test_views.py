@@ -6,10 +6,10 @@ from django.core.files.uploadedfile import SimpleUploadedFile
 from django.test import TestCase, override_settings
 from django.urls import reverse
 from django.contrib.auth.models import User, Group
-from models.models import Model, ModelReview
+from models.models import Model, Review
 
-from models.views import model_notify, model_update_notify
-from models.forms import ModelUploadForm
+from base.views.processing_view import resource_notify, resource_update_notify
+from models.forms import UploadForm
 
 MODEL_DIR = os.path.join(os.path.dirname(__file__), "modelfiles")
 
@@ -22,9 +22,9 @@ class SetUpTest():
     def setUp(self):
         self.thumbnail = os.path.join(MODEL_DIR, "thumbnail.png")
         self.thumbnail_content = open(self.thumbnail, 'rb')
-        self.model_file = os.path.join(MODEL_DIR,
+        self.file = os.path.join(MODEL_DIR,
                                        "example.model3")
-        self.model_file_content = open(self.model_file, 'rb')
+        self.file_content = open(self.file, 'rb')
         self.modelzip_file = os.path.join(MODEL_DIR,
                                        "example.zip")
         self.modelzip_file_content = open(self.modelzip_file, 'rb')
@@ -47,7 +47,7 @@ class SetUpTest():
 
     def tearDown(self):
         self.thumbnail_content.close()
-        self.model_file_content.close()
+        self.file_content.close()
         self.modelzip_file_content.close()
         self.model_oversize_content.close()
 
@@ -61,10 +61,10 @@ class TestFormValidation(SetUpTest, TestCase):
             self.thumbnail_content.read()
         )
         uploaded_model = SimpleUploadedFile(
-            self.model_file_content.name,
-            self.model_file_content.read()
+            self.file_content.name,
+            self.file_content.read()
         )
-        form = ModelUploadForm(data={})
+        form = UploadForm(data={})
         self.assertFalse(form.is_valid())
         data = {
                 "name": "flooded building extractor",
@@ -72,12 +72,12 @@ class TestFormValidation(SetUpTest, TestCase):
         }
         file_data = {
             'thumbnail_image': uploaded_thumbnail,
-            'model_file': uploaded_model
+            'file': uploaded_model
         }
-        form = ModelUploadForm(data, file_data)
+        form = UploadForm(data, file_data)
         self.assertTrue(form.is_valid())
 
-    def test_form_invalid_model_file_extension(self):
+    def test_form_invalid_file_extension(self):
         uploaded_thumbnail = SimpleUploadedFile(
             self.thumbnail_content.name,
             self.thumbnail_content.read()
@@ -92,14 +92,14 @@ class TestFormValidation(SetUpTest, TestCase):
         }
         file_data = {
             'thumbnail_image': uploaded_thumbnail,
-            'model_file': uploaded_model
+            'file': uploaded_model
         }
-        form = ModelUploadForm(data, file_data)
+        form = UploadForm(data, file_data)
         self.assertFalse(form.is_valid())
         self.assertEqual(form.errors,
-                         {'model_file': ['The submitted file is empty.']})
+                         {'file': ['The submitted file is empty.']})
 
-    def test_form_invalid_model_filesize(self):
+    def test_form_invalid_filesize(self):
         uploaded_thumbnail = SimpleUploadedFile(
             self.thumbnail_content.name,
             self.thumbnail_content.read()
@@ -114,13 +114,13 @@ class TestFormValidation(SetUpTest, TestCase):
         }
         file_data = {
             'thumbnail_image': uploaded_thumbnail,
-            'model_file': uploaded_model
+            'file': uploaded_model
         }
-        form = ModelUploadForm(data, file_data)
+        form = UploadForm(data, file_data)
         self.assertFalse(form.is_valid())
         self.assertEqual(
             form.errors,
-            {'model_file': ['File is too big. Max size is 1.0 Megabytes']}
+            {'file': ['File is too big. Max size is 1.0 Megabytes']}
         )
 
 
@@ -138,24 +138,26 @@ class TestEmailNotification(SetUpTest, TestCase):
             name="flooded buildings extractor",
             description="A Model for testing purpose",
             thumbnail_image=self.thumbnail,
-            model_file=self.model_file
+            file=self.file
         )
         model = Model.objects.first()
-        model_notify(model)
-        ModelReview.objects.create(
+        resource_notify(model, resource_type='Model')
+        Review.objects.create(
             reviewer=self.staff,
-            model=model,
+            resource=model,
             comment="Rejected for testing purpose")
         model.require_action = True
         model.save()
-        model_update_notify(model, self.creator, self.staff)
-        ModelReview.objects.create(
+        resource_update_notify(model, self.creator, self.staff,
+                               resource_type='Model')
+        Review.objects.create(
             reviewer=self.staff,
-            model=model,
+            resource=model,
             comment="Approved! This is for testing purpose")
         model.approved = True
         model.save()
-        model_update_notify(model, self.creator, self.staff)
+        resource_update_notify(model, self.creator, self.staff,
+                            resource_type='Model')
 
 
 @override_settings(MEDIA_ROOT=tempfile.mkdtemp())
@@ -170,14 +172,14 @@ class TestUploadModel(SetUpTest, TestCase):
             self.thumbnail_content.read()
         )
         uploaded_model = SimpleUploadedFile(
-            self.model_file_content.name,
-            self.model_file_content.read()
+            self.file_content.name,
+            self.file_content.read()
         )
         data = {
             "name": "flooded buildings extractor",
             "description": "Test upload an acceptable model size",
             "thumbnail_image": uploaded_thumbnail,
-            "model_file": uploaded_model
+            "file": uploaded_model
         }
         response = self.client.post(url, data, follow=True)
         # should send email notify
@@ -204,7 +206,7 @@ class TestUploadModel(SetUpTest, TestCase):
             "name": "flooded buildings extractor",
             "description": "Test upload .zip model",
             "thumbnail_image": uploaded_thumbnail,
-            "model_file": uploaded_model
+            "file": uploaded_model
         }
         response = self.client.post(url, data, follow=True)
         # should send email notify
@@ -231,7 +233,7 @@ class TestUploadModel(SetUpTest, TestCase):
             "name": "flooded buildings extractor",
             "description": "Test upload a model > 1Mb filesize",
             "thumbnail_image": uploaded_thumbnail,
-            "model_file": uploaded_model
+            "file": uploaded_model
         }
         response = self.client.post(url, data, follow=True)
         self.assertEqual(response.status_code, 200)
@@ -250,13 +252,8 @@ class TestReviewModel(SetUpTest, TestCase):
             name="flooded buildings extractor",
             description="A Model for testing purpose",
             thumbnail_image=self.thumbnail,
-            model_file=self.model_file
+            file=self.file
         )
-
-    def test_review_should_be_done_by_staff(self):
-        url = reverse('model_review', kwargs={'pk': self.model_object.id})
-        response = self.client.get(url)
-        self.assertEqual(response.status_code, 302)
 
     def test_approve_model(self):
         login = self.client.login(username="staff", password="password")
