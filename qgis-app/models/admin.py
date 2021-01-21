@@ -1,9 +1,9 @@
 from django.contrib import admin
-from models.models import Model, ModelReview
+from models.models import Model, Review
 
 
 class ModelInline(admin.TabularInline):
-    model = ModelReview
+    model = Review
     list_display = ('review_date', 'comment', 'reviewer')
 
 
@@ -14,6 +14,6 @@ class ModelAdmin(admin.ModelAdmin):
     search_fields = ('name', 'description',)
 
 
-@admin.register(ModelReview)
+@admin.register(Review)
 class ModelReviewAdmin(admin.ModelAdmin):
-    list_display = ('model', 'reviewer', 'comment', 'review_date',)
+    list_display = ('resource', 'reviewer', 'comment', 'review_date',)

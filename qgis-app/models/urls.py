@@ -1,15 +1,15 @@
 from django.urls import path
 
 from models.views import (ModelCreateView,
-                             ModelDetailView,
-                             ModelUpdateView,
-                             ModelListView,
-                             ModelDeleteView,
-                             ModelUnapprovedListView,
-                             ModelRequireActionListView,
-                             model_review,
-                             model_download,
-                             model_nav_content,)
+                          ModelDetailView,
+                          ModelUpdateView,
+                          ModelListView,
+                          ModelDeleteView,
+                          ModelUnapprovedListView,
+                          ModelRequireActionListView,
+                          ModelReviewView,
+                          ModelDownloadView,
+                          model_nav_content,)
 
 
 urlpatterns = [
@@ -22,8 +22,8 @@ urlpatterns = [
          name='model_update'),
     path('<int:pk>/delete/', ModelDeleteView.as_view(),
          name='model_delete'),
-    path('<int:pk>/review/', model_review, name='model_review'),
-    path('<int:pk>/download/', model_download,
+    path('<int:pk>/review/', ModelReviewView.as_view(), name='model_review'),
+    path('<int:pk>/download/', ModelDownloadView.as_view(),
          name='model_download'),
 
     path('unapproved/', ModelUnapprovedListView.as_view(),
