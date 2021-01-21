@@ -1,27 +1,3 @@
-import logging
-
-from django.conf import settings
-from django.contrib import messages
-from django.contrib.auth.mixins import LoginRequiredMixin
-from django.contrib.auth.models import User
-from django.contrib.sites.models import Site
-from django.contrib.postgres.search import SearchVector
-from django.core.mail import send_mail
-from django.http import HttpResponse, HttpResponseRedirect, JsonResponse
-from django.shortcuts import get_object_or_404, render
-from django.urls import reverse, reverse_lazy
-from django.utils.translation import ugettext_lazy as _
-from django.utils.decorators import method_decorator
-from django.utils.text import slugify
-from django.views.decorators.cache import never_cache
-from django.views.generic import (CreateView,
-                                  DetailView,
-                                  DeleteView,
-                                  ListView,
-                                  UpdateView,
-                                  View)
-
-from base.license import zipped_with_license
 from base.views.processing_view import (ResourceBaseCreateView,
                                         ResourceBaseDetailView,
                                         ResourceBaseUpdateView,
@@ -33,9 +9,7 @@ from base.views.processing_view import (ResourceBaseCreateView,
                                         ResourceBaseDownload,
                                         resource_nav_content)
 
-from geopackages.forms import (GeopackageReviewForm,
-                               UpdateForm,
-                               UploadForm,)
+from geopackages.forms import (UpdateForm, UploadForm,)
 from geopackages.models import Geopackage, Review
 
 
@@ -60,46 +34,42 @@ class GeopackageCreateView(ResourceMixin, ResourceBaseCreateView):
 
 
 class GeopackageDetailView(ResourceMixin, ResourceBaseDetailView):
-
-    pass
+    """Geopackage Detail View"""
 
 
 class GeopackageUpdateView(ResourceMixin, ResourceBaseUpdateView):
-    """Update a GeoPackage"""
+    """Update the GeoPackage"""
 
     form_class = UpdateForm
 
 
 class GeopackageListView(ResourceMixin, ResourceBaseListView):
-    pass
+    """Approved GeoPackage ListView"""
 
 
 class GeopackageUnapprovedListView(ResourceMixin,
                                    ResourceBaseUnapprovedListView):
-    pass
+    """Unapproved GeoPackage ListView"""
 
 
 class GeopackageRequireActionListView(ResourceMixin,
                                       ResourceBaseRequireActionListView):
-    """Geopackage Requires Action """
+    """Geopackage Requires Action"""
 
 
 class GeopackageDeleteView(ResourceMixin, ResourceBaseDeleteView):
-    """
-    Delete a GeoPackage.
-    """
+    """Delete a GeoPackage."""
+
 
 class GeopackageReviewView(ResourceMixin, ResourceBaseReviewView):
-    pass
+    """Create a review"""
 
 
 class GeopackageDownloadView(ResourceMixin, ResourceBaseDownload):
-    pass
+    """Download a GeoPackage"""
 
 
 def geopackage_nav_content(request):
     model = ResourceMixin.model
     response = resource_nav_content(request, model)
     return response
-
-

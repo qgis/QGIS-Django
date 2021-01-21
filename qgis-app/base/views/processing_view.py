@@ -30,7 +30,6 @@ from base.forms.processing_forms import ResourceBaseReviewForm
 from base.license import zipped_with_license
 
 
-
 GROUP_NAME = "Style Managers"
 
 
@@ -255,7 +254,7 @@ class ResourceBaseUpdateView(LoginRequiredMixin,
             url_name = '%s_list' % self.resource_name_url_base
             return HttpResponseRedirect(reverse(url_name))
         return super().dispatch(request, *args, **kwargs)
-#
+
     def form_valid(self, form):
         obj = form.save(commit=False)
         obj.require_action = False

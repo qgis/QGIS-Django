@@ -2,9 +2,7 @@ from django import forms
 
 from geopackages.models import Geopackage
 
-from base.forms.processing_forms import (ResourceBaseReviewForm,
-                                         ResourceBaseSearchForm,
-                                         ResourceBaseCleanFileForm)
+from base.forms.processing_forms import ResourceBaseCleanFileForm
 
 
 class ResourceFormMixin(forms.ModelForm):
@@ -16,22 +14,6 @@ class ResourceFormMixin(forms.ModelForm):
 class UploadForm(ResourceBaseCleanFileForm, ResourceFormMixin):
     """Upload Form."""
 
-    pass
-
 
 class UpdateForm(ResourceFormMixin):
     """GeoPackage Update Form."""
-
-    pass
-
-
-class GeopackageReviewForm(ResourceBaseReviewForm):
-    """GeoPackage Review Form."""
-
-    pass
-
-
-class GeopackageSearchForm(ResourceBaseSearchForm):
-    """Search Form"""
-
-    pass
