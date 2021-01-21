@@ -29,7 +29,7 @@
                     <dt>Uploaded Date</dt>
                     <dd>{{ object_detail.upload_date|date:"d F Y" }}</dd>
                     <dt>Approved Date</dt>
-                    <dd>{{ object_detail.geopackagereview_set.last.review_date|date:"d F Y"}}</dd>
+                    <dd>{{ object_detail.review_set.last.review_date|date:"d F Y"}}</dd>
                     <dt>Creator</dt>
                     <dd>{{ object_detail.get_creator_name|title }}</dd>
                     <dt>{{ resource_name }} File</dt>

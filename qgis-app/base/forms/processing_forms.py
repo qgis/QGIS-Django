@@ -1,7 +1,7 @@
 from django import forms
 from django.utils.translation import ugettext_lazy as _
 
-from geopackages.validator import gpkg_validator
+from base.validator import filesize_validator
 
 
 class ResourceBaseReviewForm(forms.Form):
@@ -23,11 +23,11 @@ class ResourceBaseSearchForm(forms.Form):
 
 
 class ResourceBaseCleanFileForm(object):
-    def clean_gpkg_file(self):
+    def clean_file(self):
         """
-        Cleaning gpkg_file field data.
+        Cleaning file field data.
         """
 
-        gpkg_file = self.cleaned_data['gpkg_file']
-        if gpkg_validator(gpkg_file.file):
-            return gpkg_file
+        file = self.cleaned_data['file']
+        if filesize_validator(file.file):
+            return file

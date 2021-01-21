@@ -49,7 +49,7 @@
 
                 <hr />
                 {% if reviewer %}
-                    {% with review=object_detail.geopackagereview_set.last %}
+                    {% with review=object_detail.review_set.last %}
                     <dt>Last Review</dt>
                     <dd>{{ review.comment }}<br/>
                         <i><small>Reviewed by {{ reviewer|title }} {{ review.review_date|naturaltime }}</small></i>

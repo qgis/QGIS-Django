@@ -6,7 +6,7 @@ from django.core.files.uploadedfile import SimpleUploadedFile
 from django.test import TestCase, override_settings
 from django.urls import reverse
 from django.contrib.auth.models import User, Group
-from geopackages.models import Geopackage, GeopackageReview
+from geopackages.models import Geopackage, Review
 
 from base.views.processing_view import resource_notify, resource_update_notify
 from geopackages.forms import UploadForm
@@ -22,8 +22,8 @@ class SetUpTest():
     def setUp(self):
         self.thumbnail = os.path.join(GPKG_DIR, "thumbnail.png")
         self.thumbnail_content = open(self.thumbnail, 'rb')
-        self.gpkg_file = os.path.join(GPKG_DIR, "spiky-polygons.gpkg")
-        self.gpkg_file_content = open(self.gpkg_file, 'rb')
+        self.file = os.path.join(GPKG_DIR, "spiky-polygons.gpkg")
+        self.file_content = open(self.file, 'rb')
         self.gpkg_oversize = os.path.join(GPKG_DIR, "dummy_oversize.gpkg")
         self.gpkg_oversize_content = open(self.gpkg_oversize, 'rb')
 
@@ -43,7 +43,7 @@ class SetUpTest():
 
     def tearDown(self):
         self.thumbnail_content.close()
-        self.gpkg_file_content.close()
+        self.file_content.close()
         self.gpkg_oversize_content.close()
 
 
@@ -56,8 +56,8 @@ class TestFormValidation(SetUpTest, TestCase):
             self.thumbnail_content.read()
         )
         uploaded_gpkg = SimpleUploadedFile(
-            self.gpkg_file_content.name,
-            self.gpkg_file_content.read()
+            self.file_content.name,
+            self.file_content.read()
         )
         form = UploadForm(data={})
         self.assertFalse(form.is_valid())
@@ -67,12 +67,12 @@ class TestFormValidation(SetUpTest, TestCase):
         }
         file_data = {
             'thumbnail_image': uploaded_thumbnail,
-            'gpkg_file': uploaded_gpkg
+            'file': uploaded_gpkg
         }
         form = UploadForm(data, file_data)
         self.assertTrue(form.is_valid())
 
-    def test_form_invalid_gpkg_file_extension(self):
+    def test_form_invalid_file_extension(self):
         uploaded_thumbnail = SimpleUploadedFile(
             self.thumbnail_content.name,
             self.thumbnail_content.read()
@@ -87,14 +87,14 @@ class TestFormValidation(SetUpTest, TestCase):
         }
         file_data = {
             'thumbnail_image': uploaded_thumbnail,
-            'gpkg_file': uploaded_gpkg
+            'file': uploaded_gpkg
         }
         form = UploadForm(data, file_data)
         self.assertFalse(form.is_valid())
         self.assertEqual(form.errors,
-                         {'gpkg_file': ['The submitted file is empty.']})
+                         {'file': ['The submitted file is empty.']})
 
-    def test_form_invalid_gpkg_filesize(self):
+    def test_form_invalid_filesize(self):
         uploaded_thumbnail = SimpleUploadedFile(
             self.thumbnail_content.name,
             self.thumbnail_content.read()
@@ -109,13 +109,13 @@ class TestFormValidation(SetUpTest, TestCase):
         }
         file_data = {
             'thumbnail_image': uploaded_thumbnail,
-            'gpkg_file': uploaded_gpkg
+            'file': uploaded_gpkg
         }
         form = UploadForm(data, file_data)
         self.assertFalse(form.is_valid())
         self.assertEqual(
             form.errors,
-            {'gpkg_file': ['File is too big. Max size is 1.0 Megabytes']}
+            {'file': ['File is too big. Max size is 1.0 Megabytes']}
         )
 
 
@@ -133,21 +133,21 @@ class TestEmailNotification(SetUpTest, TestCase):
             name="spiky polygons",
             description="A GeoPackage for testing purpose",
             thumbnail_image=self.thumbnail,
-            gpkg_file=self.gpkg_file
+            file=self.file
         )
         gpkg = Geopackage.objects.first()
         resource_notify(gpkg, resource_type='GeoPackage')
-        GeopackageReview.objects.create(
+        Review.objects.create(
             reviewer=self.staff,
-            geopackage=gpkg,
+            resource=gpkg,
             comment="Rejected for testing purpose")
         gpkg.require_action = True
         gpkg.save()
         resource_update_notify(gpkg, self.creator, self.staff,
                                resource_type='GeoPackage')
-        GeopackageReview.objects.create(
+        Review.objects.create(
             reviewer=self.staff,
-            geopackage=gpkg,
+            resource=gpkg,
             comment="Approved! This is for testing purpose")
         gpkg.approved = True
         gpkg.save()
@@ -167,14 +167,14 @@ class TestUploadGeoPackage(SetUpTest, TestCase):
             self.thumbnail_content.read()
         )
         uploaded_gpkg = SimpleUploadedFile(
-            self.gpkg_file_content.name,
-            self.gpkg_file_content.read()
+            self.file_content.name,
+            self.file_content.read()
         )
         data = {
             "name": "spiky polygons",
             "description": "Test upload an acceptable gpkg size",
             "thumbnail_image": uploaded_thumbnail,
-            "gpkg_file": uploaded_gpkg
+            "file": uploaded_gpkg
         }
         response = self.client.post(url, data, follow=True)
         # should send email notify
@@ -203,7 +203,7 @@ class TestUploadGeoPackage(SetUpTest, TestCase):
             "name": "spiky polygons",
             "description": "Test upload a gpkg > 1Mb filesize",
             "thumbnail_image": uploaded_thumbnail,
-            "gpkg_file": uploaded_gpkg
+            "file": uploaded_gpkg
         }
         response = self.client.post(url, data, follow=True)
         self.assertEqual(response.status_code, 200)
@@ -222,7 +222,7 @@ class TestReviewGeopackage(SetUpTest, TestCase):
             name="spiky polygons",
             description="A GeoPackage for testing purpose",
             thumbnail_image=self.thumbnail,
-            gpkg_file=self.gpkg_file
+            file=self.file
         )
 
     def test_approve_gpkg(self):

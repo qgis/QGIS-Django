@@ -36,7 +36,7 @@ from base.views.processing_view import (ResourceBaseCreateView,
 from geopackages.forms import (GeopackageReviewForm,
                                UpdateForm,
                                UploadForm,)
-from geopackages.models import Geopackage, GeopackageReview
+from geopackages.models import Geopackage, Review
 
 
 class ResourceMixin():
@@ -44,7 +44,7 @@ class ResourceMixin():
 
     model = Geopackage
 
-    review_model = GeopackageReview
+    review_model = Review
 
     # The resource_name will be displayed as the app name on web page
     resource_name = 'GeoPackage'

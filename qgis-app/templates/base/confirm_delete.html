@@ -1,4 +1,4 @@
-{% extends 'geopackages/geopackage_base.html' %}{% load i18n %}
+{% extends 'base/base.html' %}{% load i18n %}
 {% block content %}
     <h2>{% trans "Delete"%} {{ resource_name }}: {{ object.name }}</h2>
     <form action="" method="post">{% csrf_token %}

@@ -10,7 +10,7 @@ from base.forms.processing_forms import (ResourceBaseReviewForm,
 class ResourceFormMixin(forms.ModelForm):
     class Meta:
         model = Geopackage
-        fields = ['gpkg_file', 'thumbnail_image', 'name', 'description', ]
+        fields = ['file', 'thumbnail_image', 'name', 'description', ]
 
 
 class UploadForm(ResourceBaseCleanFileForm, ResourceFormMixin):

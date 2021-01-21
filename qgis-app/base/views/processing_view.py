@@ -10,7 +10,7 @@ from django.contrib.postgres.search import SearchVector
 from django.core.mail import send_mail
 from django.db import models
 from django.http import HttpResponse, HttpResponseRedirect, JsonResponse
-from django.shortcuts import get_object_or_404, render
+from django.shortcuts import get_object_or_404
 from django.template.response import TemplateResponse
 from django.urls import reverse, reverse_lazy
 from django.utils.translation import ugettext_lazy as _
@@ -120,7 +120,7 @@ def resource_update_notify(resource: models.base, creator: User, staff: User,
     else:
         approval_state = 'rejected'
 
-    review = resource.geopackagereview_set.last()
+    review = resource.review_set.last()
     comment = review.comment
 
     if recipients:
@@ -136,10 +136,14 @@ def resource_update_notify(resource: models.base, creator: User, staff: User,
           recipients,
           fail_silently=True)
         logging.debug('Sending email %s notification for %s Resource, '
-                      'recipients:  %s' % (approval_state, resource, recipients))
+                      'recipients:  %s' % (approval_state,
+                                           resource,
+                                           recipients))
     else:
-        logging.warning('No recipients found for %s geopackage %s '
-                        'notification' % (resource, approval_state))
+        logging.warning('No recipients found for %s %s %s '
+                        'notification' % (resource,
+                                          resource_type,
+                                          approval_state))
 
 
 class ResourceBaseMixin():
@@ -204,7 +208,7 @@ class ResourceBaseCreateView(LoginRequiredMixin,
 
 class ResourceBaseDetailView(ResourceBaseContextMixin,
                              DetailView):
-    """Base Class for DetailView."""
+    """Base Class for Resource DetailView."""
 
     context_object_name = 'object_detail'
 
@@ -221,14 +225,14 @@ class ResourceBaseDetailView(ResourceBaseContextMixin,
         context = super().get_context_data()
         user = self.request.user
         context['creator'] = self.object.get_creator_name
-        if self.object.geopackagereview_set.exists():
-            if self.object.geopackagereview_set.last().reviewer.first_name:
+        if self.object.review_set.exists():
+            if self.object.review_set.last().reviewer.first_name:
                 reviewer = "%s %s" % (
-                    self.object.geopackagereview_set.last()
+                    self.object.review_set.last()
                         .reviewer.first_name,
-                    self.object.geopackagereview_set.last().reviewer.last_name)
+                    self.object.review_set.last().reviewer.last_name)
             else:
-                reviewer = self.object.geopackagereview_set.last().reviewer \
+                reviewer = self.object.review_set.last().reviewer \
                     .username
             context['reviewer'] = reviewer
         if user.is_staff or is_resources_manager(user):
@@ -384,7 +388,7 @@ class ResourceBaseReviewView(ResourceBaseMixin, View):
         if form.is_valid():
             data = form.cleaned_data
             self.review_model.objects.create(
-                geopackage=object,
+                resource=object,
                 reviewer=request.user,
                 comment=data['comment'])
             if data['approval'] == 'approve':
@@ -395,7 +399,7 @@ class ResourceBaseReviewView(ResourceBaseMixin, View):
             else:
                 object.approved = False
                 object.require_action = True
-                msg = _("The GeoPackage has been rejected.")
+                msg = _("The %s has been rejected." % self.resource_name)
                 messages.success(request, msg, 'error', fail_silently=True)
             object.save()
             # send email notification
@@ -424,8 +428,8 @@ class ResourceBaseDownload(ResourceBaseContextMixin, View):
             object.increase_download_counter()
             object.save()
 
-        # zip the geopackage and license.txt
-        zipfile = zipped_with_license(object.gpkg_file.file.name, object.name)
+        # zip the resource and license.txt
+        zipfile = zipped_with_license(object.file.file.name, object.name)
 
         response = HttpResponse(
             zipfile.getvalue(), content_type="application/x-zip-compressed")
@@ -438,7 +442,7 @@ class ResourceBaseDownload(ResourceBaseContextMixin, View):
 @never_cache
 def resource_nav_content(request, model):
     """
-    Provides data for sidebar geopackage navigation
+    Provides data for sidebar navigation
     """
 
     user = request.user
@@ -453,7 +457,7 @@ def resource_nav_content(request, model):
             creator=user).distinct().count()
         require_action = model.requireaction_objects.filter(
             creator=user).distinct().count()
-    number_geopackage = {'all': all_object,
+    count_object = {'all': all_object,
                     'waiting_review': waiting_review,
                     'require_action': require_action}
-    return JsonResponse(number_geopackage, status=200)
+    return JsonResponse(count_object, status=200)
