@@ -121,7 +121,7 @@ class Resource(models.Model):
         return "%s" % (self.name)
 
 
-class Review(models.Model):
+class ResourceReview(models.Model):
     """
     A Review Model.
     """
@@ -138,7 +138,9 @@ class Review(models.Model):
         User,
         verbose_name=_('Reviewed by'),
         help_text=_('The user who reviewed this GeoPackage.'),
-        on_delete=models.CASCADE)
+        on_delete=models.CASCADE,
+        related_name='%(app_label)s_%(class)s_related'
+    )
 
     # comment
     comment = models.TextField(

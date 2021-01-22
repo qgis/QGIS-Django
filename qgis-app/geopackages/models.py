@@ -6,7 +6,7 @@ from django.db import models
 from django.urls import reverse
 from django.utils.translation import ugettext_lazy as _
 
-from base.models.processing_models import Resource, Review
+from base.models.processing_models import Resource, ResourceReview
 
 GEOPACKAGES_STORAGE_PATH = getattr(settings,
                                  'GEOPACKAGE_STORAGE_PATH', 'geopackages/%Y')
@@ -39,12 +39,13 @@ class Geopackage(Resource):
         return extension
 
 
-class Review(Review):
+class Review(ResourceReview):
 
     # Geopackage resource
-    resource = models.ForeignKey(Geopackage,
-                                   verbose_name=_('GeoPackage'),
-                                   help_text=_('The reviewed GeoPackage'),
-                                   blank=False,
-                                   null=False,
-                                   on_delete=models.CASCADE)
+    resource = models.ForeignKey(
+        Geopackage,
+        verbose_name=_('GeoPackage'),
+        help_text=_('The reviewed GeoPackage'),
+        blank=False,
+        null=False,
+        on_delete=models.CASCADE)
