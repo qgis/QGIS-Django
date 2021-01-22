@@ -139,8 +139,7 @@ class ResourceReview(models.Model):
         verbose_name=_('Reviewed by'),
         help_text=_('The user who reviewed this GeoPackage.'),
         on_delete=models.CASCADE,
-        related_name='%(app_label)s_%(class)s_related'
-    )
+        related_name='%(app_label)s_%(class)s_related')
 
     # comment
     comment = models.TextField(

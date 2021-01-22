@@ -6,7 +6,7 @@ from django.db import models
 from django.urls import reverse
 from django.utils.translation import ugettext_lazy as _
 
-from base.models.processing_models import Resource, Review
+from base.models.processing_models import Resource, ResourceReview
 
 MODELS_STORAGE_PATH = getattr(settings,
                                  'MODELS_STORAGE_PATH', 'models/%Y')
@@ -43,15 +43,16 @@ class Model(Resource):
         return reverse('model_detail', args=(self.id,))
 
 
-class ModelReview(Review):
+class ModelReview(ResourceReview):
     """
     A Model Review Model.
     """
 
     # model
-    model = models.ForeignKey(Model,
-                                verbose_name=_('Model'),
-                                help_text=_('The reviewed Model'),
-                                blank=False,
-                                null=False,
-                                on_delete=models.CASCADE)
+    model = models.ForeignKey(
+        Model,
+        verbose_name=_('Model'),
+        help_text=_('The reviewed Model'),
+        blank=False,
+        null=False,
+        on_delete=models.CASCADE)

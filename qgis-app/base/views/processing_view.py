@@ -145,7 +145,7 @@ def resource_update_notify(resource: models.base, creator: User, staff: User,
                                           approval_state))
 
 
-class ResourceBaseMixin():
+class ResourceBaseMixin(object):
     """
     Mixin class to provide standard settings for Resource.
     """
