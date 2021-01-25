@@ -6,21 +6,27 @@ from styles.models import Style
 from styles.file_handler import validator
 
 
-class StyleUploadForm(forms.ModelForm):
+class ResourceFormMixin(forms.ModelForm):
+    class Meta:
+        model = Style
+        fields = ['file', 'thumbnail_image', 'name', 'description', ]
+
+
+class UploadForm(forms.ModelForm):
     """
     Style Upload Form.
     """
 
     class Meta:
         model = Style
-        fields = ['xml_file', 'thumbnail_image', 'description', ]
+        fields = ['file', 'thumbnail_image', 'description', ]
 
-    def clean_xml_file(self):
+    def clean_file(self):
         """
-        Cleaning xml_file field data.
+        Cleaning file field data.
         """
 
-        xml_file = self.cleaned_data['xml_file']
+        xml_file = self.cleaned_data['file']
 
         if xml_file:
             style = validator(xml_file.file)
@@ -30,14 +36,8 @@ class StyleUploadForm(forms.ModelForm):
         return xml_file
 
 
-class StyleUpdateForm(StyleUploadForm):
-    """
-    Style Update Form.
-    """
-
-    class Meta:
-        model = Style
-        fields = ['name', 'xml_file', 'thumbnail_image', 'description', ]
+class UpdateForm(ResourceFormMixin):
+    """Style Update Form."""
 
 
 class StyleReviewForm(forms.Form):

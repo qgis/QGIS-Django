@@ -103,7 +103,7 @@ class Style(Resource):
         upload_to=STYLES_STORAGE_PATH)
 
     # file
-    xml_file = models.FileField(
+    file = models.FileField(
         _('Style file'),
         help_text=_('A QGIS style file in XML format.'),
         upload_to=STYLES_STORAGE_PATH,
@@ -114,14 +114,13 @@ class Style(Resource):
         return reverse('style_detail', args=(self.id,))
 
 
-class StyleReview(ResourceReview):
+class Review(ResourceReview):
 
     # style
-    style = models.ForeignKey(
+    resource = models.ForeignKey(
         Style,
         verbose_name=_('Style'),
-        help_text=_('The type of this style, this will automatically be read '
-                    'from the XML file.'),
+        help_text=_('The reviewed Style.'),
         blank=True,
         null=True,
         on_delete=models.CASCADE)

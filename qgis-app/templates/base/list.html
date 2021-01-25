@@ -13,6 +13,31 @@
     .sorted-name {
         color: #006dcc;
     }
+    {# from style #}
+    table > tbody > tr {
+        height: 120px;
+    }
+
+    .table td {
+        vertical-align: middle;
+    }
+
+    img.style-icon {
+        width: 100px;
+        height: 100px;
+    }
+
+    img.style-icon:hover {
+        width: 320px;
+        height: 320px;
+        position: absolute;
+
+        margin-top: -250px;
+        margin-left: -220px;
+        border-radius: 20px;
+        box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
+
+    }
 </style>
 {% endblock %}
 
@@ -37,7 +62,11 @@
             <tr>
                 <th></th>
                 <th> {% anchor_sort_arrow 'Name' 'name' order_by queries %} </th>
+                {% if object_list.first.style_type %}
+                <th> {% anchor_sort_arrow 'Type' 'type' order_by queries %} </th>
+                {% else %}
                 <th> Description </th>
+                {% endif %}
                 <th>
                     <i class="icon-download-alt" title="{% trans 'Download Count' %}"></i>
                     {% anchor_sort_arrow '' 'download_count' order_by queries %}
@@ -52,15 +81,21 @@
                 <tr>
                     <td>
                     {% if object.thumbnail_image and object.thumbnail_image.file %}
-                        {% thumbnail object.thumbnail_image "32x32" format="PNG" as im %}
-                            <img class="plugin-icon" alt="{% trans "Style icon" %}" src="{{ im.url }}" width="{{ im.x }}" height="{{ im.y }}" />
+                        {% thumbnail object.thumbnail_image "420x420" format="PNG" as im %}
+                            <img class="style-icon" alt="{% trans "Style icon" %}" src="{{ im.url }}" width="{{ im.x }}" height="{{ im.y }}" />
                         {% endthumbnail %}
                     {% else %}
                         <img height="32" width="32" class="plugin-icon" src="{% static "images/qgis-icon-32x32.png" %}" alt="{% trans "Plugin icon" %}" />
                     {% endif %}
                     </td>
                     <td><a href="{% url url_detail pk=object.id %}">{{ object.name}}</a></td>
+
+                    {% if object.style_type %}
+                    <td><span class="center-vertical">{{ object.style_type.name|title }}</span></td>
+                    {%  else %}
                     <td>{{ object.description|md_to_html|striptags|truncatewords:7 }}</td>
+                    {% endif %}
+
                     <td>{{ object.download_count }}</td>
                     <td>{{ object.get_creator_name|title }}</td>
                     <td>{{ object.upload_date|date:"d F Y" }}</td>
