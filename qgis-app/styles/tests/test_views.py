@@ -8,7 +8,8 @@ from django.urls import reverse
 from django.contrib.auth.models import User, Group
 
 from styles.models import Style, StyleType
-from styles.views import style_update_notify, style_notify
+from base.views. processing_view import (resource_update_notify,
+                                         resource_notify)
 
 STYLE_DIR = os.path.join(os.path.dirname(__file__), "stylefiles")
 
@@ -51,10 +52,8 @@ class TestUploadStyle(TestCase):
 
     def test_upload_page_with_login(self):
         self.assertEqual(self.response.status_code, 200)
-        self.assertTemplateUsed(self.response, 'styles/style_form.html')
-        self.assertContains(self.response,
-                            "To upload a new style, you can specify "
-                            "the xml file in this form.")
+        self.assertTemplateUsed(self.response, 'base/upload_form.html')
+        self.assertContains(self.response, 'Style')
 
     @override_settings(MEDIA_ROOT=tempfile.mkdtemp())
     def test_upload_xml_file(self):
@@ -62,7 +61,7 @@ class TestUploadStyle(TestCase):
         f = os.path.join(STYLE_DIR, "cattrail.xml")
         with open(f) as xml_file:
             self.client.post(url, {
-                'xml_file': xml_file,
+                'file': xml_file,
                 'thumbnail_image': self.thumbnail,
                 'description': 'This style is for testing only purpose'
             })
@@ -109,7 +108,7 @@ class TestModeration(TestCase):
         f = os.path.join(STYLE_DIR, "legend_patch.xml")
         with open(f) as xml_file:
             c.post(url, {
-                'xml_file': xml_file,
+                'file': xml_file,
                 'thumbnail_image': cls.thumbnail,
                 'description': 'This style is for testing only purpose'
             })
@@ -265,7 +264,7 @@ class TestDownloadStyles(TestCase):
             name="Blues",
             description="This file is saved in styles/tests/stylefiles folder",
             thumbnail_image="thumbnail.png",
-            xml_file="colorramp_blue.xml",
+            file="colorramp_blue.xml",
             download_count=0,
             approved=True,
         )
@@ -300,17 +299,18 @@ class TestStyleApprovalNotify(TestCase):
         self.group.user_set.add(self.staff)
 
     def test_send_email_new_style_notification(self):
-        style_notify(self.style_new)
+        resource_notify(self.style_new, resource_type='Style')
         self.assertEqual(len(mail.outbox), 1)
         self.assertEqual(mail.outbox[0].subject,
-                         "A new style has been created by creator.")
+                         "A new Style has been created by creator.")
         self.assertIn("Style name is: New Cube Style",
                       mail.outbox[0].body)
         self.assertIn("Style description is: This is a new cube",
                       mail.outbox[0].body)
 
     def test_send_email_approved_style_notification(self):
-        style_update_notify(self.style_approved, self.creator, self.staff)
+        resource_update_notify(self.style_approved, self.creator, self.staff,
+                               'Style')
         self.assertEqual(len(mail.outbox), 1)
         self.assertEqual(mail.outbox[0].subject,
                          "Style Cube approved notification.")
@@ -318,7 +318,8 @@ class TestStyleApprovalNotify(TestCase):
                       mail.outbox[0].body)
 
     def test_send_email_rejected_style_notification(self):
-        style_update_notify(self.style_rejected, self.creator, self.staff)
+        resource_update_notify(self.style_rejected, self.creator, self.staff,
+                               'Style')
         self.assertEqual(len(mail.outbox), 1)
         self.assertEqual(mail.outbox[0].subject,
                          "Style Another Cube rejected notification.")

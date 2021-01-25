@@ -1,138 +1,20 @@
 import json
-import logging
 
 from django.conf import settings
 from django.contrib import messages
-from django.contrib.auth.mixins import LoginRequiredMixin
-from django.contrib.auth.models import User
 from django.core import serializers
-from django.contrib.sites.models import Site
-from django.core.mail import send_mail
-from django.http import HttpResponse, HttpResponseRedirect, JsonResponse
-from django.db.models import Q
-from django.shortcuts import get_object_or_404, render
+from django.http import HttpResponse, HttpResponseRedirect
 from django.urls import reverse, reverse_lazy
 from django.utils.translation import ugettext_lazy as _
-from django.utils.decorators import method_decorator
 from django.utils.crypto import get_random_string
-from django.utils.text import slugify
 from django.views.decorators.cache import never_cache
-from django.views.generic import (CreateView,
-                                  DetailView,
-                                  DeleteView,
-                                  ListView,
-                                  UpdateView)
-
-from base.license import zipped_with_license
 
 from styles.models import Style, StyleType, Review
-from styles.forms import (UploadForm,
-                          UpdateForm)
+from styles.forms import UploadForm, UpdateForm
 
 from styles.file_handler import read_xml_style
 
 
-# def is_style_manager(user: User) -> bool:
-#     """Check if user is the members of Style Managers group."""
-#
-#     return user.groups.filter(name="Style Managers").exists()
-#
-#
-# def check_styles_access(user: User, style: Style) -> bool:
-#     """Check if user is the creator of the style or is_staff."""
-#
-#     return user.is_staff or style.creator == user or is_style_manager(user)
-#
-#
-# def send_mail_wrapper(subject,
-#                       message,
-#                       mail_from,
-#                       recipients,
-#                       fail_silently=True):
-#     """
-#     Wrapping send_email function to send email only when not DEBUG.
-#     """
-#
-#     if settings.DEBUG:
-#         logging.debug("Mail not sent (DEBUG=True)")
-#     else:
-#         send_mail(subject,
-#                   message,
-#                   mail_from,
-#                   recipients,
-#                   fail_silently)
-#
-#
-# def style_notify(style: Style, created=True) -> None:
-#     """
-#     Email notification when a new style created.
-#
-#     """
-#     recipients = [u.email for u in User.objects.filter(
-#         groups__name="Style Managers").exclude(email='')]
-#
-#     if created:
-#         style_status = "created"
-#     else:
-#         style_status = "updated"
-#
-#     if recipients:
-#         domain = Site.objects.get_current().domain
-#         mail_from = settings.DEFAULT_FROM_EMAIL
-#
-#         send_mail_wrapper(
-#             _('A new style has been %s by %s.') % (style_status,
-#                                                    style.creator),
-#             _('\r\nStyle name is: %s\r\nStyle description is: %s\r\n'
-#               'Link: http://%s%s\r\n') % (style.name, style.description,
-#                                           domain, style.get_absolute_url()),
-#             mail_from,
-#             recipients,
-#             fail_silently=True)
-#         logging.debug('Sending email notification for %s style, '
-#                       'recipients:  %s' % (style.name, recipients))
-#     else:
-#         logging.warning('No recipients found for %s style notification'
-#                         % style.name)
-#
-#
-# def style_update_notify(style: Style, creator: User, staff: User) -> None:
-#     """
-#     Email notification system for approval styles
-#     """
-#
-#     recipients = [u.email for u in User.objects.filter(
-#         groups__name="Style Managers").exclude(email='')]
-#
-#     if creator.email:
-#         recipients += [creator.email]
-#
-#     if style.approved:
-#         approval_state = 'approved'
-#     else:
-#         approval_state = 'rejected'
-#
-#     review = style.stylereview_set.last()
-#     comment = review.comment
-#
-#     if recipients:
-#         domain = Site.objects.get_current().domain
-#         mail_from = settings.DEFAULT_FROM_EMAIL
-#         send_mail_wrapper(
-#           _('Style %s %s notification.') % (style, approval_state),
-#           _('\r\nStyle %s %s by %s.\r\n%s\r\nLink: http://%s%s\r\n') % (
-#               style.name, approval_state, staff, comment, domain,
-#               style.get_absolute_url()),
-#           mail_from,
-#           recipients,
-#           fail_silently=True)
-#         logging.debug('Sending email %s notification for %s style, '
-#                       'recipients:  %s' % (approval_state, style, recipients))
-#     else:
-#         logging.warning('No recipients found for %s style %s notification' % (
-#             style, approval_state))
-
-# =======================================================================
 from base.views.processing_view import (ResourceBaseCreateView,
                                         ResourceBaseDetailView,
                                         ResourceBaseUpdateView,
@@ -220,7 +102,7 @@ class StyleUpdateView(ResourceMixin, ResourceBaseUpdateView):
         obj.require_action = False
         obj.approved = False
         obj.save()
-        style_notify(obj, created=False)
+        resource_notify(obj, created=False, resource_type=self.resource_name)
         msg = _("The Style has been successfully updated.")
         messages.success(self.request, msg, 'success', fail_silently=True)
         return HttpResponseRedirect(reverse_lazy('style_detail',
@@ -228,51 +110,11 @@ class StyleUpdateView(ResourceMixin, ResourceBaseUpdateView):
 
 
 class StyleListView(ResourceMixin, ResourceBaseListView):
-    """
-    Style ListView
-    """
-
-    # model = Style
-    # queryset = Style.approved_objects.all()
-    # context_object_name = 'style_list'
-    # template_name = 'styles/style_list.html'
-    # paginate_by = settings.PAGINATION_DEFAULT_PAGINATION
-    #
-    # def get_context_data(self, **kwargs):
-    #     context = super().get_context_data(**kwargs)
-    #     context['count'] = self.get_queryset().count()
-    #     context['order_by'] = self.request.GET.get('order_by', None)
-    #     context['queries'] = self.request.GET.get('q', None)
-    #     return context
-    #
-    # def get_queryset(self):
-    #     qs = super().get_queryset()
-    #     q = self.request.GET.get('q')
-    #     if q:
-    #         queries = q.split(" ")
-    #         if queries:
-    #             query_filter = Q()
-    #             for query in queries:
-    #                 query_filter &= (
-    #                         Q(name__search=query)
-    #                         | Q(description__search=query)
-    #                         | Q(creator__username__search=query)
-    #                         | Q(creator__first_name__search=query)
-    #                         | Q(creator__last_name__search=query)
-    #                 )
-    #             qs = qs.filter(query_filter)
-    #     order_by = self.request.GET.get('order_by', None)
-    #     if order_by:
-    #         qs = qs.order_by(order_by)
-    #         if order_by == "-type":
-    #             qs = qs.order_by('-style_type__name')
-    #         elif order_by == "type":
-    #             qs = qs.order_by('style_type__name')
-    #     return qs
+    """Style ListView."""
 
 
 class StyleByTypeListView(StyleListView):
-
+    """Display StyleListView filtered on style type"""
 
     def get_queryset(self):
         qs = super().get_queryset()
@@ -293,61 +135,15 @@ class StyleByTypeListView(StyleListView):
 
 class StyleUnapprovedListView(ResourceMixin, ResourceBaseUnapprovedListView):
     """Unapproved Style ListView."""
-    # context_object_name = 'style_list'
-    # queryset = Style.unapproved_objects.all()
-    #
-    # def get_queryset(self):
-    #     qs = super().get_queryset()
-    #     user = self.request.user
-    #     if user.is_staff or is_style_manager(user):
-    #         return qs
-    #     return qs.filter(creator=user)
-    #
-    # def get_context_data(self, **kwargs):
-    #     context = super().get_context_data(**kwargs)
-    #     context['title'] = 'Waiting Review'
-    #     return context
 
 
 class StyleRequireActionListView(ResourceMixin,
                                  ResourceBaseRequireActionListView):
     """Style requires action."""
-    # context_object_name = 'style_list'
-    # queryset = Style.requireaction_objects.all()
-    #
-    # def get_queryset(self):
-    #     qs = super().get_queryset()
-    #     user = self.request.user
-    #     if user.is_staff or is_style_manager(user):
-    #         return qs
-    #     return qs.filter(creator=user)
-    #
-    # def get_context_data(self, **kwargs):
-    #     context = super().get_context_data(**kwargs)
-    #     context['title'] = 'Requiring Update'
-    #     return context
 
 
 class StyleDeleteView(ResourceMixin, ResourceBaseDeleteView):
-    """
-    Delete a style.
-    """
-
-    # model = Style
-    # context_object_file = 'style'
-    # success_url = reverse_lazy('style_list')
-    # slug_url_kwarg = 'name'
-    # slug_field = 'name'
-    #
-    # def dispatch(self, request, *args, **kwargs):
-    #     style = self.get_object()
-    #     user = self.request.user
-    #     if not check_styles_access(user, style):
-    #         return render(
-    #             request, 'styles/style_permission_deny.html',
-    #             {'style_name': style.name,
-    #              'context': "You cannot delete this style"})
-    #     return super().dispatch(request, *args, **kwargs)
+    """Delete a style."""
 
 
 class StyleReviewView(ResourceMixin, ResourceBaseReviewView):
@@ -362,87 +158,6 @@ def style_nav_content(request):
     model = ResourceMixin.model
     response = resource_nav_content(request, model)
     return response
-
-# def style_download(request, pk):
-#     """
-#     Download style file and update download_count in Style model
-#     """
-#
-#     style = get_object_or_404(Style, pk=pk)
-#     if not style.approved:
-#         if not check_styles_access(request.user, style):
-#             return render(
-#                 request, 'styles/style_permission_deny.html',
-#                 {'style_name': style.name,
-#                  'context': 'Download failed. This style is not approved'})
-#     else:
-#         style.increase_download_counter()
-#         style.save()
-#
-#     # zip the style and license.txt
-#     zipfile = zipped_with_license(style.xml_file.file.name, style.name)
-#
-#     response = HttpResponse(
-#         zipfile.getvalue(), content_type="application/x-zip-compressed")
-#     response['Content-Disposition'] = 'attachment; filename=%s.zip' % (
-#         slugify(style.name, allow_unicode=True)
-#     )
-#
-#     return response
-#
-#
-# def style_review(request, pk):
-#     """
-#     Submit a style review and send email notification
-#     """
-#
-#     style = get_object_or_404(Style, pk=pk)
-#     if request.method == 'POST':
-#         form = StyleReviewForm(request.POST)
-#         if form.is_valid():
-#             data = form.cleaned_data
-#             StyleReview.objects.create(
-#                 style=style,
-#                 reviewer=request.user,
-#                 comment=data['comment'])
-#             if data['approval'] == 'approve':
-#                 style.approved = True
-#                 style.require_action = False
-#                 msg = _("The Style has been approved.")
-#                 messages.success(request, msg, 'success', fail_silently=True)
-#             else:
-#                 style.approved = False
-#                 style.require_action = True
-#                 msg = _("The Style has been rejected.")
-#                 messages.success(request, msg, 'error', fail_silently=True)
-#             style.save()
-#             # send email notification
-#             style_update_notify(style, style.creator, request.user)
-#     return HttpResponseRedirect(reverse('style_detail', kwargs={'pk': pk}))
-#
-
-@never_cache
-def style_nav_content(request):
-    """
-    Provides data for sidebar style navigation
-    """
-
-    user = request.user
-    all_styles = Style.approved_objects.count()
-    waiting_review = 0
-    require_action = 0
-    if user.is_staff or is_style_manager(user):
-        waiting_review = Style.unapproved_objects.distinct().count()
-        require_action = Style.requireaction_objects.distinct().count()
-    elif user.is_authenticated:
-        waiting_review = Style.unapproved_objects.filter(
-            creator=user).distinct().count()
-        require_action = Style.requireaction_objects.filter(
-            creator=user).distinct().count()
-    number_style = {'all': all_styles,
-                    'waiting_review': waiting_review,
-                    'require_action': require_action}
-    return JsonResponse(number_style, status=200)
 
 
 @never_cache
