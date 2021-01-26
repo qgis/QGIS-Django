@@ -37,3 +37,12 @@ img.plugin-icon {
 }
 
 .required label:after { content:" *"; color: red; }
+
+/* HUB style */
+.dropdown-menu {
+    background-color: #1C2028;
+}
+
+.navbar .nav>li>.dropdown-menu:after {
+    border-bottom: 6px solid #1C2028;
+}
