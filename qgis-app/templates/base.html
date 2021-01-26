@@ -44,12 +44,23 @@
                       <input type="text"  id="id_q" name="q" class="search-query" placeholder="Search" />
                     </form>
 
-                    {% get_simplemenu as menu %}
+                    {% get_namedmenu Navigation as menu %}
                      <div class="nav-collapse collapse">
                         <ul class="unstyled nav main-menu">
                         {% for item in menu %}
                             <li><a href="{{ item.page.url }}">{{ item.name }}</a></li>
                         {% endfor %}
+
+                    {% get_namedmenu sharing_app as sharing_app %}
+                            <li class="dropdown">
+                              <a class="dropdown-toggle" id="drop4" role="button" data-toggle="dropdown" href="#">Hub<b class="caret"></b></a>
+                              <ul id="sharingAppMenu" class="dropdown-menu" role="menu" aria-labelledby="drop4">
+                                {% for item in sharing_app %}
+                                  <li role="presentation"><a role="menuitem" tabindex="-1" href="{{ item.page.url }}">{{ item.name }}</a></li>
+                                {% endfor %}
+                              </ul>
+                            </li>
+
                             {% if user.is_authenticated %}
                             <li><a href="{% url "logout" %}">{% trans "Logout" %}</a></li>
                             {% else %}
@@ -57,6 +68,8 @@
                             {% endif %}
                             {% block navigation_extra %}
                             {% endblock %}
+
+
                         </ul>
 
                     </div>
