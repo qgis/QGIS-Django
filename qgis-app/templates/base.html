@@ -53,7 +53,7 @@
 
                     {% get_namedmenu sharing_app as sharing_app %}
                             <li class="dropdown">
-                              <a class="dropdown-toggle" id="drop4" role="button" data-toggle="dropdown" href="#">Sharing Files<b class="caret"></b></a>
+                              <a class="dropdown-toggle" id="drop4" role="button" data-toggle="dropdown" href="#">Hub<b class="caret"></b></a>
                               <ul id="sharingAppMenu" class="dropdown-menu" role="menu" aria-labelledby="drop4">
                                 {% for item in sharing_app %}
                                   <li role="presentation"><a role="menuitem" tabindex="-1" href="{{ item.page.url }}">{{ item.name }}</a></li>
