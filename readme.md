@@ -8,6 +8,8 @@ the QGIS project.
 This software is open source and licensed under GNU General Public License v2.0.
 For licensing information, please read the COPYING file included in this directory.
 
+For setup, installation and backup notes, please read [INSTALL](https://github.com/qgis/QGIS-Django/blob/master/INSTALL.md) included in this directory.
+
 For setting up a local development environment using Vagrant please read the Vagrant [README](https://github.com/qgis/QGIS-Django/blob/master/vagrant_assets/README.md).
 
 To contribute to this project, please contact Tim Sutton - tim@kartoza.com
