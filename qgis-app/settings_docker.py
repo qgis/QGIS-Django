@@ -97,7 +97,7 @@ EMAIL_BACKEND = os.environ.get('EMAIL_BACKEND',
 # Host for sending e-mail.
 EMAIL_HOST = os.environ.get('EMAIL_HOST', 'smtp')
 # Port for sending e-mail.
-EMAIL_PORT = os.environ.get('EMAIL_PORT', 25)
+EMAIL_PORT = int(os.environ.get('EMAIL_PORT', '25'))
 # SMTP authentication information for EMAIL_HOST.
 # See fig.yml for where these are defined
 EMAIL_HOST_USER = os.environ.get('EMAIL_HOST_USER', 'noreply')
