@@ -1,4 +1,4 @@
-{% extends 'geopackages/geopackage_base.html' %}{% load i18n static thumbnail humanize resources_custom_tags%}
+{% extends 'base/base.html' %}{% load i18n static thumbnail humanize resources_custom_tags%}
 
 {% block extrajs %}
     {{ block.super }}
@@ -14,18 +14,18 @@
 {% endblock %}
 
 {% block content %}
-    <h3>{{ geopackage_detail.name }} <small>in review</small></h3>
-    {% if user == geopackage_detail.creator or user.is_staff %}
+    <h3>{{ object_detail.name }} <small>in review</small></h3>
+    {% if user == object_detail.creator or user.is_staff %}
         <div class="row pull-right">
-            <a class="btn btn-primary btn-mini" href="{% url 'geopackage_update' geopackage_detail.id %}" title="{% trans "Edit" %}"><i class="icon-pencil icon-white"></i></a>&nbsp
-            <a class="btn btn-danger btn-mini" href="{% url 'geopackage_delete' geopackage_detail.id  %}" title="{% trans "Delete" %}"><i class="icon-remove icon-white"></i></a>&nbsp
+            <a class="btn btn-primary btn-mini" href="{% url url_update object_detail.id %}" title="{% trans "Edit" %}"><i class="icon-pencil icon-white"></i></a>&nbsp
+            <a class="btn btn-danger btn-mini" href="{% url url_delete object_detail.id  %}" title="{% trans "Delete" %}"><i class="icon-remove icon-white"></i></a>&nbsp
         </div>
     {% endif %}
     <hr />
     <div class="row">
         <div class="span6 text-center mb-5">
             <div class="style-polaroid">
-               {% thumbnail geopackage_detail.thumbnail_image "420x420" format="PNG" as im %}
+               {% thumbnail object_detail.thumbnail_image "420x420" format="PNG" as im %}
                    <img class="style-polaroid" alt="{% trans "Style icon" %}" src="{{ im.url }}" width="{{ im.x }}" height="{{ im.y }}" />
                 {% endthumbnail %}
             </div>
@@ -33,23 +33,23 @@
         <div class="span6">
             <dl class="dl-horizontal">
                 <dt>Name</dt>
-                <dd>{{ geopackage_detail.name }}</dd>
+                <dd>{{ object_detail.name }}</dd>
                 <dt>Description</dt>
-                <dd>{{ geopackage_detail.description|md_to_html }}</dd>
+                <dd>{{ object_detail.description|md_to_html }}</dd>
                 <dt>Upload Date</dt>
-                <dd>{{ geopackage_detail.upload_date|date:"d F Y" }}</dd>
+                <dd>{{ object_detail.upload_date|date:"d F Y" }}</dd>
                 <dt>Modified Date</dt>
-                <dd>{{ geopackage_detail.modified_date|date:"d F Y" }}</dd>
+                <dd>{{ object_detail.modified_date|date:"d F Y" }}</dd>
                 <dt>Creator</dt>
-                <dd>{{ geopackage_detail.get_creator_name|title }}</dd>
-                <dt>GeoPackage File</dt>
+                <dd>{{ object_detail.get_creator_name|title }}</dd>
+                <dt>{{ resource_name }} File</dt>
                 <dd>
-                    <a class="btn btn-primary btn-mini delete" href="{% url 'geopackage_download' geopackage_detail.id %}" title="{% trans "Download" %}"><i class="icon-download-alt"></i> Download</a>
+                    <a class="btn btn-primary btn-mini delete" href="{% url url_download object_detail.id %}" title="{% trans "Download" %}"><i class="icon-download-alt"></i> Download</a>
                 </dd>
 
                 <hr />
                 {% if reviewer %}
-                    {% with review=geopackage_detail.geopackagereview_set.last %}
+                    {% with review=object_detail.review_set.last %}
                     <dt>Last Review</dt>
                     <dd>{{ review.comment }}<br/>
                         <i><small>Reviewed by {{ reviewer|title }} {{ review.review_date|naturaltime }}</small></i>
@@ -58,7 +58,7 @@
                 {% endif %}
 
                 {% if user.is_staff %}
-                <form method="post" action="{% url 'geopackage_review' pk=geopackage_detail.id %}">{% csrf_token %}
+                <form method="post" action="{% url url_review pk=object_detail.id %}">{% csrf_token %}
                     <dt>Approval</dt>
                     <dd>
                         <label class="radio inline">

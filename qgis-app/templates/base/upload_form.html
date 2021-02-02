@@ -1,6 +1,6 @@
-{% extends "geopackages/geopackage_base.html" %}{% load i18n static %}
+{% extends "base/base.html" %}{% load i18n static %}
 {% block content %}
-    <h2>{% trans "Upload GeoPackage" %}</h2>
+    <h2>{% trans "Upload" %} {{ resource_name }}</h2>
 
     {% if form.non_field_errors %}
     <div class="alert alert-error">
@@ -13,7 +13,7 @@
 
     <form method="post" enctype="multipart/form-data">
         {% csrf_token %}
-        {% include "geopackages/form_snippet.html" %}
+        {% include "base/form_snippet.html" %}
 
         <div class="license-agreement">
             <label class="checkbox">
@@ -28,12 +28,12 @@
 
     <script>
         // check filesize
-        $('#id_gpkg_file').bind('change', function() {
+        $('#id_file').bind('change', function() {
             let maxFileSize = 1000000;
             let fileSize = this.files[0].size
             if (fileSize > maxFileSize){
                 alert('You have selected a file that is more than 1mb, files larger than this are not supported.');
-                $('#id_gpkg_file').val('');
+                $('#id_file').val('');
             };
         });
     </script>

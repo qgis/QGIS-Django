@@ -6,7 +6,7 @@ from django.db import models
 from django.urls import reverse
 from django.utils.translation import ugettext_lazy as _
 
-from base.models.processing_models import Resource, Review
+from base.models.processing_models import Resource, ResourceReview
 
 GEOPACKAGES_STORAGE_PATH = getattr(settings,
                                  'GEOPACKAGE_STORAGE_PATH', 'geopackages/%Y')
@@ -15,7 +15,7 @@ GEOPACKAGES_STORAGE_PATH = getattr(settings,
 class Geopackage(Resource):
 
     # file
-    gpkg_file = models.FileField(
+    file = models.FileField(
         _('GeoPackage file'),
         help_text=_('A GeoPackage file. The filesize must less than 1MB '),
         upload_to=GEOPACKAGES_STORAGE_PATH,
@@ -35,16 +35,17 @@ class Geopackage(Resource):
         return reverse('geopackage_detail', args=(self.id,))
 
     def extension(self):
-        name, extension = os.path.splitext(self.gpkg_file.name)
+        name, extension = os.path.splitext(self.file.name)
         return extension
 
 
-class GeopackageReview(Review):
+class Review(ResourceReview):
 
-    # geopackage
-    geopackage = models.ForeignKey(Geopackage,
-                                   verbose_name=_('GeoPackage'),
-                                   help_text=_('The reviewed GeoPackage'),
-                                   blank=False,
-                                   null=False,
-                                   on_delete=models.CASCADE)
+    # Geopackage resource
+    resource = models.ForeignKey(
+        Geopackage,
+        verbose_name=_('GeoPackage'),
+        help_text=_('The reviewed GeoPackage'),
+        blank=False,
+        null=False,
+        on_delete=models.CASCADE)

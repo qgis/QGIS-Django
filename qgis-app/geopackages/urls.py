@@ -1,15 +1,15 @@
 from django.urls import path
 
 from geopackages.views import (GeopackageCreateView,
-                             GeopackageDetailView,
-                             GeopackageUpdateView,
-                             GeopackageListView,
-                             GeopackageDeleteView,
-                             GeopackageUnapprovedListView,
-                             GeopackageRequireActionListView,
-                             geopackage_review,
-                             geopackage_download,
-                             geopackage_nav_content,)
+                                GeopackageDetailView,
+                                GeopackageUpdateView,
+                                GeopackageListView,
+                                GeopackageDeleteView,
+                                GeopackageUnapprovedListView,
+                                GeopackageRequireActionListView,
+                                GeopackageReviewView,
+                                GeopackageDownloadView,
+                                geopackage_nav_content)
 
 
 urlpatterns = [
@@ -22,8 +22,9 @@ urlpatterns = [
          name='geopackage_update'),
     path('<int:pk>/delete/', GeopackageDeleteView.as_view(),
          name='geopackage_delete'),
-    path('<int:pk>/review/', geopackage_review, name='geopackage_review'),
-    path('<int:pk>/download/', geopackage_download,
+    path('<int:pk>/review/', GeopackageReviewView.as_view(),
+         name='geopackage_review'),
+    path('<int:pk>/download/', GeopackageDownloadView.as_view(),
          name='geopackage_download'),
 
     path('unapproved/', GeopackageUnapprovedListView.as_view(),

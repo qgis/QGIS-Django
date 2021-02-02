@@ -4,7 +4,7 @@ from django.core.validators import FileExtensionValidator
 from django.urls import reverse
 from django.utils.translation import ugettext_lazy as _
 
-from base.models.processing_models import Resource, Review
+from base.models.processing_models import Resource, ResourceReview
 
 STYLES_STORAGE_PATH = getattr(settings,
                                  'PLUGINS_STORAGE_PATH', 'styles/%Y')
@@ -114,10 +114,11 @@ class Style(Resource):
         return reverse('style_detail', args=(self.id,))
 
 
-class StyleReview(Review):
+class StyleReview(ResourceReview):
 
     # style
-    style = models.ForeignKey(Style,
+    style = models.ForeignKey(
+        Style,
         verbose_name=_('Style'),
         help_text=_('The type of this style, this will automatically be read '
                     'from the XML file.'),

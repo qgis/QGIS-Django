@@ -1,4 +1,4 @@
-{% extends 'geopackages/geopackage_base.html' %}{% load i18n bootstrap_pagination humanize static thumbnail resources_custom_tags %}
+{% extends 'base/base.html' %}{% load i18n bootstrap_pagination humanize static thumbnail resources_custom_tags %}
 
 {% block extrajs %}
 {{ block.super }}
@@ -17,11 +17,11 @@
 {% endblock %}
 
 {% block content %}
-    <h2>{% if title %}{{title}}{% else %}{% trans "All GeoPackages" %}{% endif %}</h2>
+    <h2>{% if title %}{{title}}{% else %}{% trans "All" %} {{ resource_name }}s{% endif %}</h2>
 
-    {% if not geopackage_list and not queries %}
+    {% if not object_list and not queries %}
         <p>No data.</p>
-    {% elif not geopackage_list and queries %}
+    {% elif not object_list and queries %}
         <p>
             Keyword: "<strong>{{ queries }}</strong>" <br /> Search result: no record found.
         </p>
@@ -30,7 +30,7 @@
             {%  if queries %}
                 Keyword: "<strong>{{ queries }}</strong>" <br /> Search result:
             {% endif %}
-            {{ count }} record{{ geopackage_list.count|pluralize:"s" }} found.
+            {{ count }} record{{ object_list.count|pluralize:"s" }} found.
         </p>
         <table class="table table-striped plugins">
         <thead>
@@ -48,28 +48,28 @@
             </tr>
         </thead>
         <tbody>
-            {% for geopackage in geopackage_list %}
+            {% for object in object_list %}
                 <tr>
                     <td>
-                    {% if geopackage.thumbnail_image and geopackage.thumbnail_image.file %}
-                        {% thumbnail geopackage.thumbnail_image "32x32" format="PNG" as im %}
+                    {% if object.thumbnail_image and object.thumbnail_image.file %}
+                        {% thumbnail object.thumbnail_image "32x32" format="PNG" as im %}
                             <img class="plugin-icon" alt="{% trans "Style icon" %}" src="{{ im.url }}" width="{{ im.x }}" height="{{ im.y }}" />
                         {% endthumbnail %}
                     {% else %}
                         <img height="32" width="32" class="plugin-icon" src="{% static "images/qgis-icon-32x32.png" %}" alt="{% trans "Plugin icon" %}" />
                     {% endif %}
                     </td>
-                    <td><a href="{% url 'geopackage_detail' pk=geopackage.id %}">{{ geopackage.name}}</a></td>
-                    <td>{{ geopackage.description|md_to_html|striptags|truncatewords:7 }}</a></td>
-                    <td>{{ geopackage.download_count }}</td>
-                    <td>{{ geopackage.get_creator_name|title }}</td>
-                    <td>{{ geopackage.upload_date|date:"d F Y" }}</td>
+                    <td><a href="{% url url_detail pk=object.id %}">{{ object.name}}</a></td>
+                    <td>{{ object.description|md_to_html|striptags|truncatewords:7 }}</td>
+                    <td>{{ object.download_count }}</td>
+                    <td>{{ object.get_creator_name|title }}</td>
+                    <td>{{ object.upload_date|date:"d F Y" }}</td>
                     <td>
                         {% if user.is_staff or user == style.creator %}
-                        <a class="btn btn-primary btn-mini" href="{% url 'geopackage_update' geopackage.id %}" title="{% trans "Edit" %}"><i class="icon-pencil icon-white"></i></a>&nbsp
-                        <a class="btn btn-danger btn-mini delete" href="{% url 'geopackage_delete' geopackage.id %}" title="{% trans "Delete" %}"><i class="icon-remove icon-white"></i></a>&nbsp
+                        <a class="btn btn-primary btn-mini" href="{% url url_update object.id %}" title="{% trans "Edit" %}"><i class="icon-pencil icon-white"></i></a>&nbsp
+                        <a class="btn btn-danger btn-mini delete" href="{% url url_delete object.id %}" title="{% trans "Delete" %}"><i class="icon-remove icon-white"></i></a>&nbsp
                         {% endif %}
-                        <a class="btn btn-primary btn-mini pull-right" href="{% url 'geopackage_download' geopackage.id %}" title="{% trans "Download" %}"><i class="icon-download-alt"></i></a>
+                        <a class="btn btn-primary btn-mini pull-right" href="{% url url_download object.id %}" title="{% trans "Download" %}"><i class="icon-download-alt"></i></a>
                     </td>
                 </tr>
             {% endfor %}

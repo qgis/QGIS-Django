@@ -1,7 +1,7 @@
-{% extends "geopackages/geopackage_base.html" %}{% load i18n %}
+{% extends "base/base.html" %}{% load i18n %}
 {% block content %}
-    <h2>{% trans "Update GeoPackage:" %} {{ geopackage.name }}</h2>
-    <p class="help">{% trans "To update your GeoPackage, you can change the value in the input field." %}</p>
+    <h2>{% trans "Update" %} {{ resource_name }}: {{ object.name }}</h2>
+    <p class="help">{% trans "To update your" %} {{ resource_name }}{% trans ", you can change the value in the input field." %}</p>
 
     {% if form.non_field_errors %}
     <div class="alert alert-error">
@@ -14,7 +14,7 @@
 
     <form method="post" enctype="multipart/form-data">
         {% csrf_token %}
-        {% include "geopackages/form_snippet.html" %}
+        {% include "base/form_snippet.html" %}
         <button class="btn btn-primary" type="submit">{% trans "Update" %}</button>
     </form>
 
