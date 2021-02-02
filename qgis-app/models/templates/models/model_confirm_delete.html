@@ -1,9 +1,0 @@
-{% extends 'models/model_base.html' %}{% load i18n %}
-{% block content %}
-    <h2>{% trans "Delete Model"%}: {{ model.name }}</h2>
-    <form action="" method="post">{% csrf_token %}
-        <p class="alert alert-danger">{% trans "Are you sure you want to permanently remove this Model?"%}</p>
-        <p><input type="submit" class="btn btn-danger" name="delete_confirm" value="{% trans "Delete" %}" /> <a class="btn btn-primary" href="{% url 'model_list' %}">{% trans "Cancel" %}</a></p>
-    </form>
-
-{% endblock %}
