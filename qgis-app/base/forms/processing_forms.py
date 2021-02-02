@@ -7,8 +7,8 @@ from base.validator import filesize_validator
 class ResourceBaseReviewForm(forms.Form):
     """Base Review Form for sharing file app."""
 
-    CHOICES = [('approve', 'Approve'), ('reject', 'Reject')]
-    approval = forms.ChoiceField(required=True, choices=CHOICES,
+    APPROVAL_OPTIONS = [('approve', 'Approve'), ('reject', 'Reject')]
+    approval = forms.ChoiceField(required=True, choices=APPROVAL_OPTIONS,
                                  widget=forms.RadioSelect, initial='approve')
     comment = forms.CharField(widget=forms.Textarea(
         attrs={'placeholder': _('Please provide clear feedback if you decided '
