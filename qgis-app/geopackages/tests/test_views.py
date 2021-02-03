@@ -19,6 +19,8 @@ class SetUpTest():
     SetUp for all Test Class
     """
 
+    fixtures = ['fixtures/simplemenu.json']
+
     def setUp(self):
         self.thumbnail = os.path.join(GPKG_DIR, "thumbnail.png")
         self.thumbnail_content = open(self.thumbnail, 'rb')
@@ -49,6 +51,7 @@ class SetUpTest():
 
 @override_settings(MEDIA_ROOT=tempfile.mkdtemp())
 class TestFormValidation(SetUpTest, TestCase):
+    fixtures = ['fixtures/simplemenu.json']
 
     def test_form_with_valid_data(self):
         uploaded_thumbnail = SimpleUploadedFile(
@@ -125,6 +128,8 @@ class TestEmailNotification(SetUpTest, TestCase):
     Send the email to console
     """
 
+    fixtures = ['fixtures/simplemenu.json']
+
     @override_settings(
         EMAIL_BACKEND='django.core.mail.backends.console.EmailBackend')
     def test_print_email_notification_in_console(self):
@@ -157,6 +162,7 @@ class TestEmailNotification(SetUpTest, TestCase):
 
 @override_settings(MEDIA_ROOT=tempfile.mkdtemp())
 class TestUploadGeoPackage(SetUpTest, TestCase):
+    fixtures = ['fixtures/simplemenu.json']
 
     def test_upload_acceptable_size_file(self):
         login = self.client.login(username="creator", password="password")
@@ -214,6 +220,7 @@ class TestUploadGeoPackage(SetUpTest, TestCase):
 
 @override_settings(MEDIA_ROOT="geopackages/tests/gpkgfiles/")
 class TestReviewGeopackage(SetUpTest, TestCase):
+    fixtures = ['fixtures/simplemenu.json']
 
     def setUp(self):
         super(TestReviewGeopackage, self).setUp()

@@ -19,6 +19,8 @@ class SetUpTest():
     SetUp for all Test Class
     """
 
+    fixtures = ['fixtures/simplemenu.json']
+
     def setUp(self):
         self.thumbnail = os.path.join(MODEL_DIR, "thumbnail.png")
         self.thumbnail_content = open(self.thumbnail, 'rb')
@@ -54,6 +56,7 @@ class SetUpTest():
 
 @override_settings(MEDIA_ROOT=tempfile.mkdtemp())
 class TestFormValidation(SetUpTest, TestCase):
+    fixtures = ['fixtures/simplemenu.json']
 
     def test_form_with_valid_data(self):
         uploaded_thumbnail = SimpleUploadedFile(
@@ -130,6 +133,8 @@ class TestEmailNotification(SetUpTest, TestCase):
     Send the email to console
     """
 
+    fixtures = ['fixtures/simplemenu.json']
+
     @override_settings(
         EMAIL_BACKEND='django.core.mail.backends.console.EmailBackend')
     def test_print_email_notification_in_console(self):
@@ -160,6 +165,7 @@ class TestEmailNotification(SetUpTest, TestCase):
 
 @override_settings(MEDIA_ROOT=tempfile.mkdtemp())
 class TestUploadModel(SetUpTest, TestCase):
+    fixtures = ['fixtures/simplemenu.json']
 
     def test_upload_acceptable_model3_size_file(self):
         login = self.client.login(username="creator", password="password")
@@ -242,6 +248,7 @@ class TestUploadModel(SetUpTest, TestCase):
 
 @override_settings(MEDIA_ROOT="models/tests/modelfiles/")
 class TestReviewModel(SetUpTest, TestCase):
+    fixtures = ['fixtures/simplemenu.json']
 
     def setUp(self):
         super(TestReviewModel, self).setUp()
