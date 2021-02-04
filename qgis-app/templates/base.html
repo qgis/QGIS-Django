@@ -1,4 +1,4 @@
-{% load i18n simplemenu_tags static %}<!DOCTYPE html>
+{% load i18n simplemenu_tags static cache_bust%}<!DOCTYPE html>
 <html xmlns="http://www.w3.org/1999/xhtml">
 <head>
   <title>QGIS {% block extratitle %}Plugins{% endblock %}</title>
@@ -12,7 +12,7 @@
     <link rel="stylesheet" href="{% static "style/new/bootstrap-sphinx.css" %}" type="text/css" />
     <link rel="stylesheet" href="{% static "bootstrap/css/bootstrap-responsive.min.css" %}" type="text/css" />
     <link rel="stylesheet" href="{% static "font-awesome/css/font-awesome.min.css" %}">
-    <link type="text/css" href="{% static "style/style.css" %}" rel="stylesheet" />
+    <link type="text/css" href="{% static "style/style.css" %}?{% cache_bust %}" rel="stylesheet" />
     {% block extracss %}{% endblock %}
 
     <script type="text/javascript" src="{% static "js/jquery-1.11.1.min.js" %}"></script>

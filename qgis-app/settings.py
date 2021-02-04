@@ -164,6 +164,10 @@ TEMPLATES = [
                 # ABP: adds DEBUG and BASE_TEMPLATE vars
                 "qgis_context_processor.additions",
             ),
+            'libraries':{
+                        'cache_bust': 'base.templatetags.cache_bust',
+
+            }
         },
     },
 ]
