@@ -63,6 +63,12 @@ INSTALLED_APPS = [
 
     'feedjack',
 
+    'rest_framework',
+    'sorl_thumbnail_serializer',
+    'drf_yasg',
+
+    'api',
+
     # styles:
     'styles',
     # geopackages
@@ -107,3 +113,11 @@ EMAIL_SUBJECT_PREFIX = os.environ.get('EMAIL_SUBJECT_PREFIX', '[QGIS Plugins]')
 
 # django uploaded file permission
 FILE_UPLOAD_PERMISSIONS = 0o644
+
+REST_FRAMEWORK = {
+    'DEFAULT_PAGINATION_CLASS': 'rest_framework.pagination.PageNumberPagination',
+    'PAGE_SIZE': 10,
+    'DEFAULT_AUTHENTICATION_CLASSES': (
+        'rest_framework.authentication.TokenAuthentication',
+    )
+}

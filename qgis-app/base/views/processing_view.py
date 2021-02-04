@@ -260,7 +260,7 @@ class ResourceBaseUpdateView(LoginRequiredMixin,
         obj.require_action = False
         obj.approved = False
         obj.save()
-        resource_notify(obj, resource_type=self.resource_name)
+        resource_notify(obj, created=False, resource_type=self.resource_name)
         msg = _("The %s has been successfully updated." % self.resource_name)
         messages.success(self.request, msg, 'success', fail_silently=True)
         url_name = '%s_detail' % self.resource_name_url_base
