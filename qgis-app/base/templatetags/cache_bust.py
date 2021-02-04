@@ -6,6 +6,7 @@ from django.conf import settings
 
 register = template.Library()
 
+
 @register.simple_tag(name='cache_bust')
 def cache_bust():
 
