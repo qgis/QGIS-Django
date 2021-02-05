@@ -295,7 +295,14 @@ class ResourceBaseListView(ResourceBaseContextMixin, ListView):
             ).filter(search=q)
         order_by = self.request.GET.get('order_by', None)
         if order_by:
-            qs = qs.order_by(order_by)
+            # for style sharing app, there is style_type column that doesn't
+            # exist in deafult sharing app
+            if order_by == "-type":
+                qs = qs.order_by('-style_type__name')
+            elif order_by == "type":
+                qs = qs.order_by('style_type__name')
+            else:
+                qs = qs.order_by(order_by)
         return qs
 
 
@@ -314,7 +321,14 @@ class ResourceBaseUnapprovedListView(LoginRequiredMixin, ResourceBaseListView):
             ).filter(search=q)
         order_by = self.request.GET.get('order_by', None)
         if order_by:
-            qs = qs.order_by(order_by)
+            # for style sharing app, there is style_type column that doesn't
+            # exist in deafult sharing app
+            if order_by == "-type":
+                qs = qs.order_by('-style_type__name')
+            elif order_by == "type":
+                qs = qs.order_by('style_type__name')
+            else:
+                qs = qs.order_by(order_by)
         user = self.request.user
         if user.is_staff or is_resources_manager(user):
             return qs
@@ -342,7 +356,14 @@ class ResourceBaseRequireActionListView(LoginRequiredMixin,
             ).filter(search=q)
         order_by = self.request.GET.get('order_by', None)
         if order_by:
-            qs = qs.order_by(order_by)
+            # for style sharing app, there is style_type column that doesn't
+            # exist in deafult sharing app
+            if order_by == "-type":
+                qs = qs.order_by('-style_type__name')
+            elif order_by == "type":
+                qs = qs.order_by('style_type__name')
+            else:
+                qs = qs.order_by(order_by)
         user = self.request.user
         if user.is_staff or is_resources_manager(user):
             return qs

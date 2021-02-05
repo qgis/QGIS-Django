@@ -32,6 +32,15 @@
                     <dd>{{ object_detail.review_set.last.review_date|date:"d F Y"}}</dd>
                     <dt>Creator</dt>
                     <dd>{{ object_detail.get_creator_name|title }}</dd>
+
+                    {# for style app sharing only #}
+                    {% if object_detail.style_type %}
+                    <dt>Type</dt>
+                    <dd>
+                        {{ object_detail.style_type.name }}
+                    </dd>
+                    {% endif %}
+
                     <dt>{{ resource_name }} File</dt>
                     <dd>
                         <div>

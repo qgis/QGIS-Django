@@ -137,7 +137,7 @@ class ResourceReview(models.Model):
     reviewer = models.ForeignKey(
         User,
         verbose_name=_('Reviewed by'),
-        help_text=_('The user who reviewed this GeoPackage.'),
+        help_text=_('The user who reviewed this %(app_label)s.'),
         on_delete=models.CASCADE,
         related_name='%(app_label)s_%(class)s_related')
 

@@ -27,7 +27,7 @@ class Model(Resource):
         upload_to=MODELS_STORAGE_PATH)
 
     # file
-    model_file = models.FileField(
+    file = models.FileField(
         _('Model file'),
         help_text=_('A Model file. The filesize must less than 1MB '),
         upload_to=MODELS_STORAGE_PATH,
@@ -36,23 +36,22 @@ class Model(Resource):
         null=False)
 
     def extension(self):
-        name, extension = os.path.splitext(self.model_file.name)
+        name, extension = os.path.splitext(self.file.name)
         return extension
 
     def get_absolute_url(self):
         return reverse('model_detail', args=(self.id,))
 
 
-class ModelReview(ResourceReview):
+class Review(ResourceReview):
     """
     A Model Review Model.
     """
 
-    # model
-    model = models.ForeignKey(
-        Model,
-        verbose_name=_('Model'),
-        help_text=_('The reviewed Model'),
-        blank=False,
-        null=False,
-        on_delete=models.CASCADE)
+    # Model resource
+    resource = models.ForeignKey(Model,
+                                verbose_name=_('Model'),
+                                help_text=_('The reviewed Model'),
+                                blank=False,
+                                null=False,
+                                on_delete=models.CASCADE)

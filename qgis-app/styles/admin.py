@@ -1,5 +1,5 @@
 from django.contrib import admin
-from .models import Style, StyleType, StyleReview
+from .models import Style, StyleType, Review
 
 
 class StyleTypeAdmin(admin.ModelAdmin):
@@ -19,4 +19,4 @@ class StyleAdmin(admin.ModelAdmin):
 
 admin.site.register(Style, StyleAdmin)
 admin.site.register(StyleType, StyleTypeAdmin)
-admin.site.register(StyleReview)
+admin.site.register(Review)
