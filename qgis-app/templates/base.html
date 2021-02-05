@@ -64,7 +64,7 @@
                             {% if user.is_authenticated %}
                             <li><a href="{% url "logout" %}">{% trans "Logout" %}</a></li>
                             {% else %}
-                            <li><a href="{% url "login" %}">{% trans "Login" %}</a></li>
+                            <li><a href="{% url "login" %}">{% trans "Login to Publish" %}</a></li>
                             {% endif %}
                             {% block navigation_extra %}
                             {% endblock %}
