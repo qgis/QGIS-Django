@@ -74,10 +74,11 @@ class ModelSerializer(ResourceBaseSerializer):
         model = Model
 
     def get_resource_subtype(self, obj):
-        return 'None'
+        return None
 
 
 class StyleSerializer(ResourceBaseSerializer):
     resource_subtype = serializers.ReadOnlyField(source='get_style_type')
+
     class Meta(ResourceBaseSerializer.Meta):
         model = Style

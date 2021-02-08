@@ -114,3 +114,7 @@ EMAIL_SUBJECT_PREFIX = os.environ.get('EMAIL_SUBJECT_PREFIX', '[QGIS Plugins]')
 
 # django uploaded file permission
 FILE_UPLOAD_PERMISSIONS = 0o644
+
+REST_FRAMEWORK = {
+    'TEST_REQUEST_DEFAULT_FORMAT': 'json',
+}

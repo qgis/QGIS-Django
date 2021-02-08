@@ -1,17 +1,29 @@
+from django.contrib.contenttypes.models import ContentType
 from django.contrib.postgres.search import SearchVector
-from api.permissions import IsHasAccessOrReadOnly
+from django.http import Http404, HttpResponse
+from django.utils.decorators import method_decorator
+from django.utils.text import slugify
+from django.views.decorators.cache import cache_page
+
+
 from rest_framework import filters, permissions
 from rest_framework.response import Response
+from rest_framework.views import APIView
 from drf_multiple_model.views import FlatMultipleModelAPIView
 from drf_multiple_model.pagination import MultipleModelLimitOffsetPagination
 
+# models
 from geopackages.models import Geopackage
 from models.models import Model
 from styles.models import Style
 
+from base.license import zipped_with_license
+
 from api.serializers import (GeopackageSerializer,
                              ModelSerializer,
                              StyleSerializer)
+from api.permissions import IsHasAccessOrReadOnly
+
 
 
 def filter_resource_type(queryset, request, *args, **kwargs):
@@ -69,6 +81,8 @@ class LimitPagination(MultipleModelLimitOffsetPagination):
     default_limit = 10
 
 
+# cache for 2 hours
+@method_decorator(cache_page(60 * 60 * 2), name='dispatch')
 class ResourceAPIList(FlatMultipleModelAPIView):
     permission_classes = [permissions.IsAuthenticatedOrReadOnly]
     pagination_class = LimitPagination
@@ -92,12 +106,42 @@ class ResourceAPIList(FlatMultipleModelAPIView):
         {
             'queryset': Style.approved_objects.all(),
             'serializer_class': StyleSerializer,
-            'label': 'model',
+            'label': 'style',
             'filter_fn': filter_general
         },
     ]
 
 
+class ResourceAPIDownload(APIView):
+    """
+    Download resource
+    """
+
+    # Cache page for the requested url
+    @method_decorator(cache_page(60 * 60 * 2))
+    def get(self, request, *args, **kwargs):
+        resource_type = kwargs.get('resource_type')
+        id = kwargs.get('id')
+        if not resource_type:
+            raise Http404
+        ct = ContentType.objects.get(model=resource_type)
+        model = ct.model_class()
+        try:
+            object = model.approved_objects.get(id=id)
+        except model.DoesNotExist:
+            raise Http404
+
+        object.increase_download_counter()
+        object.save()
+        # zip the resource and license.txt
+        zipfile = zipped_with_license(object.file.file.name, object.name)
+
+        response = HttpResponse(
+            zipfile.getvalue(), content_type="application/x-zip-compressed")
+        response['Content-Disposition'] = 'attachment; filename=%s.zip' % (
+            slugify(object.name, allow_unicode=True)
+        )
+        return response
 
 
 
