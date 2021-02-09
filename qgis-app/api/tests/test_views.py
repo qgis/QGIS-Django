@@ -1,4 +1,6 @@
+import io
 import json
+import zipfile
 
 from django.contrib.auth.models import User, Group
 from django.core.files.base import ContentFile
@@ -23,7 +25,7 @@ class TestResourceAPIList(TestCase):
         )
         self.thumbnail = SimpleUploadedFile(
             'small.gif', small_gif, content_type='image/gif')
-        self.file = ContentFile('text', 'filename')
+        self.file = ContentFile('text', 'a_filename')
 
         self.creator = User.objects.create(
             username="creator", email="creator@email.com"
@@ -46,7 +48,7 @@ class TestResourceAPIList(TestCase):
             name="Marker",
             description="a marker for testing purpose",
             icon=self.thumbnail)
-        Style.objects.create(
+        self.style = Style.objects.create(
             name="style_zero",
             description="a style for testing purpose",
             creator=self.creator,
@@ -208,3 +210,19 @@ class TestResourceAPIList(TestCase):
         self.assertIsNotNone(g_index)
         self.assertIsNotNone(m_index)
         self.assertIsNotNone(s_index)
+
+    def test_download_resource_should_be_a_file_in_a_zip(self):
+        url = reverse('resource-download',
+                      kwargs={'id': self.style.id, 'resource_type': 'style'})
+        response = self.client.get(url)
+        self.assertEqual(response.status_code, 200)
+        self.assertEquals(
+            response.get('Content-Disposition'),
+            'attachment; filename=style_zero.zip'
+        )
+        with io.BytesIO(response.content) as file:
+            zip_file = zipfile.ZipFile(file, 'r')
+            self.assertIsNone(zip_file.testzip())
+            self.assertIn('a_filename', zip_file.namelist()[0])
+            self.assertNotIn('.zip', zip_file.namelist())
+            zip_file.close()
