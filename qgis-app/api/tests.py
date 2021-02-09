@@ -77,6 +77,7 @@ class TestResourceAPIList(TestCase):
         pass
 
     def test_get_list_resources(self):
+        """ test results all resources """
         url = reverse('resource-list')
         response = self.client.get(url)
         json_parse = json.loads(response.content)
@@ -89,7 +90,9 @@ class TestResourceAPIList(TestCase):
                 m_index = i
             elif d['type'] == 'style':
                 s_index = i
+        self.assertIsNotNone(g_index)
         self.assertIsNotNone(m_index)
+        self.assertIsNotNone(s_index)
         self.assertEqual(result[g_index]['resource_type'], 'Geopackage')
         self.assertEqual(result[g_index]['resource_subtype'], None)
         self.assertEqual(result[g_index]['creator'], 'creator')
@@ -99,3 +102,108 @@ class TestResourceAPIList(TestCase):
         self.assertEqual(result[s_index]['resource_type'], 'Style')
         self.assertEqual(result[s_index]['resource_subtype'], 'Marker')
         self.assertEqual(result[s_index]['creator'], 'creator')
+
+    def test_get_list_resources_with_filter(self):
+        param = ('resource_type=geopackage')
+        url = '%s?%s' % (reverse('resource-list'), param)
+        response = self.client.get(url)
+        json_parse = json.loads(response.content)
+        self.assertEqual(json_parse['overall_total'], 1)
+        result = json_parse['results']
+        g_index = None
+        m_index = None
+        s_index = None
+        for i, d in enumerate(result):
+            if d['type'] == 'geopackage':
+                g_index = i
+            elif d['type'] == 'model':
+                m_index = i
+            elif d['type'] == 'style':
+                s_index = i
+        self.assertIsNotNone(g_index)
+        self.assertIsNone(m_index)
+        self.assertIsNone(s_index)
+
+    def test_get_list_resources_with_filter_resource_type(self):
+        param = ('resource_type=geopackage')
+        url = '%s?%s' % (reverse('resource-list'), param)
+        response = self.client.get(url)
+        json_parse = json.loads(response.content)
+        self.assertEqual(json_parse['overall_total'], 1)
+        result = json_parse['results']
+        g_index = None
+        m_index = None
+        s_index = None
+        for i, d in enumerate(result):
+            if d['type'] == 'geopackage':
+                g_index = i
+            elif d['type'] == 'model':
+                m_index = i
+            elif d['type'] == 'style':
+                s_index = i
+        self.assertIsNotNone(g_index)
+        self.assertIsNone(m_index)
+        self.assertIsNone(s_index)
+
+    def test_get_list_resources_with_filter_resource_type(self):
+        param = ('resource_subtype=Marker')
+        url = '%s?%s' % (reverse('resource-list'), param)
+        response = self.client.get(url)
+        json_parse = json.loads(response.content)
+        self.assertEqual(json_parse['overall_total'], 1)
+        result = json_parse['results']
+        g_index = None
+        m_index = None
+        s_index = None
+        for i, d in enumerate(result):
+            if d['type'] == 'geopackage':
+                g_index = i
+            elif d['type'] == 'model':
+                m_index = i
+            elif d['type'] == 'style':
+                s_index = i
+        self.assertIsNone(g_index)
+        self.assertIsNone(m_index)
+        self.assertIsNotNone(s_index)
+
+    def test_get_list_resources_with_filter_creator(self):
+        param = ('creator=creator 0')
+        url = '%s?%s' % (reverse('resource-list'), param)
+        response = self.client.get(url)
+        json_parse = json.loads(response.content)
+        self.assertEqual(json_parse['overall_total'], 1)
+        result = json_parse['results']
+        g_index = None
+        m_index = None
+        s_index = None
+        for i, d in enumerate(result):
+            if d['type'] == 'geopackage':
+                g_index = i
+            elif d['type'] == 'model':
+                m_index = i
+            elif d['type'] == 'style':
+                s_index = i
+        self.assertIsNone(g_index)
+        self.assertIsNotNone(m_index)
+        self.assertIsNone(s_index)
+
+    def test_get_list_resources_with_filter_keyword(self):
+        param = ('keyword=testing')
+        url = '%s?%s' % (reverse('resource-list'), param)
+        response = self.client.get(url)
+        json_parse = json.loads(response.content)
+        self.assertEqual(json_parse['overall_total'], 3)
+        result = json_parse['results']
+        g_index = None
+        m_index = None
+        s_index = None
+        for i, d in enumerate(result):
+            if d['type'] == 'geopackage':
+                g_index = i
+            elif d['type'] == 'model':
+                m_index = i
+            elif d['type'] == 'style':
+                s_index = i
+        self.assertIsNotNone(g_index)
+        self.assertIsNotNone(m_index)
+        self.assertIsNotNone(s_index)

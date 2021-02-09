@@ -19,3 +19,17 @@ def zipped_with_license(file: str, zip_subdir: str) -> BytesIO:
     zf.close()
 
     return in_memory_data
+
+
+def zip_a_file_if_not_zipfile(filename: str) -> BytesIO:
+    """ Zip a file without license """
+
+    if zipfile.is_zipfile(filename):
+        in_memory_data = BytesIO(filename)
+    else:
+        in_memory_data = BytesIO()
+        zf = zipfile.ZipFile(in_memory_data, "w")
+        fdir, fname = os.path.split(filename)
+        zf.write(filename, fname)
+        zf.close()
+    return in_memory_data

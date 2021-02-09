@@ -7,7 +7,6 @@ from django.views.decorators.cache import cache_page
 
 
 from rest_framework import filters, permissions
-from rest_framework.response import Response
 from rest_framework.views import APIView
 from drf_multiple_model.views import FlatMultipleModelAPIView
 from drf_multiple_model.pagination import MultipleModelLimitOffsetPagination
@@ -17,12 +16,11 @@ from geopackages.models import Geopackage
 from models.models import Model
 from styles.models import Style
 
-from base.license import zipped_with_license
+from base.license import zipped_with_license, zip_a_file_if_not_zipfile
 
 from api.serializers import (GeopackageSerializer,
                              ModelSerializer,
                              StyleSerializer)
-from api.permissions import IsHasAccessOrReadOnly
 
 
 
@@ -114,7 +112,9 @@ class ResourceAPIList(FlatMultipleModelAPIView):
 
 class ResourceAPIDownload(APIView):
     """
-    Download resource
+    Download a resource in a zipfile.
+
+    The zipfile only contains a resource file.
     """
 
     # Cache page for the requested url
@@ -133,8 +133,8 @@ class ResourceAPIDownload(APIView):
 
         object.increase_download_counter()
         object.save()
-        # zip the resource and license.txt
-        zipfile = zipped_with_license(object.file.file.name, object.name)
+        # zip the resource
+        zipfile = zip_a_file_if_not_zipfile(object.file.file.name)
 
         response = HttpResponse(
             zipfile.getvalue(), content_type="application/x-zip-compressed")
@@ -142,37 +142,3 @@ class ResourceAPIDownload(APIView):
             slugify(object.name, allow_unicode=True)
         )
         return response
-
-
-
-
-
-
-# class ResourceAPIDetail(generics.RetrieveUpdateAPIView):
-#     permission_classes = [permissions.IsAuthenticatedOrReadOnly,
-#                           IsHasAccessOrReadOnly]
-#     http_method_names = ['get', 'put']
-#
-#     def get_queryset(self):
-#         """Return detail """
-#         qs = self.model.approved_objects.all()
-#         return qs
-#
-#     def perform_update(self, serializer):
-#         serializer.save(approved=False, require_action=False)
-
-#
-# class ReasourceAPIDownload(generics.ListAPIView):
-#     def get(self, request, pk, format=None):
-#         object = self.model.approved_objects.get(id=pk)
-#         object.increase_download_counter()
-#         object.save()
-#         # zip the resource and license.txt
-#         zipfile = zipped_with_license(object.file.file.name, object.name)
-#
-#         response = HttpResponse(
-#             zipfile.getvalue(), content_type="application/x-zip-compressed")
-#         response['Content-Disposition'] = 'attachment; filename=%s.zip' % (
-#             slugify(object.name, allow_unicode=True)
-#         )
-#         return response

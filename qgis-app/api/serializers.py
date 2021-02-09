@@ -1,19 +1,3 @@
-# from base.serializers import (ResourceBaseSerializer,
-#                               ResourceThumbnailBaseSerializer)
-#
-# from geopackages.models import Geopackage
-#
-#
-# class GeopackageSerializer(ResourceBaseSerializer):
-#     class Meta(ResourceBaseSerializer.Meta):
-#         model = Geopackage
-#
-#
-# class GeopackageThumbnailSerializer(ResourceThumbnailBaseSerializer):
-#     class Meta(ResourceThumbnailBaseSerializer.Meta):
-#         model = Geopackage
-
-# =============================================================================
 from rest_framework import serializers
 from sorl_thumbnail_serializer.fields import HyperlinkedSorlImageField
 
