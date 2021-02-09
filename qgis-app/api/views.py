@@ -16,12 +16,11 @@ from geopackages.models import Geopackage
 from models.models import Model
 from styles.models import Style
 
-from base.license import zipped_with_license, zip_a_file_if_not_zipfile
+from base.license import zip_a_file_if_not_zipfile
 
 from api.serializers import (GeopackageSerializer,
                              ModelSerializer,
                              StyleSerializer)
-
 
 
 def filter_resource_type(queryset, request, *args, **kwargs):

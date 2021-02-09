@@ -2,7 +2,7 @@ import json
 
 from django.contrib.auth.models import User, Group
 from django.core.files.base import ContentFile
-from django.test import TestCase, Client
+from django.test import TestCase
 from django.urls import reverse
 
 # models
@@ -13,6 +13,7 @@ from styles.models import Style, StyleType
 from django.core.files.uploadedfile import SimpleUploadedFile
 
 
+@override_settings(MEDIA_ROOT="api")
 class TestResourceAPIList(TestCase):
     def setUp(self):
         small_gif = (
@@ -63,7 +64,7 @@ class TestResourceAPIList(TestCase):
             file=self.file,
             approved=True
         )
-        #create Model
+        # create Model
         Model.objects.create(
             creator=self.creator0,
             name="flooded buildings extractor",
@@ -145,7 +146,7 @@ class TestResourceAPIList(TestCase):
         self.assertIsNone(m_index)
         self.assertIsNone(s_index)
 
-    def test_get_list_resources_with_filter_resource_type(self):
+    def test_get_list_resources_with_filter_resource_subtype(self):
         param = ('resource_subtype=Marker')
         url = '%s?%s' % (reverse('resource-list'), param)
         response = self.client.get(url)
