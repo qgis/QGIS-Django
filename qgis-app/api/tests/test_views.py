@@ -2,7 +2,7 @@ import json
 
 from django.contrib.auth.models import User, Group
 from django.core.files.base import ContentFile
-from django.test import TestCase
+from django.test import TestCase, override_settings
 from django.urls import reverse
 
 # models
@@ -13,7 +13,7 @@ from styles.models import Style, StyleType
 from django.core.files.uploadedfile import SimpleUploadedFile
 
 
-@override_settings(MEDIA_ROOT="api")
+@override_settings(MEDIA_ROOT="api/tests")
 class TestResourceAPIList(TestCase):
     def setUp(self):
         small_gif = (
