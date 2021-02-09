@@ -36,7 +36,7 @@ class TestCRUD(TestCase):
             description="a style for testing purpose",
             creator=self.user_staff,
             thumbnail_image=self.image_temp,
-            xml_file=self.xml_temp,
+            file=self.xml_temp,
             style_type=self.marker_type)
 
     def test_create_style_type(self):
@@ -51,7 +51,7 @@ class TestCRUD(TestCase):
                                 description="a style for testing purpose",
                                 creator=self.user_staff,
                                 thumbnail_image=self.image_temp,
-                                xml_file=self.xml_temp,
+                                file=self.xml_temp,
                                 style_type=self.line_type)
         self.assertEqual(style_one.name, "style_one")
         self.assertEqual(style_one.creator.first_name, "first_name_staff")

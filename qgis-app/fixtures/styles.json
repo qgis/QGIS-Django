@@ -21,7 +21,7 @@
       "name": "Cube",
       "description": "This a cube",
       "thumbnail_image": "styles/2020/thumbnail.png",
-      "xml_file": "styles/2020/3d_cube.xml",
+      "file": "styles/2020/3d_cube.xml",
       "download_count": 1,
       "approved": true,
       "require_action": false
@@ -38,7 +38,7 @@
       "name": "Another Cube",
       "description": "This is another cube",
       "thumbnail_image": "styles/2020/thumbnail.png",
-      "xml_file": "styles/2020/3d_cube.xml",
+      "file": "styles/2020/3d_cube.xml",
       "download_count": 1,
       "approved": false,
       "require_action": true
@@ -55,39 +55,39 @@
       "name": "New Cube Style",
       "description": "This is a new cube",
       "thumbnail_image": "styles/2020/thumbnail.png",
-      "xml_file": "styles/2020/3d_cube.xml",
+      "file": "styles/2020/3d_cube.xml",
       "download_count": 0,
       "approved": false,
       "require_action": false
     }
   },
   {
-    "model": "styles.stylereview",
+    "model": "styles.review",
     "pk": 1,
     "fields": {
       "review_date": "2020-11-18T21:16:24.104",
       "reviewer": 3,
-      "style": 1,
+      "resource": 1,
       "comment": "This style is approved for testing purpose"
     }
   },
   {
-    "model": "styles.stylereview",
+    "model": "styles.review",
     "pk": 2,
     "fields": {
       "review_date": "2020-09-18T21:16:24.104",
       "reviewer": 3,
-      "style": 2,
+      "resource": 2,
       "comment": "This comment should not be appear."
     }
   },
   {
-    "model": "styles.stylereview",
+    "model": "styles.review",
     "pk": 3,
     "fields": {
       "review_date": "2020-11-18T21:16:24.104",
       "reviewer": 3,
-      "style": 2,
+      "resource": 2,
       "comment": "This style is rejected for testing purpose."
     }
   }
