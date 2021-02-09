@@ -155,6 +155,41 @@ class ResourceBaseMixin(object):
     review_model = None
 
 
+class ResourceSearchMixin(object):
+    """
+    Mixin class to provide search in ListView
+    """
+
+    def get_queryset_search(self, qs):
+        q = self.request.GET.get('q')
+        if q:
+            qs = qs.annotate(
+                search=(SearchVector('name')
+                        + SearchVector('description')
+                        + SearchVector('creator__username')
+                        + SearchVector('creator__first_name')
+                        + SearchVector('creator__last_name'))
+            ).filter(search=q)
+        order_by = self.request.GET.get('order_by', None)
+        if order_by:
+            # for style sharing app, there is style_type column that doesn't
+            # exist in deafult sharing app
+            if order_by == "-type":
+                qs = qs.order_by('-style_type__name')
+            elif order_by == "type":
+                qs = qs.order_by('style_type__name')
+            else:
+                qs = qs.order_by(order_by)
+        return qs
+
+    def get_queryset_search_and_is_creator(self, qs):
+        qs = self.get_queryset_search(qs)
+        user = self.request.user
+        if user.is_staff or is_resources_manager(user):
+            return qs
+        return qs.filter(creator=user)
+
+
 class ResourceBaseContextMixin(ContextMixin):
     def get_context_data(self, **kwargs):
         context = super(ResourceBaseContextMixin, self).get_context_data()
@@ -269,7 +304,9 @@ class ResourceBaseUpdateView(LoginRequiredMixin,
 
 
 @method_decorator(never_cache, name='dispatch')
-class ResourceBaseListView(ResourceBaseContextMixin, ListView):
+class ResourceBaseListView(ResourceBaseContextMixin,
+                           ResourceSearchMixin,
+                           ListView):
 
     context_object_name = 'object_list'
     template_name = 'base/list.html'
@@ -284,55 +321,18 @@ class ResourceBaseListView(ResourceBaseContextMixin, ListView):
 
     def get_queryset(self):
         qs = self.model.approved_objects.all()
-        q = self.request.GET.get('q')
-        if q:
-            qs = qs.annotate(
-                search=(SearchVector('name')
-                        + SearchVector('description')
-                        + SearchVector('creator__username')
-                        + SearchVector('creator__first_name')
-                        + SearchVector('creator__last_name'))
-            ).filter(search=q)
-        order_by = self.request.GET.get('order_by', None)
-        if order_by:
-            # for style sharing app, there is style_type column that doesn't
-            # exist in deafult sharing app
-            if order_by == "-type":
-                qs = qs.order_by('-style_type__name')
-            elif order_by == "type":
-                qs = qs.order_by('style_type__name')
-            else:
-                qs = qs.order_by(order_by)
+        qs = self.get_queryset_search(qs)
         return qs
 
 
-class ResourceBaseUnapprovedListView(LoginRequiredMixin, ResourceBaseListView):
+class ResourceBaseUnapprovedListView(LoginRequiredMixin,
+                                     ResourceBaseListView,
+                                     ResourceSearchMixin):
 
     def get_queryset(self):
         qs = self.model.unapproved_objects.all()
-        q = self.request.GET.get('q')
-        if q:
-            qs = qs.annotate(
-                search=(SearchVector('name')
-                        + SearchVector('description')
-                        + SearchVector('creator__username')
-                        + SearchVector('creator__first_name')
-                        + SearchVector('creator__last_name'))
-            ).filter(search=q)
-        order_by = self.request.GET.get('order_by', None)
-        if order_by:
-            # for style sharing app, there is style_type column that doesn't
-            # exist in deafult sharing app
-            if order_by == "-type":
-                qs = qs.order_by('-style_type__name')
-            elif order_by == "type":
-                qs = qs.order_by('style_type__name')
-            else:
-                qs = qs.order_by(order_by)
-        user = self.request.user
-        if user.is_staff or is_resources_manager(user):
-            return qs
-        return qs.filter(creator=user)
+        qs = self.get_queryset_search_and_is_creator(qs)
+        return qs
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
@@ -341,33 +341,13 @@ class ResourceBaseUnapprovedListView(LoginRequiredMixin, ResourceBaseListView):
 
 
 class ResourceBaseRequireActionListView(LoginRequiredMixin,
-                                      ResourceBaseListView):
+                                        ResourceBaseListView,
+                                        ResourceSearchMixin):
 
     def get_queryset(self):
         qs = self.model.requireaction_objects.all()
-        q = self.request.GET.get('q')
-        if q:
-            qs = qs.annotate(
-                search=(SearchVector('name')
-                        + SearchVector('description')
-                        + SearchVector('creator__username')
-                        + SearchVector('creator__first_name')
-                        + SearchVector('creator__last_name'))
-            ).filter(search=q)
-        order_by = self.request.GET.get('order_by', None)
-        if order_by:
-            # for style sharing app, there is style_type column that doesn't
-            # exist in deafult sharing app
-            if order_by == "-type":
-                qs = qs.order_by('-style_type__name')
-            elif order_by == "type":
-                qs = qs.order_by('style_type__name')
-            else:
-                qs = qs.order_by(order_by)
-        user = self.request.user
-        if user.is_staff or is_resources_manager(user):
-            return qs
-        return qs.filter(creator=user)
+        qs = self.get_queryset_search_and_is_creator(qs)
+        return qs
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)

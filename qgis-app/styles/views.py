@@ -27,6 +27,7 @@ from base.views.processing_view import (ResourceBaseCreateView,
                                         resource_nav_content,
                                         resource_notify)
 
+
 class ResourceMixin():
     """Mixin class for Geopackage."""
 
