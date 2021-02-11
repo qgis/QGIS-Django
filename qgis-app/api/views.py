@@ -1,6 +1,5 @@
 from collections import OrderedDict
 
-from django.contrib.contenttypes.models import ContentType
 from django.contrib.postgres.search import SearchVector
 from django.http import Http404, HttpResponse
 from django.utils.decorators import method_decorator

@@ -84,14 +84,14 @@ class TestResourceAPIList(TestCase):
         url = reverse('resource-list')
         response = self.client.get(url)
         json_parse = json.loads(response.content)
-        self.assertEqual(json_parse['overall_total'], 3)
+        self.assertEqual(json_parse['total'], 3)
         result = json_parse['results']
         for i, d in enumerate(result):
-            if d['type'] == 'geopackage':
+            if d['resource_type'] == 'Geopackage':
                 g_index = i
-            elif d['type'] == 'model':
+            elif d['resource_type'] == 'Model':
                 m_index = i
-            elif d['type'] == 'style':
+            elif d['resource_type'] == 'Style':
                 s_index = i
         self.assertIsNotNone(g_index)
         self.assertIsNotNone(m_index)
@@ -111,17 +111,17 @@ class TestResourceAPIList(TestCase):
         url = '%s?%s' % (reverse('resource-list'), param)
         response = self.client.get(url)
         json_parse = json.loads(response.content)
-        self.assertEqual(json_parse['overall_total'], 1)
+        self.assertEqual(json_parse['total'], 1)
         result = json_parse['results']
         g_index = None
         m_index = None
         s_index = None
         for i, d in enumerate(result):
-            if d['type'] == 'geopackage':
+            if d['resource_type'] == 'Geopackage':
                 g_index = i
-            elif d['type'] == 'model':
+            elif d['resource_type'] == 'Model':
                 m_index = i
-            elif d['type'] == 'style':
+            elif d['resource_type'] == 'Style':
                 s_index = i
         self.assertIsNotNone(g_index)
         self.assertIsNone(m_index)
@@ -132,17 +132,17 @@ class TestResourceAPIList(TestCase):
         url = '%s?%s' % (reverse('resource-list'), param)
         response = self.client.get(url)
         json_parse = json.loads(response.content)
-        self.assertEqual(json_parse['overall_total'], 1)
+        self.assertEqual(json_parse['total'], 1)
         result = json_parse['results']
         g_index = None
         m_index = None
         s_index = None
         for i, d in enumerate(result):
-            if d['type'] == 'geopackage':
+            if d['resource_type'] == 'Geopackage':
                 g_index = i
-            elif d['type'] == 'model':
+            elif d['resource_type'] == 'Model':
                 m_index = i
-            elif d['type'] == 'style':
+            elif d['resource_type'] == 'Style':
                 s_index = i
         self.assertIsNotNone(g_index)
         self.assertIsNone(m_index)
@@ -153,17 +153,17 @@ class TestResourceAPIList(TestCase):
         url = '%s?%s' % (reverse('resource-list'), param)
         response = self.client.get(url)
         json_parse = json.loads(response.content)
-        self.assertEqual(json_parse['overall_total'], 1)
+        self.assertEqual(json_parse['total'], 1)
         result = json_parse['results']
         g_index = None
         m_index = None
         s_index = None
         for i, d in enumerate(result):
-            if d['type'] == 'geopackage':
+            if d['resource_type'] == 'Geopackage':
                 g_index = i
-            elif d['type'] == 'model':
+            elif d['resource_type'] == 'Model':
                 m_index = i
-            elif d['type'] == 'style':
+            elif d['resource_type'] == 'Style':
                 s_index = i
         self.assertIsNone(g_index)
         self.assertIsNone(m_index)
@@ -174,17 +174,17 @@ class TestResourceAPIList(TestCase):
         url = '%s?%s' % (reverse('resource-list'), param)
         response = self.client.get(url)
         json_parse = json.loads(response.content)
-        self.assertEqual(json_parse['overall_total'], 1)
+        self.assertEqual(json_parse['total'], 1)
         result = json_parse['results']
         g_index = None
         m_index = None
         s_index = None
         for i, d in enumerate(result):
-            if d['type'] == 'geopackage':
+            if d['resource_type'] == 'Geopackage':
                 g_index = i
-            elif d['type'] == 'model':
+            elif d['resource_type'] == 'Model':
                 m_index = i
-            elif d['type'] == 'style':
+            elif d['resource_type'] == 'Style':
                 s_index = i
         self.assertIsNone(g_index)
         self.assertIsNotNone(m_index)
@@ -195,17 +195,17 @@ class TestResourceAPIList(TestCase):
         url = '%s?%s' % (reverse('resource-list'), param)
         response = self.client.get(url)
         json_parse = json.loads(response.content)
-        self.assertEqual(json_parse['overall_total'], 3)
+        self.assertEqual(json_parse['total'], 3)
         result = json_parse['results']
         g_index = None
         m_index = None
         s_index = None
         for i, d in enumerate(result):
-            if d['type'] == 'geopackage':
+            if d['resource_type'] == 'Geopackage':
                 g_index = i
-            elif d['type'] == 'model':
+            elif d['resource_type'] == 'Model':
                 m_index = i
-            elif d['type'] == 'style':
+            elif d['resource_type'] == 'Style':
                 s_index = i
         self.assertIsNotNone(g_index)
         self.assertIsNotNone(m_index)
@@ -213,7 +213,7 @@ class TestResourceAPIList(TestCase):
 
     def test_download_resource_should_be_a_file_in_a_zip(self):
         url = reverse('resource-download',
-                      kwargs={'id': self.style.id, 'resource_type': 'style'})
+                      kwargs={'uuid': self.style.uuid})
         response = self.client.get(url)
         self.assertEqual(response.status_code, 200)
         self.assertEquals(
