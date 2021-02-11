@@ -175,6 +175,16 @@ def validator(package):
         except ValidationError as e:
             raise ValidationError(_("qgisMinimumVersion is set to less than  1.8 (%s) and there were errors reading metadata from the __init__.py file. This can lead to errors in versions of QGIS less than 1.8, please either set the qgisMinimumVersion to 1.8 or specify the metadata also in the __init__.py file. Reported error was: %s") % (min_qgs_version, ','.join(e.messages)))
 
+    # check that link value are not the basic links provided by the plugin builder
+    is_tracker_basic_link = dict(metadata).get('tracker') == 'http://bugs'
+    is_repo_basic_link = dict(metadata).get('repository') == 'http://repo'
+    is_homepage_basic_link = dict(metadata).get('homepage') == 'http://homepage'
+    if (is_tracker_basic_link
+            or is_repo_basic_link
+            or is_homepage_basic_link):
+        raise ValidationError(_("Please provide valid url link for Bug tracker,"
+                                " Repository and Home page in metadata."))
+
     zip.close()
     del zip
 
