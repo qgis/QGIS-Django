@@ -4,8 +4,7 @@ from api.views import ResourceAPIList, ResourceAPIDownload
 
 
 urlpatterns = [
-
-    path('', ResourceAPIList.as_view(), name='resource-list'),
-    path('<resource_type>/<int:id>/', ResourceAPIDownload.as_view(),
+    path('resources/', ResourceAPIList.as_view(), name='resource-list'),
+    path('resource/<uuid:uuid>/', ResourceAPIDownload.as_view(),
          name='resource-download')
 ]

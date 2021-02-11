@@ -132,15 +132,14 @@ class ResourceAPIDownload(APIView):
     # Cache page for the requested url
     @method_decorator(cache_page(60 * 60 * 2))
     def get(self, request, *args, **kwargs):
-        resource_type = kwargs.get('resource_type')
-        id = kwargs.get('id')
-        if not resource_type:
-            raise Http404
-        ct = ContentType.objects.get(model=resource_type)
-        model = ct.model_class()
-        try:
-            object = model.approved_objects.get(id=id)
-        except model.DoesNotExist:
+        uuid = kwargs.get('uuid')
+        if Geopackage.approved_objects.filter(uuid=uuid).exists():
+            object = Geopackage.approved_objects.get(uuid=uuid)
+        elif Model.approved_objects.filter(uuid=uuid).exists():
+            object = Model.approved_objects.get(uuid=uuid)
+        elif Style.approved_objects.filter(uuid=uuid).exists():
+            object = Style.approved_objects.get(uuid=uuid)
+        else:
             raise Http404
 
         object.increase_download_counter()

@@ -25,14 +25,13 @@ class ResourceBaseSerializer(serializers.ModelSerializer):
         fields = [
             'resource_type',
             'resource_subtype',
-            'id',
+            'uuid',
             'name',
             'creator',
             'upload_date',
             'download_count',
             'description',
             'file',
-            # 'thumbnail_image',
             'thumbnail',
         ]
 
