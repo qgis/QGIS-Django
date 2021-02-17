@@ -46,7 +46,7 @@ script:
   - flake8 ./models
   - python manage.py makemigrations
   - python manage.py migrate
-  - coverage run manage.py test base styles geopackages models
+  - coverage run manage.py test base styles geopackages models plugins
 
 after_success:
   - codecov
