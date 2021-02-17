@@ -266,9 +266,6 @@ select#languages option {
 .footer #facebook {
     background: url("images/footer-facebook.png") no-repeat scroll 0 0 transparent;
 }
-.footer #gplus {
-    background: url("images/footer-gplus.png") no-repeat scroll 0 0 transparent;
-}
 .footer #github {
     background: url("images/footer-github.png") no-repeat scroll 0 0 transparent;
 }

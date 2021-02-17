@@ -9,6 +9,8 @@ import os
 import configparser
 from io import StringIO
 import codecs
+import requests
+from urllib.parse import urlparse
 from django.conf import settings
 from django.utils.translation import ugettext_lazy as _
 from django.forms import ValidationError
@@ -50,6 +52,39 @@ def _check_required_metadata(metadata):
     for md in PLUGIN_REQUIRED_METADATA:
         if not md in dict(metadata) or not dict(metadata)[md]:
             raise ValidationError(_('Cannot find metadata <strong>%s</strong> in metadata source <code>%s</code>.<br />For further informations about metadata, please see: <a target="_blank"  href="http://docs.qgis.org/testing/en/docs/pyqgis_developer_cookbook/plugins.html#plugin-metadata-table">metadata documentation</a>') % (md, dict(metadata).get('metadata_source')))
+
+
+def _check_url_link(url: str, forbidden_url: str) -> None:
+    """
+    Checks if the url link is valid.
+    """
+    error_check = ValidationError(
+        _("Please provide valid url link for Bug tracker, Repository and "
+          "Home page in metadata."))
+
+    # check against forbidden_url
+    is_forbidden_url = url == forbidden_url
+    if is_forbidden_url:
+        raise error_check
+
+    # check if parsed url is valid
+    # https://stackoverflow.com/a/38020041
+    try:
+        parsed_url = urlparse(url)  # e.g https://plugins.qgis.org/
+        if not(all([parsed_url.scheme,  # e.g http
+                   parsed_url.netloc])):  # e.g www.qgis.org
+            raise error_check
+    except Exception:
+        raise error_check
+
+    # Check if url is exist
+    # This check will slow down the upload process.
+    try:
+        req = requests.head(url)
+    except Exception:
+        raise error_check
+    if req.status_code >= 400:
+        raise error_check
 
 
 def validator(package):
@@ -174,6 +209,11 @@ def validator(package):
             _check_required_metadata(initmetadata)
         except ValidationError as e:
             raise ValidationError(_("qgisMinimumVersion is set to less than  1.8 (%s) and there were errors reading metadata from the __init__.py file. This can lead to errors in versions of QGIS less than 1.8, please either set the qgisMinimumVersion to 1.8 or specify the metadata also in the __init__.py file. Reported error was: %s") % (min_qgs_version, ','.join(e.messages)))
+
+    # check url_link
+    _check_url_link(dict(metadata).get('tracker'), 'http://bugs')
+    _check_url_link(dict(metadata).get('repository'), 'http://repo')
+    _check_url_link(dict(metadata).get('homepage'), 'http://homepage')
 
     zip.close()
     del zip
