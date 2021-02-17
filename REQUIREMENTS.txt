@@ -43,11 +43,15 @@ python-ldap==2.4.19
 # RPC4DJANGO
 git+https://github.com/davidfischer/rpc4django.git
 six==1.4.1
-sorl-thumbnail==11.12
+sorl-thumbnail==12.7.0
+sorl-thumbnail-serializer-field==0.2.1
 sqlparse==0.1.11
 wsgiref==0.1.2
 simplejson==3.3.3
 BeautifulSoup
-django-bootstrap-pagination
-django-sortable-listview
+django-bootstrap-pagination==1.7.1
+django-sortable-listview==0.43
 django-user-map
+djangorestframework==3.12.2
+django-rest-auth==0.9.5
+drf-yasg

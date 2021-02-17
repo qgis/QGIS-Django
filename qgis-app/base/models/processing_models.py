@@ -2,6 +2,7 @@
 Base Model for sharing file feature
 """
 import datetime
+import uuid
 
 from django.db import models
 from django.contrib.auth.models import User
@@ -37,6 +38,9 @@ class Resource(models.Model):
 
     Child class must have the FileField
     """
+
+    # uuid
+    uuid = models.UUIDField(default=uuid.uuid4, unique=True)
 
     # date
     upload_date = models.DateTimeField(

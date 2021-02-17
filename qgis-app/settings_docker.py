@@ -63,6 +63,13 @@ INSTALLED_APPS = [
 
     'feedjack',
 
+    'rest_framework',
+    'sorl_thumbnail_serializer',  # serialize image
+    'drf_multiple_model',
+    'drf_yasg',
+
+    'api',
+
     # styles:
     'styles',
     # geopackages
@@ -107,3 +114,7 @@ EMAIL_SUBJECT_PREFIX = os.environ.get('EMAIL_SUBJECT_PREFIX', '[QGIS Plugins]')
 
 # django uploaded file permission
 FILE_UPLOAD_PERMISSIONS = 0o644
+
+REST_FRAMEWORK = {
+    'TEST_REQUEST_DEFAULT_FORMAT': 'json',
+}

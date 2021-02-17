@@ -9,6 +9,7 @@ from base.views.processing_view import (ResourceBaseCreateView,
                                         ResourceBaseDownload,
                                         resource_nav_content)
 
+
 from models.forms import UpdateForm, UploadForm
 from models.models import Model, Review
 

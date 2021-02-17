@@ -40,13 +40,14 @@ before_script:
 
 script:
   - cd qgis-app
+  - flake8 ./api
   - flake8 ./base
   - flake8 ./styles
   - flake8 ./geopackages
   - flake8 ./models
   - python manage.py makemigrations
   - python manage.py migrate
-  - coverage run manage.py test base styles geopackages models plugins
+  - coverage run manage.py test api base styles geopackages models
 
 after_success:
   - codecov
