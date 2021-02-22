@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 if [ -z "$REPO_NAME" ]; then
-	REPO_NAME=dimasciput
+	REPO_NAME=kartoza
 fi
 
 if [ -z "$IMAGE_NAME" ]; then
