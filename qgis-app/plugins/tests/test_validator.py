@@ -1,11 +1,14 @@
 import os
+import requests
+
+from unittest import mock
 
 from django.core.exceptions import ValidationError
 from django.core.files.uploadedfile import InMemoryUploadedFile
 from django.test import TestCase
 
 
-from plugins.validator import validator
+from plugins.validator import validator, _check_url_link
 
 TESTFILE_DIR = os.path.abspath(
     os.path.join(os.path.dirname(__file__), 'testfiles'))
@@ -114,3 +117,17 @@ class TestValidatorMetadataPlugins(TestCase):
             )
         )
 
+    @mock.patch('requests.get', side_effect=requests.exceptions.SSLError())
+    def test_check_url_link_ssl_error(self, mock_request):
+        url = 'http://example.com/'
+        self.assertIsNone(
+            _check_url_link(url, 'forbidden_url', 'metadata attribute')
+        )
+
+    @mock.patch('requests.get', side_effect=requests.exceptions.HTTPError())
+    def test_check_url_link_does_not_exist(self, mock_request):
+        url = 'http://example.com/'
+        self.assertRaises(
+            ValidationError,
+            _check_url_link(url, 'forbidden_url', 'metadata attribute'),
+        )
