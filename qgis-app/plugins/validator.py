@@ -54,13 +54,15 @@ def _check_required_metadata(metadata):
             raise ValidationError(_('Cannot find metadata <strong>%s</strong> in metadata source <code>%s</code>.<br />For further informations about metadata, please see: <a target="_blank"  href="http://docs.qgis.org/testing/en/docs/pyqgis_developer_cookbook/plugins.html#plugin-metadata-table">metadata documentation</a>') % (md, dict(metadata).get('metadata_source')))
 
 
-def _check_url_link(url: str, forbidden_url: str) -> None:
+def _check_url_link(url: str, forbidden_url: str, metadata_attr: str) -> None:
     """
     Checks if the url link is valid.
     """
     error_check = ValidationError(
-        _("Please provide valid url link for Bug tracker, Repository and "
-          "Home page in metadata."))
+        _("Please provide valid url link for %s in metadata.") % metadata_attr)
+    error_check_if_exist = ValidationError(
+        _("Please provide valid url link for %s in metadata. "
+          "This website cannot be reached.") % metadata_attr)
 
     # check against forbidden_url
     is_forbidden_url = url == forbidden_url
@@ -78,13 +80,14 @@ def _check_url_link(url: str, forbidden_url: str) -> None:
         raise error_check
 
     # Check if url is exist
-    # This check will slow down the upload process.
     try:
         req = requests.head(url)
+    except requests.exceptions.SSLError:
+        req = requests.head(url, verify=False)
     except Exception:
-        raise error_check
+        raise error_check_if_exist
     if req.status_code >= 400:
-        raise error_check
+        raise error_check_if_exist
 
 
 def validator(package):
@@ -211,9 +214,14 @@ def validator(package):
             raise ValidationError(_("qgisMinimumVersion is set to less than  1.8 (%s) and there were errors reading metadata from the __init__.py file. This can lead to errors in versions of QGIS less than 1.8, please either set the qgisMinimumVersion to 1.8 or specify the metadata also in the __init__.py file. Reported error was: %s") % (min_qgs_version, ','.join(e.messages)))
 
     # check url_link
-    _check_url_link(dict(metadata).get('tracker'), 'http://bugs')
-    _check_url_link(dict(metadata).get('repository'), 'http://repo')
-    _check_url_link(dict(metadata).get('homepage'), 'http://homepage')
+    _check_url_link(
+        dict(metadata).get('tracker'), 'http://bugs', 'Bug tracker')
+    _check_url_link(
+        dict(metadata).get('repository'), 'http://repo', 'Repository'
+    )
+    _check_url_link(
+        dict(metadata).get('homepage'), 'http://homepage', 'Home page'
+    )
 
     zip.close()
     del zip
