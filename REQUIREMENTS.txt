@@ -1,4 +1,4 @@
-Django==1.11.29
+Django==2.2.18
 # Currently broken with 'no module named defaults' error
 #Feedjack==0.9.18
 # So use George's fork rather
