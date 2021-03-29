@@ -131,3 +131,69 @@ class TestValidatorMetadataPlugins(TestCase):
             ValidationError,
             _check_url_link(url, 'forbidden_url', 'metadata attribute'),
         )
+
+
+class TestValidatorForbiddenFileFolder(TestCase):
+    """Test if zipfile is not containing forbidden folders and files """
+
+    def setUp(self) -> None:
+        valid_plugins = os.path.join(
+            TESTFILE_DIR, "valid_metadata_link.zip")
+        self.valid_metadata_link = open(valid_plugins, 'rb')
+        self.package = InMemoryUploadedFile(
+            self.valid_metadata_link,
+            field_name='tempfile',
+            name='testfile.zip',
+            content_type='application/zip',
+            size=1234,
+            charset='utf8'
+        )
+
+    def tearDown(self):
+        self.valid_metadata_link.close()
+
+    @mock.patch('zipfile.ZipFile.namelist')
+    def test_zipfile_with_pyc_file(self, mock_namelist):
+        mock_namelist.return_value = ['.pyc']
+        with self.assertRaisesMessage(
+                Exception,
+                'For security reasons, zip file cannot contain .pyc file'):
+            validator(self.package)
+
+    @mock.patch('zipfile.ZipFile.namelist')
+    def test_zipfile_with_MACOSX(self, mock_namelist):
+        mock_namelist.return_value = ['__MACOSX/']
+        with self.assertRaisesMessage(
+                Exception,
+                ("For security reasons, zip file cannot contain "
+                 "'__MACOSX' directory")):
+            validator(self.package)
+
+    @mock.patch('zipfile.ZipFile.namelist')
+    def test_zipfile_with_pycache(self, mock_namelist):
+        mock_namelist.return_value = ['__pycache__/']
+        with self.assertRaisesMessage(
+                Exception,
+                ("For security reasons, zip file cannot contain "
+                 "'__pycache__' directory")):
+            validator(self.package)
+
+    @mock.patch('zipfile.ZipFile.namelist')
+    def test_zipfile_with_git(self, mock_namelist):
+        mock_namelist.return_value = ['.git']
+        with self.assertRaisesMessage(
+                Exception,
+                ("For security reasons, zip file cannot contain "
+                 "'.git' directory")):
+            validator(self.package)
+
+    @mock.patch('zipfile.ZipFile.namelist')
+    def test_zipfile_with_gitignore(self, mock_namelist):
+        """test if .gitignore will not raise ValidationError"""
+        mock_namelist.return_value = ['.gitignore']
+        with self.assertRaises(ValidationError) as cm:
+            validator(self.package)
+        exception = cm.exception
+        self.assertNotEqual(
+            exception.message,
+            "For security reasons, zip file cannot contain '.git' directory")
