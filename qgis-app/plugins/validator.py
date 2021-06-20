@@ -118,6 +118,8 @@ def validator(package):
     for zname in zip.namelist():
         if zname.find('..') != -1 or zname.find(os.path.sep) == 0 :
             raise ValidationError( _("For security reasons, zip file cannot contain path informations") )
+        if zname.find('.pyc') != -1:
+            raise ValidationError( _("For security reasons, zip file cannot contain .pyc file") )
         for forbidden_dir in ['__MACOSX', '.git', '__pycache__']:
             if forbidden_dir in zname.split('/'):
                 raise ValidationError(_("For security reasons, zip file "
