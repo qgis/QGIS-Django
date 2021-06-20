@@ -5,7 +5,7 @@ from django.core import mail
 from django.core.files.uploadedfile import InMemoryUploadedFile
 from django.test import TestCase, override_settings
 
-from plugins.models import PluginVersion, Plugin
+from plugins.models import PluginVersion, Plugin, PluginInvalid
 from plugins.management.commands.validate_existing_plugins import (
     validate_zipfile_version, send_email_notification)
 
@@ -16,6 +16,7 @@ TESTFILE_DIR = os.path.abspath(
 @override_settings(MEDIA_ROOT='plugins/tests/testfiles/')
 @override_settings(MEDIA_URL='plugins/tests/testfiles/')
 class TestValidateExistingPlugin(TestCase):
+
     def setUp(self) -> None:
         self.creator = User.objects.create(
             username='usertest_creator',
@@ -72,6 +73,7 @@ class TestValidateExistingPlugin(TestCase):
             'plugin': 'test_plugin',
             'created_by': 'usertest_creator',
             'version': '0.1',
+            'version_id': self.version.id,
             'msg': ['Please provide valid url link for Repository in metadata. '
                     'This website cannot be reached.'],
             'url': 'http://plugins.qgis.org/plugins/test_plugin/version/0.1/',

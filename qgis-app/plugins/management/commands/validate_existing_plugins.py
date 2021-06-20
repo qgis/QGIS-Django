@@ -8,7 +8,7 @@ from django.core.management.base import BaseCommand
 from django.contrib.sites.models import Site
 from django.utils.translation import ugettext_lazy as _
 
-from plugins.models import PluginVersion
+from plugins.models import PluginVersion, PluginInvalid
 from plugins.validator import validator
 
 
@@ -48,6 +48,7 @@ def validate_zipfile_version(version):
             'plugin': f'{version.plugin.name}',
             'created_by': f'{version.plugin.created_by}',
             'version': f'{version.version}',
+            'version_id': version.id,
             'msg': [f'File does not exist. Please re-upload.'],
             'url': f'http://{DOMAIN}{version.get_absolute_url()}',
             'recipients_email': get_recipients_email(version.plugin)
@@ -68,6 +69,7 @@ def validate_zipfile_version(version):
                 'plugin': f'{version.plugin.name}',
                 'created_by': f'{version.plugin.created_by}',
                 'version': f'{version.version}',
+                'version_id': version.id,
                 'msg': e.messages,
                 'url': f'http://{DOMAIN}{version.get_absolute_url()}',
                 'recipients_email': get_recipients_email(version.plugin)
@@ -82,7 +84,9 @@ class Command(BaseCommand):
 
     def handle(self, *args, **options):
         self.stdout.write('Validating existing plugins...')
-        versions = PluginVersion.objects.all()
+        # get the latest version
+        versions = PluginVersion.approved_objects.\
+            order_by('plugin_id', '-created_on').distinct('plugin_id').all()[:3]
         num_count = 0
         for version in versions:
             error_msg = validate_zipfile_version(version)
@@ -102,6 +106,12 @@ class Command(BaseCommand):
                     )
                 )
                 num_count += 1
+                plugin_version = PluginVersion.objects\
+                    .select_related('plugin').get(id=error_msg['version_id'])
+                PluginInvalid.objects.create(
+                    plugin=plugin_version.plugin,
+                    validated_version=plugin_version.version
+                )
         self.stdout.write(
             _('Successfully sent email notification for %s invalid plugins')
             % (num_count)
