@@ -86,7 +86,7 @@ class Command(BaseCommand):
         self.stdout.write('Validating existing plugins...')
         # get the latest version
         versions = PluginVersion.approved_objects.\
-            order_by('plugin_id', '-created_on').distinct('plugin_id').all()[:3]
+            order_by('plugin_id', '-created_on').distinct('plugin_id').all()[:50]
         num_count = 0
         for version in versions:
             error_msg = validate_zipfile_version(version)
@@ -110,7 +110,8 @@ class Command(BaseCommand):
                     .select_related('plugin').get(id=error_msg['version_id'])
                 PluginInvalid.objects.create(
                     plugin=plugin_version.plugin,
-                    validated_version=plugin_version.version
+                    validated_version=plugin_version.version,
+                    message=error_msg['msg']
                 )
         self.stdout.write(
             _('Successfully sent email notification for %s invalid plugins')

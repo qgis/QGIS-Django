@@ -20,7 +20,7 @@ from django.utils.translation import ugettext_lazy as _
 #from sortable_listview import SortableListView
 from django.views.generic.list import ListView
 from django.views.generic.detail import DetailView
-from plugins.models import Plugin, PluginVersion, vjust
+from plugins.models import Plugin, PluginVersion, vjust, PluginInvalid
 from plugins.forms import *
 from plugins.validator import PLUGIN_REQUIRED_METADATA
 
@@ -580,6 +580,13 @@ class TagsPluginsList(PluginsList):
             'title' : _('Plugins tagged with: %s') % unquote(self.kwargs['tags']),
         })
         return context
+
+
+class InvalidPluginList(ListView):
+    model = PluginInvalid
+    template_name = 'plugins/plugin_invalid_list.html'
+    context_object_name = 'invalid_plugins'
+    paginate_by = settings.PAGINATION_DEFAULT_PAGINATION
 
 
 @login_required

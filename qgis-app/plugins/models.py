@@ -637,7 +637,7 @@ class PluginInvalid(models.Model):
     of the latest version.
     """
 
-    plugin = models.ForeignKey(Plugin, on_delete=models.CASCADE)
+    plugin = models.ForeignKey(Plugin, on_delete=models.CASCADE, unique=True)
     # We track the version number, not the version instance.
     # So that when the version has been deleted, we keep the plugin
     # in the tracking list
@@ -645,6 +645,12 @@ class PluginInvalid(models.Model):
         _('Version'), max_length=32, db_index=True)
     validated_at = models.DateTimeField(
         _('Validated at'), auto_now_add=True, editable=False)
+    message = models.CharField(
+        _('Message'),
+        help_text=_('Invalid error message'),
+        max_length=256,
+        editable=False
+    )
 
 
 models.signals.post_delete.connect(
