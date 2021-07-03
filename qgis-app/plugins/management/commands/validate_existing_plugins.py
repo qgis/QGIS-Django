@@ -111,7 +111,9 @@ class Command(BaseCommand):
                 PluginInvalid.objects.create(
                     plugin=plugin_version.plugin,
                     validated_version=plugin_version.version,
-                    message=error_msg['msg']
+                    message=(error_msg['msg']
+                             if not isinstance(error_msg['msg'], list)
+                             else ', '.join(error_msg['msg']))
                 )
         self.stdout.write(
             _('Successfully sent email notification for %s invalid plugins')

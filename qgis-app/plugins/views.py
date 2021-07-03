@@ -438,6 +438,9 @@ def plugin_update(request, package_name):
             # Checks for optional metadata
             _check_optional_metadata(form, request)
 
+            # Remove from invalid plugin list
+            delete_invalid_plugin(plugin)
+
             return HttpResponseRedirect(new_object.get_absolute_url())
     else:
         form = PluginForm(instance = plugin)
@@ -587,6 +590,52 @@ class InvalidPluginList(ListView):
     template_name = 'plugins/plugin_invalid_list.html'
     context_object_name = 'invalid_plugins'
     paginate_by = settings.PAGINATION_DEFAULT_PAGINATION
+
+    def get_queryset(self):
+        qs = super(InvalidPluginList, self).get_queryset()
+        sort_by = self.request.GET.get('sort', None)
+        if sort_by:
+            if sort_by[0] == '-':
+                _sort_by = sort_by[1:]
+                _sort_desc = True
+            else:
+                _sort_by = sort_by
+                _sort_desc = False
+
+            if _sort_by == 'name' or 'author':
+                _sort_by = f'-plugin__{_sort_by}' if _sort_desc else f'plugin__{_sort_by}'
+            
+            qs = qs.order_by(_sort_by)
+        else:
+            # default
+            if not qs.ordered:
+                qs = qs.order_by(Lower('plugin__name'))
+        return qs
+    
+    def get_context_data(self, **kwargs):
+        context = super(InvalidPluginList, self).get_context_data(**kwargs)
+        context['current_sort_query'] = self.get_sortstring()
+        context['current_querystring'] = self.get_querystring()
+        return context
+
+    def get_sortstring(self):
+        if self.request.GET.get('sort', None):
+            return 'sort=%s' % self.request.GET.get('sort')
+        return
+
+    def get_querystring(self):
+        """
+        Clean existing query string (GET parameters) by removing
+        arguments that we don't want to preserve (sort parameter, 'page')
+        """
+        to_remove = ['page', 'sort']
+        query_string = urlparse(self.request.get_full_path()).query
+        query_dict = parse_qs(query_string)
+        for arg in to_remove:
+            if arg in query_dict:
+                del query_dict[arg]
+        clean_query_string = urlencode(query_dict, doseq=True)
+        return clean_query_string
 
 
 @login_required
@@ -744,6 +793,8 @@ def version_create(request, package_name):
                     form.cleaned_data['icon'] = form.cleaned_data.get('icon_file')
                 _main_plugin_update(request, new_object.plugin, form)
                 _check_optional_metadata(form, request)
+                # Remove from invalid plugin list
+                delete_invalid_plugin(plugin)
                 return HttpResponseRedirect(new_object.plugin.get_absolute_url())
             except (IntegrityError, ValidationError, DjangoUnicodeDecodeError) as e:
                 messages.error(request, e, fail_silently=True)
@@ -778,6 +829,8 @@ def version_update(request, package_name, version):
                 _main_plugin_update(request, new_object.plugin, form)
                 msg = _("The Plugin Version has been successfully updated.")
                 messages.success(request, msg, fail_silently=True)
+                # Remove from invalid plugin list
+                delete_invalid_plugin(plugin)
             except (IntegrityError, ValidationError, DjangoUnicodeDecodeError) as e:
                 messages.error(request, e, fail_silently=True)
                 connection.close()
@@ -1082,3 +1135,9 @@ def xml_plugins_new(request, qg_version=None, stable_only=None, package_name=Non
 
 
     return render(request, 'plugins/plugins.xml', {'object_list': object_list_new}, content_type='text/xml')
+
+
+def delete_invalid_plugin(plugin):
+    invalid_plugin = PluginInvalid.objects.filter(plugin=plugin)
+    if invalid_plugin:
+        invalid_plugin.delete()
