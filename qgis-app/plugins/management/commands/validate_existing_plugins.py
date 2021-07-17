@@ -1,4 +1,8 @@
-"""A command to validate the existing zipfile Plugin Packages"""
+"""A command to validate the existing zipfile Plugin Packages.
+
+We are using the same validator that used in uploading plugins.
+Re-run this command when modify the validator to validate the existing plugins.
+"""
 
 import os
 from django.conf import settings
