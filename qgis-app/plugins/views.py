@@ -438,9 +438,6 @@ def plugin_update(request, package_name):
             # Checks for optional metadata
             _check_optional_metadata(form, request)
 
-            # Remove from invalid plugin list
-            delete_invalid_plugin(plugin)
-
             return HttpResponseRedirect(new_object.get_absolute_url())
     else:
         form = PluginForm(instance = plugin)
