@@ -1,0 +1,22 @@
+[flake8]
+exclude = */docs/*,*/.tox/*,*/.venv/*,*/.pycharm_helpers/*,*/migrations/*,docs/*,*/__init__.py,
+    */manage.py,*/wsgi.py,
+    # we don't check this for now, until it's been fixed. otherwise it will throw lot of errors
+    qgis-app/plugins/*,
+    qgis-app/userexport/*,
+    qgis-app/lib/templatetags/*,
+    vagrant_assets/*,
+    qgis-app/users/*,
+    qgis-app/settings*,
+    qgis-app/qgis_context_processor.py,
+    qgis-app/search_sites.py,
+    qgis-app/urls.py,
+    qgis-app/custom_haystack_urls.py,
+    qgis-app/middleware.py,
+    qgis-app/homepage.py
+max-line-length = 79
+
+# E12x continuation line indentation
+# E251 no spaces around keyword / parameter equals
+# E303 too many blank lines (3)
+ignore = E121,E122,E123,E124,E125,E126,E127,E128,E251,E303,W503,W504,W60,F405
