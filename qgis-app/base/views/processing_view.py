@@ -310,7 +310,7 @@ class ResourceBaseListView(ResourceBaseContextMixin,
 
     context_object_name = 'object_list'
     template_name = 'base/list.html'
-    paginate_by = settings.PAGINATION_DEFAULT_PAGINATION
+    paginate_by = settings.PAGINATION_DEFAULT_PAGINATION_HUB
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)

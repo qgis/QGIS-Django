@@ -3,40 +3,48 @@
 {% block extrajs %}
 {{ block.super }}
 <style>
-    table > thead > tr > th > a {
-        color: grey;
-    }
-    .sorted {
-        color: #006dcc;
-        font-size: 20px;
-    }
-    .sorted-name {
-        color: #006dcc;
-    }
-    {# from style #}
-    table > tbody > tr {
-        height: 120px;
+    .next-row {
+      margin-top: 1.5em;
     }
 
-    .table td {
-        vertical-align: middle;
+    .galery {
+        height: 550px;
+        background-color: #F2F2F2;
+
     }
 
-    img.style-icon {
-        width: 100px;
-        height: 100px;
+    .galery:hover {
+        background-color: #7f7f7f;
     }
 
-    img.style-icon:hover {
-        width: 320px;
-        height: 320px;
-        position: absolute;
+    .galery:hover .image-info a, .galery:hover .image-info {
+        color: whitesmoke;
+    }
 
-        margin-top: -250px;
-        margin-left: -220px;
-        border-radius: 20px;
-        box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
+    .galery:hover a.btn-download {
+        color: #80a732;
+    }
 
+    .frame-image-demo {
+      height: 420px;
+        position: relative;
+        background-color: white;
+    }
+    img.image-demo {
+        height: auto;
+        max-height: 100%;
+        width: auto;
+        max-width: 100%;
+    }
+    .image-info a {
+      text-decoration: none;
+        color: #151515 ;
+    }
+    .center {
+        text-align: center;
+    }
+    .image-info {
+        margin-left: 5px;
     }
 </style>
 {% endblock %}
@@ -57,64 +65,69 @@
             {% endif %}
             {{ count }} record{{ object_list.count|pluralize:"s" }} found.
         </p>
-        <table class="table table-striped plugins">
-        <thead>
-            <tr>
-                <th></th>
-                <th> {% anchor_sort_arrow 'Name' 'name' order_by queries %} </th>
-                {% if object_list.first.style_type %}
-                <th> {% anchor_sort_arrow 'Type' 'type' order_by queries %} </th>
-                {% else %}
-                <th> Description </th>
-                {% endif %}
-                <th>
-                    <i class="icon-download-alt" title="{% trans 'Download Count' %}"></i>
-                    {% anchor_sort_arrow '' 'download_count' order_by queries %}
-                </th>
-                <th> {% anchor_sort_arrow 'Creator' 'creator' order_by queries %} </th>
-                <th> {% anchor_sort_arrow 'Upload Date' 'upload_date' order_by queries %} </th>
-                <th></th>
-            </tr>
-        </thead>
-        <tbody>
-            {% for object in object_list %}
-                <tr>
-                    <td>
+    {% endif %}
+
+
+        <div class="row filter-sort">
+          <a class="btn pull-right" href="#" data="-"><span id="iconOrder"><i class="icon-arrow-up"></i></span></a>
+          <select class="pull-right">
+            <option value="upload_date">Upload date</option>
+            <option value="name">{{ resource_name }} name</option>
+            {% if object_list.first.style_type %}<option value="type">Style type</option>{% endif %}
+            <option value="creator">Creator</option>
+            <option value="download_count">Number of downloads</option>
+          </select>
+        </div>
+        <div class="row">
+        {% for object in object_list %}
+          <div class="span4">
+              <div class="galery thumbnail">
+                <div class="frame-image-demo center">
+                  <a href="{% url url_detail pk=object.id %}">
                     {% if object.thumbnail_image and object.thumbnail_image.file %}
-                        {% thumbnail object.thumbnail_image "420x420" format="PNG" as im %}
-                            <img class="style-icon" alt="{% trans "Style icon" %}" src="{{ im.url }}" width="{{ im.x }}" height="{{ im.y }}" />
-                        {% endthumbnail %}
-                    {% else %}
-                        <img height="32" width="32" class="plugin-icon" src="{% static "images/qgis-icon-32x32.png" %}" alt="{% trans "Plugin icon" %}" />
-                    {% endif %}
-                    </td>
-                    <td><a href="{% url url_detail pk=object.id %}">{{ object.name}}</a></td>
+                            {% thumbnail object.thumbnail_image "420x420" format="PNG" as im %}
+                                <img class="image-demo" alt="{% trans "Style icon" %}" src="{{ im.url }}" />
+                            {% endthumbnail %}
+                        {% else %}
+                            <img height="32" width="32" class="image-demo" src="{% static "images/qgis-icon-32x32.png" %}" alt="{% trans "Plugin icon" %}" />
+                        {% endif %}
+                  </a>
+                </div>
+               <div class="image-info">
+               <a class="btn btn-mini btn-download pull-right" href="{% url url_download object.id %}" title="{% trans "Download" %}"><i class="icon-download-alt"></i></a>
+               <a href="{% url url_detail pk=object.id %}">
+                 <h4>
+                   {{ object.name}}
+                 </h4>
+                 <h5>
+                   {{ object.get_creator_name|title }} | {{ object.upload_date|date:"d F Y" }} | {{ object.download_count }} downloaded
+                 </h5>
+                 <p>
 
                     {% if object.style_type %}
-                    <td><span class="center-vertical">{{ object.style_type.name|title }}</span></td>
+                    style: {{ object.style_type.name|title }}
                     {%  else %}
-                    <td>{{ object.description|md_to_html|striptags|truncatewords:7 }}</td>
+                    {{ object.description|md_to_html|striptags|truncatewords:15 }}
                     {% endif %}
+                 </p>
+               </a>
+               </div>
 
-                    <td>{{ object.download_count }}</td>
-                    <td>{{ object.get_creator_name|title }}</td>
-                    <td>{{ object.upload_date|date:"d F Y" }}</td>
-                    <td>
-                        {% if user.is_staff or user == style.creator %}
-                        <a class="btn btn-primary btn-mini" href="{% url url_update object.id %}" title="{% trans "Edit" %}"><i class="icon-pencil icon-white"></i></a>&nbsp
-                        <a class="btn btn-danger btn-mini delete" href="{% url url_delete object.id %}" title="{% trans "Delete" %}"><i class="icon-remove icon-white"></i></a>&nbsp
-                        {% endif %}
-                        <a class="btn btn-primary btn-mini pull-right" href="{% url url_download object.id %}" title="{% trans "Download" %}"><i class="icon-download-alt"></i></a>
-                    </td>
-                </tr>
-            {% endfor %}
-        </tbody>
-    </table>
+              </div>
+          </div>
+
+          {% if forloop.counter|divisibleby:3 %}
+            </div>
+            <div class="row next-row">
+          {% endif %}
+        {% endfor %}
+    </div>
+
+
     <div class="pagination">
     {% include 'sortable_listview/pagination.html' %}
     </div>
 
-    {% endif %}
 
 
     <script type="text/javascript">
@@ -143,7 +156,40 @@
         // edit search input from base template, in order to use it for styles
         $("form.navbar-search").attr("action", "");
 
+        // add event listener
+        $('div.filter-sort').find('a').click( () => {
+          const $order = $('div.filter-sort').find('a').eq(0);
+          if (!$order.attr('data')) {
+            $order.attr('data', '-')
+          } else {
+            $order.attr('data', '')
+          }
+          sort();
+        });
+        $('div.filter-sort').find('select').on('change', sort);
+
+        // set current value of sort selector and order button
+        const currentVal = orderBy.split('-')
+        if (currentVal.length > 1) {
+          $('div.filter-sort').find('a').attr('data', '-');
+          $("#iconOrder").html('<i class="icon-arrow-down"></i>')
+          $('div.filter-sort').find('select').val(currentVal[1]);
+        } else {
+          $('div.filter-sort').find('a').attr('data', '');
+          $("#iconOrder").html('<i class="icon-arrow-up"></i>')
+          $('div.filter-sort').find('select').val(currentVal[0])
+        }
+
     })
+
+    function sort(){
+      const order = $('div.filter-sort').find('a').attr('data')
+      const sort_by = $('div.filter-sort').find('select').val()
+      let current_query = new URLSearchParams(window.location.search).get("q");
+      if (current_query === null) current_query = '';
+
+      location.href = location.protocol + '//' + location.host + location.pathname + `?order_by=${order}${sort_by}&&`
+    }
     </script>
 {% endblock %}
 
