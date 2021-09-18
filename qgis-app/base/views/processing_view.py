@@ -309,7 +309,6 @@ class ResourceBaseListView(ResourceBaseContextMixin,
                            ListView):
 
     context_object_name = 'object_list'
-    paginate_by = settings.PAGINATION_DEFAULT_PAGINATION_HUB
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
@@ -324,7 +323,6 @@ class ResourceBaseListView(ResourceBaseContextMixin,
         qs = self.get_queryset_search(qs)
         return qs
 
-
     def get_template_names(self):
         context = self.get_context_data()
         is_galery = context['is_galery']
@@ -334,6 +332,11 @@ class ResourceBaseListView(ResourceBaseContextMixin,
         else:
             return 'base/list.html'
 
+    def get_paginate_by(self, queryset):
+        is_galery = self.request.GET.get('is_galery', None)
+        if is_galery:
+            return settings.PAGINATION_DEFAULT_PAGINATION_HUB
+        return settings.PAGINATION_DEFAULT_PAGINATION
 
 
 class ResourceBaseUnapprovedListView(LoginRequiredMixin,
