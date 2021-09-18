@@ -309,20 +309,34 @@ class ResourceBaseListView(ResourceBaseContextMixin,
                            ListView):
 
     context_object_name = 'object_list'
-    template_name = 'base/list.html'
-    paginate_by = settings.PAGINATION_DEFAULT_PAGINATION
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         context['count'] = self.get_queryset().count()
         context['order_by'] = self.request.GET.get('order_by', None)
         context['queries'] = self.request.GET.get('q', None)
+        context['is_galery'] = self.request.GET.get('is_galery', None)
         return context
 
     def get_queryset(self):
         qs = self.model.approved_objects.all()
         qs = self.get_queryset_search(qs)
         return qs
+
+    def get_template_names(self):
+        context = self.get_context_data()
+        is_galery = context['is_galery']
+        if is_galery:
+            self.paginate_by = settings.PAGINATION_DEFAULT_PAGINATION
+            return 'base/list_galery.html'
+        else:
+            return 'base/list.html'
+
+    def get_paginate_by(self, queryset):
+        is_galery = self.request.GET.get('is_galery', None)
+        if is_galery:
+            return settings.PAGINATION_DEFAULT_PAGINATION_HUB
+        return settings.PAGINATION_DEFAULT_PAGINATION
 
 
 class ResourceBaseUnapprovedListView(LoginRequiredMixin,

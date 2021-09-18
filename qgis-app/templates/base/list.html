@@ -57,6 +57,10 @@
             {% endif %}
             {{ count }} record{{ object_list.count|pluralize:"s" }} found.
         </p>
+        <div class="list-grid">
+          <a class="btn pull-right is-list" href="#"><i class="icon-th-list"></i></a>
+          <a class="btn pull-right is-galery" href="#"><i class="icon-th-large"></i></a>
+        </div>
         <table class="table table-striped plugins">
         <thead>
             <tr>
@@ -132,6 +136,24 @@
                 this.href += 'q=' + queries +'&&';
             })
         }
+
+        // galery or list view
+        const url = window.location.href.split('?')[0];
+        const isGalery = new URLSearchParams(window.location.search).get("is_galery");
+        console.log(isGalery)
+        if (isGalery && isGalery === 'true') {
+          $('.list-grid').find('.is-galery').addClass('disabled')
+        } else {
+          $('.list-grid').find('.is-list').addClass('disabled')
+          console.log('siable list')
+        }
+        // add href value
+        $('.list-grid a.is-list').each(function(){
+          this.href = url;
+        })
+        $('.list-grid a.is-galery').each(function(){
+          this.href = url + '?is_galery=true';
+        })
 
         // change color for sorted head
         $("table thead tr th a").each(function(i, el){
