@@ -17,6 +17,15 @@
 
     <script type="text/javascript" src="{% static "js/jquery-1.11.1.min.js" %}"></script>
     <script type="text/javascript" src="{% static "bootstrap/js/bootstrap.min.js" %}"></script>
+
+    <!-- Cookie disclaimer -->
+    <script type="text/javascript" id="cookieinfo" src="{% static 'js/cookieinfo/cookieinfo.min.js' %}" data-bg="#1c2028"
+            data-fg="#FFFFFF" data-link="#22961c" data-cookie="CookieInfoScript" data-text-align="left"
+            data-message="We use functional cookies to enhance your experience.
+            We do not use any ad tracking or targeting cookies.
+            By continuing to visit this site you agree to our use of cookies."
+            data-close-text="Got it!">
+    </script>
     {% block extrajs %}{% endblock %}
 
 </head>
