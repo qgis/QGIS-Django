@@ -1,0 +1,112 @@
+{% extends 'plugins/plugin_base.html' %}{% load i18n bootstrap_pagination humanize static sort_anchor range_filter thumbnail %}
+{% block extrajs %}
+  <script type="text/javascript" src="{% static "js/jquery.cookie.js" %}"></script>
+  <script language="javascript">
+   $(document).ready(function () {
+     if ($('tr > th > a:contains("Downloads ↓")'))
+     {
+       $('tr > th > a:contains("Downloads ↓")').html('<img src="{% static "images/down_16.png" %}" />&darr;');
+     }
+     if ( $('tr > th > a:contains("Downloads ↑")') )
+     {
+       $('tr > th > a:contains("Downloads ↑")').html('<img src="{% static "images/down_16.png" %}" />&uarr;');
+     }
+     $('tr > th > a:contains("Downloads")').html('<img src="{% static "images/down_16.png" %}" />');
+
+     if ($('tr > th > a:contains("Featured ↓")'))
+     {
+       $('tr > th > a:contains("Featured ↓")').html('<img src="{% static "images/star_16.png" %}" />&darr;');
+     }
+     if ( $('tr > th > a:contains("Featured ↑")') )
+     {
+       $('tr > th > a:contains("Featured ↑")').html('<img src="{% static "images/star_16.png" %}" />&uarr;');
+     }
+     $('tr > th > a:contains("Featured")').html('<img src="{% static "images/star_16.png" %}" />');
+   });
+
+    function toggle_desc(){
+        jQuery('.plugin-description').toggle('slow', function(){
+            jQuery.cookie('plugin-description-visible', jQuery('.plugin-description').is(':visible'));
+        });
+        if(jQuery('.plugin-description').hasClass('hidden')){
+            jQuery('.plugin-description').removeClass('hidden');
+        } else {
+            jQuery('.plugin-description').addClass('hidden');
+        }
+        return false;
+    }
+
+    // Start with descriptions visible
+    jQuery(function(){
+        if (jQuery.cookie('plugin-description-visible') == 'true'){
+            toggle_desc();
+        }
+    });
+
+
+  </script>
+{% endblock %}
+{% block content %}
+    <h2>{% if title %}{{title}}{% else %}{% trans "Invalid Plugins" %}{% endif %}</h2>
+    {# Filtered views menu #}
+    {% if object_list.count %}
+    <div id="list_commands">
+        <span class="num_items">{% blocktrans with records_count=page_obj.paginator.count %}{{ records_count }} records found{% endblocktrans %}</span>&nbsp;&mdash;&nbsp;
+        <a class="toggle_desc" href="javascript:void(0);" onclick="return toggle_desc()">{% trans "Click to toggle descriptions." %}</a>
+    </div>
+    <div class="pagination">
+    {#% include 'sortable_listview/sort_links.html' %#}
+    </div>
+    <table class="table table-striped plugins">
+        <thead>
+            <tr>
+                <th>&nbsp;</th>
+                <th>{% anchor name %}</th>
+                <th>{% anchor author "Author" %}</th>
+                <th>{% anchor validated_version "Validated Version" %}</th>
+                <th>{% anchor validated_at "Validated at" %}</th>
+                <th>{% anchor message "Error message" %}</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for object in invalid_plugins %}
+            <tr class="pmain {% if object.plugin.deprecated %} error deprecated{% endif %}" id="pmain{{object.plugin.pk}}">
+                <td><a title="{% if object.plugin.deprecated %} [DEPRECATED] {% endif %}{% trans "Click here for plugin details" %}" href="{% url "plugin_detail" object.plugin.package_name %}">
+                {% if object.plugin.icon and object.plugin.icon.file %}
+                {% thumbnail object.icon "24x24" format="PNG" as im %}
+                    <img class="plugin-icon" alt="{% trans "Plugin icon" %}" src="{{ im.url }}" width="{{ im.x }}" height="{{ im.y }}" />
+                {% endthumbnail %}
+                {% else %}
+                    <img height="32" width="32" class="plugin-icon" src="{% static "images/qgis-icon-32x32.png" %}" alt="{% trans "Plugin icon" %}" />
+                {% endif %}
+                </a></td>
+                <td><a title="{% if object.plugin.deprecated %} [DEPRECATED] {% endif %}{% trans "Click here for plugin details" %}"  href="{% url "plugin_detail" object.plugin.package_name %}">{{ object.plugin.name }}</a></td>
+                  <td><a title="{% trans "See all plugins by"%} {{ object.plugin.author }}" href="{% url "author_plugins" object.plugin.author %}">{{ object.plugin.author }}</a></td>
+                <td>{{ object.validated_version }}</td>
+                <td>{{ object.validated_at }}</td>
+                <td>{{ object.message }}</td>
+            </tr>
+
+
+            {% endfor %}
+        </tbody>
+    </table>
+    <div class="pagination">
+    {% include 'sortable_listview/pagination.html' %}
+    </div>
+    <div class="alert">
+        <button type="button" class="close" data-dismiss="alert">&times;</button>
+        {% trans "Deprecated plugins are printed in red." %}
+    </div>
+    {% else %}
+    {% block plugins_message %}
+    <div class="alert">
+        <button type="button" class="close" data-dismiss="alert">&times;</button>
+        {% trans "This list is empty!" %}
+    </div>
+    {% endblock %}
+    {% endif %}
+    <script type="text/javascript">
+        jQuery('.popover').popover();
+    </script>
+{% endblock %}

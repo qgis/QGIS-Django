@@ -628,6 +628,31 @@ def delete_plugin_icon(sender, instance, **kw):
         pass
 
 
+class PluginInvalid(models.Model):
+    """Invalid plugins model.
+
+    There were existing plugins on the server before the validation
+    mechanism updated.
+    We run the management command to validate them, and track the invalid one
+    of the latest version.
+    """
+
+    plugin = models.ForeignKey(Plugin, on_delete=models.CASCADE, unique=True)
+    # We track the version number, not the version instance.
+    # So that when the version has been deleted, we keep the plugin
+    # in the tracking list
+    validated_version = VersionField(
+        _('Version'), max_length=32, db_index=True)
+    validated_at = models.DateTimeField(
+        _('Validated at'), auto_now_add=True, editable=False)
+    message = models.CharField(
+        _('Message'),
+        help_text=_('Invalid error message'),
+        max_length=256,
+        editable=False
+    )
+
+
 models.signals.post_delete.connect(
     delete_version_package, sender=PluginVersion)
 models.signals.post_delete.connect(delete_plugin_icon, sender=Plugin)

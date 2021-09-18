@@ -55,6 +55,11 @@ urlpatterns += [
     url(r'^user/(?P<username>\w+)/manage/$', user_permissions_manage, {}, name='user_permissions_manage'),
 ]
 
+# Invalid Plugin
+urlpatterns += [
+    url(r'^invalid_plugins/$', InvalidPluginList.as_view(), name='invalid_plugins'),
+]
+
 
 # Version Management
 urlpatterns += [
