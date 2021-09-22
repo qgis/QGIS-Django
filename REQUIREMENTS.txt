@@ -1,4 +1,4 @@
-Django==2.2.18
+Django==2.2.24
 # Currently broken with 'no module named defaults' error
 #Feedjack==0.9.18
 # So use George's fork rather
@@ -8,7 +8,7 @@ git+https://github.com/elpaso/feedjack.git
 Markdown==2.3.1
 #PIL==1.1.7
 Pillow
-Pygments==1.6
+Pygments==2.7.4
 Whoosh==2.5.6
 argparse==1.2.1
 #cab==0.2.0 # Not used anymore..-
@@ -16,7 +16,7 @@ argparse==1.2.1
 django-annoying==0.7.7
 django-auth-ldap==1.2.6
 django-autoslug==1.7.1
-django-debug-toolbar==1.4
+django-debug-toolbar==1.11.1
 django-endless-pagination==2.0
 django-extensions==1.2.0
 django-generic-aggregation==0.3.2
