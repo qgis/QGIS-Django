@@ -65,6 +65,7 @@ urlpatterns = [
     url(r'^styles/', include('styles.urls')),
     url(r'^geopackages/', include('geopackages.urls')),
     url(r'^models/', include('models.urls')),
+    url(r'^wavefronts/', include('wavefronts.urls')),
 ]
 
 # ABP: temporary home page
@@ -120,9 +121,10 @@ simplemenu.register(
     '/planet/',
 #    '/community-map/',
     '/plugins/',
-    '/styles/',
-    '/geopackages/',
-    '/models/',
+    '/styles/?is_galery=true',
+    '/geopackages/?is_galery=true',
+    '/models/?is_galery=true',
+    '/wavefronts/?is_galery=true',
     FlatPage.objects.all(),
     simplemenu.models.URLItem.objects.all(),
 )

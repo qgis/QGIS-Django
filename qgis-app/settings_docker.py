@@ -76,6 +76,7 @@ INSTALLED_APPS = [
     'geopackages',
     # models (sharing .model3 file feature)
     'models',
+    'wavefronts'
 ]
 
 DATABASES = {
