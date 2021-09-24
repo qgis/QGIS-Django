@@ -13,15 +13,15 @@
     }
 
     .galery:hover {
-        background-color: #7f7f7f;
+        background-color: #3e88ce;
     }
 
     .galery:hover .image-info a, .galery:hover .image-info {
-        color: whitesmoke;
+        color: aliceblue;
     }
 
     .galery:hover a.btn-download {
-        color: #80a732;
+        color: #78a2cc;
     }
 
     .frame-image-demo {
@@ -110,7 +110,7 @@
                  <p>
 
                     {% if object.style_type %}
-                    style: {{ object.style_type.name|title }}
+                    Style Type: {{ object.style_type.name|title }}
                     {%  else %}
                     {{ object.description|md_to_html|striptags|truncatewords:15 }}
                     {% endif %}

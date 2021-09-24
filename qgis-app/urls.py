@@ -120,9 +120,9 @@ simplemenu.register(
     '/planet/',
 #    '/community-map/',
     '/plugins/',
-    '/styles/',
-    '/geopackages/',
-    '/models/',
+    '/styles/?is_galery=true',
+    '/geopackages/?is_galery=true',
+    '/models/?is_galery=true',
     FlatPage.objects.all(),
     simplemenu.models.URLItem.objects.all(),
 )
