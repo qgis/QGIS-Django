@@ -237,6 +237,13 @@ class Plugin (models.Model):
     # True if the plugin has a server interface
     server = models.BooleanField(_('Server'), default=False, db_index=True)
 
+    # slug
+    slug = models.CharField(
+        _('Slug'),
+        max_length=400,
+        unique=True,
+    )
+
     # Managers
     objects = models.Manager()
     base_objects = BasePluginManager()
@@ -350,9 +357,15 @@ class Plugin (models.Model):
         """
         from django.core.exceptions import ValidationError
 
+        message = 'must start with an ASCII letter and can contain only ASCII letters, digits and the - and _ signs.'
+
         if not re.match(r'^[A-Za-z][A-Za-z0-9-_]+$', self.package_name):
             raise ValidationError(
-                _('Plugin package_name (which equals to the main plugin folder inside the zip file) must start with an ASCII letter and can contain only ASCII letters, digits and the - and _ signs.'))
+                _('Plugin package_name (which equals to the main plugin folder inside the zip file) ' + message))
+
+        if self.slug and not re.match(r'^[A-Za-z][A-Za-z0-9-_]+$', self.slug):
+            raise ValidationError(
+                _('Plugin slug (which will be in your Plugin URL) ' + message))
 
         if self.pk:
             qs = Plugin.objects.filter(
@@ -372,10 +385,20 @@ class Plugin (models.Model):
             raise ValidationError(
                 _('A plugin with a similar package_name (%s) already exists (the package_name only differs in case).') % qs.all()[0].package_name)
 
+        if self.pk:
+            qs = Plugin.objects.filter(
+                slug__iexact=self.slug).exclude(pk=self.pk)
+        else:
+            qs = Plugin.objects.filter(slug__iexact=self.slug)
+        if qs.exists():
+            raise ValidationError(
+                _('A plugin with a similar slug (%s) already exists (the slug only differs in case).') % qs.first().slug)
+
     def save(self, keep_date=False, *args, **kwargs):
         """
         Soft triggers:
         * updates modified_on if keep_date is not set
+        * updates slug
         """
         if self.pk and not keep_date:
             import logging
@@ -383,6 +406,8 @@ class Plugin (models.Model):
             self.modified_on = datetime.datetime.now()
         if not self.pk:
             self.modified_on = datetime.datetime.now()
+        if not self.slug:
+            self.slug = self.package_name
         super(Plugin, self).save(*args, **kwargs)
 
 
