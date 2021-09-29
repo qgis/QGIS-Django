@@ -15,7 +15,7 @@
         <download_url>{% if request.is_secure %}https{% else %}http{% endif %}://{{ request.get_host }}{{ version.get_download_url }}</download_url>
         <uploaded_by><![CDATA[{{ version.created_by }}]]></uploaded_by>
         <create_date>{{ version.created_on.isoformat }}</create_date>
-        <update_date>{{ version.modified_on.isoformat }}</update_date>
+        <update_date>{{ version.plugin.modified_on.isoformat }}</update_date>
         <experimental>{% if version.experimental %}True{% else%}False{% endif %}</experimental>
         <deprecated>{{ version.plugin.deprecated }}</deprecated>
         <tracker><![CDATA[{{ version.plugin.tracker }}]]></tracker>
