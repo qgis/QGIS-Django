@@ -32,6 +32,7 @@ class WavefrontCreateView(ResourceMixin, ResourceBaseCreateView):
     """Upload a Wavefront File"""
 
     form_class = UploadForm
+    is_1mb_limit_enable = False
 
 
 class WavefrontDetailView(ResourceMixin, ResourceBaseDetailView):

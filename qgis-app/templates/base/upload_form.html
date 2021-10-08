@@ -26,6 +26,7 @@
 
     <script type="text/javascript" src="{% static 'js/resource_upload.js' %}"></script>
 
+  {% if limit_1mb %}
     <script>
         // check filesize
         $('#id_file').bind('change', function() {
@@ -37,4 +38,5 @@
             };
         });
     </script>
+  {% endif %}
 {% endblock %}

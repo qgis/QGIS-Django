@@ -222,6 +222,7 @@ class ResourceBaseCreateView(LoginRequiredMixin,
     """Upload a Resource File."""
 
     template_name = 'base/upload_form.html'
+    is_1mb_limit_enable = True
 
     def form_valid(self, form):
         self.obj = form.save(commit=False)
@@ -238,6 +239,11 @@ class ResourceBaseCreateView(LoginRequiredMixin,
     def get_success_url(self):
         url_name = '%s_detail' % self.resource_name_url_base
         return reverse(url_name, kwargs={'pk': self.object.id})
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data()
+        context['limit_1mb'] = self.is_1mb_limit_enable
+        return context
 
 
 class ResourceBaseDetailView(ResourceBaseContextMixin,
