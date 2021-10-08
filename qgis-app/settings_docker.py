@@ -63,6 +63,8 @@ INSTALLED_APPS = [
 
     'feedjack',
 
+    'preferences',
+
     'rest_framework',
     'sorl_thumbnail_serializer',  # serialize image
     'drf_multiple_model',
@@ -120,3 +122,4 @@ FILE_UPLOAD_PERMISSIONS = 0o644
 REST_FRAMEWORK = {
     'TEST_REQUEST_DEFAULT_FORMAT': 'json',
 }
+

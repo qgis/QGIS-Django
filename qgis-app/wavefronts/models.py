@@ -1,5 +1,7 @@
 import os
 
+from preferences.models import Preferences
+
 from django.conf import settings
 from django.core.validators import FileExtensionValidator
 from django.db import models
@@ -8,7 +10,8 @@ from django.utils.translation import ugettext_lazy as _
 
 from base.models.processing_models import Resource, ResourceReview
 
-WAVEFRONTS_STORAGE_PATH = getattr(settings, 'WAVEFRONTS_STORAGE_PATH', 'wavefronts/%Y')
+WAVEFRONTS_STORAGE_PATH = getattr(
+    settings, 'WAVEFRONTS_STORAGE_PATH', 'wavefronts/%Y')
 
 
 class Wavefront(Resource):
@@ -55,4 +58,12 @@ class Review(ResourceReview):
         blank=False,
         null=False,
         on_delete=models.CASCADE
+    )
+
+
+class FilesizePreferences(Preferences):
+    __module__ = 'preferences.models'
+    wavefront_filesize_limit = models.FloatField(
+        help_text=_('filesize in mb'),
+        default=10
     )

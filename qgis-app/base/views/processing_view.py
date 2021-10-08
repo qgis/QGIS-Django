@@ -215,11 +215,15 @@ class ResourceBaseContextMixin(ContextMixin):
         return context
 
 
+@method_decorator(never_cache, name='dispatch')
 class ResourceBaseCreateView(LoginRequiredMixin,
                              ResourceBaseContextMixin,
                              SuccessMessageMixin,
                              CreateView):
-    """Upload a Resource File."""
+    """Upload a Resource File.
+
+    We don't cache since there's a dynamic preference value on the template
+    """
 
     template_name = 'base/upload_form.html'
     is_1mb_limit_enable = True

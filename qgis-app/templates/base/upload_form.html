@@ -26,17 +26,17 @@
 
     <script type="text/javascript" src="{% static 'js/resource_upload.js' %}"></script>
 
-  {% if limit_1mb %}
+
     <script>
         // check filesize
         $('#id_file').bind('change', function() {
-            let maxFileSize = 1000000;
+            let maxFileSize = {% if limit_1mb %}1000000{% else %}{{ preferences.FilesizePreferences.wavefront_filesize_limit }} * 1000000{% endif %};
             let fileSize = this.files[0].size
             if (fileSize > maxFileSize){
-                alert('You have selected a file that is more than 1mb, files larger than this are not supported.');
+                alert(`You have selected a file that is more than ${maxFileSize/1000000}mb, files larger than this are not supported.`);
                 $('#id_file').val('');
             };
         });
     </script>
-  {% endif %}
+
 {% endblock %}

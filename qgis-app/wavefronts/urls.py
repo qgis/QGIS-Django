@@ -22,7 +22,8 @@ urlpatterns = [
          name='wavefront_update'),
     path('<int:pk>/delete/', WavefrontDeleteView.as_view(),
          name='wavefront_delete'),
-    path('<int:pk>/review/', WavefrontReviewView.as_view(), name='wavefront_review'),
+    path('<int:pk>/review/', WavefrontReviewView.as_view(),
+         name='wavefront_review'),
     path('<int:pk>/download/', WavefrontDownloadView.as_view(),
          name='wavefront_download'),
 

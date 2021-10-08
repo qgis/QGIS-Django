@@ -146,7 +146,7 @@ INSTALLED_APPS = [
     'bootstrapform',
     'rest_framework',
     'rest_framework_gis',
-
+    'preferences',
     # styles:
     'styles',
 ]
@@ -163,6 +163,7 @@ TEMPLATES = [
                 'django.template.context_processors.request',
                 # ABP: adds DEBUG and BASE_TEMPLATE vars
                 "qgis_context_processor.additions",
+                "preferences.context_processors.preferences_cp",
             ),
         },
     },
