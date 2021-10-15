@@ -1,16 +1,13 @@
 import os
 import tempfile
 
-from django.conf import settings
 from django.core import mail
 from django.core.files.uploadedfile import SimpleUploadedFile
-from django.test import TestCase, Client, override_settings
+from django.test import TestCase, override_settings
 from django.urls import reverse
 from django.contrib.auth.models import User, Group
 
 from wavefronts.models import Wavefront
-from base.views. processing_view import (resource_update_notify,
-                                         resource_notify)
 
 WAVEFRONT_DIR = os.path.join(os.path.dirname(__file__), "wavefrontfiles")
 
@@ -60,7 +57,8 @@ class TestPageUserAnonymous(TestCase):
     def test_upload(self):
         url = reverse('wavefront_create')
         response = self.client.get(url)
-        self.assertRedirects(response, '/accounts/login/?next=/wavefronts/add/')
+        self.assertRedirects(
+            response, '/accounts/login/?next=/wavefronts/add/')
 
 
 @override_settings(MEDIA_ROOT=tempfile.mkdtemp())

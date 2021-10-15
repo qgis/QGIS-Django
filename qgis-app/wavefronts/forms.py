@@ -18,7 +18,7 @@ class UploadForm(ResourceBaseCleanFileForm, ResourceFormMixin):
     def clean_file(self):
         zip_file = self.cleaned_data['file']
         if zip_file:
-            is_valid = WavefrontValidator(zip_file).validate_wavefront()
+            WavefrontValidator(zip_file).validate_wavefront()
         return zip_file
 
 

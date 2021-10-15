@@ -20,7 +20,7 @@ class WavefrontValidator:
     def valid_zip(self):
         try:
             zip_file = ZipFile(self.file)
-        except Exception as e:
+        except Exception:
             raise ValidationError(_("Could not unzip file."))
         return zip_file
 
@@ -66,4 +66,6 @@ class WavefrontValidator:
             raise ValidationError(_(f'Wavefront validation failed. {e}'))
         # remove directory and the content
         shutil.rmtree(temp_dir)
+        if not scene:
+            return False
         return True
