@@ -2,6 +2,7 @@ from django.urls import path
 
 from wavefronts.views import (WavefrontCreateView,
                               WavefrontDetailView,
+                              WavefrontDetailWithViewerView,
                               WavefrontUpdateView,
                               WavefrontListView,
                               WavefrontDeleteView,
@@ -9,7 +10,8 @@ from wavefronts.views import (WavefrontCreateView,
                               WavefrontRequireActionListView,
                               WavefrontReviewView,
                               WavefrontDownloadView,
-                              wavefront_nav_content,)
+                              wavefront_nav_content,
+                              wavefront_obj_file)
 
 
 urlpatterns = [
@@ -18,6 +20,8 @@ urlpatterns = [
     path('add/', WavefrontCreateView.as_view(), name='wavefront_create'),
     path('<int:pk>/', WavefrontDetailView.as_view(),
          name='wavefront_detail'),
+    path('<int:pk>/viewer/', WavefrontDetailWithViewerView.as_view(),
+         name='wavefront_viewer'),
     path('<int:pk>/update/', WavefrontUpdateView.as_view(),
          name='wavefront_update'),
     path('<int:pk>/delete/', WavefrontDeleteView.as_view(),
@@ -26,6 +30,8 @@ urlpatterns = [
          name='wavefront_review'),
     path('<int:pk>/download/', WavefrontDownloadView.as_view(),
          name='wavefront_download'),
+    path('<int:pk>/file/', wavefront_obj_file,
+         name='wavefront_file'),
 
     path('unapproved/', WavefrontUnapprovedListView.as_view(),
          name='wavefront_unapproved'),
