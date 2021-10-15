@@ -1,6 +1,5 @@
 """Wavefront validator."""
 
-
 import os
 import pywavefront
 import re
@@ -9,7 +8,6 @@ import uuid
 from zipfile import ZipFile
 from django.core.exceptions import ValidationError
 from django.utils.translation import ugettext_lazy as _
-
 
 
 class WavefrontValidator:
@@ -39,7 +37,7 @@ class WavefrontValidator:
         mtl_file = f'{filename}.mtl'
         for file in self.valid_zip().filelist:
             if mtl_file == file.filename:
-                return None
+                return True
         raise ValidationError(_('Could not find .mtl file.'))
 
     def validate_wavefront(self):
