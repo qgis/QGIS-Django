@@ -53,6 +53,10 @@ STATICFILES_DIRS = [
     os.path.join(SITE_ROOT, "static"),
 ]
 
+STATICFILES_FINDERS = [
+    'django.contrib.staticfiles.finders.FileSystemFinder',
+    'django.contrib.staticfiles.finders.AppDirectoriesFinder',
+]
 
 
 # Make this unique, and don't share it with anybody.
