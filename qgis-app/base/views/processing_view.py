@@ -256,6 +256,17 @@ class ResourceBaseDetailView(ResourceBaseContextMixin,
 
     context_object_name = 'object_detail'
 
+    # js source files
+    # e.g. js = ({'src': 'path/to/js/under/static/file.js', 'type': 'module'},)
+    # attribute src is mandatory, type is optional
+    js = ()
+
+    # css source files
+    # e.g css = ('path/to/css/file1.css', 'path/to/css/file1.css')
+    css = ()
+
+    is_3d_model = False
+
     def get_template_names(self):
         object = self.get_object()
         if not object.approved:
@@ -269,6 +280,9 @@ class ResourceBaseDetailView(ResourceBaseContextMixin,
         context = super().get_context_data()
         user = self.request.user
         context['creator'] = self.object.get_creator_name
+        context['js'] = self.js
+        context['css'] = self.css
+        context['is_3d_model'] = self.is_3d_model
         if self.object.review_set.exists():
             if self.object.review_set.last().reviewer.first_name:
                 reviewer = "%s %s" % (
@@ -281,6 +295,8 @@ class ResourceBaseDetailView(ResourceBaseContextMixin,
             context['reviewer'] = reviewer
         if user.is_staff or is_resources_manager(user):
             context['form'] = ResourceBaseReviewForm()
+        if self.is_3d_model:
+            context['url_viewer'] = "%s_viewer" % self.resource_name_url_base
         return context
 
 

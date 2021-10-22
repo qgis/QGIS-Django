@@ -1,5 +1,12 @@
 {% extends 'base/base.html' %}{% load i18n static thumbnail resources_custom_tags%}
 
+{% block extrajs %}
+  {{ block.super }}
+  {% for css_src in css %}
+    <link rel="stylesheet" href="{% static css_src %}" type="text/css" />
+  {% endfor %}
+{% endblock %}
+
 {% block content %}
         <h3 class="style-title">{{ object_detail.name }}</h3>
         {% if user == object_detail.creator or user.is_staff %}
@@ -13,10 +20,15 @@
             <div class="span4 mb-5">
                 <div class="style-polaroid">
                     {% thumbnail object_detail.thumbnail_image "420x420" format="PNG" as im %}
-                    <img class="" alt="{% trans "image" %}" src="{{ im.url }}" width="{{ im.x }}" height="{{ im.y }}" />
+                    <img class="image-resource" alt="{% trans "image" %}" src="{{ im.url }}" width="{{ im.x }}" height="{{ im.y }}" />
                     {% endthumbnail %}
-
+                    {% if is_3d_model %}
+                      <div class="middle">
+                        <a class="btn" href="{% url url_viewer object_detail.id %}">3D View</a>
+                      </div>
+                    {% endif %}
                 </div>
+
 
             </div>
             <div class="span8">
@@ -62,4 +74,11 @@
             </div>
 
         </div>
+
+
+  {% for js_src in js %}
+    <script type="{% if not js_src.type %}text/javascript{% else %}{{ js_src.type }}{% endif %}" src="{% static js_src.src %}"></script>
+  {%  endfor %}
+
+
 {% endblock %}

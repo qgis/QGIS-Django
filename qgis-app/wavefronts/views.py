@@ -28,7 +28,7 @@ class ResourceMixin():
     review_model = Review
 
     # The resource_name will be displayed as the app name on web page
-    resource_name = 'Wavefront'
+    resource_name = '3D Model'
 
     # The url name in urls.py should start with this value
     resource_name_url_base = 'wavefront'
@@ -43,6 +43,10 @@ class WavefrontCreateView(ResourceMixin, ResourceBaseCreateView):
 
 class WavefrontDetailView(ResourceMixin, ResourceBaseDetailView):
     """Wavefront Detail View"""
+
+    is_3d_model = True
+    js = ({'src': 'wavefront/js/test.js'},)
+    css = ('wavefront/css/wavefront.css',)
 
 
 class WavefrontUpdateView(ResourceMixin, ResourceBaseUpdateView):
