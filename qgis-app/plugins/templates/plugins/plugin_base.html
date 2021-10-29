@@ -1,4 +1,5 @@
 {% extends BASE_TEMPLATE %}{% load i18n plugins_tagcloud static %}
+{% load resources_custom_tags %}
 {% block extratitle %}{% trans "Python Plugins Repository"%}{% endblock %}
 {% block app_title %}
 <h2>{% trans "QGIS Python Plugins Repository"%}</h2>
@@ -40,5 +41,5 @@
 {% endblock %}
 
 {% block "credits" %}
-{% trans "This web application was developed by:" %}&nbsp;<a href="https://www.itopen.it">Alessandro Pasotti</a> and &nbsp;<a href="https://kartoza.com"><img src="{% static 'images/kartoza-logo-only.png' %}" alt="Kartoza icon" width="16" height="16">Kartoza</a>.
+  {{ block.super }}
 {% endblock %}
