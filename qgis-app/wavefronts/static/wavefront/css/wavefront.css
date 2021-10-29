@@ -25,3 +25,13 @@
 .style-polaroid:hover .middle {
   opacity: 1;
 }
+
+/* 3d style */
+.container-3dview {
+  margin-left: 50px;
+  width: 100%;
+  display: block;
+}
+#c {
+  width: 100%;
+}

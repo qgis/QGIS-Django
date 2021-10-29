@@ -17,21 +17,27 @@
         {% endif %}
         <hr />
         <div class="row">
-            <div class="span4 mb-5">
+            <div class="span4 mb-5 view-resource">
                 <div class="style-polaroid">
                     {% thumbnail object_detail.thumbnail_image "420x420" format="PNG" as im %}
                     <img class="image-resource" alt="{% trans "image" %}" src="{{ im.url }}" width="{{ im.x }}" height="{{ im.y }}" />
                     {% endthumbnail %}
                     {% if is_3d_model %}
                       <div class="middle">
-                        <a class="btn" href="{% url url_viewer object_detail.id %}">3D View</a>
+{#                        <a class="btn" href="{% url url_viewer object_detail.id %}">3D View</a>#}
+                        <a class="btn" href="#" id="view3d">3D View</a>
                       </div>
-                    {% endif %}
+                      </div>
+                      <div id="urlView" data-url="{% url 'wavefront_file' object_detail.id %}"></div>
+
+                    {% else %}
                 </div>
+                    {% endif %}
+
 
 
             </div>
-            <div class="span6">
+            <div class="span6 info-resource">
                 <dl class="dl-horizontal">
                     <dd></dd>
                     <dt>Name</dt>

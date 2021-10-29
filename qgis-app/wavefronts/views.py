@@ -45,7 +45,9 @@ class WavefrontDetailView(ResourceMixin, ResourceBaseDetailView):
     """Wavefront Detail View"""
 
     is_3d_model = True
-    js = ({'src': 'wavefront/js/test.js'},)
+    js = (
+        {'src': 'wavefront/js/3d_view.js', 'type': 'module'},
+    )
     css = ('wavefront/css/wavefront.css',)
 
 
@@ -79,12 +81,6 @@ class WavefrontReviewView(ResourceMixin, ResourceBaseReviewView):
 
 class WavefrontDownloadView(ResourceMixin, ResourceBaseDownload):
     """Download a Wavefront"""
-
-
-class WavefrontDetailWithViewerView(WavefrontDetailView):
-
-    def get_template_names(self):
-        return 'wavefronts/viewer.html'
 
 
 def wavefront_nav_content(request):

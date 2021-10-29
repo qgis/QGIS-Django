@@ -1,8 +1,23 @@
-const urlObj = document.querySelector('#c').dataset.url
+console.log('test from test.js')
+
+const urlObj = document.querySelector('div#urlView').dataset.url
+console.log(urlObj)
 
 import * as THREE from 'https://threejsfundamentals.org/threejs/resources/threejs/r132/build/three.module.js';
 import {OrbitControls} from 'https://threejsfundamentals.org/threejs/resources/threejs/r132/examples/jsm/controls/OrbitControls.js';
 import {OBJLoader} from 'https://threejsfundamentals.org/threejs/resources/threejs/r132/examples/jsm/loaders/OBJLoader.js';
+
+const view3d = () => {
+  const $container = $("div.view-resource");
+  $container.children('div.style-polaroid').remove();
+  $container.append(
+    '<div class="container-3dview"><canvas id="c"></canvas></div>'
+  )
+
+  main();
+}
+
+$("#view3d").on('click', view3d)
 
 function main() {
 
@@ -66,7 +81,7 @@ function main() {
     const objLoader = new OBJLoader();
     objLoader.load(urlObj, (root) => {
       scene.add(root);
-    });
+    }, loadAnimation());
   }
 
   function resizeRendererToDisplaySize(renderer) {
@@ -93,7 +108,9 @@ function main() {
     requestAnimationFrame(render);
   }
 
+  function loadAnimation(){
+    // $(".container-3dview").append('<h1>loadingggg</h1>')
+  }
+
   requestAnimationFrame(render);
 }
-
-main();

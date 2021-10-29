@@ -2,7 +2,6 @@ from django.urls import path
 
 from wavefronts.views import (WavefrontCreateView,
                               WavefrontDetailView,
-                              WavefrontDetailWithViewerView,
                               WavefrontUpdateView,
                               WavefrontListView,
                               WavefrontDeleteView,
@@ -20,8 +19,6 @@ urlpatterns = [
     path('add/', WavefrontCreateView.as_view(), name='wavefront_create'),
     path('<int:pk>/', WavefrontDetailView.as_view(),
          name='wavefront_detail'),
-    path('<int:pk>/viewer/', WavefrontDetailWithViewerView.as_view(),
-         name='wavefront_viewer'),
     path('<int:pk>/update/', WavefrontUpdateView.as_view(),
          name='wavefront_update'),
     path('<int:pk>/delete/', WavefrontDeleteView.as_view(),
