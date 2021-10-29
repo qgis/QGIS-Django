@@ -141,7 +141,7 @@
 
         // galery or list view
         const url = window.location.href.split('?')[0];
-        const isGalery = new URLSearchParams(window.location.search).get("is_galery");
+        const isGalery = new URLSearchParams(window.location.search).get("is_gallery");
         console.log(isGalery)
         if (isGalery && isGalery === 'true') {
           $('.list-grid').find('.is-galery').addClass('disabled')
@@ -154,7 +154,7 @@
           this.href = url;
         })
         $('.list-grid a.is-galery').each(function(){
-          this.href = url + '?is_galery=true';
+          this.href = url + '?is_gallery=true';
         })
 
         // change color for sorted head
