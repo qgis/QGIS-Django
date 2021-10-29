@@ -341,7 +341,7 @@ class ResourceBaseListView(ResourceBaseContextMixin,
         context['count'] = self.get_queryset().count()
         context['order_by'] = self.request.GET.get('order_by', None)
         context['queries'] = self.request.GET.get('q', None)
-        context['is_galery'] = self.request.GET.get('is_galery', None)
+        context['is_gallery'] = self.request.GET.get('is_gallery', None)
         return context
 
     def get_queryset(self):
@@ -351,16 +351,16 @@ class ResourceBaseListView(ResourceBaseContextMixin,
 
     def get_template_names(self):
         context = self.get_context_data()
-        is_galery = context['is_galery']
-        if is_galery:
+        is_gallery = context['is_gallery']
+        if is_gallery:
             self.paginate_by = settings.PAGINATION_DEFAULT_PAGINATION
             return 'base/list_galery.html'
         else:
             return 'base/list.html'
 
     def get_paginate_by(self, queryset):
-        is_galery = self.request.GET.get('is_galery', None)
-        if is_galery:
+        is_gallery = self.request.GET.get('is_gallery', None)
+        if is_gallery:
             return settings.PAGINATION_DEFAULT_PAGINATION_HUB
         return settings.PAGINATION_DEFAULT_PAGINATION
 

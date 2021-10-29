@@ -140,26 +140,26 @@
         // Add arguments in pagination
         const orderBy = new URLSearchParams(window.location.search).get("order_by");
         const queries = new URLSearchParams(window.location.search).get("q");
-        const is_galery = 'is_galery=true'
+        const is_gallery = 'is_gallery=true'
         if (orderBy){
             $(".pagination li a").each(function(){
-                this.href += 'order_by=' + orderBy +'&&' + is_galery + '&&';
+                this.href += 'order_by=' + orderBy +'&&' + is_gallery + '&&';
             })
         }
         if (queries){
             $(".pagination li a").each(function(){
-                this.href += 'q=' + queries +'&&' + is_galery + '&&';
+                this.href += 'q=' + queries +'&&' + is_gallery + '&&';
             })
         }
         if (!orderBy && !queries){
           $(".pagination li a").each(function(){
-                this.href += is_galery + '&&';
+                this.href += is_gallery + '&&';
             })
         }
 
         // galery or list view
         const url = window.location.href.split('?')[0];
-        const isGalery = new URLSearchParams(window.location.search).get("is_galery");
+        const isGalery = new URLSearchParams(window.location.search).get("is_gallery");
         if (isGalery && isGalery === 'true') {
           $('.list-grid').find('.is-galery').addClass('disabled')
         } else {
@@ -170,7 +170,7 @@
           this.href = url;
         })
         $('.list-grid a.is-galery').each(function(){
-          this.href = url + '?is_galery=true';
+          this.href = url + '?is_gallery=true';
         })
 
         // edit search input from base template, in order to use it for styles
@@ -207,10 +207,10 @@
       const order = $('div.filter-sort').find('a').attr('data')
       const sort_by = $('div.filter-sort').find('select').val()
       let current_query = new URLSearchParams(window.location.search).get("q");
-      let is_galery = new URLSearchParams(window.location.search).get("is_galery");
+      let is_gallery = new URLSearchParams(window.location.search).get("is_gallery");
       if (current_query === null) current_query = '';
 
-      location.href = location.protocol + '//' + location.host + location.pathname + `?order_by=${order}${sort_by}&&is_galery=${is_galery}`
+      location.href = location.protocol + '//' + location.host + location.pathname + `?order_by=${order}${sort_by}&&is_gallery=${is_gallery}`
     }
     </script>
 {% endblock %}

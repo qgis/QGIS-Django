@@ -121,10 +121,9 @@ simplemenu.register(
     '/planet/',
 #    '/community-map/',
     '/plugins/',
-    '/styles/?is_galery=true',
-    '/geopackages/?is_galery=true',
-    '/models/?is_galery=true',
-    '/wavefronts/?is_galery=true',
+    '/styles/?order_by=-upload_date&&is_gallery=true',
+    '/geopackages/?order_by=-upload_date&&is_gallery=true',
+    '/models/?order_by=-upload_date&&is_gallery=true',
     FlatPage.objects.all(),
     simplemenu.models.URLItem.objects.all(),
 )
