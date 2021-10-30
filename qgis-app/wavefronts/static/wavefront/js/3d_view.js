@@ -9,7 +9,7 @@ import {OBJLoader} from 'https://threejsfundamentals.org/threejs/resources/three
 
 const view3d = () => {
   const $container = $("div.view-resource");
-  $container.children('div.style-polaroid').remove();
+  $container.children('div').remove();
   $container.append(
     '<div class="container-3dview"><canvas id="c"></canvas></div>'
   )
@@ -17,7 +17,8 @@ const view3d = () => {
   main();
 }
 
-$("#view3d").on('click', view3d)
+$(".style-polaroid").on('click', view3d)
+
 
 function main() {
 

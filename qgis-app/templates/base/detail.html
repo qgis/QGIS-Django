@@ -24,8 +24,9 @@
                     {% endthumbnail %}
                     {% if is_3d_model %}
                       <div class="middle">
-{#                        <a class="btn" href="{% url url_viewer object_detail.id %}">3D View</a>#}
-                        <a class="btn" href="#" id="view3d">3D View</a>
+                        {% thumbnail object_detail.thumbnail_image "150x150" format="PNG" as im %}
+                          <img alt="{% trans "image" %}" src="{% static 'wavefront/img/cube.png' %}" width="{{ im.x }}" height="{{ im.y }}" />
+                        {% endthumbnail %}
                       </div>
                       </div>
                       <div id="urlView" data-url="{% url 'wavefront_file' object_detail.id %}"></div>

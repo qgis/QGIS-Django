@@ -1,37 +1,37 @@
+.view-resource {
+  position: relative;
+  text-align: center;
+}
 .image-resource {
   opacity: 1;
-  /*display: block;*/
-  /*width: 100%;*/
-  /*height: auto;*/
   transition: .5s ease;
   backface-visibility: hidden;
 }
-
 .middle {
   transition: .5s ease;
   opacity: 0;
-  /*position: absolute;*/
-  top: 50%;
-  /*left: 50%;*/
-  transform: translate(-50%, -50%);
-  -ms-transform: translate(-50%, -50%);
-  text-align: center;
+  position: absolute;
+  width: 420px;
+  top: 40%;
 }
 
 .style-polaroid:hover .image-resource {
   opacity: 0.3;
+  cursor: pointer;
 }
-
 .style-polaroid:hover .middle {
   opacity: 1;
+  cursor: pointer;
 }
 
 /* 3d style */
 .container-3dview {
-  margin-left: 50px;
   width: 100%;
-  display: block;
+  margin-top: 23px;
+  box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
+  cursor: move;
 }
 #c {
   width: 100%;
 }
+
