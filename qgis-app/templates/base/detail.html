@@ -29,7 +29,7 @@
                         {% endthumbnail %}
                       </div>
                       </div>
-                      <div id="urlView" data-url="{% url 'wavefront_file' object_detail.id %}"></div>
+                      <div id="urlView" data-url="{% url 'wavefront_file' object_detail.id %}" data-mtl-url="{%url 'wavefront_mtl_file' object_detail.id  %}"></div>
 
                     {% else %}
                 </div>
