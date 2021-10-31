@@ -17,7 +17,7 @@ from base.views.processing_view import (ResourceBaseCreateView,
 from wavefronts.forms import UpdateForm, UploadForm
 from wavefronts.models import Wavefront, Review
 
-from wavefronts.utilities import get_obj_info
+from wavefronts.utilities import get_obj_info, get_mtl_info
 
 
 class ResourceMixin():
@@ -99,5 +99,19 @@ def wavefront_obj_file(request, pk):
     path, filename = os.path.split(obj_filename)
     obj_data = ZipFile(file).read(obj_filename)
     response = HttpResponse(obj_data, content_type='model/obj')
+    response['Content-Disposition'] = f'attachment; filename={filename}'
+    return response
+
+
+def wavefront_mtl_file(request, pk):
+    try:
+        wavefront = Wavefront.objects.get(pk=pk)
+        file = wavefront.file
+    except Wavefront.DoesNotExist:
+        raise Http404('Wavefront does not exist')
+    obj_filename, obj_filesize = get_mtl_info(file)
+    path, filename = os.path.split(obj_filename)
+    obj_data = ZipFile(file).read(obj_filename)
+    response = HttpResponse(obj_data, content_type='model/mtl')
     response['Content-Disposition'] = f'attachment; filename={filename}'
     return response

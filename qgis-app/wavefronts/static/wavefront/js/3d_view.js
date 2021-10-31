@@ -1,11 +1,12 @@
 console.log('test from test.js')
 
 const urlObj = document.querySelector('div#urlView').dataset.url
-console.log(urlObj)
+const urlMtl = document.querySelector('div#urlView').dataset.mtlUrl
 
 import * as THREE from 'https://threejsfundamentals.org/threejs/resources/threejs/r132/build/three.module.js';
 import {OrbitControls} from 'https://threejsfundamentals.org/threejs/resources/threejs/r132/examples/jsm/controls/OrbitControls.js';
 import {OBJLoader} from 'https://threejsfundamentals.org/threejs/resources/threejs/r132/examples/jsm/loaders/OBJLoader.js';
+import {MTLLoader} from 'https://threejsfundamentals.org/threejs/resources/threejs/r132/examples/jsm/loaders/MTLLoader.js';
 
 const view3d = () => {
   const $container = $("div.view-resource");
@@ -20,7 +21,28 @@ const view3d = () => {
 $(".style-polaroid").on('click', view3d)
 
 
-function main() {
+function fitCameraToObject( camera, object, offset ) {
+  // Taken from https://discourse.threejs.org/t/camera-zoom-to-fit-object/936/21
+  offset = offset || 1.5;
+  const boundingBox = new THREE.Box3();
+  boundingBox.setFromObject(object);
+
+  const center = boundingBox.getCenter(new THREE.Vector3());
+  const size = boundingBox.getSize(new THREE.Vector3());
+
+  const startDistance = center.distanceTo(camera.position);
+  const endDistance = camera.aspect > 1 ?
+      ((size.y / 2) + offset) / Math.abs(Math.tan(camera.fov / 2)) :
+      ((size.y / 2) + offset) / Math.abs(Math.tan(camera.fov / 2)) / camera.aspect;
+  camera.position.set(
+      camera.position.x * endDistance / startDistance,
+      camera.position.y * endDistance / startDistance,
+      camera.position.z * endDistance / startDistance,
+  );
+  camera.lookAt(center);
+}
+
+async function main() {
 
   const canvas = document.querySelector('#c');
   const renderer = new THREE.WebGLRenderer({canvas});
@@ -37,28 +59,7 @@ function main() {
   controls.update();
 
   const scene = new THREE.Scene();
-  scene.background = new THREE.Color('black');
-
-  {
-    const planeSize = 40;
-
-    const loader = new THREE.TextureLoader();
-    const texture = loader.load('https://threejsfundamentals.org/threejs/resources/images/checker.png');
-    texture.wrapS = THREE.RepeatWrapping;
-    texture.wrapT = THREE.RepeatWrapping;
-    texture.magFilter = THREE.NearestFilter;
-    const repeats = planeSize / 2;
-    texture.repeat.set(repeats, repeats);
-
-    const planeGeo = new THREE.PlaneGeometry(planeSize, planeSize);
-    const planeMat = new THREE.MeshPhongMaterial({
-      map: texture,
-      side: THREE.DoubleSide,
-    });
-    const mesh = new THREE.Mesh(planeGeo, planeMat);
-    mesh.rotation.x = Math.PI * -.5;
-    scene.add(mesh);
-  }
+  scene.background = new THREE.Color('white');
 
   {
     const skyColor = 0xB1E1FF;  // light blue
@@ -69,20 +70,33 @@ function main() {
   }
 
   {
-    const color = 0xFFFFFF;
-    const intensity = 1;
-    const light = new THREE.DirectionalLight(color, intensity);
-    light.position.set(0, 10, 0);
-    light.target.position.set(-5, 0, 0);
-    scene.add(light);
-    scene.add(light.target);
-  }
 
-  {
+    let materials = null;
+    const mtlLoader = new MTLLoader();
+    try {
+      materials = await mtlLoader.loadAsync(urlMtl)
+      materials.preload();
+    } catch (e) {
+      console.error(e);
+    }
+
     const objLoader = new OBJLoader();
-    objLoader.load(urlObj, (root) => {
-      scene.add(root);
+    if (materials) {
+      objLoader.setMaterials(materials);
+    }
+    objLoader.load(urlObj, (object) => {
+
+      scene.add(object);
+
+      fitCameraToObject(
+          camera,
+          object,
+          10
+      )
+
     }, loadAnimation());
+
+
   }
 
   function resizeRendererToDisplaySize(renderer) {
