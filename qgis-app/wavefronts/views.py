@@ -1,6 +1,9 @@
 import os
 from zipfile import ZipFile
 from django.http import Http404, HttpResponse
+from django.shortcuts import get_object_or_404
+from django.template.response import TemplateResponse
+from django.utils.text import slugify
 
 from base.views.processing_view import (ResourceBaseCreateView,
                                         ResourceBaseDetailView,
@@ -13,10 +16,10 @@ from base.views.processing_view import (ResourceBaseCreateView,
                                         ResourceBaseDownload,
                                         resource_nav_content)
 
+from base.views.processing_view import check_resources_access
+
 from wavefronts.forms import UpdateForm, UploadForm
 from wavefronts.models import Wavefront, Review
-
-from wavefronts.utilities import get_obj_info, get_mtl_info
 
 
 class ResourceMixin():
@@ -44,6 +47,7 @@ class WavefrontCreateView(ResourceMixin, ResourceBaseCreateView):
 
         self.obj = form.save(commit=False)
         self.obj.creator = self.request.user
+        # we save the path with dummy file to avoid duplicate filename
         self.obj.file.name = form.file_path
         self.obj.save()
         resource_notify(self.obj, resource_type=self.resource_name)
@@ -97,49 +101,37 @@ class WavefrontDeleteView(ResourceMixin, ResourceBaseDeleteView):
 class WavefrontReviewView(ResourceMixin, ResourceBaseReviewView):
     """Create a review"""
 
-
+from .utilities import zipped_all_with_license
 class WavefrontDownloadView(ResourceMixin, ResourceBaseDownload):
     """Download a Wavefront"""
+
+
+    def get(self, request, *args, **kwargs):
+        object = get_object_or_404(self.model, pk=self.kwargs['pk'])
+        if not object.approved:
+            if not check_resources_access(self.request.user, object):
+                context = super(ResourceBaseDownload, self).get_context_data()
+                context['object_name'] = object.name
+                context['context'] = ('Download failed. This %s is '
+                                      'not approved' % self.resource_name)
+                return TemplateResponse(request, self.template_name, context)
+        else:
+            object.increase_download_counter()
+            object.save()
+
+        # zip the 3d files folder and license.txt
+        path, filename = os.path.split(object.file.file.name)
+        zipfile = zipped_all_with_license(path, object.name)
+
+        response = HttpResponse(
+            zipfile.getvalue(), content_type="application/x-zip-compressed")
+        response['Content-Disposition'] = 'attachment; filename=%s.zip' % (
+            slugify(object.name, allow_unicode=True)
+        )
+        return response
 
 
 def wavefront_nav_content(request):
     model = ResourceMixin.model
     response = resource_nav_content(request, model)
     return response
-
-
-def wavefront_obj_file(request, pk):
-    try:
-        wavefront = Wavefront.objects.get(pk=pk)
-        file = wavefront.file
-    except Wavefront.DoesNotExist:
-        raise Http404('Wavefront does not exist')
-    obj_filename, obj_filesize = get_obj_info(file)
-    path, filename = os.path.split(obj_filename)
-    obj_data = ZipFile(file).read(obj_filename)
-    response = HttpResponse(obj_data, content_type='model/obj')
-    response['Content-Disposition'] = f'attachment; filename={filename}'
-    return response
-
-
-def wavefront_mtl_file(request, pk):
-    try:
-        wavefront = Wavefront.objects.get(pk=pk)
-        file = wavefront.file
-    except Wavefront.DoesNotExist:
-        raise Http404('Wavefront does not exist')
-    obj_filename, obj_filesize = get_mtl_info(file)
-    path, filename = os.path.split(obj_filename)
-    obj_data = ZipFile(file).read(obj_filename)
-    response = HttpResponse(obj_data, content_type='model/mtl')
-    response['Content-Disposition'] = f'attachment; filename={filename}'
-    return response
-
-
-def get_obj_media_url(request, pk):
-    try:
-        wavefront = Wavefront.objects.get(pk=pk)
-        file = wavefront.file
-    except Wavefront.DoesNotExist:
-        raise Http404('Wavefront does not exist')
-

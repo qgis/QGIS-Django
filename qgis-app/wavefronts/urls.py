@@ -9,9 +9,7 @@ from wavefronts.views import (WavefrontCreateView,
                               WavefrontRequireActionListView,
                               WavefrontReviewView,
                               WavefrontDownloadView,
-                              wavefront_nav_content,
-                              wavefront_obj_file,
-                              wavefront_mtl_file)
+                              wavefront_nav_content)
 
 
 urlpatterns = [
@@ -28,10 +26,6 @@ urlpatterns = [
          name='wavefront_review'),
     path('<int:pk>/download/', WavefrontDownloadView.as_view(),
          name='wavefront_download'),
-    path('<int:pk>/file/', wavefront_obj_file,
-         name='wavefront_file'),
-    path('<int:pk>/mtl_file/', wavefront_mtl_file,
-         name='wavefront_mtl_file'),
 
     path('unapproved/', WavefrontUnapprovedListView.as_view(),
          name='wavefront_unapproved'),
