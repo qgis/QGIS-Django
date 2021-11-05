@@ -13,7 +13,6 @@ from base.views.processing_view import (ResourceBaseCreateView,
                                         ResourceBaseDownload,
                                         resource_nav_content)
 
-
 from wavefronts.forms import UpdateForm, UploadForm
 from wavefronts.models import Wavefront, Review
 
@@ -40,6 +39,18 @@ class WavefrontCreateView(ResourceMixin, ResourceBaseCreateView):
     form_class = UploadForm
     is_1mb_limit_enable = False
 
+    def form_valid(self, form):
+        from base.views.processing_view import resource_notify, messages, _
+
+        self.obj = form.save(commit=False)
+        self.obj.creator = self.request.user
+        self.obj.file.name = form.file_path
+        self.obj.save()
+        resource_notify(self.obj, resource_type=self.resource_name)
+        msg = _(self.success_message)
+        messages.success(self.request, msg, 'success', fail_silently=True)
+        return super(ResourceBaseCreateView, self).form_valid(form)
+
 
 class WavefrontDetailView(ResourceMixin, ResourceBaseDetailView):
     """Wavefront Detail View"""
@@ -49,6 +60,14 @@ class WavefrontDetailView(ResourceMixin, ResourceBaseDetailView):
         {'src': 'wavefront/js/3d_view.js', 'type': 'module'},
     )
     css = ('wavefront/css/wavefront.css',)
+
+    def get_context_data(self, **kwargs):
+        context = super(WavefrontDetailView, self).get_context_data()
+        obj = self.get_object()
+        filename, ext = os.path.splitext(obj.file.url)
+        context['obj_url'] = f'{filename}.obj'
+        context['mtl_url'] = f'{filename}.mtl'
+        return context
 
 
 class WavefrontUpdateView(ResourceMixin, ResourceBaseUpdateView):
@@ -115,3 +134,12 @@ def wavefront_mtl_file(request, pk):
     response = HttpResponse(obj_data, content_type='model/mtl')
     response['Content-Disposition'] = f'attachment; filename={filename}'
     return response
+
+
+def get_obj_media_url(request, pk):
+    try:
+        wavefront = Wavefront.objects.get(pk=pk)
+        file = wavefront.file
+    except Wavefront.DoesNotExist:
+        raise Http404('Wavefront does not exist')
+

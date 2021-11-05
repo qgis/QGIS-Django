@@ -7,7 +7,10 @@ import shutil
 import uuid
 from zipfile import ZipFile
 from django.core.exceptions import ValidationError
+from django.conf import settings
 from django.utils.translation import ugettext_lazy as _
+
+from wavefronts.models import WAVEFRONTS_STORAGE_PATH
 
 
 class WavefrontValidator:
@@ -40,30 +43,67 @@ class WavefrontValidator:
                 return True
         raise ValidationError(_('Could not find .mtl file.'))
 
+    def extract_zipfile(self, target_dir):
+        with ZipFile(self.file) as zip:
+            for zip_info in zip.infolist():
+                if zip_info.filename[-1] == '/':
+                    continue
+                zip_info.filename = os.path.basename(zip_info.filename)
+                zip.extract(zip_info, target_dir)
+
     def validate_wavefront(self):
         self.is_mtl_file_exist()
         obj_path = self.get_wavefront_obj_path()
         filename, ext = os.path.splitext(obj_path)
         mtl_path = f'{filename}.mtl'
 
-        temp_dir = f'/tmp/{uuid.uuid4().hex[0:6]}'
+        unique_hex = uuid.uuid4().hex[0:6]
+        temp_dir = f'/tmp/{unique_hex}'
 
         # create new directory for temporary file
-        path, _ = os.path.split(obj_path)
-        new_dir = f'{temp_dir}/{path}' if path else f'{temp_dir}'
-        if not os.path.exists(new_dir):
-            os.makedirs(new_dir)
+        path, filename = os.path.split(obj_path)
+        filename, ext = os.path.splitext(filename)
+        obj_file = f'{filename}.obj'
+        mtl_file = f'{filename}.mtl'
+        dummy_file = f'{filename}.dummy'
 
-        with open(f'{temp_dir}/{obj_path}', 'wb') as f:
-            f.write(ZipFile(self.file).read(obj_path))
-        with open(f'{temp_dir}/{mtl_path}', 'wb') as f:
-            f.write(ZipFile(self.file).read(mtl_path))
+
+        if not os.path.exists(temp_dir):
+            os.makedirs(temp_dir)
+
+        with open(f'{temp_dir}/{obj_file}', 'wb') as f_obj:
+            f_obj.write(ZipFile(self.file).read(obj_path))
+        with open(f'{temp_dir}/{mtl_file}', 'wb') as f_mtl:
+            f_mtl.write(ZipFile(self.file).read(mtl_path))
+
         try:
-            scene = pywavefront.Wavefront(f'{temp_dir}/{obj_path}')
+            scene = pywavefront.Wavefront(f'{temp_dir}/{obj_file}')
         except Exception as e:
             raise ValidationError(_(f'Wavefront validation failed. {e}'))
         # remove directory and the content
+        # shutil.rmtree(temp_dir)
+        # if not scene:
+        #     return False
+
+        # save to media directory
+        media_dir = os.path.join(settings.MEDIA_ROOT, WAVEFRONTS_STORAGE_PATH)
+        save_dir = f'{media_dir}/{unique_hex}'
+        if not os.path.exists(save_dir):
+            os.makedirs(save_dir)
+        shutil.move(f'{temp_dir}/{obj_file}', f'{save_dir}/{obj_file}')
+        shutil.move(f'{temp_dir}/{mtl_file}', f'{save_dir}/{mtl_file}')
+
+        self.extract_zipfile(save_dir)
+
+        # remove temp directory and the content
         shutil.rmtree(temp_dir)
-        if not scene:
-            return False
-        return True
+
+        # remove obj_file on dir
+        # os.remove(f'{save_dir}/{obj_file}')
+
+        # create empty file to return
+        # from pathlib import Path
+        # Path(f'{save_dir}/{dummy_file}').touch()
+
+
+        return f'{unique_hex}/{dummy_file}'

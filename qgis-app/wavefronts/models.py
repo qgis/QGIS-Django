@@ -11,7 +11,7 @@ from django.utils.translation import ugettext_lazy as _
 from base.models.processing_models import Resource, ResourceReview
 
 WAVEFRONTS_STORAGE_PATH = getattr(
-    settings, 'WAVEFRONTS_STORAGE_PATH', 'wavefronts/%Y')
+    settings, 'WAVEFRONTS_STORAGE_PATH', 'wavefronts')
 
 
 class Wavefront(Resource):

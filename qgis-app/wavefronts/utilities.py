@@ -36,3 +36,8 @@ def get_mtl_info(file):
     obj_path = f'{filename}.mtl'
     return obj_path, obj_filesize
 
+
+# def get_obj_mtl_path(filepath):
+#     # e.g /home/web/media/wavefronts/217fb6/odm_textured.dummy
+#     path, filename = os.path.split(filepath)
+#     for
