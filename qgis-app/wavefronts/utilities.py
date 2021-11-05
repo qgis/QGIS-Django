@@ -1,3 +1,4 @@
+import os.path
 import re
 from zipfile import ZipFile
 from django.core.exceptions import ValidationError
@@ -11,15 +12,15 @@ def extract_file(file, file_type):
     except Exception:
         raise ValidationError(_("Could not unzip file."))
 
-    file_path = ''
-    file_size = 0
-    rgx = r'.*\.{}$'.format(file_type)
+    obj_path = ''
+    obj_filesize = 0
+    rgx = r'.*\.obj$'
     for file in zip_file.filelist:
         find_wavefront = re.findall(rgx, file.filename)
         if find_wavefront and find_wavefront[0]:
-            file_path = find_wavefront[0]
-            file_size = file.file_size
-    return (file_path, file_size)
+            obj_path = find_wavefront[0]
+            obj_filesize = file.file_size
+    return (obj_path, obj_filesize)
 
 
 def get_obj_info(file):
@@ -31,5 +32,7 @@ def get_obj_info(file):
 def get_mtl_info(file):
     """Extract the wavefront zipfile and return the mtl info."""
     obj_path, obj_filesize = extract_file(file, 'mtl')
+    filename, ext = os.path.splitext(obj_path)
+    obj_path = f'{filename}.mtl'
     return obj_path, obj_filesize
 
