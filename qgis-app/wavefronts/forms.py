@@ -26,3 +26,9 @@ class UploadForm(ResourceBaseCleanFileForm, ResourceFormMixin):
 
 class UpdateForm(ResourceFormMixin):
     """Model Update Form."""
+
+    def clean_file(self):
+        zip_file = self.cleaned_data['file']
+        if zip_file:
+            self.file_path = WavefrontValidator(zip_file).validate_wavefront()
+        return zip_file

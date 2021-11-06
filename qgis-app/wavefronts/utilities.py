@@ -15,7 +15,7 @@ def zipped_all_with_license(folder_path: str, zip_subdir: str) -> io.BytesIO:
     filelist.append(LICENSE_FILE)
     with ZipFile(in_memory_data, "w", ZIP_DEFLATED) as zf:
         for file in filelist:
-            if file.endswith('.dummy'):
+            if file.endswith('.zip'):
                 continue
             file_path, filename = os.path.split(file)
             zf.write(

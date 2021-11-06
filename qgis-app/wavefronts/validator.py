@@ -65,7 +65,7 @@ class WavefrontValidator:
         filename, ext = os.path.splitext(filename)
         obj_file = f'{filename}.obj'
         mtl_file = f'{filename}.mtl'
-        dummy_file = f'{filename}.dummy'
+        dummy_file = f'{filename}.zip'
 
 
         if not os.path.exists(temp_dir):

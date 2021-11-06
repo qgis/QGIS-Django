@@ -1,8 +1,11 @@
 import os
-from django.http import HttpResponse
+from django.contrib import messages
+from django.http import HttpResponse, HttpResponseRedirect
 from django.shortcuts import get_object_or_404
 from django.template.response import TemplateResponse
+from django.urls import reverse_lazy
 from django.utils.text import slugify
+from django.utils.translation import ugettext_lazy as _
 
 from base.views.processing_view import (ResourceBaseCreateView,
                                         ResourceBaseDetailView,
@@ -15,7 +18,7 @@ from base.views.processing_view import (ResourceBaseCreateView,
                                         ResourceBaseDownload,
                                         resource_nav_content)
 
-from base.views.processing_view import check_resources_access
+from base.views.processing_view import check_resources_access, resource_notify
 
 from wavefronts.forms import UpdateForm, UploadForm
 from wavefronts.models import Wavefront, Review
@@ -43,11 +46,8 @@ class WavefrontCreateView(ResourceMixin, ResourceBaseCreateView):
     is_1mb_limit_enable = False
 
     def form_valid(self, form):
-        from base.views.processing_view import resource_notify, messages, _
-
         self.obj = form.save(commit=False)
         self.obj.creator = self.request.user
-        # we save the path with dummy file to avoid duplicate filename
         self.obj.file.name = form.file_path
         self.obj.save()
         resource_notify(self.obj, resource_type=self.resource_name)
@@ -78,6 +78,19 @@ class WavefrontUpdateView(ResourceMixin, ResourceBaseUpdateView):
     """Update the Wavefront"""
 
     form_class = UpdateForm
+
+    def form_valid(self, form):
+        obj = form.save(commit=False)
+        obj.file.name = form.file_path
+        obj.require_action = False
+        obj.approved = False
+        obj.save()
+        resource_notify(obj, created=False, resource_type=self.resource_name)
+        msg = _("The %s has been successfully updated." % self.resource_name)
+        messages.success(self.request, msg, 'success', fail_silently=True)
+        url_name = '%s_detail' % self.resource_name_url_base
+        return HttpResponseRedirect(reverse_lazy(url_name,
+                                                 kwargs={'pk': obj.id}))
 
 
 class WavefrontListView(ResourceMixin, ResourceBaseListView):

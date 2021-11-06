@@ -195,6 +195,6 @@ class TestDownloadWavefront(SetUpTest, TestCase):
             for f in expected_filename_list:
                 self.assertIn(f, zip_file.namelist())
             self.assertNotIn(
-                'odm texturing/odm_textured_model_geo.dummy',
+                'odm texturing/odm_textured_model_geo.zip',
                 zip_file.namelist())
             zip_file.close()
