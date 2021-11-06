@@ -1,5 +1,3 @@
-import os.path
-
 from django import forms
 
 from wavefronts.models import Wavefront
@@ -18,12 +16,12 @@ class UploadForm(ResourceBaseCleanFileForm, ResourceFormMixin):
     """Upload Form."""
 
     file_path = ''
+
     def clean_file(self):
         zip_file = self.cleaned_data['file']
         if zip_file:
             self.file_path = WavefrontValidator(zip_file).validate_wavefront()
         return zip_file
-
 
 
 class UpdateForm(ResourceFormMixin):

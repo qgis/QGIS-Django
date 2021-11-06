@@ -1,5 +1,7 @@
+import io
 import os
 import tempfile
+import zipfile
 
 from django.core import mail
 from django.core.files.uploadedfile import SimpleUploadedFile
@@ -51,7 +53,7 @@ class TestPageUserAnonymous(TestCase):
         url = reverse('wavefront_list')
         response = self.client.get(url)
         self.assertEqual(response.status_code, 200)
-        self.assertContains(response, "All Wavefronts")
+        self.assertContains(response, "All 3D Models")
         self.assertContains(response, "No data.")
 
     def test_upload(self):
@@ -98,7 +100,7 @@ class TestReviewWavefront(SetUpTest, TestCase):
         })
         # should send email notify
         self.assertIn(
-            '\nWavefront odm texturing approved by staff.'
+            '\n3D Model odm texturing approved by staff.'
             '\nThis should be in Approve page.',
             mail.outbox[-1].body
         )
@@ -120,7 +122,7 @@ class TestReviewWavefront(SetUpTest, TestCase):
         })
         # should send email notify
         self.assertIn(
-            '\nWavefront odm texturing rejected by staff.'
+            '\n3D Model odm texturing rejected by staff.'
             '\nThis should be in requiring update page.',
             mail.outbox[-1].body
         )
@@ -139,3 +141,60 @@ class TestReviewWavefront(SetUpTest, TestCase):
         self.assertEqual(response.status_code, 200)
         self.assertContains(response, "1 record found.")
         self.assertContains(response, "odm texturing")
+
+
+@override_settings(MEDIA_ROOT=tempfile.mkdtemp())
+class TestDownloadWavefront(SetUpTest, TestCase):
+    fixtures = ['fixtures/simplemenu.json']
+
+    def setUp(self):
+        super(TestDownloadWavefront, self).setUp()
+        login = self.client.login(username="creator", password="password")
+        self.assertTrue(login)
+        url = reverse("wavefront_create")
+        uploaded_thumbnail = SimpleUploadedFile(
+            self.thumbnail_content.name,
+            self.thumbnail_content.read()
+        )
+        uploaded_file = SimpleUploadedFile(
+            self.zipfile_content.name,
+            self.zipfile_content.read()
+        )
+        data = {
+            "name": "odm texturing",
+            "description": "Test upload a wavefront",
+            "thumbnail_image": uploaded_thumbnail,
+            "file": uploaded_file
+        }
+        self.client.post(url, data, follow=True)
+        self.object = Wavefront.objects.first()
+        self.client.logout()
+
+    def test_download_should_return_zipfile(self):
+        wavefront = Wavefront.objects.last()
+        wavefront.approved = True
+        wavefront.save()
+        url = reverse('wavefront_download', kwargs={'pk': wavefront.id})
+        response = self.client.get(url)
+        self.assertEqual(response.status_code, 200)
+        self.assertEquals(
+            response.get('Content-Disposition'),
+            'attachment; filename=odm-texturing.zip'
+        )
+        expected_filename_list = [
+            'odm texturing/odm_textured_model_geo.mtl',
+            'odm texturing/odm_textured_model_geo_material0000_map_Kd.png',
+            'odm texturing/odm_textured_model.mtl',
+            'odm texturing/odm_textured_model_geo.conf',
+            'odm texturing/odm_textured_model_geo.obj',
+            'odm texturing/license.txt'
+        ]
+        with io.BytesIO(response.content) as file:
+            zip_file = zipfile.ZipFile(file, 'r')
+            self.assertIsNone(zip_file.testzip())
+            for f in expected_filename_list:
+                self.assertIn(f, zip_file.namelist())
+            self.assertNotIn(
+                'odm texturing/odm_textured_model_geo.dummy',
+                zip_file.namelist())
+            zip_file.close()

@@ -1,5 +1,3 @@
-console.log('test from test.js')
-
 const urlObj = document.querySelector('div#urlView').dataset.url
 const urlMtl = document.querySelector('div#urlView').dataset.mtlUrl
 
@@ -94,7 +92,7 @@ async function main() {
           10
       )
 
-    }, loadAnimation());
+    });
 
 
   }
@@ -121,10 +119,6 @@ async function main() {
     renderer.render(scene, camera);
 
     requestAnimationFrame(render);
-  }
-
-  function loadAnimation(){
-    // $(".container-3dview").append('<h1>loadingggg</h1>')
   }
 
   requestAnimationFrame(render);

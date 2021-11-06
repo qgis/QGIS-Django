@@ -23,18 +23,19 @@ class Wavefront(Resource):
     # thumbnail
     thumbnail_image = models.ImageField(
         _('Thumbnail'),
-        help_text=_('Please upload an image that demonstrate this Wavefront'),
+        help_text=_('Please upload an image that demonstrate this 3D Model'),
         blank=False,
         null=False,
         upload_to=WAVEFRONTS_STORAGE_PATH)
 
     # file
     file = models.FileField(
-        _('Wavefront file'),
-        help_text=_('A Wavefront file. The filesize must less than 1MB '),
+        _('3D Model file'),
+        help_text=_(
+            'A 3D model zip file. The zip file must contains obj and mtl files'
+        ),
         upload_to=WAVEFRONTS_STORAGE_PATH,
-        validators=[FileExtensionValidator(
-            allowed_extensions=['model3', 'zip'])],
+        validators=[FileExtensionValidator(allowed_extensions=['zip'])],
         null=False)
 
     def extension(self):

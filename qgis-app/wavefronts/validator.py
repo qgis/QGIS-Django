@@ -77,33 +77,18 @@ class WavefrontValidator:
             f_mtl.write(ZipFile(self.file).read(mtl_path))
 
         try:
-            scene = pywavefront.Wavefront(f'{temp_dir}/{obj_file}')
+            pywavefront.Wavefront(f'{temp_dir}/{obj_file}')
         except Exception as e:
             raise ValidationError(_(f'Wavefront validation failed. {e}'))
-        # remove directory and the content
-        # shutil.rmtree(temp_dir)
-        # if not scene:
-        #     return False
 
         # save to media directory
         media_dir = os.path.join(settings.MEDIA_ROOT, WAVEFRONTS_STORAGE_PATH)
         save_dir = f'{media_dir}/{unique_hex}'
         if not os.path.exists(save_dir):
             os.makedirs(save_dir)
-        shutil.move(f'{temp_dir}/{obj_file}', f'{save_dir}/{obj_file}')
-        shutil.move(f'{temp_dir}/{mtl_file}', f'{save_dir}/{mtl_file}')
-
         self.extract_zipfile(save_dir)
 
         # remove temp directory and the content
         shutil.rmtree(temp_dir)
-
-        # remove obj_file on dir
-        # os.remove(f'{save_dir}/{obj_file}')
-
-        # create empty file to return
-        # from pathlib import Path
-        # Path(f'{save_dir}/{dummy_file}').touch()
-
 
         return f'{unique_hex}/{dummy_file}'

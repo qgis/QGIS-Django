@@ -1,6 +1,5 @@
 import os
-from zipfile import ZipFile
-from django.http import Http404, HttpResponse
+from django.http import HttpResponse
 from django.shortcuts import get_object_or_404
 from django.template.response import TemplateResponse
 from django.utils.text import slugify
@@ -20,6 +19,7 @@ from base.views.processing_view import check_resources_access
 
 from wavefronts.forms import UpdateForm, UploadForm
 from wavefronts.models import Wavefront, Review
+from wavefronts.utilities import zipped_all_with_license
 
 
 class ResourceMixin():
@@ -101,10 +101,9 @@ class WavefrontDeleteView(ResourceMixin, ResourceBaseDeleteView):
 class WavefrontReviewView(ResourceMixin, ResourceBaseReviewView):
     """Create a review"""
 
-from .utilities import zipped_all_with_license
+
 class WavefrontDownloadView(ResourceMixin, ResourceBaseDownload):
     """Download a Wavefront"""
-
 
     def get(self, request, *args, **kwargs):
         object = get_object_or_404(self.model, pk=self.kwargs['pk'])
