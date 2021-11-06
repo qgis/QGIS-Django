@@ -82,8 +82,8 @@ async function main() {
     if (materials) {
       objLoader.setMaterials(materials);
     }
-    objLoader.load(urlObj, (object) => {
 
+    objLoader.loadAsync(urlObj).then(function(object){
       scene.add(object);
 
       fitCameraToObject(
@@ -91,7 +91,7 @@ async function main() {
           object,
           10
       )
-
+      stopAnimation();
     });
 
 
@@ -121,5 +121,17 @@ async function main() {
     requestAnimationFrame(render);
   }
 
+  function loadAnimation(){
+    $('.container-3dview').append(
+      '<div class="loading"></div>'
+    )
+    console.log('loading')
+  }
+  function stopAnimation(){
+    $('.container-3dview').children('div.loading').remove();
+    console.log('remove')
+  }
+
+  loadAnimation();
   requestAnimationFrame(render);
 }
