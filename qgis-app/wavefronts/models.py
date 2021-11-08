@@ -1,4 +1,5 @@
 import os
+import shutil
 
 from preferences.models import Preferences
 
@@ -44,6 +45,14 @@ class Wavefront(Resource):
 
     def get_absolute_url(self):
         return reverse('wavefront_detail', args=(self.id,))
+
+    def delete(self, *args, **kwargs):
+        if os.path.isfile(self.file.path):
+            path, _ = os.path.split(self.file.path)
+            if not path.endswith(WAVEFRONTS_STORAGE_PATH):
+                # remove folder and the content
+                shutil.rmtree(path)
+        super(Wavefront, self).delete(*args, **kwargs)
 
 
 class Review(ResourceReview):
