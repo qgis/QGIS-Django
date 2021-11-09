@@ -1,5 +1,12 @@
 {% extends 'base/base.html' %}{% load i18n static thumbnail resources_custom_tags%}
 
+{% block extrajs %}
+  {{ block.super }}
+  {% for css_src in css %}
+    <link rel="stylesheet" href="{% static css_src %}" type="text/css" />
+  {% endfor %}
+{% endblock %}
+
 {% block content %}
         <h3 class="style-title">{{ object_detail.name }}</h3>
         {% if user == object_detail.creator or user.is_staff %}
@@ -10,16 +17,25 @@
         {% endif %}
         <hr />
         <div class="row">
-            <div class="span4 mb-5">
+            <div class="span4 mb-5 view-resource">
                 <div class="style-polaroid">
                     {% thumbnail object_detail.thumbnail_image "420x420" format="PNG" as im %}
-                    <img class="" alt="{% trans "image" %}" src="{{ im.url }}" width="{{ im.x }}" height="{{ im.y }}" />
+                    <img class="image-resource" alt="{% trans "image" %}" src="{{ im.url }}" width="{{ im.x }}" height="{{ im.y }}" />
                     {% endthumbnail %}
+                    {% if is_3d_model %}
+                      <div class="middle">
+                        {% thumbnail object_detail.thumbnail_image "150x150" format="PNG" as im %}
+                          <img alt="{% trans "image" %}" src="{% static 'wavefront/img/cube-3d.png' %}" width="{{ im.x }}" height="{{ im.y }}" />
+                        {% endthumbnail %}
+                      </div>
+                      </div>
+                      <div id="urlView" data-url="{{ obj_url }}" data-mtl-url="{{ mtl_url }}"></div>
 
+                    {% else %}
                 </div>
-
+                    {% endif %}
             </div>
-            <div class="span6">
+            <div class="span6 info-resource">
                 <dl class="dl-horizontal">
                     <dd></dd>
                     <dt>Name</dt>
@@ -62,4 +78,11 @@
             </div>
 
         </div>
+
+
+  {% for js_src in js %}
+    <script type="{% if not js_src.type %}text/javascript{% else %}{{ js_src.type }}{% endif %}" src="{% static js_src.src %}"></script>
+  {%  endfor %}
+
+
 {% endblock %}

@@ -215,13 +215,18 @@ class ResourceBaseContextMixin(ContextMixin):
         return context
 
 
+@method_decorator(never_cache, name='dispatch')
 class ResourceBaseCreateView(LoginRequiredMixin,
                              ResourceBaseContextMixin,
                              SuccessMessageMixin,
                              CreateView):
-    """Upload a Resource File."""
+    """Upload a Resource File.
+
+    We don't cache since there's a dynamic preference value on the template
+    """
 
     template_name = 'base/upload_form.html'
+    is_1mb_limit_enable = True
 
     def form_valid(self, form):
         self.obj = form.save(commit=False)
@@ -239,12 +244,28 @@ class ResourceBaseCreateView(LoginRequiredMixin,
         url_name = '%s_detail' % self.resource_name_url_base
         return reverse(url_name, kwargs={'pk': self.object.id})
 
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data()
+        context['limit_1mb'] = self.is_1mb_limit_enable
+        return context
+
 
 class ResourceBaseDetailView(ResourceBaseContextMixin,
                              DetailView):
     """Base Class for Resource DetailView."""
 
     context_object_name = 'object_detail'
+
+    # js source files
+    # e.g. js = ({'src': 'path/to/js/under/static/file.js', 'type': 'module'},)
+    # attribute src is mandatory, type is optional
+    js = ()
+
+    # css source files
+    # e.g css = ('path/to/css/file1.css', 'path/to/css/file1.css')
+    css = ()
+
+    is_3d_model = False
 
     def get_template_names(self):
         object = self.get_object()
@@ -259,6 +280,9 @@ class ResourceBaseDetailView(ResourceBaseContextMixin,
         context = super().get_context_data()
         user = self.request.user
         context['creator'] = self.object.get_creator_name
+        context['js'] = self.js
+        context['css'] = self.css
+        context['is_3d_model'] = self.is_3d_model
         if self.object.review_set.exists():
             if self.object.review_set.last().reviewer.first_name:
                 reviewer = "%s %s" % (
@@ -271,6 +295,8 @@ class ResourceBaseDetailView(ResourceBaseContextMixin,
             context['reviewer'] = reviewer
         if user.is_staff or is_resources_manager(user):
             context['form'] = ResourceBaseReviewForm()
+        if self.is_3d_model:
+            context['url_viewer'] = "%s_viewer" % self.resource_name_url_base
         return context
 
 
