@@ -13,11 +13,15 @@ const view3d = () => {
     '<div class="container-3dview"><canvas id="c"></canvas></div>'
   )
 
+
   main();
 }
 
-$(".style-polaroid").on('click', view3d)
+const $thumbnail = $('.style-polaroid');
 
+window.containerWidth = $thumbnail.width();
+window.containerHeight = $thumbnail.height();
+$thumbnail.on('click', view3d)
 
 function fitCameraToObject( camera, object, offset ) {
   // Taken from https://discourse.threejs.org/t/camera-zoom-to-fit-object/936/21
@@ -43,6 +47,8 @@ function fitCameraToObject( camera, object, offset ) {
 async function main() {
 
   const canvas = document.querySelector('#c');
+  canvas.width = window.containerWidth > canvas.width ? window.containerWidth : canvas.width;
+  canvas.height = window.containerHeight > canvas.height ? window.containerHeight : canvas.height;
   const renderer = new THREE.WebGLRenderer({canvas});
 
   const fov = 45;
@@ -53,8 +59,6 @@ async function main() {
   camera.position.set(0, 10, 20);
 
   const controls = new OrbitControls(camera, canvas);
-  controls.target.set(0, 5, 0);
-  controls.update();
 
   const scene = new THREE.Scene();
   scene.background = new THREE.Color('white');
@@ -89,8 +93,10 @@ async function main() {
       fitCameraToObject(
           camera,
           object,
-          10
+          1.5
       )
+
+      controls.update();
       stopAnimation();
     });
 
@@ -101,6 +107,7 @@ async function main() {
     const canvas = renderer.domElement;
     const width = canvas.clientWidth;
     const height = canvas.clientHeight;
+
     const needResize = canvas.width !== width || canvas.height !== height;
     if (needResize) {
       renderer.setSize(width, height, false);
@@ -125,11 +132,9 @@ async function main() {
     $('.container-3dview').append(
       '<div class="loading"></div>'
     )
-    console.log('loading')
   }
   function stopAnimation(){
     $('.container-3dview').children('div.loading').remove();
-    console.log('remove')
   }
 
   loadAnimation();
