@@ -32,6 +32,9 @@
   margin-top: 23px;
   box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
   cursor: move;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 #c {
   width: 100%;
@@ -40,8 +43,8 @@
 /* Loading icon */
 .loading{
   position: absolute;
-  top: 40%;
-  left: 40%;
+  margin-left: auto;
+  margin-top: auto;
 
   border: 16px solid #f3f3f3; /* Light grey */
   border-top: 16px solid #3498db; /* Blue */
