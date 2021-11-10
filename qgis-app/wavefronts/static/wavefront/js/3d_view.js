@@ -58,6 +58,9 @@ async function main() {
   const camera = new THREE.PerspectiveCamera(fov, aspect, near, far);
   camera.position.set(0, 10, 20);
 
+  camera.aspect = canvas.width / canvas.height;
+  camera.updateProjectionMatrix();
+
   const controls = new OrbitControls(camera, canvas);
 
   const scene = new THREE.Scene();
