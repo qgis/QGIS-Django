@@ -1,0 +1,19 @@
+from django import forms
+
+from layerdefinitions.models import LayerDefinition
+
+from base.forms.processing_forms import ResourceBaseCleanFileForm
+
+
+class ResourceFormMixin(forms.ModelForm):
+    class Meta:
+        model = LayerDefinition
+        fields = ['file', 'thumbnail_image', 'name', 'description', ]
+
+
+class UploadForm(ResourceBaseCleanFileForm, ResourceFormMixin):
+    """Upload Form."""
+
+
+class UpdateForm(ResourceFormMixin):
+    """Update Form."""

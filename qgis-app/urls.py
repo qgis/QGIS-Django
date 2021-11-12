@@ -64,6 +64,7 @@ urlpatterns = [
     # Styles and other files sharing
     url(r'^styles/', include('styles.urls')),
     url(r'^geopackages/', include('geopackages.urls')),
+    url(r'^layerdefinitions/', include('layerdefinitions.urls')),
     url(r'^models/', include('models.urls')),
     url(r'^wavefronts/', include('wavefronts.urls')),
 ]
@@ -123,6 +124,7 @@ simplemenu.register(
     '/plugins/',
     '/styles/?order_by=-upload_date&&is_gallery=true',
     '/geopackages/?order_by=-upload_date&&is_gallery=true',
+    '/layerdefinitions/?order_by=-upload_date&&is_gallery=true',
     '/models/?order_by=-upload_date&&is_gallery=true',
     '/wavefronts/?order_by=-upload_date&&is_gallery=true',
     FlatPage.objects.all(),
