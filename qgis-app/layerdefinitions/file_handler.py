@@ -42,6 +42,7 @@ def get_url_datasource(xmlfile):
     result = url[0] if url else None
     return result
 
+
 def get_provider(xmlfile):
     tree = parse_qlr(xmlfile)
     root = tree.getroot()

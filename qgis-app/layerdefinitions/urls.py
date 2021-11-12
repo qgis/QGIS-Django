@@ -15,7 +15,8 @@ from layerdefinitions.views import (LayerDefinitionCreateView,
 urlpatterns = [
     #  GeoPackage
     path('', LayerDefinitionListView.as_view(), name='layerdefinition_list'),
-    path('add/', LayerDefinitionCreateView.as_view(), name='layerdefinition_create'),
+    path('add/', LayerDefinitionCreateView.as_view(),
+         name='layerdefinition_create'),
     path('<int:pk>/', LayerDefinitionDetailView.as_view(),
          name='layerdefinition_detail'),
     path('<int:pk>/update/', LayerDefinitionUpdateView.as_view(),
@@ -33,5 +34,6 @@ urlpatterns = [
          name='layerdefinition_require_action'),
 
     # JSON
-    path('sidebarnav/', layerdefinition_nav_content, name="layerdefinition_nav_content"),
+    path('sidebarnav/', layerdefinition_nav_content,
+         name="layerdefinition_nav_content"),
 ]

@@ -19,6 +19,7 @@ class SetUpTest():
         self.qlr_file = os.path.join(
             TESTFILE_DIR, "my-vapour-pressure.qlr")
 
+
 class TestParseQlr(SetUpTest, TestCase):
     """Test the parse_qlr function."""
 
