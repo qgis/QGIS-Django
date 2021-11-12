@@ -35,12 +35,14 @@ def get_url_datasource(xmlfile):
     rgx = r'(?<=url=).*[&]?$'
     try:
         url = re.findall(rgx, datasource.text)
+    except TypeError:
+        return None
     except AttributeError:
         return None
     result = url[0] if url else None
     return result
 
-def get_url_provider(xmlfile):
+def get_provider(xmlfile):
     tree = parse_qlr(xmlfile)
     root = tree.getroot()
     provider = root.find('./maplayers/maplayer/provider')
