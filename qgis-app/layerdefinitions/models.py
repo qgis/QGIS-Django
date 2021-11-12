@@ -42,8 +42,8 @@ class LayerDefinition(Resource):
     provider = models.TextField(
         _('Provider'),
         max_length=5000,
-        blank=False,
-        null=False
+        blank=True,
+        null=True
     )
 
     def get_absolute_url(self):

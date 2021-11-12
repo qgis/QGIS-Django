@@ -23,14 +23,7 @@
                     <img class="image-resource" alt="{% trans "image" %}" src="{{ im.url }}" width="{{ im.x }}" height="{{ im.y }}" />
                     {% endthumbnail %}
                     {% if is_3d_model %}
-                      <div class="middle">
-                        {% thumbnail object_detail.thumbnail_image "150x150" format="PNG" as im %}
-                          <img alt="{% trans "image" %}" src="{% static 'wavefront/img/cube-3d.png' %}" width="{{ im.x }}" height="{{ im.y }}" />
-                        {% endthumbnail %}
-                      </div>
-                      </div>
-                      <div id="urlView" data-url="{{ obj_url }}" data-mtl-url="{{ mtl_url }}"></div>
-
+                      {% include "base/includes/wavefront/detail_3dviewer.html" %}
                     {% else %}
                 </div>
                     {% endif %}
@@ -48,6 +41,9 @@
                     <dd>{{ object_detail.review_set.last.review_date|date:"d F Y"}}</dd>
                     <dt>Creator</dt>
                     <dd>{{ object_detail.get_creator_name|title }}</dd>
+                    {% if is_qlr %}
+                      {% include "base/includes/layerdefinition/detail_datasource.html" %}
+                    {% endif %}
 
                     {# for style app sharing only #}
                     {% if object_detail.style_type %}
@@ -66,16 +62,10 @@
                 </dl>
 
             </div>
-            <div class="span12 license">
-              <div class="media" style="margin-top: 2rem">
-                <a class="pull-left" href="#">
-                  <img src="{% static 'images/cc-zero.svg' %}">
-                </a>
-                <div class="media-body">
-                  <p>This {{ resource_name }} is made available under the <a href="https://creativecommons.org/publicdomain/zero/1.0/" target="_blank">CC-0 license</a>.</p>
-                </div>
-              </div>
-            </div>
+
+            {% if license_template %}
+              {% include license_template %}
+            {% endif %}
 
         </div>
 

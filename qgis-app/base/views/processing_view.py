@@ -266,6 +266,7 @@ class ResourceBaseDetailView(ResourceBaseContextMixin,
     css = ()
 
     is_3d_model = False
+    license_template = 'base/includes/license.html'
 
     def get_template_names(self):
         object = self.get_object()
@@ -283,6 +284,7 @@ class ResourceBaseDetailView(ResourceBaseContextMixin,
         context['js'] = self.js
         context['css'] = self.css
         context['is_3d_model'] = self.is_3d_model
+        context['license_template'] = self.license_template
         if self.object.review_set.exists():
             if self.object.review_set.last().reviewer.first_name:
                 reviewer = "%s %s" % (
