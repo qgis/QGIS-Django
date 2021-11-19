@@ -29,38 +29,15 @@
                     {% endif %}
             </div>
             <div class="span6 info-resource">
-                <dl class="dl-horizontal">
-                    <dd></dd>
-                    <dt>Name</dt>
-                    <dd>{{ object_detail.name }}</dd>
-                    <dt>Description</dt>
-                    <dd>{{ object_detail.description|md_to_html }}</dd>
-                    <dt>Uploaded Date</dt>
-                    <dd>{{ object_detail.upload_date|date:"d F Y" }}</dd>
-                    <dt>Approved Date</dt>
-                    <dd>{{ object_detail.review_set.last.review_date|date:"d F Y"}}</dd>
-                    <dt>Creator</dt>
-                    <dd>{{ object_detail.get_creator_name|title }}</dd>
-                    {% if is_qlr %}
-                      {% include "base/includes/layerdefinition/detail_datasource.html" %}
-                    {% endif %}
-
-                    {# for style app sharing only #}
-                    {% if object_detail.style_type %}
-                    <dt>Type</dt>
-                    <dd>
-                        {{ object_detail.style_type.name }}
-                    </dd>
-                    {% endif %}
-
-                    <dt>{{ resource_name }} File</dt>
-                    <dd>
-                        <div>
-                             <a class="btn btn-primary btn-mini" href="{% url url_download object_detail.id %}" title="{% trans "Download" %}"><i class="icon-download-alt"></i> Download</a>
-                        </div>
-                    </dd>
-                </dl>
-
+              <dl class="dl-horizontal">
+                {% include "base/includes/detail_object.html" %}
+                <dt>{{ resource_name }} File</dt>
+                <dd>
+                  <div>
+                    <a class="btn btn-primary btn-mini" href="{% url url_download object_detail.id %}" title="{% trans "Download" %}"><i class="icon-download-alt"></i> Download</a>
+                  </div>
+                </dd>
+              </dl>
             </div>
 
             {% if license_template %}

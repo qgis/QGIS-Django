@@ -42,7 +42,16 @@ class LayerDefinition(Resource):
     # provider
     provider = models.TextField(
         _('Provider'),
-        max_length=5000,
+        max_length=100,
+        blank=True,
+        null=True
+    )
+
+    # license
+    license = models.TextField(
+        _('License'),
+        help_text=_('License of this resource.'),
+        max_length=500,
         blank=True,
         null=True
     )

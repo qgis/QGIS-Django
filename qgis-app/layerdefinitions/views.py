@@ -50,7 +50,8 @@ class LayerDefinitionCreateView(ResourceMixin, ResourceBaseCreateView):
 class LayerDefinitionDetailView(ResourceMixin, ResourceBaseDetailView):
     """Detail View"""
 
-    license_template = None
+    license_template = 'base/includes/layerdefinition/license.html'
+    css = ('css/detail_page.css',)
 
     def get_context_data(self, **kwargs):
         context = super(LayerDefinitionDetailView, self).get_context_data()

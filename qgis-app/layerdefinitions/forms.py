@@ -9,7 +9,9 @@ from base.forms.processing_forms import ResourceBaseCleanFileForm
 class ResourceFormMixin(forms.ModelForm):
     class Meta:
         model = LayerDefinition
-        fields = ['file', 'thumbnail_image', 'name', 'description', ]
+        fields = [
+            'file', 'thumbnail_image', 'name', 'description', 'license',
+        ]
 
 
 class UploadForm(ResourceBaseCleanFileForm, ResourceFormMixin):

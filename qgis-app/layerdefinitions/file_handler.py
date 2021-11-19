@@ -32,7 +32,7 @@ def get_url_datasource(xmlfile):
     tree = parse_qlr(xmlfile)
     root = tree.getroot()
     datasource = root.find('./maplayers/maplayer/datasource')
-    rgx = r'(?<=url=)[\'"]?(.*?)[\'"&\s].*?$'
+    rgx = r'(?<=url=)[\'"]?(.*?)[\'"&\s]*?$'
     try:
         url = re.findall(rgx, datasource.text)
     except TypeError:

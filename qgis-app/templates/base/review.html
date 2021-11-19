@@ -46,19 +46,13 @@
             </div>
         <div class="span6 info-resource">
             <dl class="dl-horizontal">
-                <dt>Name</dt>
-                <dd>{{ object_detail.name }}</dd>
-                <dt>Description</dt>
-                <dd>{{ object_detail.description|md_to_html }}</dd>
-                <dt>Upload Date</dt>
-                <dd>{{ object_detail.upload_date|date:"d F Y" }}</dd>
-                <dt>Modified Date</dt>
-                <dd>{{ object_detail.modified_date|date:"d F Y" }}</dd>
-                <dt>Creator</dt>
-                <dd>{{ object_detail.get_creator_name|title }}</dd>
+                {% include "base/includes/detail_object.html" %}
+                {% include "base/includes/layerdefinition/review_datasource.html" %}
                 <dt>{{ resource_name }} File</dt>
                 <dd>
-                    <a class="btn btn-primary btn-mini delete" href="{% url url_download object_detail.id %}" title="{% trans "Download" %}"><i class="icon-download-alt"></i> Download</a>
+                  <div>
+                    <a class="btn btn-primary btn-mini" href="{% url url_download object_detail.id %}" title="{% trans "Download" %}"><i class="icon-download-alt"></i> Download</a>
+                  </div>
                 </dd>
 
                 <hr />
