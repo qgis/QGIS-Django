@@ -2,6 +2,11 @@
           <div class="span12 license" >
             <div class="span8" style="margin-top: 2rem">
               <p><strong>Data source</strong>: <a href="{{ object_detail.url_datasource }}" target="_blank">{{ object_detail.url_datasource }}</a></p>
-              <p><strong>License</strong>: <br /><span class="custom-license">{{ object_detail.license }}</span></p>
+              <p><strong>License</strong>:
+                {% if object_detail.license %}
+                <br /><span class="custom-license">{{ object_detail.license }}</span></p>
+                {% else %}
+                -
+                {% endif %}
             </div>
           </div>
