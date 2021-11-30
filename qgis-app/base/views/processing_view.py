@@ -248,7 +248,8 @@ class ResourceBaseCreateView(LoginRequiredMixin,
     def get_context_data(self, **kwargs):
         context = super().get_context_data()
         context['limit_1mb'] = self.is_1mb_limit_enable
-        context['is_custom_license_agreement'] = self.is_custom_license_agreement
+        context['is_custom_license_agreement'] = \
+            self.is_custom_license_agreement
         return context
 
 
@@ -336,7 +337,8 @@ class ResourceBaseUpdateView(LoginRequiredMixin,
     def get_context_data(self, **kwargs):
         context = super().get_context_data()
         context['limit_1mb'] = self.is_1mb_limit_enable
-        context['is_custom_license_agreement'] = self.is_custom_license_agreement
+        context['is_custom_license_agreement'] = \
+            self.is_custom_license_agreement
         return context
 
 
