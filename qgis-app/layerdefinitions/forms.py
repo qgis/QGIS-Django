@@ -10,7 +10,8 @@ class ResourceFormMixin(forms.ModelForm):
     class Meta:
         model = LayerDefinition
         fields = [
-            'file', 'thumbnail_image', 'name', 'description', 'license',
+            'file', 'thumbnail_image', 'name', 'url_metadata',
+            'description', 'license',
         ]
 
 

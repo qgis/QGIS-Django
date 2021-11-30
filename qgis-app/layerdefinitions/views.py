@@ -10,10 +10,15 @@ from base.views.processing_view import (ResourceBaseCreateView,
                                         resource_nav_content)
 from base.views.processing_view import _, resource_notify, messages
 from base.views.processing_view import HttpResponseRedirect, reverse_lazy
+from base.views.processing_view import (
+    get_object_or_404, check_resources_access, TemplateResponse,
+    HttpResponse, slugify
+)
 
 from layerdefinitions.file_handler import get_url_datasource, get_provider
 from layerdefinitions.forms import (UpdateForm, UploadForm)
 from layerdefinitions.models import LayerDefinition, Review
+from layerdefinitions.license import zipped_with_license
 
 
 class ResourceMixin():
@@ -103,6 +108,33 @@ class LayerDefinitionReviewView(ResourceMixin, ResourceBaseReviewView):
 
 class LayerDefinitionDownloadView(ResourceMixin, ResourceBaseDownload):
     """Download a Layer Definition File (.qlr)."""
+
+    def get(self, request, *args, **kwargs):
+        object = get_object_or_404(self.model, pk=self.kwargs['pk'])
+        if not object.approved:
+            if not check_resources_access(self.request.user, object):
+                context = super(ResourceBaseDownload, self).get_context_data()
+                context['object_name'] = object.name
+                context['context'] = ('Download failed. This %s is '
+                                      'not approved' % self.resource_name)
+                return TemplateResponse(request, self.template_name, context)
+        else:
+            object.increase_download_counter()
+            object.save()
+
+        # zip the resource and license.txt
+        zipfile = zipped_with_license(
+            file=object.file.file.name,
+            zip_subdir=object.name,
+            custom_license=object.license
+        )
+
+        response = HttpResponse(
+            zipfile.getvalue(), content_type="application/x-zip-compressed")
+        response['Content-Disposition'] = 'attachment; filename=%s.zip' % (
+            slugify(object.name, allow_unicode=True)
+        )
+        return response
 
 
 def layerdefinition_nav_content(request):

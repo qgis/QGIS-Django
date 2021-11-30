@@ -34,7 +34,16 @@ class LayerDefinition(Resource):
 
     # url datasource
     url_datasource = models.URLField(
-        _('URL Data Source'),
+        _('URL Data Source.'),
+        blank=True,
+        null=True,
+        max_length=200)
+
+    # url metadata
+    url_metadata = models.URLField(
+        _('URL Metadata'),
+        help_text=_('Please add a URL where we can find metadata information '
+                    'of this resource.'),
         blank=True,
         null=True,
         max_length=200)
@@ -70,7 +79,7 @@ class Review(ResourceReview):
     resource = models.ForeignKey(
         LayerDefinition,
         verbose_name=_('Layer Definition'),
-        help_text=_('The reviewed Layer Definition'),
+        help_text=_('The reviewed Layer Definition.'),
         blank=False,
         null=False,
         on_delete=models.CASCADE)
