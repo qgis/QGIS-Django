@@ -227,6 +227,7 @@ class ResourceBaseCreateView(LoginRequiredMixin,
 
     template_name = 'base/upload_form.html'
     is_1mb_limit_enable = True
+    is_custom_license_agreement = False
 
     def form_valid(self, form):
         self.obj = form.save(commit=False)
@@ -247,6 +248,7 @@ class ResourceBaseCreateView(LoginRequiredMixin,
     def get_context_data(self, **kwargs):
         context = super().get_context_data()
         context['limit_1mb'] = self.is_1mb_limit_enable
+        context['is_custom_license_agreement'] = self.is_custom_license_agreement
         return context
 
 
@@ -309,6 +311,7 @@ class ResourceBaseUpdateView(LoginRequiredMixin,
 
     context_object_name = 'object'
     template_name = 'base/update_form.html'
+    is_custom_license_agreement = False
 
     def dispatch(self, request, *args, **kwargs):
         object = self.get_object()
@@ -329,6 +332,12 @@ class ResourceBaseUpdateView(LoginRequiredMixin,
         url_name = '%s_detail' % self.resource_name_url_base
         return HttpResponseRedirect(reverse_lazy(url_name,
                                                  kwargs={'pk': obj.id}))
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data()
+        context['limit_1mb'] = self.is_1mb_limit_enable
+        context['is_custom_license_agreement'] = self.is_custom_license_agreement
+        return context
 
 
 @method_decorator(never_cache, name='dispatch')

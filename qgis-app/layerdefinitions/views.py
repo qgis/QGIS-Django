@@ -29,7 +29,7 @@ class ResourceMixin():
     review_model = Review
 
     # The resource_name will be displayed as the app name on web page
-    resource_name = 'Layer Definition'
+    resource_name = 'Layer Definition File'
 
     # The url name in urls.py should start start with this value
     resource_name_url_base = 'layerdefinition'
@@ -39,6 +39,7 @@ class LayerDefinitionCreateView(ResourceMixin, ResourceBaseCreateView):
     """Upload a Layer Definition File (.qlr)."""
 
     form_class = UploadForm
+    is_custom_license_agreement = True
 
     def form_valid(self, form):
         obj = form.save(commit=False)
@@ -68,6 +69,7 @@ class LayerDefinitionUpdateView(ResourceMixin, ResourceBaseUpdateView):
     """Update View"""
 
     form_class = UpdateForm
+    is_custom_license_agreement = True
 
     def form_valid(self, form):
         obj = form.save(commit=False)

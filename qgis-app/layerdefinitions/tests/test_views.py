@@ -50,7 +50,7 @@ class TestPageUserAnonymous(TestCase):
         url = reverse('layerdefinition_list')
         response = self.client.get(url)
         self.assertEqual(response.status_code, 200)
-        self.assertContains(response, 'All Layer Definitions')
+        self.assertContains(response, 'All Layer Definition Files')
         self.assertContains(response, 'No data.')
 
     def test_upload(self):
@@ -94,7 +94,7 @@ class TestUploadLayerDefinitionFile(SetUpTest, TestCase):
         self.assertEqual(len(mail.outbox), 1)
         self.assertEqual(
             mail.outbox[0].subject,
-            'A new Layer Definition has been created by creator.'
+            'A new Layer Definition File has been created by creator.'
         )
 
     def test_uploaded_file_create_model_instance(self):

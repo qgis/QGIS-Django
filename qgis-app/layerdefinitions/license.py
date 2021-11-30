@@ -5,7 +5,7 @@ import uuid
 import zipfile
 
 
-def create_license_file(string: str):
+def create_license_file(string):
     tmp_dir = f'/tmp/{uuid.uuid4().hex}'
     file = f'{tmp_dir}/license.txt'
     os.mkdir(tmp_dir)
@@ -15,7 +15,7 @@ def create_license_file(string: str):
     return file, tmp_dir
 
 
-def zipped_with_license(file: str, zip_subdir: str, custom_license: str) -> io.BytesIO:
+def zipped_with_license(file, zip_subdir, custom_license):
     license_file, tmp_dir = create_license_file(custom_license)
     filenames = (file, license_file)
     in_memory_data = io.BytesIO()
