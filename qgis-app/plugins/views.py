@@ -903,6 +903,26 @@ def version_detail(request, package_name, version):
 from django.views.decorators.cache import cache_page
 
 
+def _add_patch_version(version: str) -> str:
+    """To add patch number in version.
+
+    e.g qgis version = 3.16 we add patch number (99) in versioning -> 3.16.99
+    We use this versioning to query against PluginVersion min_qg_version,
+    so that the query result will include all PluginVersion with
+    minimum QGIS version 3.16 regardless of the patch number.
+    """
+
+    if not version:
+        return version
+    separator = '.'
+    v = version.split(separator)
+    if len(v) > 1:
+        two_first_segment = separator.join(v[:2])
+        max_patch_version = 99
+        version = f'{two_first_segment}.{max_patch_version}'
+    return version
+
+
 @cache_page(60 * 15)
 def xml_plugins(request, qg_version=None, stable_only=None, package_name=None):
     """
@@ -924,8 +944,8 @@ def xml_plugins(request, qg_version=None, stable_only=None, package_name=None):
     object_list = []
 
     if qg_version:
-        filters.update({'pluginversion__min_qg_version__lte' : qg_version})
-        version_filters.update({'min_qg_version__lte' : qg_version})
+        filters.update({'pluginversion__min_qg_version__lte' : _add_patch_version(qg_version)})
+        version_filters.update({'min_qg_version__lte' : _add_patch_version(qg_version)})
         filters.update({'pluginversion__max_qg_version__gte' : qg_version})
         version_filters.update({'max_qg_version__gte' : qg_version})
 
@@ -1001,8 +1021,8 @@ def xml_plugins_new(request, qg_version=None, stable_only=None, package_name=Non
     object_list = []
 
     if qg_version:
-        filters.update({'pluginversion__min_qg_version__lte' : qg_version})
-        version_filters.update({'min_qg_version__lte' : qg_version})
+        filters.update({'pluginversion__min_qg_version__lte' : _add_patch_version(qg_version)})
+        version_filters.update({'min_qg_version__lte' : _add_patch_version(qg_version)})
         filters.update({'pluginversion__max_qg_version__gte' : qg_version})
         version_filters.update({'max_qg_version__gte' : qg_version})
 
@@ -1046,7 +1066,7 @@ def xml_plugins_new(request, qg_version=None, stable_only=None, package_name=Non
             WHERE (
                 pv.approved = True
                 AND pv."max_qg_version" >= '%(qg_version)s'
-                AND pv."min_qg_version" <= '%(qg_version)s'
+                AND pv."min_qg_version" <= '%(qg_version_with_patch)s'
                 AND pv.experimental = %(experimental)s
             )
             ORDER BY pv.plugin_id, pv.version DESC
@@ -1057,6 +1077,7 @@ def xml_plugins_new(request, qg_version=None, stable_only=None, package_name=Non
             'pv_table': PluginVersion._meta.db_table,
             'p_table': Plugin._meta.db_table,
             'qg_version': qg_version,
+            'qg_version_with_patch': _add_patch_version(qg_version),
             'experimental': 'False',
             'trusted_users_ids': str(trusted_users_ids),
         })
@@ -1069,6 +1090,7 @@ def xml_plugins_new(request, qg_version=None, stable_only=None, package_name=Non
                 'pv_table': PluginVersion._meta.db_table,
                 'p_table': Plugin._meta.db_table,
                 'qg_version': qg_version,
+                'qg_version_with_patch': _add_patch_version(qg_version),
                 'experimental': 'True',
                 'trusted_users_ids': str(trusted_users_ids),
             })]
