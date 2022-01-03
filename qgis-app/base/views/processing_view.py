@@ -312,6 +312,7 @@ class ResourceBaseUpdateView(LoginRequiredMixin,
 
     context_object_name = 'object'
     template_name = 'base/update_form.html'
+    is_1mb_limit_enable = True
     is_custom_license_agreement = False
 
     def dispatch(self, request, *args, **kwargs):
