@@ -76,6 +76,8 @@ INSTALLED_APPS = [
     'styles',
     # geopackages
     'geopackages',
+    # QGIS Layer Definition File (.qlr)
+    'layerdefinitions',
     # models (sharing .model3 file feature)
     'models',
     'wavefronts'

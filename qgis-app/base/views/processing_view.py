@@ -227,6 +227,7 @@ class ResourceBaseCreateView(LoginRequiredMixin,
 
     template_name = 'base/upload_form.html'
     is_1mb_limit_enable = True
+    is_custom_license_agreement = False
 
     def form_valid(self, form):
         self.obj = form.save(commit=False)
@@ -247,6 +248,8 @@ class ResourceBaseCreateView(LoginRequiredMixin,
     def get_context_data(self, **kwargs):
         context = super().get_context_data()
         context['limit_1mb'] = self.is_1mb_limit_enable
+        context['is_custom_license_agreement'] = \
+            self.is_custom_license_agreement
         return context
 
 
@@ -266,6 +269,7 @@ class ResourceBaseDetailView(ResourceBaseContextMixin,
     css = ()
 
     is_3d_model = False
+    license_template = 'base/includes/license.html'
 
     def get_template_names(self):
         object = self.get_object()
@@ -283,6 +287,7 @@ class ResourceBaseDetailView(ResourceBaseContextMixin,
         context['js'] = self.js
         context['css'] = self.css
         context['is_3d_model'] = self.is_3d_model
+        context['license_template'] = self.license_template
         if self.object.review_set.exists():
             if self.object.review_set.last().reviewer.first_name:
                 reviewer = "%s %s" % (
@@ -307,6 +312,7 @@ class ResourceBaseUpdateView(LoginRequiredMixin,
 
     context_object_name = 'object'
     template_name = 'base/update_form.html'
+    is_custom_license_agreement = False
 
     def dispatch(self, request, *args, **kwargs):
         object = self.get_object()
@@ -327,6 +333,13 @@ class ResourceBaseUpdateView(LoginRequiredMixin,
         url_name = '%s_detail' % self.resource_name_url_base
         return HttpResponseRedirect(reverse_lazy(url_name,
                                                  kwargs={'pk': obj.id}))
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data()
+        context['limit_1mb'] = self.is_1mb_limit_enable
+        context['is_custom_license_agreement'] = \
+            self.is_custom_license_agreement
+        return context
 
 
 @method_decorator(never_cache, name='dispatch')
