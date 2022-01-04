@@ -1,4 +1,4 @@
-django==2.2.18
+django==2.2.24
 django-auth-ldap
 python-ldap
 django-taggit
@@ -20,7 +20,7 @@ django-bootstrap-pagination
 django-sortable-listview
 sorl-thumbnail
 django-extensions
-django-debug-toolbar
+django-debug-toolbar==1.11.1
 whoosh
 django-haystack
 
@@ -42,3 +42,6 @@ sorl-thumbnail-serializer-field==0.2.1
 django-rest-auth==0.9.5
 drf-yasg==1.17.1
 django-rest-multiple-models==2.1.3
+
+django-preferences==1.0.0
+PyWavefront==1.3.3

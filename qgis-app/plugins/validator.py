@@ -81,7 +81,15 @@ def _check_url_link(url: str, forbidden_url: str, metadata_attr: str) -> None:
 
     # Check if url is exist
     try:
-        req = requests.head(url)
+        # https://stackoverflow.com/a/41950438/10268058
+        # add the headers parameter to make the request appears like coming
+        # from browser, otherwise some websites will return 403
+        headers = {
+            'User-Agent': 'Mozilla/5.0 (Windows NT 6.1; WOW64) '
+                          'AppleWebKit/537.36 (KHTML, like Gecko) '
+                          'Chrome/56.0.2924.76 Safari/537.36'
+        }
+        req = requests.head(url, headers=headers)
     except requests.exceptions.SSLError:
         req = requests.head(url, verify=False)
     except Exception:
@@ -118,6 +126,8 @@ def validator(package):
     for zname in zip.namelist():
         if zname.find('..') != -1 or zname.find(os.path.sep) == 0 :
             raise ValidationError( _("For security reasons, zip file cannot contain path informations") )
+        if zname.find('.pyc') != -1:
+            raise ValidationError( _("For security reasons, zip file cannot contain .pyc file") )
         for forbidden_dir in ['__MACOSX', '.git', '__pycache__']:
             if forbidden_dir in zname.split('/'):
                 raise ValidationError(_("For security reasons, zip file "

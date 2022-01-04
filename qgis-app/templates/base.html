@@ -1,4 +1,6 @@
-{% load i18n simplemenu_tags static %}<!DOCTYPE html>
+{% load i18n simplemenu_tags static %}
+{% load resources_custom_tags %}
+<!DOCTYPE html>
 <html xmlns="http://www.w3.org/1999/xhtml">
 <head>
   <title>QGIS {% block extratitle %}Plugins{% endblock %}</title>
@@ -17,6 +19,15 @@
 
     <script type="text/javascript" src="{% static "js/jquery-1.11.1.min.js" %}"></script>
     <script type="text/javascript" src="{% static "bootstrap/js/bootstrap.min.js" %}"></script>
+
+    <!-- Cookie disclaimer -->
+    <script type="text/javascript" id="cookieinfo" src="{% static 'js/cookieinfo/cookieinfo.min.js' %}" data-bg="#1c2028"
+            data-fg="#FFFFFF" data-link="#22961c" data-cookie="CookieInfoScript" data-text-align="left"
+            data-message="We use functional cookies to enhance your experience.
+            We do not use any ad tracking or targeting cookies.
+            By continuing to visit this site you agree to our use of cookies."
+            data-close-text="Got it!">
+    </script>
     {% block extrajs %}{% endblock %}
 
 </head>
@@ -148,11 +159,10 @@
                 </div>
 
                 <p class="credit">{% trans "All content is licensed under" %} <a href="http://creativecommons.org/licenses/by-sa/3.0/">Creative Commons Attribution-ShareAlike 3.0 licence (CC BY-SA)</a>.</p>
-            </div>
-            <div class="container">
-              {% block "credits" %}
-              <p class="credit">{% trans "Select graphics from " %}<a href="http://thenounproject.com" target="_blank">{% trans "The Noun Project collection" %}</a>.</p>
-              {% endblock %}
+                {% block "credits" %}
+                <p class="credit">{% trans "Select graphics from " %}<a href="http://thenounproject.com" target="_blank">{% trans "The Noun Project collection" %}</a>.</p>
+                  <p class="credit">{% trans "This web application was developed by:" %}&nbsp;<a href="https://www.itopen.it">Alessandro Pasotti</a> and &nbsp;<a href="https://kartoza.com"><img src="{% static 'images/kartoza-logo-only.png' %}" alt="Kartoza icon" width="16" height="16">Kartoza</a>. <span>Version: {% version_tag %}</span>.</p>
+                {% endblock %}
             </div>
         </footer>
     </div>

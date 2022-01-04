@@ -63,6 +63,8 @@ INSTALLED_APPS = [
 
     'feedjack',
 
+    'preferences',
+
     'rest_framework',
     'sorl_thumbnail_serializer',  # serialize image
     'drf_multiple_model',
@@ -74,8 +76,11 @@ INSTALLED_APPS = [
     'styles',
     # geopackages
     'geopackages',
+    # QGIS Layer Definition File (.qlr)
+    'layerdefinitions',
     # models (sharing .model3 file feature)
     'models',
+    'wavefronts'
 ]
 
 DATABASES = {
@@ -93,6 +98,7 @@ DATABASES = {
 }
 
 PAGINATION_DEFAULT_PAGINATION=20
+PAGINATION_DEFAULT_PAGINATION_HUB=30
 LOGIN_REDIRECT_URL='/'
 SERVE_STATIC_MEDIA = DEBUG
 DEFAULT_PLUGINS_SITE = os.environ.get('DEFAULT_PLUGINS_SITE', '')
@@ -118,3 +124,4 @@ FILE_UPLOAD_PERMISSIONS = 0o644
 REST_FRAMEWORK = {
     'TEST_REQUEST_DEFAULT_FORMAT': 'json',
 }
+

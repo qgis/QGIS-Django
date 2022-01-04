@@ -1,5 +1,12 @@
 {% extends 'base/base.html' %}{% load i18n static thumbnail resources_custom_tags%}
 
+{% block extrajs %}
+  {{ block.super }}
+  {% for css_src in css %}
+    <link rel="stylesheet" href="{% static css_src %}" type="text/css" />
+  {% endfor %}
+{% endblock %}
+
 {% block content %}
         <h3 class="style-title">{{ object_detail.name }}</h3>
         {% if user == object_detail.creator or user.is_staff %}
@@ -10,56 +17,39 @@
         {% endif %}
         <hr />
         <div class="row">
-            <div class="span4 mb-5">
+            <div class="span4 mb-5 view-resource">
                 <div class="style-polaroid">
                     {% thumbnail object_detail.thumbnail_image "420x420" format="PNG" as im %}
-                    <img class="" alt="{% trans "image" %}" src="{{ im.url }}" width="{{ im.x }}" height="{{ im.y }}" />
+                    <img class="image-resource" alt="{% trans "image" %}" src="{{ im.url }}" width="{{ im.x }}" height="{{ im.y }}" />
                     {% endthumbnail %}
-
+                    {% if is_3d_model %}
+                      {% include "base/includes/wavefront/detail_3dviewer.html" %}
+                    {% else %}
                 </div>
-
-            </div>
-            <div class="span8">
-                <dl class="dl-horizontal">
-                    <dd></dd>
-                    <dt>Name</dt>
-                    <dd>{{ object_detail.name }}</dd>
-                    <dt>Description</dt>
-                    <dd>{{ object_detail.description|md_to_html }}</dd>
-                    <dt>Uploaded Date</dt>
-                    <dd>{{ object_detail.upload_date|date:"d F Y" }}</dd>
-                    <dt>Approved Date</dt>
-                    <dd>{{ object_detail.review_set.last.review_date|date:"d F Y"}}</dd>
-                    <dt>Creator</dt>
-                    <dd>{{ object_detail.get_creator_name|title }}</dd>
-
-                    {# for style app sharing only #}
-                    {% if object_detail.style_type %}
-                    <dt>Type</dt>
-                    <dd>
-                        {{ object_detail.style_type.name }}
-                    </dd>
                     {% endif %}
-
-                    <dt>{{ resource_name }} File</dt>
-                    <dd>
-                        <div>
-                             <a class="btn btn-primary btn-mini" href="{% url url_download object_detail.id %}" title="{% trans "Download" %}"><i class="icon-download-alt"></i> Download</a>
-                        </div>
-                    </dd>
-                </dl>
-
             </div>
-            <div class="span12 license">
-              <div class="media" style="margin-top: 2rem">
-                <a class="pull-left" href="#">
-                  <img src="{% static 'images/cc-zero.svg' %}">
-                </a>
-                <div class="media-body">
-                  <p>This {{ resource_name }} is made available under the <a href="https://creativecommons.org/publicdomain/zero/1.0/" target="_blank">CC-0 license</a>.</p>
-                </div>
-              </div>
+            <div class="span6 info-resource">
+              <dl class="dl-horizontal">
+                {% include "base/includes/detail_object.html" %}
+                <dt>{{ resource_name }} File</dt>
+                <dd>
+                  <div>
+                    <a class="btn btn-primary btn-mini" href="{% url url_download object_detail.id %}" title="{% trans "Download" %}"><i class="icon-download-alt"></i> Download</a>
+                  </div>
+                </dd>
+              </dl>
             </div>
+
+            {% if license_template %}
+              {% include license_template %}
+            {% endif %}
 
         </div>
+
+
+  {% for js_src in js %}
+    <script type="{% if not js_src.type %}text/javascript{% else %}{{ js_src.type }}{% endif %}" src="{% static js_src.src %}"></script>
+  {%  endfor %}
+
+
 {% endblock %}

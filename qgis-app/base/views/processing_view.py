@@ -215,13 +215,19 @@ class ResourceBaseContextMixin(ContextMixin):
         return context
 
 
+@method_decorator(never_cache, name='dispatch')
 class ResourceBaseCreateView(LoginRequiredMixin,
                              ResourceBaseContextMixin,
                              SuccessMessageMixin,
                              CreateView):
-    """Upload a Resource File."""
+    """Upload a Resource File.
+
+    We don't cache since there's a dynamic preference value on the template
+    """
 
     template_name = 'base/upload_form.html'
+    is_1mb_limit_enable = True
+    is_custom_license_agreement = False
 
     def form_valid(self, form):
         self.obj = form.save(commit=False)
@@ -239,12 +245,31 @@ class ResourceBaseCreateView(LoginRequiredMixin,
         url_name = '%s_detail' % self.resource_name_url_base
         return reverse(url_name, kwargs={'pk': self.object.id})
 
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data()
+        context['limit_1mb'] = self.is_1mb_limit_enable
+        context['is_custom_license_agreement'] = \
+            self.is_custom_license_agreement
+        return context
+
 
 class ResourceBaseDetailView(ResourceBaseContextMixin,
                              DetailView):
     """Base Class for Resource DetailView."""
 
     context_object_name = 'object_detail'
+
+    # js source files
+    # e.g. js = ({'src': 'path/to/js/under/static/file.js', 'type': 'module'},)
+    # attribute src is mandatory, type is optional
+    js = ()
+
+    # css source files
+    # e.g css = ('path/to/css/file1.css', 'path/to/css/file1.css')
+    css = ()
+
+    is_3d_model = False
+    license_template = 'base/includes/license.html'
 
     def get_template_names(self):
         object = self.get_object()
@@ -259,6 +284,10 @@ class ResourceBaseDetailView(ResourceBaseContextMixin,
         context = super().get_context_data()
         user = self.request.user
         context['creator'] = self.object.get_creator_name
+        context['js'] = self.js
+        context['css'] = self.css
+        context['is_3d_model'] = self.is_3d_model
+        context['license_template'] = self.license_template
         if self.object.review_set.exists():
             if self.object.review_set.last().reviewer.first_name:
                 reviewer = "%s %s" % (
@@ -271,6 +300,8 @@ class ResourceBaseDetailView(ResourceBaseContextMixin,
             context['reviewer'] = reviewer
         if user.is_staff or is_resources_manager(user):
             context['form'] = ResourceBaseReviewForm()
+        if self.is_3d_model:
+            context['url_viewer'] = "%s_viewer" % self.resource_name_url_base
         return context
 
 
@@ -281,6 +312,8 @@ class ResourceBaseUpdateView(LoginRequiredMixin,
 
     context_object_name = 'object'
     template_name = 'base/update_form.html'
+    is_1mb_limit_enable = True
+    is_custom_license_agreement = False
 
     def dispatch(self, request, *args, **kwargs):
         object = self.get_object()
@@ -302,6 +335,13 @@ class ResourceBaseUpdateView(LoginRequiredMixin,
         return HttpResponseRedirect(reverse_lazy(url_name,
                                                  kwargs={'pk': obj.id}))
 
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data()
+        context['limit_1mb'] = self.is_1mb_limit_enable
+        context['is_custom_license_agreement'] = \
+            self.is_custom_license_agreement
+        return context
+
 
 @method_decorator(never_cache, name='dispatch')
 class ResourceBaseListView(ResourceBaseContextMixin,
@@ -309,20 +349,34 @@ class ResourceBaseListView(ResourceBaseContextMixin,
                            ListView):
 
     context_object_name = 'object_list'
-    template_name = 'base/list.html'
-    paginate_by = settings.PAGINATION_DEFAULT_PAGINATION
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         context['count'] = self.get_queryset().count()
         context['order_by'] = self.request.GET.get('order_by', None)
         context['queries'] = self.request.GET.get('q', None)
+        context['is_gallery'] = self.request.GET.get('is_gallery', None)
         return context
 
     def get_queryset(self):
         qs = self.model.approved_objects.all()
         qs = self.get_queryset_search(qs)
         return qs
+
+    def get_template_names(self):
+        context = self.get_context_data()
+        is_gallery = context['is_gallery']
+        if is_gallery:
+            self.paginate_by = settings.PAGINATION_DEFAULT_PAGINATION
+            return 'base/list_galery.html'
+        else:
+            return 'base/list.html'
+
+    def get_paginate_by(self, queryset):
+        is_gallery = self.request.GET.get('is_gallery', None)
+        if is_gallery:
+            return settings.PAGINATION_DEFAULT_PAGINATION_HUB
+        return settings.PAGINATION_DEFAULT_PAGINATION
 
 
 class ResourceBaseUnapprovedListView(LoginRequiredMixin,

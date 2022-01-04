@@ -1,0 +1,217 @@
+{% extends 'base/base.html' %}{% load i18n bootstrap_pagination humanize static thumbnail resources_custom_tags %}
+
+{% block extrajs %}
+{{ block.super }}
+<style>
+    .next-row {
+      margin-top: 1.5em;
+    }
+
+    .galery {
+        height: 550px;
+        background-color: #F2F2F2;
+    }
+
+    .galery:hover {
+        background-color: #3e88ce;
+    }
+
+    .galery:hover .image-info a, .galery:hover .image-info {
+        color: aliceblue;
+    }
+
+    .galery:hover a.btn-download {
+        color: #78a2cc;
+    }
+
+    .frame-image-demo {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        height: 420px;
+        background-color: white;
+    }
+    img.image-demo {
+        height: auto;
+        max-height: 100%;
+        width: auto;
+        max-width: 100%;
+    }
+    .image-info a {
+      text-decoration: none;
+        color: #151515 ;
+    }
+    .center {
+        text-align: center;
+    }
+    .image-info {
+        margin-left: 5px;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+    <h2>{% if title %}{{title}}{% else %}{% trans "All" %} {{ resource_name }}s{% endif %}</h2>
+
+    {% if not object_list and not queries %}
+        <p>No data.</p>
+    {% elif not object_list and queries %}
+        <p>
+            Keyword: "<strong>{{ queries }}</strong>" <br /> Search result: no record found.
+        </p>
+    {% else %}
+        <p>
+            {%  if queries %}
+                Keyword: "<strong>{{ queries }}</strong>" <br /> Search result:
+            {% endif %}
+            {{ count }} record{{ object_list.count|pluralize:"s" }} found.
+        </p>
+    {% endif %}
+
+        <div class="list-grid">
+          <a class="btn pull-right is-list" href="#"><i class="icon-th-list"></i></a>
+          <a class="btn pull-right is-galery" href="#"><i class="icon-th-large"></i></a>
+        </div>
+        <div class="row filter-sort">
+          <a class="btn pull-right" href="#" data="-"><span id="iconOrder"><i class="icon-arrow-up"></i></span></a>
+          <select class="pull-right">
+            <option value="creator">Creator</option>
+            <option value="download_count">Number of downloads</option>
+            <option value="upload_date" selected>Upload date</option>
+            <option value="name">{{ resource_name }} name</option>
+            {% if object_list.first.style_type %}<option value="type">Style type</option>{% endif %}
+          </select>
+        </div>
+        <div class="row">
+        {% for object in object_list %}
+          <div class="span4">
+              <div class="galery thumbnail">
+                <div class="frame-image-demo center">
+                  <a href="{% url url_detail pk=object.id %}">
+                  <a href="{% url url_detail pk=object.id %}">
+                    {% if object.thumbnail_image and object.thumbnail_image.file %}
+                            {% thumbnail object.thumbnail_image "420x420" format="PNG" as im %}
+                                <img class="image-demo" alt="{% trans "Style icon" %}" src="{{ im.url }}" />
+                            {% endthumbnail %}
+                        {% else %}
+                            <img height="32" width="32" class="image-demo" src="{% static "images/qgis-icon-32x32.png" %}" alt="{% trans "Plugin icon" %}" />
+                        {% endif %}
+                  </a>
+                </div>
+               <div class="image-info">
+               <a class="btn btn-mini btn-download pull-right" href="{% url url_download object.id %}" title="{% trans "Download" %}"><i class="icon-download-alt"></i></a>
+               <a href="{% url url_detail pk=object.id %}">
+                 <h4>
+                   {{ object.name}}
+                 </h4>
+                 <h5>
+                   {{ object.get_creator_name|title }} | {{ object.upload_date|date:"d F Y" }} | {{ object.download_count }} downloads
+                 </h5>
+                 <p>
+
+                    {% if object.style_type %}
+                    Style Type: {{ object.style_type.name|title }}
+                    {%  else %}
+                    {{ object.description|md_to_html|striptags|truncatewords:15 }}
+                    {% endif %}
+                 </p>
+               </a>
+               </div>
+
+              </div>
+          </div>
+
+          {% if forloop.counter|divisibleby:3 %}
+            </div>
+            <div class="row next-row">
+          {% endif %}
+        {% endfor %}
+    </div>
+
+
+    <div class="pagination">
+    {% include 'sortable_listview/pagination.html' %}
+    </div>
+
+
+
+    <script type="text/javascript">
+    $(document).ready(function(){
+        // Add arguments in pagination
+        const orderBy = new URLSearchParams(window.location.search).get("order_by");
+        const queries = new URLSearchParams(window.location.search).get("q");
+        const is_gallery = 'is_gallery=true'
+        if (orderBy){
+            $(".pagination li a").each(function(){
+                this.href += 'order_by=' + orderBy +'&&' + is_gallery + '&&';
+            })
+        }
+        if (queries){
+            $(".pagination li a").each(function(){
+                this.href += 'q=' + queries +'&&' + is_gallery + '&&';
+            })
+        }
+        if (!orderBy && !queries){
+          $(".pagination li a").each(function(){
+                this.href += is_gallery + '&&';
+            })
+        }
+
+        // galery or list view
+        const url = window.location.href.split('?')[0];
+        const isGalery = new URLSearchParams(window.location.search).get("is_gallery");
+        if (isGalery && isGalery === 'true') {
+          $('.list-grid').find('.is-galery').addClass('disabled')
+        } else {
+          $('.list-grid').find('.is-list').addClass('disabled')
+        }
+        // add href value
+        $('.list-grid a.is-list').each(function(){
+          this.href = url;
+        })
+        $('.list-grid a.is-galery').each(function(){
+          this.href = url + '?is_gallery=true';
+        })
+
+        // edit search input from base template, in order to use it for styles
+        $("form.navbar-search").attr("action", "");
+
+        // add event listener
+        $('div.filter-sort').find('a').click( () => {
+          const $order = $('div.filter-sort').find('a').eq(0);
+          if (!$order.attr('data')) {
+            $order.attr('data', '-')
+          } else {
+            $order.attr('data', '')
+          }
+          sort();
+        });
+        $('div.filter-sort').find('select').on('change', sort);
+
+        // set current value of sort selector and order button
+        if (!orderBy) return;
+        const currentVal = orderBy.split('-')
+        if (currentVal.length > 1) {
+          $('div.filter-sort').find('a').attr('data', '-');
+          $("#iconOrder").html('<i class="icon-arrow-down"></i>')
+          $('div.filter-sort').find('select').val(currentVal[1]);
+        } else {
+          $('div.filter-sort').find('a').attr('data', '');
+          $("#iconOrder").html('<i class="icon-arrow-up"></i>')
+          $('div.filter-sort').find('select').val(currentVal[0])
+        }
+
+    })
+
+    function sort(){
+      const order = $('div.filter-sort').find('a').attr('data')
+      const sort_by = $('div.filter-sort').find('select').val()
+      let current_query = new URLSearchParams(window.location.search).get("q");
+      let is_gallery = new URLSearchParams(window.location.search).get("is_gallery");
+      if (current_query === null) current_query = '';
+
+      location.href = location.protocol + '//' + location.host + location.pathname + `?order_by=${order}${sort_by}&&is_gallery=${is_gallery}`
+    }
+    </script>
+{% endblock %}
+

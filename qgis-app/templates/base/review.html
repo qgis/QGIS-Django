@@ -11,6 +11,9 @@
     }
 
 </style>
+  {% for css_src in css %}
+    <link rel="stylesheet" href="{% static css_src %}" type="text/css" />
+  {% endfor %}
 {% endblock %}
 
 {% block content %}
@@ -23,28 +26,33 @@
     {% endif %}
     <hr />
     <div class="row">
-        <div class="span6 text-center mb-5">
-            <div class="style-polaroid">
-               {% thumbnail object_detail.thumbnail_image "420x420" format="PNG" as im %}
-                   <img class="style-polaroid" alt="{% trans "Style icon" %}" src="{{ im.url }}" width="{{ im.x }}" height="{{ im.y }}" />
-                {% endthumbnail %}
+        <div class="span4 mb-5 view-resource">
+                <div class="style-polaroid">
+                    {% thumbnail object_detail.thumbnail_image "420x420" format="PNG" as im %}
+                    <img class="image-resource" alt="{% trans "image" %}" src="{{ im.url }}" width="{{ im.x }}" height="{{ im.y }}" />
+                    {% endthumbnail %}
+                    {% if is_3d_model %}
+                      <div class="middle">
+                        {% thumbnail object_detail.thumbnail_image "150x150" format="PNG" as im %}
+                          <img alt="{% trans "image" %}" src="{% static 'wavefront/img/cube-3d.png' %}" width="{{ im.x }}" height="{{ im.y }}" />
+                        {% endthumbnail %}
+                      </div>
+                      </div>
+                      <div id="urlView" data-url="{{ obj_url }}" data-mtl-url="{{ mtl_url }}"></div>
+
+                    {% else %}
+                </div>
+                    {% endif %}
             </div>
-        </div>
-        <div class="span6">
+        <div class="span6 info-resource">
             <dl class="dl-horizontal">
-                <dt>Name</dt>
-                <dd>{{ object_detail.name }}</dd>
-                <dt>Description</dt>
-                <dd>{{ object_detail.description|md_to_html }}</dd>
-                <dt>Upload Date</dt>
-                <dd>{{ object_detail.upload_date|date:"d F Y" }}</dd>
-                <dt>Modified Date</dt>
-                <dd>{{ object_detail.modified_date|date:"d F Y" }}</dd>
-                <dt>Creator</dt>
-                <dd>{{ object_detail.get_creator_name|title }}</dd>
+                {% include "base/includes/detail_object.html" %}
+                {% include "base/includes/layerdefinition/review_datasource.html" %}
                 <dt>{{ resource_name }} File</dt>
                 <dd>
-                    <a class="btn btn-primary btn-mini delete" href="{% url url_download object_detail.id %}" title="{% trans "Download" %}"><i class="icon-download-alt"></i> Download</a>
+                  <div>
+                    <a class="btn btn-primary btn-mini" href="{% url url_download object_detail.id %}" title="{% trans "Download" %}"><i class="icon-download-alt"></i> Download</a>
+                  </div>
                 </dd>
 
                 <hr />
@@ -82,7 +90,7 @@
         <div class="span12"></div>
 
     </div>
-    <script>
-
-    </script>
+    {% for js_src in js %}
+        <script type="{% if not js_src.type %}text/javascript{% else %}{{ js_src.type }}{% endif %}" src="{% static js_src.src %}"></script>
+    {%  endfor %}
 {% endblock %}

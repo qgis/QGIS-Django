@@ -1,33 +1,41 @@
+# Installation
+
 ## Development Environment Deployment
 
 - Clone git repo `git clone https://github.com/qgis/QGIS-Django.git`
-> run `$ pwd` in order to get your current directory
->
-> path to your repo should be `<your current directory>/QGIS-Django `
-- Go to dockerize directory
-`$ cd QGIS-Django/dockerize`
+- Run `$ pwd` in order to get your current directory
+- Path to your repo should be `<your current directory>/QGIS-Django `
+- Go to dockerize directory `cd QGIS-Django/dockerize`
 
 - Build and spin container
-```
+```bash
 $ make build
 $ make web
 $ make devweb
 ```
 
 - Run migrate
-```
+```bash
 $ make migrate
 ```
 
-- Set up python interpreter in PyCharm or just runserver from devweb container:
+If you have a backup, you can restore it:
+
+```bash
+make dbrestore
 ```
+otherwise, you will have to create the superuser, adding menu etc.
+
+- Set up python interpreter in PyCharm or just runserver from devweb container:
+```bash
 $ make devweb-runserver
 ```
 and now, you can see your site at `http://0.0.0.0:62202` (skip this step if you are using PyCharm interpreter)
 
 ---
 
-### Setting up a remote interpreter in pycharm
+### Setting up a remote interpreter in PyCharm
+
 - PyCharm -> Preferences -> Project: QGIS-Django
 - Click on the gear icon next to project interpreter -> add
 - SSH Interpreter -> New server configuration
@@ -48,7 +56,7 @@ and now, you can see your site at `http://0.0.0.0:62202` (skip this step if you 
 - Click the Apply button
 
 
-### In settings, django support:
+#### In settings, django support:
 
 - Language & Framework -> Django
 - tick to Enable Django Support.
@@ -56,8 +64,7 @@ and now, you can see your site at `http://0.0.0.0:62202` (skip this step if you 
 - Settings: setting_docker.py
 - Click the Apply button
 
-
-### Create the django run configuration
+#### Create the django run configuration
 
 - Run -> Edit configurations
 - Click the `+` icon in the top left corner
@@ -166,7 +173,7 @@ $ make dbrestore
 ## Deploy Update with Rancher
 
 - Go to [https://rancher.qgis.org](https://rancher.qgis.org)
-- Click the home icon on the top left corner,  and choose the environment: `plugins.qgis.org`
+- Click the home icon in the top left corner,  and choose the environment: `plugins.qgis.org`
 - You will be redirected to User Stacks page, choose the plugins stack by clicking on `plugins` link
 - Next, let's go inside the container, click on `uwsgi` link.
 

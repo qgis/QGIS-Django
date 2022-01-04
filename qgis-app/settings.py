@@ -53,6 +53,10 @@ STATICFILES_DIRS = [
     os.path.join(SITE_ROOT, "static"),
 ]
 
+STATICFILES_FINDERS = [
+    'django.contrib.staticfiles.finders.FileSystemFinder',
+    'django.contrib.staticfiles.finders.AppDirectoriesFinder',
+]
 
 
 # Make this unique, and don't share it with anybody.
@@ -146,7 +150,7 @@ INSTALLED_APPS = [
     'bootstrapform',
     'rest_framework',
     'rest_framework_gis',
-
+    'preferences',
     # styles:
     'styles',
 ]
@@ -163,6 +167,7 @@ TEMPLATES = [
                 'django.template.context_processors.request',
                 # ABP: adds DEBUG and BASE_TEMPLATE vars
                 "qgis_context_processor.additions",
+                "preferences.context_processors.preferences_cp",
             ),
         },
     },
@@ -221,6 +226,7 @@ TINYMCE_COMPRESSOR = True
 
 # Default number of items per page
 PAGINATION_DEFAULT_PAGINATION = 20
+PAGINATION_DEFAULT_PAGINATION_HUB = 30
 
 # rpc4django
 RPC4DJANGO_LOG_REQUESTS_RESPONSES = False

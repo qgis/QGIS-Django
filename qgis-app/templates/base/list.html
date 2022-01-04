@@ -28,11 +28,13 @@
     }
 
     img.style-icon:hover {
-        width: 320px;
-        height: 320px;
+        max-width: 320px;
+        max-height: 320px;
+        width: auto;
+        height: auto;
         position: absolute;
 
-        margin-top: -250px;
+        margin-top: -150px;
         margin-left: -220px;
         border-radius: 20px;
         box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
@@ -57,6 +59,10 @@
             {% endif %}
             {{ count }} record{{ object_list.count|pluralize:"s" }} found.
         </p>
+        <div class="list-grid">
+          <a class="btn pull-right is-list" href="#"><i class="icon-th-list"></i></a>
+          <a class="btn pull-right is-galery" href="#"><i class="icon-th-large"></i></a>
+        </div>
         <table class="table table-striped plugins">
         <thead>
             <tr>
@@ -132,6 +138,24 @@
                 this.href += 'q=' + queries +'&&';
             })
         }
+
+        // galery or list view
+        const url = window.location.href.split('?')[0];
+        const isGalery = new URLSearchParams(window.location.search).get("is_gallery");
+        console.log(isGalery)
+        if (isGalery && isGalery === 'true') {
+          $('.list-grid').find('.is-galery').addClass('disabled')
+        } else {
+          $('.list-grid').find('.is-list').addClass('disabled')
+          console.log('siable list')
+        }
+        // add href value
+        $('.list-grid a.is-list').each(function(){
+          this.href = url;
+        })
+        $('.list-grid a.is-galery').each(function(){
+          this.href = url + '?is_gallery=true';
+        })
 
         // change color for sorted head
         $("table thead tr th a").each(function(i, el){

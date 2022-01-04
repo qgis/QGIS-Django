@@ -3,6 +3,7 @@ Base Model for sharing file feature
 """
 import datetime
 import uuid
+import os
 
 from django.db import models
 from django.contrib.auth.models import User
@@ -120,6 +121,11 @@ class Resource(models.Model):
         # update modified file
         self.modified_date = datetime.datetime.now()
         super().save(*args, **kwargs)
+
+    def delete(self, *args, **kwargs):
+        if os.path.isfile(self.file.path):
+            os.remove(self.file.path)
+        super(Resource, self).delete(*args, **kwargs)
 
     def __str__(self):
         return "%s" % (self.name)
