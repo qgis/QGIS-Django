@@ -1,4 +1,4 @@
-django==2.2.24
+django==3.2.11
 django-auth-ldap
 python-ldap
 django-taggit
@@ -6,8 +6,10 @@ django-tinymce
 psycopg2
 # Updates for Django 2
 git+https://github.com/metamatik/django-templatetag-sugar.git
-# Updates for Django 2
-git+https://github.com/elpaso/django-ratings.git@modernize
+
+# Updates for Django 3
+git+https://github.com/gelo-zhukov/django-ratings.git
+
 django-taggit-autosuggest
 django-annoying
 # Updates for Django 2
@@ -20,7 +22,7 @@ django-bootstrap-pagination
 django-sortable-listview
 sorl-thumbnail
 django-extensions
-django-debug-toolbar==1.11.1
+django-debug-toolbar==3.2.4
 whoosh
 django-haystack
 
@@ -29,8 +31,9 @@ django-haystack
 # git+https://github.com/Erve1879/feedjack.git
 # George's is also broken: use my fork (django 1.8 ready)
 # git+https://github.com/elpaso/feedjack.git
-# His is also broken, use mine (django 2.2 ready)
+# His is also broken, use dimasciput (django 3.2 ready)
 git+https://github.com/dimasciput/feedjack.git
+
 feedparser==5.2.1
 celery==4.3.1
 requests==2.23.0
