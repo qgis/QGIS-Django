@@ -7,7 +7,7 @@ MAINTAINER Dimas Ciputra<dimas@kartoza.com>
 RUN apt-get clean all
 RUN apt-get update && apt-get install -y libsasl2-dev python-dev libldap2-dev libssl-dev
 ADD REQUIREMENTS.txt /REQUIREMENTS.txt
-RUN pip install -r /REQUIREMENTS.txt
+RUN pip install --upgrade pip && pip install -r /REQUIREMENTS.txt
 RUN pip install uwsgi
 
 # https://docs.docker.com/examples/running_ssh_service/

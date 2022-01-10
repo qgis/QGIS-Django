@@ -14,6 +14,7 @@ RUN mkdir -p /usr/src; mkdir -p /home/web && \
 	        ln -s /usr/src/plugins/qgis-app /home/web/django_project
 
 RUN cd /usr/src/plugins/dockerize/docker && \
+	pip install --upgrade pip && \
 	pip install -r REQUIREMENTS.txt && \
 	pip install uwsgi && \
 	rm -rf /uwsgi.conf && \
