@@ -4,6 +4,7 @@ from haystack.views import SearchView
 from haystack.query import SearchQuerySet
 from django.conf.urls import include, url
 
+
 class SearchWithRequest(SearchView):
 
     __qualname__ = 'SearchWithRequest'
