@@ -10,10 +10,18 @@ class ResourceBaseReviewForm(forms.Form):
     APPROVAL_OPTIONS = [('approve', 'Approve'), ('reject', 'Reject')]
     approval = forms.ChoiceField(required=True, choices=APPROVAL_OPTIONS,
                                  widget=forms.RadioSelect, initial='approve')
-    comment = forms.CharField(widget=forms.Textarea(
-        attrs={'placeholder': _('Please provide clear feedback if you decided '
-                                'to not approve this GeoPackage.'),
-               'rows': "5"}))
+    comment = forms.CharField()
+
+    def __init__(self, *args, **kwargs):
+        self.resource_name = kwargs.pop('resource_name', 'resource')
+        super(ResourceBaseReviewForm, self).__init__(*args, **kwargs)
+        self.fields['comment'].widget = forms.Textarea(
+            attrs={
+                'placeholder': _(
+                    'Please provide clear feedback if you decided to not '
+                    'approve this %s.') % self.resource_name,
+                'rows': "5"})
+
 
 
 class ResourceBaseSearchForm(forms.Form):
