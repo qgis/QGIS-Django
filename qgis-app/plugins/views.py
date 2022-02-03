@@ -916,7 +916,7 @@ def _add_patch_version(version: str, additional_patch: str ) -> str:
         return version
     separator = '.'
     v = version.split(separator)
-    if len(v) > 1:
+    if len(v) == 2:
         two_first_segment = separator.join(v[:2])
         version = f'{two_first_segment}.{additional_patch}'
     return version
