@@ -55,6 +55,7 @@
 
                     <form class="navbar-search" action="{% url "haystack_search" %}" method="get">
                       <input type="text"  id="id_q" name="q" class="search-query" placeholder="Search" />
+                      <input type="submit" class="btn" value="Search" />
                     </form>
 
                     {% get_namedmenu Navigation as menu %}
