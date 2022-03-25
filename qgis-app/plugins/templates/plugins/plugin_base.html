@@ -1,6 +1,9 @@
 {% extends BASE_TEMPLATE %}{% load i18n plugins_tagcloud static %}
-{% load resources_custom_tags %}
-{% block extratitle %}{% trans "Python Plugins Repository"%}{% endblock %}
+{% load resources_custom_tags plugin_utils %}
+{% block title %}
+    {% plugin_title %} — {% trans "QGIS Python Plugins Repository"%}
+{% endblock %}
+
 {% block app_title %}
 <h2>{% trans "QGIS Python Plugins Repository"%}</h2>
 {% endblock %}
