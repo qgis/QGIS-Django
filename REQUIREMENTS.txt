@@ -29,7 +29,7 @@ django-pagination==1.0.7
 git+https://github.com/enikesha/django-ratings.git
 django-simple-ratings==0.3.2
 # SIMPLEMENU
-git+git://github.com/elpaso/django-simplemenu.git
+git+https://github.com/elpaso/django-simplemenu.git
 django-taggit==0.14.0
 django-taggit-autosuggest==0.2.7
 django-taggit-templatetags==0.4.6dev0
