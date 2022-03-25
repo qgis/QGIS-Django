@@ -15,7 +15,7 @@ git+https://github.com/elpaso/rpc4django.git@modernize
 Pillow
 django-taggit-templatetags
 # Updates for Django 2
-git+git://github.com/elpaso/django-simplemenu.git@modernize
+git+https://github.com/elpaso/django-simplemenu.git@modernize
 django-bootstrap-pagination
 django-sortable-listview
 sorl-thumbnail
