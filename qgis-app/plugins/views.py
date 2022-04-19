@@ -464,8 +464,12 @@ class PluginsList(ListView):
             paginate_by = self.paginate_by
         return paginate_by
 
+    def get_filtered_queryset(self, qs):
+        return qs
+
     def get_queryset(self):
         qs = super(PluginsList, self).get_queryset()
+        qs = self.get_filtered_queryset(qs)
         sort_by = self.request.GET.get('sort', None)
         if sort_by:
             if sort_by[0] == '-':
@@ -522,22 +526,22 @@ class PluginsList(ListView):
 
 class MyPluginsList(PluginsList):
 
-    def get_queryset(self):
+    def get_filtered_queryset(self, qs):
         return Plugin.base_objects.filter(owners=self.request.user).distinct()\
          | Plugin.objects.filter(created_by=self.request.user).distinct()
 
 
 class UserPluginsList(PluginsList):
 
-    def get_queryset(self):
+    def get_filtered_queryset(self, qs):
         user = get_object_or_404(User, username=self.kwargs['username'])
-        return Plugin.approved_objects.filter(created_by=user)
+        return qs.filter(created_by=user)
 
 
 class AuthorPluginsList(PluginsList):
 
-    def get_queryset(self):
-        return Plugin.approved_objects.filter(author=unquote(self.kwargs['author']))
+    def get_filtered_queryset(self, qs):
+        return qs.filter(author=unquote(self.kwargs['author']))
 
     def get_context_data(self, **kwargs):
         context = super(AuthorPluginsList, self).get_context_data(**kwargs)
@@ -553,9 +557,9 @@ class UserDetailsPluginsList(PluginsList):
     List plugins created_by OR owned by user
     """
     template_name = 'plugins/user.html'
-    def get_queryset(self):
+    def get_filtered_queryset(self, qs):
         user = get_object_or_404(User, username=self.kwargs['username'])
-        return Plugin.approved_objects.filter(Q(created_by=user) | Q(owners=user))
+        return qs.filter(Q(created_by=user) | Q(owners=user))
 
     def get_context_data(self, **kwargs):
         user = get_object_or_404(User, username=self.kwargs['username'])
@@ -571,8 +575,10 @@ class UserDetailsPluginsList(PluginsList):
 
 class TagsPluginsList(PluginsList):
 
-    def get_queryset(self):
-        return Plugin.approved_objects.filter(tagged_items__tag__slug=unquote(self.kwargs['tags']))
+    def get_filtered_queryset(self, qs):
+        return (
+            qs.filter(tagged_items__tag__slug=unquote(self.kwargs['tags']))
+        )
 
     def get_context_data(self, **kwargs):
         context = super(TagsPluginsList, self).get_context_data(**kwargs)
