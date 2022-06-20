@@ -20,6 +20,9 @@ To contribute to this project, please contact Tim Sutton - tim@kartoza.com
 QGIS Django Project
 Tim Sutton 2010
 
+## Admin
+
+To update QGIS versions, go to **Admin** -> **Site preferences**.
 
 ## Tech stack
 
