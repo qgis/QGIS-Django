@@ -22,7 +22,7 @@ Tim Sutton 2010
 
 ## Admin
 
-To update QGIS versions, go to **Admin** -> **Site preferences**.
+To update QGIS versions, go to **[Admin](https://plugins.qgis.org/admin/)** -> **[Site preferences](https://plugins.qgis.org/admin/preferences/sitepreference/)**.
 
 ## Tech stack
 
