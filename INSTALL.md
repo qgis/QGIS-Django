@@ -24,7 +24,11 @@ If you have a backup, you can restore it:
 ```bash
 make dbrestore
 ```
-otherwise, you will have to create the superuser, adding menu etc.
+
+otherwise, you can seed initial data from fixtures:
+```
+make dbseed
+```
 
 - Set up python interpreter in PyCharm or just runserver from devweb container:
 ```bash
