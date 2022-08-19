@@ -10,7 +10,8 @@ function toUserTimeZone(date) {
     date = new Date(date);
     let options = {
       year: 'numeric', month: 'short', day: 'numeric',
-      hour: '2-digit', minute: '2-digit'
+      hour: '2-digit', minute: '2-digit',
+      timeZoneName: 'short'
     }
     return date.toLocaleDateString([], options);
   } catch (e) {
