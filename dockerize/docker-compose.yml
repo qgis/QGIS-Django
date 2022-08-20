@@ -6,6 +6,8 @@ volumes:
   logs-data:
   nginx-conf:
   db-backups:
+  rabbitmq:
+  celerybeat-schedule:
 services:
 
   smtp:
@@ -43,11 +45,14 @@ services:
       - VIRTUAL_PORT=${VIRTUAL_PORT:-8080}
       - DEBUG=${DEBUG:-False}
       - RABBITMQ_HOST=${RABBITMQ_HOST:-rabbitmq}
+      - BROKER_URL=amqp://rabbitmq:5672
     volumes:
       - static-data:/home/web/static:rw
       - media-data:/home/web/media:rw
+      - celerybeat-schedule:/home/web/celerybeat-schedule:rw
     links:
       - db:db
+      - rabbitmq:rabbitmq
     restart: unless-stopped
     user: root
 
@@ -58,20 +63,29 @@ services:
     <<: *uwsgi-common
 
   rabbitmq:
-    image: library/rabbitmq:3.6
+    image: rabbitmq:3.7-alpine
     hostname: rabbitmq
-    environment:
-      - RABBIT_PASSWORD=${RABBIT_PASSWORD:-rabbit_test_password}
-      - USER=${RABBIT_USER:-rabbit_user}
-      - RABBITMQ_NODENAME=${RABBITMQ_NODENAME:-rabbit}
+    volumes:
+      - rabbitmq:/var/lib/rabbitmq
     restart: unless-stopped
+
+  beat:
+    <<: *uwsgi-common
+    container_name: qgis-plugins-beat
+    working_dir: /home/web/django_project
+    entrypoint: [ ]
+    command: celery --app=plugins.celery:app beat -s /home/web/celerybeat-schedule/schedule -l INFO
 
   worker:
     <<: *uwsgi-common
-    # Note you cannot scale if you use container_name
     container_name: qgis-plugins-worker
+    links:
+      - db
+      - rabbitmq
+      - beat
     working_dir: /home/web/django_project
-    command: celery -A plugins worker -l info
+    entrypoint: []
+    command: celery --app=plugins.celery:app worker -l INFO
 
   beat:
     <<: *uwsgi-common

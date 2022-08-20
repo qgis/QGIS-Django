@@ -34,14 +34,14 @@ web: db
 	@echo "------------------------------------------------------------------"
 	@echo "Running in production mode"
 	@echo "------------------------------------------------------------------"
-	@docker-compose -p $(PROJECT_ID) up -d uwsgi web smtp
+	@docker-compose -p $(PROJECT_ID) up -d uwsgi web smtp worker beat
 
 devweb: db
 	@echo
 	@echo "------------------------------------------------------------------"
 	@echo "Running in DEVELOPMENT mode"
 	@echo "------------------------------------------------------------------"
-	@docker-compose -p $(PROJECT_ID) up --no-deps -d devweb
+	@docker-compose -p $(PROJECT_ID) up --no-deps -d devweb rabbitmq worker beat
 
 devweb-runserver: devweb
 	@echo
