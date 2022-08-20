@@ -9,7 +9,7 @@ volumes:
 services:
 
   smtp:
-    image: catatnight/postfix
+    image: catatnight/postfix:latest
     hostname: postfix
     environment:
       - maildomain=qgis.org

@@ -34,7 +34,7 @@ web: db
 	@echo "------------------------------------------------------------------"
 	@echo "Running in production mode"
 	@echo "------------------------------------------------------------------"
-	@docker-compose -p $(PROJECT_ID) up -d uwsgi web
+	@docker-compose -p $(PROJECT_ID) up -d uwsgi web smtp
 
 devweb: db
 	@echo
@@ -106,6 +106,20 @@ rm-only: kill
 	@echo "Removing production instance!!! "
 	@echo "------------------------------------------------------------------"
 	@docker-compose -p $(PROJECT_ID) rm
+
+maillogs:
+	@echo
+	@echo "------------------------------------------------------------------"
+	@echo "Showing smtp logs in production mode"
+	@echo "------------------------------------------------------------------"
+	@docker-compose exec smtp tail -f /var/log/mail.log
+
+mailerrorlogs:
+	@echo
+	@echo "------------------------------------------------------------------"
+	@echo "Showing smtp error logs in production mode"
+	@echo "------------------------------------------------------------------"
+	@docker-compose exec smtp tail -f /var/log/mail.err
 
 dbrestore:
 	@echo
