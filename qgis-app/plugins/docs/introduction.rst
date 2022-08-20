@@ -9,7 +9,7 @@ The Plugin model
 
 The plugin model represents a QGIS plugin and holds general informations such as title and description and icon.
 
-The plugin can have zero or more *owners*, *owners* have the same permissions of the original plugin creator.
+The plugin can have zero or more *owners* (also named 'collaborators'), *owners* have the same permissions of the original plugin creator.
 
 Permissions
 -----------
