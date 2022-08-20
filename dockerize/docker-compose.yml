@@ -85,7 +85,7 @@ services:
       - beat
     working_dir: /home/web/django_project
     entrypoint: []
-    command: celery --app=plugins.celery:app worker -l INFO
+    command: celery -A plugins worker -l INFO
 
   beat:
     <<: *uwsgi-common
@@ -129,3 +129,15 @@ services:
       - POSTGRES_HOST=${DATABASE_HOST:-db}
       - PGDATABASE=${DATABASE_NAME:-gis}
     restart: unless-stopped
+
+  metabase:
+    image: metabase/metabase:latest
+    environment:
+      - MB_DB_TYPE=postgres
+      - MB_DB_CONNECTION_URI=jdbc:postgresql://db:5432/metabase?user=docker&password=docker
+    volumes:
+      - ./metabase-backups/:/metabase-backups/
+    ports:
+      - "3000:3000"
+    links:
+      - db

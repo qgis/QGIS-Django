@@ -45,6 +45,8 @@ INSTALLED_APPS = [
     # full text search postgres
     'django.contrib.postgres',
 
+    'feedjack',
+
     # ABP:
     'plugins',
     'django.contrib.humanize',
@@ -62,8 +64,6 @@ INSTALLED_APPS = [
     'simplemenu',
     'tinymce',
     'rpc4django',
-
-    'feedjack',
 
     'preferences',
 
@@ -130,11 +130,15 @@ REST_FRAMEWORK = {
 CELERY_RESULT_BACKEND = 'rpc://'
 CELERY_BROKER_URL = os.environ.get('BROKER_URL', 'amqp://rabbitmq:5672')
 CELERY_BEAT_SCHEDULE = {
-    'debug_task': {
+    'generate_plugins_xml': {
         'task': 'plugins.tasks.generate_plugins_xml.generate_plugins_xml',
         'schedule': crontab(minute='*/10'),  # Execute every 10 minutes.
         'kwargs': {
             'site': 'https://plugins.qgis.org/'
         }
+    },
+    'update_feedjack': {
+        'task': 'plugins.tasks.update_feedjack.update_feedjack',
+        'schedule': crontab(minute='*/30'),  # Execute every 30 minutes.
     }
 }
