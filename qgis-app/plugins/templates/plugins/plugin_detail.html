@@ -131,7 +131,7 @@
                         <a href="{% url "user_details" object.created_by %}">{{ object.created_by }}</a>
                     </dd>
                     {% if object.owners.count %}
-                        <dt>{% trans "Owners"%}</dt>
+                        <dt>{% trans "Collaborators"%}</dt>
                         <dd>
                             {% for owner in object.owners.all %}
                             <a href="{% url "user_details" owner.username %}">{{ owner.username }}</a>{% if not forloop.last %},{% endif %}
