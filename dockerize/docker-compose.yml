@@ -32,7 +32,6 @@ services:
   uwsgi: &uwsgi-common
     container_name: qgis-plugins-uwsgi
     image: kartoza/qgis-plugins-uwsgi
-    build: docker
     hostname: uwsgi
     environment:
       - DATABASE_NAME=${DATABASE_NAME:-gis}
@@ -73,6 +72,13 @@ services:
     container_name: qgis-plugins-worker
     working_dir: /home/web/django_project
     command: celery -A plugins worker -l info
+
+  beat:
+    <<: *uwsgi-common
+    container_name: qgis-plugins-beat
+    working_dir: /home/web/django_project
+    entrypoint: [ ]
+    command: celery --app=plugins.celery:app beat -s /home/web/celerybeat-schedule/schedule -l INFO
 
   web:
     # Note you cannot scale if you use container_name
