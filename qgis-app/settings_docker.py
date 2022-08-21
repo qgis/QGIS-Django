@@ -1,3 +1,5 @@
+from celery.schedules import crontab
+
 from settings import *
 import ast
 import os
@@ -43,6 +45,8 @@ INSTALLED_APPS = [
     # full text search postgres
     'django.contrib.postgres',
 
+    'feedjack',
+
     # ABP:
     'plugins',
     'django.contrib.humanize',
@@ -61,8 +65,6 @@ INSTALLED_APPS = [
     'tinymce',
     'rpc4django',
 
-    'feedjack',
-
     'preferences',
 
     'rest_framework',
@@ -80,7 +82,7 @@ INSTALLED_APPS = [
     'layerdefinitions',
     # models (sharing .model3 file feature)
     'models',
-    'wavefronts'
+    'wavefronts',
 ]
 
 DATABASES = {
@@ -125,3 +127,18 @@ REST_FRAMEWORK = {
     'TEST_REQUEST_DEFAULT_FORMAT': 'json',
 }
 
+CELERY_RESULT_BACKEND = 'rpc://'
+CELERY_BROKER_URL = os.environ.get('BROKER_URL', 'amqp://rabbitmq:5672')
+CELERY_BEAT_SCHEDULE = {
+    'generate_plugins_xml': {
+        'task': 'plugins.tasks.generate_plugins_xml.generate_plugins_xml',
+        'schedule': crontab(minute='*/10'),  # Execute every 10 minutes.
+        'kwargs': {
+            'site': 'https://plugins.qgis.org/'
+        }
+    },
+    'update_feedjack': {
+        'task': 'plugins.tasks.update_feedjack.update_feedjack',
+        'schedule': crontab(minute='*/30'),  # Execute every 30 minutes.
+    }
+}

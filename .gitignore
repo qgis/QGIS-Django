@@ -51,3 +51,5 @@ qgis-app/api/tests/*/
 
 # whoosh_index
 qgis-app/whoosh_index/
+docker-compose.override.yml
+.env

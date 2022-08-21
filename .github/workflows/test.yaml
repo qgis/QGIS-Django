@@ -48,23 +48,29 @@ jobs:
       - uses: actions/checkout@v2
 
       - name: Run docker-compose build
-        run: docker-compose build
+        run: docker-compose build devweb
 
-      - name: Run the containers
-        run: docker-compose up -d db devweb
+      - name: Run docker-compose services
+        working-directory: dockerize
+        run: |
+          cp docker-compose.override.test.yml docker-compose.override.yml
+          make devweb-test
+          make wait-db
+          make create-test-db
 
       - name: Run Coverage test
         run: |
-          cat << EOF | docker-compose exec -T devweb bash
+          cat << EOF | docker-compose -p qgis-plugins exec -T devweb bash
           pip install coverage
           python manage.py makemigrations
           python manage.py migrate
+          python manage.py collectstatic --noinput --verbosity 0
           coverage run manage.py test
           coverage xml
           EOF
 
       - name: Upload coverage to codecov
-        uses: codecov/codecov-action@v2
+        uses: codecov/codecov-action@v3
         with:
           fail_ci_if_error: true
           token: ${{ secrets.CODECOV_TOKEN }}
