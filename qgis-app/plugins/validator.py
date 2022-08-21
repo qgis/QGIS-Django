@@ -73,7 +73,7 @@ def _check_url_link(url: str, forbidden_url: str, metadata_attr: str) -> None:
     # https://stackoverflow.com/a/38020041
     try:
         parsed_url = urlparse(url)  # e.g https://plugins.qgis.org/
-        if not(all([parsed_url.scheme,  # e.g http
+        if not (all([parsed_url.scheme,  # e.g http
                    parsed_url.netloc])):  # e.g www.qgis.org
             raise error_check
     except Exception:

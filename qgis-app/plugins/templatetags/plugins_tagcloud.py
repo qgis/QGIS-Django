@@ -72,7 +72,7 @@ def get_plugins_taglist(context, asvar):
 def get_plugins_tagcloud(context, asvar):
     queryset = get_queryset()
     num_times = queryset.values_list('num_times', flat=True)
-    if(len(num_times) == 0):
+    if (len(num_times) == 0):
         context[asvar] = queryset
         return ''
     weight_fun = get_weight_fun(T_MIN, T_MAX, min(num_times), max(num_times))
