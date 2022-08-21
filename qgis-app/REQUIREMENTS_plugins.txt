@@ -1,4 +1,4 @@
-django==2.2.25
+django==3.2.11
 django-auth-ldap
 python-ldap
 django-taggit
@@ -6,8 +6,10 @@ django-tinymce==3.4.0
 psycopg2
 # Updates for Django 2
 git+https://github.com/metamatik/django-templatetag-sugar.git
-# Updates for Django 2
-git+https://github.com/elpaso/django-ratings.git@modernize
+
+# Updates for Django 3
+git+https://github.com/gelo-zhukov/django-ratings.git
+
 django-taggit-autosuggest
 django-annoying
 # Updates for Django 2
@@ -20,6 +22,6 @@ django-bootstrap-pagination
 django-sortable-listview
 sorl-thumbnail
 django-extensions
-django-debug-toolbar==1.11.1
+django-debug-toolbar==3.2.4
 whoosh
 django-haystack
