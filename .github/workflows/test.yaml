@@ -53,6 +53,7 @@ jobs:
       - name: Run docker-compose services
         working-directory: dockerize
         run: |
+          cp docker-compose.override.template.yml docker-compose.override.yml
           make devweb-test
           make wait-db
           make create-test-db
