@@ -15,6 +15,13 @@ build:
 	@echo "------------------------------------------------------------------"
 	@docker-compose -p $(PROJECT_ID) build
 
+build-dev:
+	@echo
+	@echo "------------------------------------------------------------------"
+	@echo "Building in development mode only"
+	@echo "------------------------------------------------------------------"
+	@docker-compose -p $(PROJECT_ID) build devweb
+
 db:
 	@echo
 	@echo "------------------------------------------------------------------"
@@ -27,7 +34,7 @@ web: db
 	@echo "------------------------------------------------------------------"
 	@echo "Running in production mode"
 	@echo "------------------------------------------------------------------"
-	@docker-compose -p $(PROJECT_ID) up -d web
+	@docker-compose -p $(PROJECT_ID) up -d uwsgi web
 
 devweb: db
 	@echo

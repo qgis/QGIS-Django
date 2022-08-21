@@ -1,117 +1,111 @@
-db:
-  container_name: qgis-plugins-db
-  image: kartoza/postgis:9.6-2.4
-  environment:
-    - ALLOW_IP_RANGE=0.0.0.0/0
-    - POSTGRES_USER=docker
-    - POSTGRES_PASS=docker
-  volumes:
-    - ./backups:/backups
-  restart: unless-stopped
+version: '3'
+volumes:
+  backups-data:
+  static-data:
+  media-data:
+  logs-data:
+  nginx-conf:
+  db-backups:
+services:
 
-web:
-  # Note you cannot scale if you use container_name
-  container_name: qgis-plugins-web
-  build: docker
-  hostname: uwsgi
-  environment:
-    - DATABASE_NAME=gis
-    - DATABASE_USERNAME=docker
-    - DATABASE_PASSWORD=docker
-    - DATABASE_HOST=db
-    - DJANGO_SETTINGS_MODULE=settings_docker
-    - VIRTUAL_HOST=plugins.kartoza.com
-    - VIRTUAL_PORT=8080
-    - DEBUG=False
-    - RABBITMQ_HOST=rabbitmq
-  volumes:
-    - ../qgis-app:/home/web/django_project
-    - ./static:/home/web/static:rw
-    - ./static:/home/web/media:rw
-  links:
-    - db:db
-    - rabbitmq:rabbitmq
-    - worker:worker
-  restart: unless-stopped
-  user: root
-  command: uwsgi --ini /uwsgi.conf
+  smtp:
+    image: catatnight/postfix
+    hostname: postfix
+    environment:
+      - maildomain=qgis.org
+      - smtp_user=noreply:docker
+    restart: unless-stopped
 
-devweb:
-  # Note you cannot scale if you use container_name
-  container_name: qgis-plugins-devweb
-  build: docker
-  hostname: uwsgi
-  environment:
-    - DATABASE_NAME=gis
-    - DATABASE_USERNAME=docker
-    - DATABASE_PASSWORD=docker
-    - DATABASE_HOST=db
-    - DJANGO_SETTINGS_MODULE=settings_docker
-    - VIRTUAL_HOST=plugins.kartoza.com
-    - VIRTUAL_PORT=8080
-    - RABBITMQ_HOST=rabbitmq
-  volumes:
-    - ../qgis-app:/home/web/django_project
-    - ./static:/home/web/static:rw
-    - ./static:/home/web/media:rw
-  links:
-    - db:db
-    - rabbitmq:rabbitmq
-    - worker:worker
-  restart: unless-stopped
-  user: root
-  ports:
-    # for django test server
-    - "62202:8080"
-    # for ssh
-    - "62203:22"
+  db:
+    container_name: qgis-plugins-db
+    image: kartoza/postgis:14-3.3
+    environment:
+      - ALLOW_IP_RANGE=0.0.0.0/0
+      - POSTGRES_USER=${DATABASE_USERNAME:-docker}
+      - POSTGRES_PASS=${DATABASE_PASSWORD:-docker}
+      - PASSWORD_AUTHENTICATION=${PASSWORD_AUTHENTICATION:-md5}
+    volumes:
+      - postgres-data:/var/lib/postgresql
+      - backups-data:/backups
+    restart: unless-stopped
 
-rabbitmq:
-  image: library/rabbitmq:3.6
-  hostname: rabbitmq
-  environment:
-    - RABBIT_PASSWORD=rabbit_test_password
-    - USER=rabbit_user
-    - RABBITMQ_NODENAME=rabbit
-  restart: unless-stopped
+  uwsgi: &uwsgi-common
+    container_name: qgis-plugins-uwsgi
+    image: kartoza/qgis-plugins-uwsgi
+    build: docker
+    hostname: uwsgi
+    environment:
+      - DATABASE_NAME=${DATABASE_NAME:-gis}
+      - DATABASE_USERNAME=${DATABASE_USERNAME:-docker}
+      - DATABASE_PASSWORD=${DATABASE_PASSWORD:-docker}
+      - DATABASE_HOST=${DATABASE_HOST:-db}
+      - DJANGO_SETTINGS_MODULE=${DJANGO_SETTINGS_MODULE:-settings_docker}
+      - VIRTUAL_HOST=${VIRTUAL_HOST:-plugins.kartoza.com}
+      - VIRTUAL_PORT=${VIRTUAL_PORT:-8080}
+      - DEBUG=${DEBUG:-False}
+      - RABBITMQ_HOST=${RABBITMQ_HOST:-rabbitmq}
+    volumes:
+      - static-data:/home/web/static:rw
+      - media-data:/home/web/media:rw
+    links:
+      - db:db
+    restart: unless-stopped
+    user: root
 
-worker:
-  # Note you cannot scale if you use container_name
-  container_name: qgis-plugins-worker
-  build: docker
-  hostname: uwsgi
-  working_dir: /home/web/django_project
-  command: celery -A plugins worker -l info
-  environment:
-    - DATABASE_NAME=gis
-    - DATABASE_USERNAME=docker
-    - DATABASE_PASSWORD=docker
-    - DATABASE_HOST=db
-    - DJANGO_SETTINGS_MODULE=settings_docker
-    - VIRTUAL_HOST=plugins.kartoza.com
-    - VIRTUAL_PORT=8080
-    - RABBITMQ_HOST=rabbitmq
-  volumes:
-    - ../qgis-app:/home/web/django_project
-    - ./static:/home/web/static:rw
-    - ./static:/home/web/media:rw
-  links:
-    - db:db
-    - rabbitmq:rabbitmq
+  # This is the entry point for a development server.
+  # Run with --no-deps to run attached to the services
+  # from prod environment if wanted
+  devweb:
+    <<: *uwsgi-common
 
-nginx:
-  # Note you cannot scale if you use container_name
-  container_name: qgis-plugins-nginx
-  image: nginx
-  hostname: nginx
-  volumes:
-    - ./sites-enabled:/etc/nginx/conf.d:ro
-    # I dont use volumes_from as I want to use the ro modifier
-    - ./static:/home/web/static:ro
-    - ./static:/home/web/media:ro
-    - ./logs:/var/log/nginx
-  links:
-    - web:uwsgi
-  ports:
-    - "62201:8080"
-  restart: unless-stopped
+  rabbitmq:
+    image: library/rabbitmq:3.6
+    hostname: rabbitmq
+    environment:
+      - RABBIT_PASSWORD=${RABBIT_PASSWORD:-rabbit_test_password}
+      - USER=${RABBIT_USER:-rabbit_user}
+      - RABBITMQ_NODENAME=${RABBITMQ_NODENAME:-rabbit}
+    restart: unless-stopped
+
+  worker:
+    <<: *uwsgi-common
+    # Note you cannot scale if you use container_name
+    container_name: qgis-plugins-worker
+    working_dir: /home/web/django_project
+    command: celery -A plugins worker -l info
+
+  web:
+    # Note you cannot scale if you use container_name
+    container_name: qgis-plugins-web
+    image: nginx
+    hostname: web
+    volumes:
+      - nginx-conf:/etc/nginx/conf.d:ro
+      - static-data:/home/web/static:ro
+      - media-data:/home/web/media:ro
+    links:
+      - uwsgi:uwsgi
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "200k"
+        max-file: "10"
+    restart: unless-stopped
+
+  dbbackups:
+    image: kartoza/pg-backup:14-3.3
+    hostname: pg-backups
+    volumes:
+      - db-backups:/backups
+    links:
+      - db:db
+    environment:
+      # take care to let the project name below match that
+      # declared in the top of the makefile
+      - DUMPPREFIX=${DUMPPREFIX:-QGIS_PLUGINS}
+      - POSTGRES_USER=${DATABASE_USERNAME:-docker}
+      - POSTGRES_PASS=${DATABASE_PASSWORD:-docker}
+      - POSTGRES_PORT=${POSTGRES_PORT:-5432}
+      - POSTGRES_HOST=${DATABASE_HOST:-db}
+      - PGDATABASE=${DATABASE_NAME:-gis}
+    restart: unless-stopped
