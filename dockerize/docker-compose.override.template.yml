@@ -29,7 +29,7 @@ services:
   web:
     volumes:
       - ./sites-enabled:/etc/nginx/conf.d:ro
-      - static-data:/home/web/static:ro
-      - media-data:/home/web/media:ro
+      - ./static:/home/web/static:ro
+      - ./media:/home/web/media:ro
     ports:
       - "62201:8080"

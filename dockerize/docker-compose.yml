@@ -105,6 +105,7 @@ services:
       - media-data:/home/web/media:ro
     links:
       - uwsgi:uwsgi
+      - metabase:metabase
     logging:
       driver: "json-file"
       options:
@@ -134,10 +135,6 @@ services:
     image: metabase/metabase:latest
     environment:
       - MB_DB_TYPE=postgres
-      - MB_DB_CONNECTION_URI=jdbc:postgresql://db:5432/metabase?user=docker&password=docker
-    volumes:
-      - ./metabase-backups/:/metabase-backups/
-    ports:
-      - "3000:3000"
+      - MB_DB_CONNECTION_URI=jdbc:postgresql://${DATABASE_HOST:-db}:5432/metabase?user=${DATABASE_USERNAME:-docker}&password=${DATABASE_PASSWORD:-docker}
     links:
       - db

@@ -29,6 +29,13 @@ db:
 	@echo "------------------------------------------------------------------"
 	@docker-compose -p $(PROJECT_ID) up -d db
 
+metabase: db
+	@echo
+	@echo "------------------------------------------------------------------"
+	@echo "Running metabase in production mode"
+	@echo "------------------------------------------------------------------"
+	@docker-compose -p $(PROJECT_ID) up -d metabase
+
 web: db
 	@echo
 	@echo "------------------------------------------------------------------"
@@ -41,7 +48,7 @@ devweb: db
 	@echo "------------------------------------------------------------------"
 	@echo "Running in DEVELOPMENT mode"
 	@echo "------------------------------------------------------------------"
-	@docker-compose -p $(PROJECT_ID) up --no-deps -d devweb rabbitmq worker beat metabase
+	@docker-compose -p $(PROJECT_ID) up --no-deps -d devweb rabbitmq worker beat
 
 devweb-runserver: devweb
 	@echo
