@@ -94,11 +94,16 @@
         {% endblock %}
         <div class="container-fluid">
             <div class="row-fluid">
-                {% block leftbar %}
-                <div class="span3 well" id="leftcolumn">
-                    {% block menu %}&nbsp;{% endblock %}
+                <div class="span3 well" id="leftcolumn" data-spy="scroll">
+                    <a class="related-plugins-collapser" data-toggle="collapse" data-target="#collapse-related-plugins">
+                        Related Plugins and Tags
+                    </a>
+                    <div id="collapse-related-plugins" class="collapse">
+                        {% block leftbar %}
+                            {% block menu %}&nbsp;{% endblock %}
+                        {% endblock %}
+                    </div>
                 </div>
-                {% endblock %}
                 <div class="span9" id="maincolumn">
                     <section class="info">
                         {% block app_title %}{% endblock %}

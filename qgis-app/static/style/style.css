@@ -46,3 +46,21 @@ img.plugin-icon {
 .navbar .nav>li>.dropdown-menu:after {
     border-bottom: 6px solid #1C2028;
 }
+
+/* Bootstrap override */
+@media (max-width: 767px) {
+  .related-plugins-collapser {
+    display: block;
+    cursor: pointer;
+  }
+}
+
+@media (min-width: 768px) {
+  .related-plugins-collapser {
+    display: none;
+  }
+
+  #collapse-related-plugins {
+    height: auto;
+  }
+}
