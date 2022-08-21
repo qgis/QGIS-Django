@@ -4,6 +4,10 @@ services:
     # Note you cannot scale if you use container_name
     image: kartoza/qgis-plugins-uwsgi:dev-latest
     container_name: qgis-plugins-devweb
+    volumes:
+      -  ../qgis-app:/home/web/django_project
+      - ./static:/home/web/static:rw
+      - ./media:/home/web/media:rw
     build:
       context: ${PWD}/../
       dockerfile: dockerize/docker/Dockerfile
@@ -14,8 +18,24 @@ services:
       # for ssh
       - "62203:22"
 
+  beat:
+    volumes:
+      -  ../qgis-app:/home/web/django_project
+      - ./static:/home/web/static:rw
+      - ./media:/home/web/media:rw
+
+  worker:
+    volumes:
+      -  ../qgis-app:/home/web/django_project
+      - ./static:/home/web/static:rw
+      - ./media:/home/web/media:rw
+
   uwsgi:
     container_name: qgis-plugins-uwsgi
+    volumes:
+      -  ../qgis-app:/home/web/django_project
+      - ./static:/home/web/static:rw
+      - ./media:/home/web/media:rw
     build:
       context: ${PWD}/../
       dockerfile: dockerize/docker/Dockerfile
