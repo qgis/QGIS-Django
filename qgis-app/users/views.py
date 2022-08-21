@@ -1,7 +1,7 @@
 from django.http import HttpResponse
 from django.http import HttpResponseRedirect
 from django.contrib import messages
-from django.shortcuts import render_to_response, get_object_or_404
+from django.shortcuts import render, get_object_or_404
 from annoying.functions import get_object_or_None
 from django.template import RequestContext
 from django.utils.translation import ugettext_lazy as _
@@ -31,7 +31,9 @@ def usersMap(theRequest):
 
   myMap = InfoMap(users)
 
-  return render_to_response("view_users.html",
+  return render(
+      theRequest,
+      "view_users.html",
       {
         'myMap' : myMap,
         'myUserCount' : myUserCount,
@@ -48,11 +50,11 @@ def createUser(theRequest):
        myForm.save()
        return HttpResponseRedirect("/community-map/view_users.html")
     else:
-       return render_to_response("create_user_form.html", {'myForm' : myForm, 'myUserCount' : myUserCount },
+       return render(theRequest, "create_user_form.html", {'myForm' : myForm, 'myUserCount' : myUserCount },
            context_instance=RequestContext(theRequest))
   else:
     myForm = QgisUserForm()
-    return render_to_response("create_user_form.html", {'myForm' : myForm, 'myUserCount' : myUserCount },
+    return render(theRequest, "create_user_form.html", {'myForm' : myForm, 'myUserCount' : myUserCount },
         context_instance=RequestContext(theRequest))
 
 
@@ -64,12 +66,12 @@ def updateUser(theRequest, theId):
     if myForm.is_valid():
         myForm.save()
         return HttpResponseRedirect("/community-map/view_users.html")
-    return render_to_response("update_user_form.html", {
+    return render(theRequest, "update_user_form.html", {
             'myUser': myUser, 'myForm': myForm, 'myUserCount' : myUserCount
         }, context_instance=RequestContext(theRequest))
   else:
     myForm = QgisUserForm(instance=myUser)
-    return render_to_response("update_user_form.html", {'myForm' : myForm, 'myUserCount' : myUserCount},
+    return render(theRequest, "update_user_form.html", {'myForm' : myForm, 'myUserCount' : myUserCount},
         context_instance=RequestContext(theRequest))
 
 def emailEditAddress(theRequest):
@@ -101,14 +103,11 @@ def emailEditAddress(theRequest):
       msg = _("User is NOT valid.")
       messages.warning(theRequest, msg, fail_silently=True)
       logging.info("User or form is NOT valid")
-      return render_to_response("update_user.html", {'myForm' : myForm, 'myUserCount' : myUserCount},
+      return render(theRequest, "update_user.html", {'myForm' : myForm, 'myUserCount' : myUserCount},
           context_instance=RequestContext(theRequest))
 
   else:
     myUserCount = QgisUser.objects.all().count()
     myForm = EmailForm()
-    return render_to_response("update_user.html", {'myForm' : myForm},
+    return render(theRequest, "update_user.html", {'myForm' : myForm},
         context_instance=RequestContext(theRequest))
-
-
-
