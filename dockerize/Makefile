@@ -43,6 +43,13 @@ web: db
 	@echo "------------------------------------------------------------------"
 	@docker-compose -p $(PROJECT_ID) up -d uwsgi web smtp worker beat
 
+devweb-test: db
+	@echo
+	@echo "------------------------------------------------------------------"
+	@echo "Running in TESTING mode"
+	@echo "------------------------------------------------------------------"
+	@docker-compose -p $(PROJECT_ID) up --no-deps -d devweb
+
 devweb: db
 	@echo
 	@echo "------------------------------------------------------------------"
@@ -147,3 +154,10 @@ dbrestore:
 	@docker exec -t  $(PROJECT_ID)-db pg_restore /backups/latest.dmp | docker exec -i $(PROJECT_ID)-db su - postgres -c "psql gis"
 	@docker-compose -p $(PROJECT_ID) start web
 	@echo "starting web container"
+
+wait-db:
+	@docker-compose exec -p $(PROJECT_ID) db su - postgres -c "until pg_isready; do sleep 5; done"
+
+create-test-db:
+	@docker-compose exec -p $(PROJECT_ID) db su - postgres -c "psql -c 'create database test_db;'"
+	@docker-compose exec -p $(PROJECT_ID) db su - postgres -c "psql -d test_db -c 'create extension postgis;'"

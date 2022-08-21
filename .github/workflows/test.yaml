@@ -50,8 +50,12 @@ jobs:
       - name: Run docker-compose build
         run: docker-compose build devweb
 
-      - name: Run the containers
-        run: docker-compose up -d db devweb
+      - name: Run docker-compose services
+        working-directory: dockerize
+        run: |
+          make devweb-test
+          make wait-db
+          make create-test-db
 
       - name: Run Coverage test
         run: |
@@ -59,6 +63,7 @@ jobs:
           pip install coverage
           python manage.py makemigrations
           python manage.py migrate
+          python manage.py collectstatic --noinput --verbosity 0
           coverage run manage.py test
           coverage xml
           EOF
