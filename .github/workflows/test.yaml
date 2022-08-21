@@ -60,7 +60,7 @@ jobs:
 
       - name: Run Coverage test
         run: |
-          cat << EOF | docker-compose exec -T devweb bash
+          cat << EOF | docker-compose -p qgis-plugins exec devweb bash
           pip install coverage
           python manage.py makemigrations
           python manage.py migrate
