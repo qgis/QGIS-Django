@@ -1,4 +1,6 @@
 from django.contrib import admin
+
+from base.models import SitePreference
 from wavefronts.models import Wavefront, Review
 
 # django-preferences
@@ -25,3 +27,4 @@ class WavefrontReviewAdmin(admin.ModelAdmin):
 
 # django-preferences
 admin.site.register(FilesizePreferences, PreferencesAdmin)
+admin.site.register(SitePreference, PreferencesAdmin)
