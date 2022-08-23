@@ -38,6 +38,18 @@ and now, you can see your site at `http://0.0.0.0:62202` (skip this step if you 
 
 ---
 
+### Setup git-hooks and local linting
+
+In the root directory of the repo, run:
+
+```bash
+pip install -r REQUIREMENTS-dev.txt
+
+pre-commit install --config .pre-commit-config.yaml
+```
+
+---
+
 ### Setting up a remote interpreter in PyCharm
 
 - PyCharm -> Preferences -> Project: QGIS-Django

@@ -1,0 +1,9 @@
+# See https://pre-commit.com for more information
+# See https://pre-commit.com/hooks.html for more hooks
+repos:
+  # Lint files
+  - repo: https://gitlab.com/pycqa/flake8
+    rev: "3.9.0"
+    hooks:
+      - id: flake8
+
