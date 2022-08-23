@@ -19,4 +19,4 @@ max-line-length = 79
 # E12x continuation line indentation
 # E251 no spaces around keyword / parameter equals
 # E303 too many blank lines (3)
-ignore = E121,E122,E123,E124,E125,E126,E127,E128,E251,E303,W503,W504,W60,F405
+ignore = E121,E122,E123,E124,E125,E126,E127,E128,E251,E303,W503,W504,W60,F405,E501
