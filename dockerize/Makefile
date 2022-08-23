@@ -119,3 +119,10 @@ dbrestore:
 	@docker exec -t  $(PROJECT_ID)-db pg_restore /backups/latest.dmp | docker exec -i $(PROJECT_ID)-db su - postgres -c "psql gis"
 	@docker-compose -p $(PROJECT_ID) start web
 	@echo "starting web container"
+
+dbseed:
+	@echo
+	@echo "------------------------------------------------------------------"
+	@echo "Seed db with JSON data from /fixtures/*.json"
+	@echo "------------------------------------------------------------------"
+	@docker-compose -p $(PROJECT_ID) exec devweb bash -c 'python manage.py loaddata fixtures/*.json'
