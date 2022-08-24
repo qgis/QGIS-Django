@@ -1,19 +1,20 @@
-from base.views.processing_view import (ResourceBaseCreateView,
-                                        ResourceBaseDetailView,
-                                        ResourceBaseUpdateView,
-                                        ResourceBaseListView,
-                                        ResourceBaseUnapprovedListView,
-                                        ResourceBaseRequireActionListView,
-                                        ResourceBaseDeleteView,
-                                        ResourceBaseReviewView,
-                                        ResourceBaseDownload,
-                                        resource_nav_content)
-
-from geopackages.forms import (UpdateForm, UploadForm,)
+from base.views.processing_view import (
+    ResourceBaseCreateView,
+    ResourceBaseDeleteView,
+    ResourceBaseDetailView,
+    ResourceBaseDownload,
+    ResourceBaseListView,
+    ResourceBaseRequireActionListView,
+    ResourceBaseReviewView,
+    ResourceBaseUnapprovedListView,
+    ResourceBaseUpdateView,
+    resource_nav_content,
+)
+from geopackages.forms import UpdateForm, UploadForm
 from geopackages.models import Geopackage, Review
 
 
-class ResourceMixin():
+class ResourceMixin:
     """Mixin class for Geopackage."""
 
     model = Geopackage
@@ -21,10 +22,10 @@ class ResourceMixin():
     review_model = Review
 
     # The resource_name will be displayed as the app name on web page
-    resource_name = 'GeoPackage'
+    resource_name = "GeoPackage"
 
     # The url name in urls.py should start start with this value
-    resource_name_url_base = 'geopackage'
+    resource_name_url_base = "geopackage"
 
 
 class GeopackageCreateView(ResourceMixin, ResourceBaseCreateView):
@@ -47,13 +48,11 @@ class GeopackageListView(ResourceMixin, ResourceBaseListView):
     """Approved GeoPackage ListView"""
 
 
-class GeopackageUnapprovedListView(ResourceMixin,
-                                   ResourceBaseUnapprovedListView):
+class GeopackageUnapprovedListView(ResourceMixin, ResourceBaseUnapprovedListView):
     """Unapproved GeoPackage ListView"""
 
 
-class GeopackageRequireActionListView(ResourceMixin,
-                                      ResourceBaseRequireActionListView):
+class GeopackageRequireActionListView(ResourceMixin, ResourceBaseRequireActionListView):
     """Geopackage Requires Action"""
 
 

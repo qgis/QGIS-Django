@@ -6,12 +6,12 @@ from django.db import migrations
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('styles', '0003_stylereview_comment'),
+        ("styles", "0003_stylereview_comment"),
     ]
 
     operations = [
         migrations.AlterModelOptions(
-            name='stylereview',
-            options={'ordering': ['review_date']},
+            name="stylereview",
+            options={"ordering": ["review_date"]},
         ),
     ]

@@ -8,17 +8,17 @@ except NameError:
     from sets import Set as set
 
 from django import template
-from django.http import Http404
-from django.core.paginator import Paginator, InvalidPage
 from django.conf import settings
+from django.core.paginator import InvalidPage, Paginator
+from django.http import Http404
 
 register = template.Library()
 
-DEFAULT_PAGINATION = getattr(settings, 'PAGINATION_DEFAULT_PAGINATION', 20)
-DEFAULT_WINDOW = getattr(settings, 'PAGINATION_DEFAULT_WINDOW', 4)
-DEFAULT_ORPHANS = getattr(settings, 'PAGINATION_DEFAULT_ORPHANS', 0)
-INVALID_PAGE_RAISES_404 = getattr(settings,
-    'PAGINATION_INVALID_PAGE_RAISES_404', False)
+DEFAULT_PAGINATION = getattr(settings, "PAGINATION_DEFAULT_PAGINATION", 20)
+DEFAULT_WINDOW = getattr(settings, "PAGINATION_DEFAULT_WINDOW", 4)
+DEFAULT_ORPHANS = getattr(settings, "PAGINATION_DEFAULT_ORPHANS", 0)
+INVALID_PAGE_RAISES_404 = getattr(settings, "PAGINATION_INVALID_PAGE_RAISES_404", False)
+
 
 def do_autopaginate(parser, token):
     """
@@ -28,33 +28,39 @@ def do_autopaginate(parser, token):
     as_index = None
     context_var = None
     for i, bit in enumerate(split):
-        if bit == 'as':
+        if bit == "as":
             as_index = i
             break
     if as_index is not None:
         try:
             context_var = split[as_index + 1]
         except IndexError:
-            raise template.TemplateSyntaxError("Context variable assignment " +
-                "must take the form of {%% %r object.example_set.all ... as " +
-                "context_var_name %%}" % split[0])
-        del split[as_index:as_index + 2]
+            raise template.TemplateSyntaxError(
+                "Context variable assignment "
+                + "must take the form of {%% %r object.example_set.all ... as "
+                + "context_var_name %%}" % split[0]
+            )
+        del split[as_index : as_index + 2]
     if len(split) == 2:
         return AutoPaginateNode(split[1])
     elif len(split) == 3:
-        return AutoPaginateNode(split[1], paginate_by=split[2],
-            context_var=context_var)
+        return AutoPaginateNode(split[1], paginate_by=split[2], context_var=context_var)
     elif len(split) == 4:
         try:
             orphans = int(split[3])
         except ValueError:
-            raise template.TemplateSyntaxError(u'Got %s, but expected integer.'
-                % split[3])
-        return AutoPaginateNode(split[1], paginate_by=split[2], orphans=orphans,
-            context_var=context_var)
+            raise template.TemplateSyntaxError(
+                u"Got %s, but expected integer." % split[3]
+            )
+        return AutoPaginateNode(
+            split[1], paginate_by=split[2], orphans=orphans, context_var=context_var
+        )
     else:
-        raise template.TemplateSyntaxError('%r tag takes one required ' +
-            'argument and one optional argument' % split[0])
+        raise template.TemplateSyntaxError(
+            "%r tag takes one required "
+            + "argument and one optional argument" % split[0]
+        )
+
 
 class AutoPaginateNode(template.Node):
     """
@@ -73,8 +79,14 @@ class AutoPaginateNode(template.Node):
         tag.  If you choose not to use *{% paginate %}*, make sure to display the
         list of available pages, or else the application may seem to be buggy.
     """
-    def __init__(self, queryset_var, paginate_by=DEFAULT_PAGINATION,
-        orphans=DEFAULT_ORPHANS, context_var=None):
+
+    def __init__(
+        self,
+        queryset_var,
+        paginate_by=DEFAULT_PAGINATION,
+        orphans=DEFAULT_ORPHANS,
+        context_var=None,
+    ):
         self.queryset_var = template.Variable(queryset_var)
         if isinstance(paginate_by, int):
             self.paginate_by = paginate_by
@@ -92,24 +104,26 @@ class AutoPaginateNode(template.Node):
             paginate_by = self.paginate_by.resolve(context)
         paginator = Paginator(value, paginate_by, self.orphans)
         try:
-            page_obj = paginator.page(context['request'].page)
+            page_obj = paginator.page(context["request"].page)
         except InvalidPage:
             if INVALID_PAGE_RAISES_404:
-                raise Http404('Invalid page requested.  If DEBUG were set to ' +
-                    'False, an HTTP 404 page would have been shown instead.')
+                raise Http404(
+                    "Invalid page requested.  If DEBUG were set to "
+                    + "False, an HTTP 404 page would have been shown instead."
+                )
             context[key] = []
-            context['invalid_page'] = True
-            return u''
+            context["invalid_page"] = True
+            return u""
         if self.context_var is not None:
             context[self.context_var] = page_obj.object_list
         else:
             context[key] = page_obj.object_list
-        context['paginator'] = paginator
-        context['page_obj'] = page_obj
-        return u''
+        context["paginator"] = paginator
+        context["page_obj"] = page_obj
+        return u""
 
 
-def smart_paginate(context, window=DEFAULT_WINDOW, hashtag=''):
+def smart_paginate(context, window=DEFAULT_WINDOW, hashtag=""):
     """
     Renders the ``pagination/pagination.html`` template, resulting in a
     Digg-like display of the available pages, given the current page.  If there
@@ -133,26 +147,26 @@ def smart_paginate(context, window=DEFAULT_WINDOW, hashtag=''):
         A dictionary of all of the **GET** parameters in the current request.
         This is useful to maintain certain types of state, even when requesting
         a different page.
-        """
+    """
     try:
-        paginator = context['paginator']
-        page_obj = context['page_obj']
+        paginator = context["paginator"]
+        page_obj = context["page_obj"]
         page_range = paginator.page_range
         # Calculate the record range in the current page for display.
-        records = {'first': 1 + (page_obj.number - 1) * paginator.per_page}
-        records['last'] = records['first'] + paginator.per_page - 1
-        if records['last'] + paginator.orphans >= paginator.count:
-            records['last'] = paginator.count
+        records = {"first": 1 + (page_obj.number - 1) * paginator.per_page}
+        records["last"] = records["first"] + paginator.per_page - 1
+        if records["last"] + paginator.orphans >= paginator.count:
+            records["last"] = paginator.count
         # First and last are simply the first *n* pages and the last *n* pages,
         # where *n* is the current window size.
         first = set(page_range[:window])
         last = set(page_range[-window:])
         # Now we look around our current page, making sure that we don't wrap
         # around.
-        current_start = page_obj.number-1-window
+        current_start = page_obj.number - 1 - window
         if current_start < 0:
             current_start = 0
-        current_end = page_obj.number-1+window
+        current_end = page_obj.number - 1 + window
         if current_end < 0:
             current_end = 0
         current = set(page_range[current_start:current_end])
@@ -217,27 +231,27 @@ def smart_paginate(context, window=DEFAULT_WINDOW, hashtag=''):
         else:
             per_page_list = []
         to_return = {
-            'MEDIA_URL': settings.MEDIA_URL,
-            'pages': pages,
-            'records': records,
-            'page_obj': page_obj,
-            'per_page_list' : per_page_list,
-            'paginator': paginator,
-            'hashtag': hashtag,
-            'is_paginated': paginator.count > paginator.per_page,
+            "MEDIA_URL": settings.MEDIA_URL,
+            "pages": pages,
+            "records": records,
+            "page_obj": page_obj,
+            "per_page_list": per_page_list,
+            "paginator": paginator,
+            "hashtag": hashtag,
+            "is_paginated": paginator.count > paginator.per_page,
         }
-        if 'request' in context:
-            getvars = context['request'].GET.copy()
-            if 'page' in getvars:
-                del getvars['page']
+        if "request" in context:
+            getvars = context["request"].GET.copy()
+            if "page" in getvars:
+                del getvars["page"]
             if len(getvars.keys()) > 0:
-                to_return['getvars'] = "&%s" % getvars.urlencode()
+                to_return["getvars"] = "&%s" % getvars.urlencode()
             else:
-                to_return['getvars'] = ''
+                to_return["getvars"] = ""
         return to_return
     # ABP: turned exceptions into a tuple
     except (KeyError, AttributeError):
         return {}
 
-register.inclusion_tag('plugins/pagination.html', takes_context=True)(
-    smart_paginate)
+
+register.inclusion_tag("plugins/pagination.html", takes_context=True)(smart_paginate)

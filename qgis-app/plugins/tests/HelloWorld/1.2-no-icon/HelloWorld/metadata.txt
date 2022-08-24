@@ -19,5 +19,3 @@ tags=wkt,raster,hello world
 tracker=http://bugs.itopen.it
 homepage=http://www.itopen.it
 repository=http://www.itopen.it/repo
-
-

@@ -1,4 +1,4 @@
-#!/bin/bash                                                                                                                                                              
+#!/bin/bash
 
 #First the database backups on the remote server
 SOURCE=/mnt/HC_Volume_4113275

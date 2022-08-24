@@ -16,7 +16,7 @@ Tim Sutton 2010
 %This document is in text2tags format. You can generate html, plain text and
 %moinmoin formatted documentation by running txt2tags on this document. See the
 %txt2tags home page for more details.  Please insert manual line breaks in this
-%document as it makes diffing for changes much easier. To do this in vim 
+%document as it makes diffing for changes much easier. To do this in vim
 %automatically, select a section then issue (gq) command. Please dont
 %apply vim formatting to the whole document as it screws up some formatting
 %rather apply it selectively to paragraphs where needed.
@@ -46,4 +46,3 @@ Tim Sutton 2010
  + web links - a list of sites, articles etc. that feature QGIS prominantly
  + translate - a pootle instance for QGIS
  + user showcase - as simple way for users to highlight their use of QGIS without writing a full blown case study
-

@@ -1,5 +1,5 @@
 #!/usr/bin/env python
-#-*- coding:utf-8 -*-
+# -*- coding:utf-8 -*-
 
 """
     Tests for version comparison field
@@ -15,30 +15,29 @@
 
 import re
 
-
-VERSION_RE = r'(^|(?<=\.))0+(?!\.)|\.#+'
+VERSION_RE = r"(^|(?<=\.))0+(?!\.)|\.#+"
 
 TEST_CASES = (
-    '1.0.0',
-    '1.0.1',
-    '0.0.0',
-    '1.0',
-    '1.10',
-    '1.2',
-    '1.9',
-    '1.0.a',
-    'a.0.a',
-    'b.a.c',
-    'a.b',
-    '0.a.0.1',
-    '1.0.rc1',
-    '1.1a',
-    '1.1b',
-    '1.9.0',
+    "1.0.0",
+    "1.0.1",
+    "0.0.0",
+    "1.0",
+    "1.10",
+    "1.2",
+    "1.9",
+    "1.0.a",
+    "a.0.a",
+    "b.a.c",
+    "a.b",
+    "0.a.0.1",
+    "1.0.rc1",
+    "1.1a",
+    "1.1b",
+    "1.9.0",
 )
 
 
-def vjust(str, level=4, delim='.', bitsize=4, fillchar=' ', force_zero=False):
+def vjust(str, level=4, delim=".", bitsize=4, fillchar=" ", force_zero=False):
     """
     Normalize a dotted version string.
 
@@ -58,13 +57,13 @@ def vjust(str, level=4, delim='.', bitsize=4, fillchar=' ', force_zero=False):
     nb = str.count(delim)
     if nb < level:
         if force_zero:
-            str += (level-nb) * (delim+'0')
+            str += (level - nb) * (delim + "0")
         else:
-            str += (level-nb) * delim
+            str += (level - nb) * delim
     parts = []
-    for v in str.split(delim)[:level+1]:
+    for v in str.split(delim)[: level + 1]:
         if not v:
-            parts.append(v.rjust(bitsize, '#'))
+            parts.append(v.rjust(bitsize, "#"))
         else:
             parts.append(v.rjust(bitsize, fillchar))
     return delim.join(parts)
@@ -73,18 +72,18 @@ def vjust(str, level=4, delim='.', bitsize=4, fillchar=' ', force_zero=False):
 def test():
     transformed = []
     for v in TEST_CASES:
-        vj = vjust(v, level=5, fillchar='0')
+        vj = vjust(v, level=5, fillchar="0")
         transformed.append(vj)
-        ck = re.sub(VERSION_RE, '', vj)
-        print ("Testing\t %s (%s)\t\t %s" % (v, ck, vj))
+        ck = re.sub(VERSION_RE, "", vj)
+        print("Testing\t %s (%s)\t\t %s" % (v, ck, vj))
         if v != ck:
-            print ("!!! failed !!!")
+            print("!!! failed !!!")
 
     # Test sorting
     transformed.sort()
-    print ("Sorted:")
+    print("Sorted:")
     for v in transformed:
-        print (v)
+        print(v)
 
 
 if __name__ == "__main__":

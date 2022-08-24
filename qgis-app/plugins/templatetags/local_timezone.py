@@ -9,7 +9,7 @@ register = template.Library()
 def local_timezone(date):
     try:
         utcdate = date.astimezone(pytz.utc).isoformat()
-        result = '<span class="user-timezone">%s</span>' % (utcdate, )
+        result = '<span class="user-timezone">%s</span>' % (utcdate,)
     except AttributeError:
         result = date
     return mark_safe(result)

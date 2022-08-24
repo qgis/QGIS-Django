@@ -22,5 +22,3 @@ homepage=http://www.itopen.it
 repository=http://www.itopen.it/repo
 
 icon=icon.png
-
-

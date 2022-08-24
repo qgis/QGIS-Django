@@ -6,13 +6,19 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('styles', '0002_auto_20201108_0521'),
+        ("styles", "0002_auto_20201108_0521"),
     ]
 
     operations = [
         migrations.AddField(
-            model_name='stylereview',
-            name='comment',
-            field=models.TextField(blank=True, help_text='A review comment. Please write your review.', max_length=1000, null=True, verbose_name='Comment'),
+            model_name="stylereview",
+            name="comment",
+            field=models.TextField(
+                blank=True,
+                help_text="A review comment. Please write your review.",
+                max_length=1000,
+                null=True,
+                verbose_name="Comment",
+            ),
         ),
     ]

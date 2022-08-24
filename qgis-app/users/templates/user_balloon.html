@@ -1,5 +1,3 @@
 {% load thumbnail %}
 
 <p>{% if user.home_url %}<a href="{{ user.home_url }}">{% endif %}<b>{{ user.name }}</b>{% if user.home_url %}</a>{% endif %}{% if user.image %}{% thumbnail user.image "64x64" crop="center" as im %}<br /><img width="{{ im.width }}" height="{{ im.height }}" src="{{ im.url }}" />{% endthumbnail %}{% endif %}</p>
-
-

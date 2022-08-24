@@ -27,5 +27,3 @@ icon=icon.png
 experimental=True
 ; test numeric value flag
 deprecated=1
-
-

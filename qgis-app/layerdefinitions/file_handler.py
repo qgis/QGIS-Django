@@ -14,24 +14,26 @@ def parse_qlr(xmlfile):
     try:
         tree = ET.parse(xmlfile)
     except ET.ParseError:
-        raise ValidationError(_('Cannot parse the qlr file. '
-                                'Please ensure your file is correct.'))
+        raise ValidationError(
+            _("Cannot parse the qlr file. " "Please ensure your file is correct.")
+        )
     return tree
 
 
 def validator(xmlfile):
     tree = parse_qlr(xmlfile)
     root = tree.getroot()
-    if not root or not root.tag == 'qlr':
-        raise ValidationError(_('Invalid root tag of qlr file. '
-                                'Please ensure your file is correct.'))
+    if not root or not root.tag == "qlr":
+        raise ValidationError(
+            _("Invalid root tag of qlr file. " "Please ensure your file is correct.")
+        )
     return True
 
 
 def get_url_datasource(xmlfile):
     tree = parse_qlr(xmlfile)
     root = tree.getroot()
-    datasource = root.find('./maplayers/maplayer/datasource')
+    datasource = root.find("./maplayers/maplayer/datasource")
     rgx = r'(?<=url=)[\'"]?(.*?)[\'"&\s]*?$'
     try:
         url = re.findall(rgx, datasource.text)
@@ -46,7 +48,7 @@ def get_url_datasource(xmlfile):
 def get_provider(xmlfile):
     tree = parse_qlr(xmlfile)
     root = tree.getroot()
-    provider = root.find('./maplayers/maplayer/provider')
+    provider = root.find("./maplayers/maplayer/provider")
     try:
         return provider.text
     except AttributeError:
