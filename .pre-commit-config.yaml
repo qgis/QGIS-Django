@@ -1,5 +1,6 @@
 # See https://pre-commit.com for more information
 # See https://pre-commit.com/hooks.html for more hooks
+
 exclude: 'static/'
 repos:
   # Fix end of files
@@ -40,3 +41,4 @@ repos:
     rev: "3.9.0"
     hooks:
       - id: flake8
+
