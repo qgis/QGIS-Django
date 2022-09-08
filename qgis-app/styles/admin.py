@@ -1,20 +1,23 @@
 from django.contrib import admin
-from .models import Style, StyleType, Review
+
+from .models import Review, Style, StyleType
 
 
 class StyleTypeAdmin(admin.ModelAdmin):
-    list_display = ('name', 'description', 'order')
-    list_editable = ('order',)
+    list_display = ("name", "description", "order")
+    list_editable = ("order",)
 
 
 class StyleAdmin(admin.ModelAdmin):
-    list_display = ('name',
-                    'description',
-                    'creator',
-                    'upload_date',
-                    'modified_date',
-                    'style_type')
-    search_fields = ('name', 'description')
+    list_display = (
+        "name",
+        "description",
+        "creator",
+        "upload_date",
+        "modified_date",
+        "style_type",
+    )
+    search_fields = ("name", "description")
 
 
 admin.site.register(Style, StyleAdmin)

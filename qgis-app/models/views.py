@@ -1,20 +1,20 @@
-from base.views.processing_view import (ResourceBaseCreateView,
-                                        ResourceBaseDetailView,
-                                        ResourceBaseUpdateView,
-                                        ResourceBaseListView,
-                                        ResourceBaseUnapprovedListView,
-                                        ResourceBaseRequireActionListView,
-                                        ResourceBaseDeleteView,
-                                        ResourceBaseReviewView,
-                                        ResourceBaseDownload,
-                                        resource_nav_content)
-
-
+from base.views.processing_view import (
+    ResourceBaseCreateView,
+    ResourceBaseDeleteView,
+    ResourceBaseDetailView,
+    ResourceBaseDownload,
+    ResourceBaseListView,
+    ResourceBaseRequireActionListView,
+    ResourceBaseReviewView,
+    ResourceBaseUnapprovedListView,
+    ResourceBaseUpdateView,
+    resource_nav_content,
+)
 from models.forms import UpdateForm, UploadForm
 from models.models import Model, Review
 
 
-class ResourceMixin():
+class ResourceMixin:
     """Mixin class for Model."""
 
     model = Model
@@ -22,10 +22,10 @@ class ResourceMixin():
     review_model = Review
 
     # The resource_name will be displayed as the app name on web page
-    resource_name = 'Model'
+    resource_name = "Model"
 
     # The url name in urls.py should start with this value
-    resource_name_url_base = 'model'
+    resource_name_url_base = "model"
 
 
 class ModelCreateView(ResourceMixin, ResourceBaseCreateView):
@@ -48,13 +48,11 @@ class ModelListView(ResourceMixin, ResourceBaseListView):
     """Approved Model ListView"""
 
 
-class ModelUnapprovedListView(ResourceMixin,
-                                   ResourceBaseUnapprovedListView):
+class ModelUnapprovedListView(ResourceMixin, ResourceBaseUnapprovedListView):
     """Unapproved Model ListView"""
 
 
-class ModelRequireActionListView(ResourceMixin,
-                                      ResourceBaseRequireActionListView):
+class ModelRequireActionListView(ResourceMixin, ResourceBaseRequireActionListView):
     """Model Requires Action"""
 
 

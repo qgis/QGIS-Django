@@ -120,7 +120,7 @@ Follow these steps for setting up:
 - Create new Group: `Authentication and Authorization > Groups > Add group`
 - Set the options:
   - **Name:** `Style Managers`
-  - **Permissions:** 
+  - **Permissions:**
     choose all styles | in **Available permissions** by typing `styles` in search input and click `Choose all`
     - styles | style | Can add style
     - styles | style | Can change style
@@ -134,7 +134,7 @@ Follow these steps for setting up:
     - styles | style type | Can change style type
     - styles | style type | Can delete style type
     - styles | style type | Can view style type
-  
+
 ---
 ## Backup and Restore
 
@@ -142,7 +142,7 @@ Follow these steps for setting up:
 ```bash
 $ ./backup.sh
 ```
-- You will find dumps file in backups directory 
+- You will find dumps file in backups directory
 ```bash
 $ tree -L 3 backups
 backups
@@ -174,7 +174,7 @@ backups
 │`
 ```
 
-- Copy the dump file you wish to restore to dockerize/backups/latest.dmp file 
+- Copy the dump file you wish to restore to dockerize/backups/latest.dmp file
 ```bash
 $ cp backups/2020/December/PG_QGIS_PLUGINS_gis.16-December-2020.dmp dockerize/backups/latest.dmp
 ```
@@ -198,9 +198,9 @@ $ make dbrestore
 - In Containers tab, click on tripe-dot icon > `Execute Shell`
 
   ![image](https://user-images.githubusercontent.com/40058076/102454128-7352ee00-4078-11eb-80aa-f782c6ea9f6f.png)
-  
+
   Now you are inside the container and ready to deploy your update.
-  
+
   ![image](https://user-images.githubusercontent.com/40058076/102455185-1ce6af00-407a-11eb-8318-3e084b24c095.png)
 - Pull the latest commit: `git pull origin master`
 - Run migration: `python manage.py migrate`

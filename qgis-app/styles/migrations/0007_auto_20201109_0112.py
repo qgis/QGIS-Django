@@ -6,17 +6,22 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('styles', '0006_stylereview_require_action'),
+        ("styles", "0006_stylereview_require_action"),
     ]
 
     operations = [
         migrations.RemoveField(
-            model_name='stylereview',
-            name='require_action',
+            model_name="stylereview",
+            name="require_action",
         ),
         migrations.AddField(
-            model_name='style',
-            name='require_action',
-            field=models.BooleanField(db_index=True, default=False, help_text='Set to True if you require creator to update its style.', verbose_name='Requires Action'),
+            model_name="style",
+            name="require_action",
+            field=models.BooleanField(
+                db_index=True,
+                default=False,
+                help_text="Set to True if you require creator to update its style.",
+                verbose_name="Requires Action",
+            ),
         ),
     ]

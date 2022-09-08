@@ -1,12 +1,12 @@
 <VirtualHost *>
-  ServerAdmin tim@linfiniti.com 
+  ServerAdmin tim@linfiniti.com
   ServerName qgis-django.localhost
   ServerAlias www.qgis-django.localhost
   DocumentRoot /var/www
   CustomLog /var/log/apache2/qgis-django.access.log combined
   # Possible values include: debug, info, notice, warn, error, crit,
   # alert, emerg.
-  LogLevel debug 
+  LogLevel debug
   #warn
   ErrorLog /var/log/apache2/qgis-django.error.log
   ServerSignature Off

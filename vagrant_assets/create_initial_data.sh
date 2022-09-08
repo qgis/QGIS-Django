@@ -11,4 +11,3 @@ cp -r ${ROOT_DIR}/qgis-app/static_media/packages/ ${THIS_SCRIPT_DIR}
 for app in ${APPS}; do
     python manage.py dumpdata --indent 4 --format json ${app} > ${THIS_SCRIPT_DIR}/fixtures/${app}.json
 done
-

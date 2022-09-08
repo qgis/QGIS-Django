@@ -24,7 +24,7 @@ repository=http://www.itopen.it/repo
 
 
 
-experimental=True   
+experimental=True
 
 
 ; change icon...

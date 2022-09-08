@@ -2,35 +2,44 @@
 Base Model for sharing file feature
 """
 import datetime
-import uuid
 import os
+import uuid
 
-from django.db import models
 from django.contrib.auth.models import User
+from django.db import models
 from django.utils.translation import ugettext_lazy as _
 
 
 class UnapprovedManager(models.Manager):
     """Custom Queryset Manager for Unapproved Resource"""
+
     def get_queryset(self):
-        return super().get_queryset().filter(
-                approved=False, require_action=False
-            ).order_by('upload_date').distinct()
+        return (
+            super()
+            .get_queryset()
+            .filter(approved=False, require_action=False)
+            .order_by("upload_date")
+            .distinct()
+        )
 
 
 class ApprovedManager(models.Manager):
     """Custom Queryset Manager for Unapproved Resource"""
+
     def get_queryset(self):
-        return super().get_queryset().filter(approved=True) \
-            .order_by('upload_date')
+        return super().get_queryset().filter(approved=True).order_by("upload_date")
 
 
 class RequireActionManager(models.Manager):
     """Custom Queryset Manager for reviewed Resource requires an action"""
+
     def get_queryset(self):
         qs = super().get_queryset()
-        return qs.filter(approved=False, require_action=True)\
-            .order_by('upload_date').distinct()
+        return (
+            qs.filter(approved=False, require_action=True)
+            .order_by("upload_date")
+            .distinct()
+        )
 
 
 class Resource(models.Model):
@@ -45,59 +54,68 @@ class Resource(models.Model):
 
     # date
     upload_date = models.DateTimeField(
-        _('Uploaded on'),
-        help_text=_('The upload date. Automatically added on file upload.'),
+        _("Uploaded on"),
+        help_text=_("The upload date. Automatically added on file upload."),
         auto_now_add=True,
-        editable=False)
+        editable=False,
+    )
     modified_date = models.DateTimeField(
-        _('Modified on'),
-        help_text=_('The upload date. Automatically added on file upload.'),
-        editable=False)
+        _("Modified on"),
+        help_text=_("The upload date. Automatically added on file upload."),
+        editable=False,
+    )
 
     # creator
     creator = models.ForeignKey(
         User,
-        verbose_name=_('Created by'),
-        help_text=_('The user who uploaded this resource.'),
-        on_delete=models.CASCADE)
+        verbose_name=_("Created by"),
+        help_text=_("The user who uploaded this resource."),
+        on_delete=models.CASCADE,
+    )
 
     # name and desc
-    name = models.CharField(_('Name'),
-                            help_text=_('A unique name for this resource'),
-                            max_length=256,
-                            blank=False,
-                            null=False,
-                            unique=True)
+    name = models.CharField(
+        _("Name"),
+        help_text=_("A unique name for this resource"),
+        max_length=256,
+        blank=False,
+        null=False,
+        unique=True,
+    )
     description = models.TextField(
-        _('Description'),
-        help_text=_('A description of this resource.'),
+        _("Description"),
+        help_text=_("A description of this resource."),
         max_length=5000,
         blank=False,
-        null=False
+        null=False,
     )
 
     # counter
     download_count = models.IntegerField(
-        _('Downloads'),
-        help_text=_('The number of times this resource has been downloaded. '
-                    'This is updated automatically.'),
+        _("Downloads"),
+        help_text=_(
+            "The number of times this resource has been downloaded. "
+            "This is updated automatically."
+        ),
         default=0,
-        editable=False)
+        editable=False,
+    )
 
     # approval
     approved = models.BooleanField(
-        _('Approved'),
+        _("Approved"),
         default=False,
-        help_text=_('Set to True if you wish to approve this resource.'),
-        db_index=True)
+        help_text=_("Set to True if you wish to approve this resource."),
+        db_index=True,
+    )
 
     # require_action
     require_action = models.BooleanField(
-        _('Requires Action'),
+        _("Requires Action"),
         default=False,
-        help_text=_('Set to True if you require creator to update the '
-                    'resource.'),
-        db_index=True)
+        help_text=_("Set to True if you require creator to update the " "resource."),
+        db_index=True,
+    )
 
     # Manager
     objects = models.Manager()
@@ -135,33 +153,36 @@ class ResourceReview(models.Model):
     """
     A Review Model.
     """
+
     # date
     review_date = models.DateTimeField(
-        _('Reviewed on'),
-        help_text=_('The review date. Automatically added on review '
-                    'resource.'),
+        _("Reviewed on"),
+        help_text=_("The review date. Automatically added on review " "resource."),
         auto_now_add=True,
-        editable=False)
+        editable=False,
+    )
 
     # reviewer
     reviewer = models.ForeignKey(
         User,
-        verbose_name=_('Reviewed by'),
-        help_text=_('The user who reviewed this %(app_label)s.'),
+        verbose_name=_("Reviewed by"),
+        help_text=_("The user who reviewed this %(app_label)s."),
         on_delete=models.CASCADE,
-        related_name='%(app_label)s_%(class)s_related')
+        related_name="%(app_label)s_%(class)s_related",
+    )
 
     # comment
     comment = models.TextField(
-        _('Comment'),
-        help_text=_('A review comment. Please write your review.'),
+        _("Comment"),
+        help_text=_("A review comment. Please write your review."),
         max_length=1000,
         blank=True,
-        null=True,)
+        null=True,
+    )
 
     class Meta:
         abstract = True
-        ordering = ['review_date']
+        ordering = ["review_date"]
 
     def __str__(self):
         return self.comment
