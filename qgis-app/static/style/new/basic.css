@@ -384,3 +384,21 @@ div.sphinxsidebar, div.related, div.footer, #top-link {
     display: none;
 }
 }
+
+.navbar-search {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+}
+
+.navbar-search #id_q {
+    border-radius: 12px 0 0 12px;
+    color: black;
+}
+
+.btn-search {
+    width: fit-content !important;
+    margin-top: 0 !important;
+    border-radius: 0 12px 12px 0 !important;
+}
+
