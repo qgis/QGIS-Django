@@ -2,6 +2,7 @@
 XML-RPC webservices for the plugin web application
 """
 
+from base64 import b64decode
 from io import BytesIO
 from xmlrpc.server import Fault
 
@@ -47,6 +48,9 @@ def plugin_upload(package, **kwargs):
     Returns an array containing the ID (primary key) of the plugin and the ID of the version.
     """
     try:
+        # JSON-RPC cannot deserialize base64 strings to bytes, do it here instead
+        if isinstance(package, str):
+            package = b64decode(package.encode('utf-8'))
 
         request = kwargs.get("request")
         package = BytesIO(package)
