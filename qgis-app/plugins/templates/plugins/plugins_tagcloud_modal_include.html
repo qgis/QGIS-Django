@@ -2,7 +2,11 @@
 
 {% trans "Plugin Tags" as tags_title %}
 
-<a href="#tagcloudModal" role="button" class="btn btn-block btn-info btn-large my-1" data-toggle="modal"><i class="icon-tags icon-white icon-2x" style="vertical-align: middle;"></i> {{ tags_title }}</a>
+<a id="tagcloudModalButton" href="#tagcloudModal" role="button" class="btn btn-block btn-link btn-large" data-toggle="modal">
+  <i class="icon-tags icon-white icon-2x"></i>
+  {{ tags_title }}
+  <i class="icon-resize-full icon-white"></i>
+</a>
 
 <div id="tagcloudModal" class="modal hide" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
   <div class="tag_cloud_modal">

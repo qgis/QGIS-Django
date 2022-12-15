@@ -37,6 +37,13 @@ div.tag_cloud a {
   }
 }
 
+#tagcloudModalButton {
+  text-decoration: none;
+}
+
+#tagcloudModalButton i {
+  vertical-align: middle;
+}
 
 .white, .white a {
   color: #fff;
