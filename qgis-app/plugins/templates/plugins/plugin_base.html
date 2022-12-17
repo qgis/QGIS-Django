@@ -36,6 +36,10 @@
         <li><a href="{% url "most_rated_plugins" %}">{% trans "Most rated" %}</a></li>
         <li><a href="{% url "server_plugins" %}">{% trans "QGIS Server plugins" %}</a></li>
 </ul>
+
+<hr>
+{% include_plugins_tagcloud_modal 'plugins.plugin' %}
+
 {% endblock %}
 
 {% block "credits" %}

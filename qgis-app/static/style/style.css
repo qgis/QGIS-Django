@@ -24,6 +24,27 @@ div.tag_cloud a {
    margin: 4px;
 }
 
+.tag_cloud_modal {
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+}
+
+@media (max-width: 767px) {
+  .tag_cloud_modal {
+    flex-direction: column-reverse;
+    /* place in reach of thumb */
+  }
+}
+
+#tagcloudModalButton {
+  text-decoration: none;
+}
+
+#tagcloudModalButton i {
+  vertical-align: middle;
+}
+
 .white, .white a {
   color: #fff;
 }
@@ -63,4 +84,14 @@ img.plugin-icon {
   #collapse-related-plugins {
     height: auto;
   }
+}
+
+.modal {
+  /* make modal fullscreen */
+  bottom: 20px;
+}
+
+.modal-header {
+  border-bottom: none;
+  text-align: center;
 }
