@@ -36,7 +36,7 @@ celery==4.3.1
 
 # pin due to issues with a breaking change
 # https://github.com/celery/celery/issues/7783
-importlib_metadata<5
+importlib-metadata==5.1.0
 
 requests==2.23.0
 
