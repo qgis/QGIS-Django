@@ -43,6 +43,17 @@ staff_required = user_passes_test(lambda u: u.is_staff)
 from plugins.tasks.generate_plugins_xml import generate_plugins_xml
 
 
+def get_plugin(package_name: str) -> Plugin:
+    """Get the plugin from package_name"""
+    try:
+        return Plugin.objects.get(
+            Q(package_name=package_name) |
+            Q(pluginlegacyname__package_name=package_name)
+        )
+    except Plugin.DoesNotExist:
+        raise Http404()
+
+
 def send_mail_wrapper(subject, message, mail_from, recipients, fail_silently=True):
     if settings.DEBUG:
         logging.debug("Mail not sent (DEBUG=True)")
@@ -297,6 +308,7 @@ def plugin_upload(request):
     """
     if request.method == "POST":
         form = PackageUploadForm(request.POST, request.FILES)
+        plugin = None
         if form.is_valid():
             try:
                 plugin_data = {
@@ -306,11 +318,20 @@ def plugin_upload(request):
                     "created_by": request.user,
                     "author": form.cleaned_data["author"],
                     "email": form.cleaned_data["email"],
-                    "created_by": request.user,
                     "icon": form.cleaned_data["icon_file"],
                 }
 
                 # Gets existing plugin
+                if Plugin.objects.filter(
+                        name__iexact=plugin_data['name']
+                ).exclude(
+                    package_name__iexact=plugin_data['package_name']
+                ).count():
+                    raise ValidationError(
+                        _(
+                            'Error: The package name for this plugin has changed.'
+                        )
+                    )
                 try:
                     plugin = Plugin.objects.get(
                         package_name=plugin_data["package_name"]
@@ -381,7 +402,7 @@ def plugin_upload(request):
                 # Takes care of tags
                 if form.cleaned_data.get("tags"):
                     plugin.tags.set(
-                        *[
+                        [
                             t.strip().lower()
                             for t in form.cleaned_data.get("tags").split(",")
                         ]
@@ -434,7 +455,7 @@ def plugin_upload(request):
             except (IntegrityError, ValidationError, DjangoUnicodeDecodeError) as e:
                 connection.close()
                 messages.error(request, e, fail_silently=True)
-                if not plugin.pk:
+                if not plugin or not plugin.pk:
                     return render(request, "plugins/plugin_upload.html", {"form": form})
             return HttpResponseRedirect(plugin.get_absolute_url())
     else:
@@ -446,6 +467,19 @@ def plugin_upload(request):
 class PluginDetailView(DetailView):
     model = Plugin
     queryset = Plugin.objects.all()
+
+    def get_object(self, queryset=None):
+        if queryset is None:
+            queryset = self.get_queryset()
+        package_name = self.kwargs.get('package_name')
+        try:
+            return queryset.get(
+                Q(package_name__iexact=package_name) |
+                Q(pluginlegacyname__package_name__iexact=package_name)
+            )
+        except Plugin.DoesNotExist:
+            raise Http404(_("No %(verbose_name)s found matching the query") %
+                          {'verbose_name': queryset.model._meta.verbose_name})
 
     @method_decorator(ensure_csrf_cookie)
     def dispatch(self, *args, **kwargs):
@@ -1022,7 +1056,7 @@ def version_download(request, package_name, version):
     """
     Update download counter(s)
     """
-    plugin = get_object_or_404(Plugin, package_name=package_name)
+    plugin = get_plugin(package_name)
     version = get_object_or_404(PluginVersion, plugin=plugin, version=version)
     version.downloads = version.downloads + 1
     version.save()
@@ -1045,7 +1079,7 @@ def version_detail(request, package_name, version):
     """
     Show version details
     """
-    plugin = get_object_or_404(Plugin, package_name=package_name)
+    plugin = get_plugin(package_name)
     version = get_object_or_404(PluginVersion, plugin=plugin, version=version)
     return render(request, "plugins/version_detail.html", {"version": version})
 

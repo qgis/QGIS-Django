@@ -279,9 +279,7 @@ urlpatterns += [
 urlpatterns += [
     url(
         r"^(?P<package_name>[A-Za-z][A-Za-z0-9-_]+)/$",
-        PluginDetailView.as_view(
-            slug_url_kwarg="package_name", slug_field="package_name"
-        ),
+        PluginDetailView.as_view(),
         name="plugin_detail",
     ),
 ]

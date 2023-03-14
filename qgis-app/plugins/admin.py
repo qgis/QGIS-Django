@@ -1,5 +1,8 @@
 from django.contrib import admin
-from plugins.models import Plugin, PluginVersion  # , PluginCrashReport
+from plugins.models import (
+    Plugin, PluginVersion,
+    PluginLegacyName# , PluginCrashReport
+)
 
 
 class PluginAdmin(admin.ModelAdmin):
@@ -26,12 +29,28 @@ class PluginVersionAdmin(admin.ModelAdmin):
         "created_on",
         "downloads",
     )
+    search_fields = (
+        'plugin__name',
+    )
 
 
 # class PluginCrashReportAdmin(admin.ModelAdmin):
 # pass
 
 
+class PluginLegacyNameAdmin(admin.ModelAdmin):
+    list_display = (
+        'plugin',
+        'package_name',
+        'created_on'
+    )
+    readonly_fields = (
+        'created_on',
+        'package_name'
+    )
+
+
 admin.site.register(Plugin, PluginAdmin)
 admin.site.register(PluginVersion, PluginVersionAdmin)
+admin.site.register(PluginLegacyName, PluginLegacyNameAdmin)
 # admin.site.register(PluginCrashReport, PluginCrashReportAdmin)

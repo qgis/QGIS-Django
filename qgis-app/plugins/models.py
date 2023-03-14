@@ -7,6 +7,7 @@ import re
 from django.conf import settings
 from django.contrib.auth.models import User
 from django.db import models
+from django.db.models import Q
 from django.urls import reverse
 from django.utils.translation import ugettext_lazy as _
 from djangoratings.fields import AnonymousRatingField
@@ -309,11 +310,12 @@ class Plugin(models.Model):
     package_name = models.CharField(
         _("Package Name"),
         help_text=_(
-            "This is the plugin's internal name, equals to the main folder name"
+            "This is the plugin's internal name, equals to the main folder name. "
+            "Must start with an ASCII letter and can contain only ASCII letters, digits and the - and _ signs."
         ),
         max_length=256,
         unique=True,
-        editable=False,
+        editable=True,
     )
     name = models.CharField(
         _("Name"), help_text=_("Must be unique"), max_length=256, unique=True
@@ -471,11 +473,16 @@ class Plugin(models.Model):
             )
 
         if self.pk:
-            qs = Plugin.objects.filter(package_name__iexact=self.package_name).exclude(
+            qs = Plugin.objects.filter(
+                Q(package_name__iexact=self.package_name) |
+                Q(pluginlegacyname__package_name__iexact=self.package_name)
+            ).exclude(
                 pk=self.pk
             )
         else:
-            qs = Plugin.objects.filter(package_name__iexact=self.package_name)
+            qs = Plugin.objects.filter(
+                Q(package_name__iexact=self.package_name) |
+                Q(pluginlegacyname__package_name__iexact=self.package_name))
         if qs.count():
             raise ValidationError(
                 _(
@@ -768,6 +775,30 @@ class PluginVersion(models.Model):
         return self.__unicode__()
 
 
+class PluginLegacyName(models.Model):
+    plugin = models.ForeignKey(
+        Plugin,
+        on_delete=models.CASCADE)
+
+    created_on = models.DateTimeField(
+        _("Created on"),
+        auto_now_add=True,
+        editable=False
+    )
+
+    # name, desc etc.
+    package_name = models.CharField(
+        _("Package Name"),
+        help_text=_(
+            "This is the plugin's internal name, equals to the main folder name"
+        ),
+        null=True,
+        blank=True,
+        max_length=256,
+        editable=False,
+    )
+
+
 def delete_version_package(sender, instance, **kw):
     """
     Removes the zip package
@@ -788,5 +819,25 @@ def delete_plugin_icon(sender, instance, **kw):
         pass
 
 
+def plugin_rename(sender, instance, **kwargs):
+    """
+    Add old plugin name to plugin_legacy_name
+    """
+    if not PluginVersion.objects.filter(
+            plugin=instance
+    ).exists():
+        return None
+    try:
+        old_instance = Plugin.objects.get(id=instance.id)
+        if old_instance.package_name != instance.package_name:
+            PluginLegacyName.objects.get_or_create(
+                plugin=instance,
+                package_name=old_instance.package_name
+            )
+    except Plugin.DoesNotExist:
+        return None
+
+
 models.signals.post_delete.connect(delete_version_package, sender=PluginVersion)
 models.signals.post_delete.connect(delete_plugin_icon, sender=Plugin)
+models.signals.pre_save.connect(plugin_rename, sender=Plugin)

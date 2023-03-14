@@ -71,6 +71,10 @@ def plugin_upload(package, **kwargs):
         }
 
         # Gets existing plugin
+        if Plugin.objects.filter(
+            name__iexact=plugin_data['name']
+        ).exclude(package_name__iexact=plugin_data['package_name']).count():
+            raise Fault(1, 'Error: The package name for this plugin has changed.')
         try:
             plugin = Plugin.objects.get(package_name=plugin_data["package_name"])
             # Apply new values
