@@ -104,7 +104,7 @@ def plugin_upload(package, **kwargs):
         # Takes care of tags
         if cleaned_data.get("tags"):
             plugin.tags.set(
-                *[t.strip().lower() for t in cleaned_data.get("tags").split(",")]
+                [t.strip().lower() for t in cleaned_data.get("tags").split(",")]
             )
 
         version_data = {
