@@ -381,7 +381,7 @@ def plugin_upload(request):
                 # Takes care of tags
                 if form.cleaned_data.get("tags"):
                     plugin.tags.set(
-                        *[
+                        [
                             t.strip().lower()
                             for t in form.cleaned_data.get("tags").split(",")
                         ]
@@ -823,7 +823,7 @@ def _main_plugin_update(request, plugin, form):
         setattr(plugin, "icon", form.cleaned_data.get("icon_file"))
     if form.cleaned_data.get("tags"):
         plugin.tags.set(
-            *[t.strip().lower() for t in form.cleaned_data.get("tags").split(",")]
+            [t.strip().lower() for t in form.cleaned_data.get("tags").split(",")]
         )
     plugin.save()
 
