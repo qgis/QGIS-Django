@@ -45,6 +45,9 @@ dockerize/media
 dockerize/logs
 .editorconfig
 
+# dotenv
+.env
+
 # test cache
 qgis-app/*/tests/*/cache
 qgis-app/api/tests/*/
