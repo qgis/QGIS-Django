@@ -768,6 +768,37 @@ class PluginVersion(models.Model):
         return self.__unicode__()
 
 
+class PluginVersionReview(models.Model):
+    """A Review for a plugin version."""
+
+    version = models.ForeignKey(
+        PluginVersion,
+        on_delete=models.CASCADE,
+        related_name="review"
+    )
+    created_on = models.DateTimeField(
+        verbose_name=_("Created on"),
+        auto_now_add=True,
+        editable=False
+    )
+    reviewer = models.ForeignKey(
+        User,
+        verbose_name=_("Reviewed by"),
+        help_text=_("The user who reviewed this plugin."),
+        on_delete=models.CASCADE,
+    )
+    comment = models.TextField(
+        verbose_name=_("Comment"),
+        help_text=_("A review comment. Please write your review."),
+        max_length=1000,
+        blank=False,
+        null=False
+    )
+
+    class Meta:
+        ordering = ["created_on"]
+
+
 def delete_version_package(sender, instance, **kw):
     """
     Removes the zip package

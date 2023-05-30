@@ -201,6 +201,7 @@
                                 {% if user.is_staff or user in version.plugin.approvers %}
                                     {% if not version.approved %}<button class="btn btn-success btn-mini" type="submit" name="version_approve" id="version_approve"title="{% trans "Approve" %}"><i class="icon-thumbs-up icon-white"></i></button>{% else %}<button class="btn btn-warning btn-mini" type="submit" name="version_unapprove" id="version_unapprove" title="{% trans "Unapprove" %}"><i class="icon-thumbs-down icon-white"></i></button>{% endif %}
                                 {% endif %}
+                                    <a class="btn btn-primary btn-mini" href="{% url "version_review" object.package_name version.version %}" title="{% trans "Review" %}"><i class="icon-comments icon-white"></i></a>&nbsp;
                                 {% if user.is_staff or user in version.plugin.editors %}
                                 <a class="btn btn-primary btn-mini" href="{% url "version_update" object.package_name version.version %}" title="{% trans "Edit" %}"><i class="icon-pencil icon-white"></i></a>&nbsp;<a class="btn btn-danger btn-mini delete" href="{% url "version_delete" object.package_name version.version %}" title="{% trans "Delete" %}"><i class="icon-remove icon-white"></i></a>{% endif %}</form>
                                 </td>

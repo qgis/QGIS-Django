@@ -6,7 +6,7 @@ from django.contrib.auth.models import User
 from django.forms import CharField, ModelForm, ValidationError
 from django.utils.safestring import mark_safe
 from django.utils.translation import ugettext_lazy as _
-from plugins.models import Plugin, PluginVersion
+from plugins.models import Plugin, PluginVersion, PluginVersionReview
 from plugins.validator import validator
 from taggit.forms import *
 
@@ -208,3 +208,22 @@ class PackageUploadForm(forms.Form):
         # Clean tags
         self.cleaned_data["tags"] = _clean_tags(self.cleaned_data.get("tags", None))
         return package
+
+
+class VersionReviewForm(ModelForm):
+    """Review a plugin"""
+
+    comment = forms.CharField(
+        widget=forms.Textarea(
+            attrs={
+                "placeholder": ("Please provide clear feedback if you decided "
+                                "to require actions for this plugin."),
+                "rows": "5",
+                "class": "span12"
+            }
+        )
+    )
+
+    class Meta:
+        model = PluginVersionReview
+        fields = ("comment", )
