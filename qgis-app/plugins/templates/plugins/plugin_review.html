@@ -1,0 +1,75 @@
+{% extends 'plugins/plugin_base.html' %}{% load i18n %}
+{% block content %}
+    <h2>{% trans "Review Plugin" %} {{ version.plugin.name }} {{ version.version }}</h2>
+    {% if form.errors %}
+    <div class="alert alert-error">
+        <button type="button" class="close" data-dismiss="alert">&times;</button>
+        <p>{% trans "The form contains errors and cannot be submitted, please check the fields highlighted in red." %}</p>
+    </div>
+    {% endif %}
+    {% if form.non_field_errors %}
+    <div class="alert alert-error">
+        <button type="button" class="close" data-dismiss="alert">&times;</button>
+        {% for error in form.non_field_errors %}
+            <p>{{ error }}</p>
+        {% endfor %}
+    </div>
+    {% endif %}
+    <div>
+        {% for comment in comments %}
+        <div>
+            <div class="span8 previous-comment">
+                <div class="previous-comment-header">
+                    {% if comment.reviewer in version.plugin.editors %}<b>[Owner]</b> {% endif %}
+                    <b>{{ comment.reviewer.first_name }} {{ comment.reviewer.last_name }}</b>
+                    {{ comment.created_on|timesince }} ago
+                </div>
+                <p>{{ comment.comment }}</p>
+            </div>
+        </div>
+        {% endfor %}
+
+        <div>
+            <div class="span8 review-comment">
+                <form method="post" action="{% url 'version_review' version.plugin.package_name version.version %}">{% csrf_token %}
+                    <b>Comment</b>
+                        {{ form.comment }}
+                        <div class="text-right">
+                        {% if is_user_has_approval_rights %}
+                            <button class="btn btn-primary" type="submit" name="status_review" value="require_action">{% trans "Comment and require action" %}</button>
+                        {% else %}
+                            <button class="btn btn-primary" type="submit" name="status_review" value="ask_review" >{% trans "Comment and ask for review" %}</button>
+                        {% endif %}
+                            <button class="btn btn-success" type="submit" name="status_review" value="comment">{% trans "Comment" %}</button>
+                        </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+{% endblock %}
+
+{% block extrajs %}
+    <style>
+    .review-comment{
+        background-color: lightgray;
+        padding: 5px;
+        border-radius: 5px;
+        margin-top: 20px;
+        margin-bottom: 5px;
+    }
+    .previous-comment{
+        border: 1px solid #e8e8e8;
+        padding: 5px;
+        border-radius: 5px;
+        margin-top: 5px;
+    }
+    .previous-comment-header{
+        background-color: #e8e8e8;
+        padding: 5px;
+        border-radius: 2px;
+        margin: -5px -5px 0;
+    }
+
+    </style>
+{% endblock %}
