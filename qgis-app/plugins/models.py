@@ -768,8 +768,12 @@ class PluginVersion(models.Model):
         return self.__unicode__()
 
 
-class PluginVersionReview(models.Model):
-    """A Review for a plugin version."""
+class PluginVersionFeedback(models.Model):
+    """Feedback for a plugin version."""
+
+    STATUS = (
+        ''
+    )
 
     version = models.ForeignKey(
         PluginVersion,

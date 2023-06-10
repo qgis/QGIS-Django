@@ -247,10 +247,10 @@ urlpatterns += [
         name="version_unapprove",
     ),
     url(
-        r"^(?P<package_name>[A-Za-z][A-Za-z0-9-_]+)/version/(?P<version>[^\/]+)/review/$",
-        version_review,
+        r"^(?P<package_name>[A-Za-z][A-Za-z0-9-_]+)/version/(?P<version>[^\/]+)/feedback/$",
+        version_feedback,
         {},
-        name="version_review",
+        name="version_feedback",
     ),
 ]
 

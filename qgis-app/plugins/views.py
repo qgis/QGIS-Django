@@ -936,35 +936,35 @@ def version_update(request, package_name, version):
     )
 
 @login_required
-def version_review(request, package_name, version):
+def version_feedback(request, package_name, version):
     """
-    The form will add a comment/ review for the package version.
+    The form will add a comment/ feedback for the package version.
     """
     plugin = get_object_or_404(Plugin, package_name=package_name)
     version = get_object_or_404(PluginVersion, plugin=plugin, version=version)
     is_user_plugin_owner: bool = request.user in plugin.editors
     is_user_has_approval_rights: bool = check_plugin_version_approval_rights(
         request.user, plugin)
-    form = VersionReviewForm()
+    form = VersionFeedbackForm()
     if not is_user_plugin_owner and not is_user_has_approval_rights:
         return render(request, "plugins/version_permission_deny.html", {})
     if request.method == "POST":
-        form = VersionReviewForm(request.POST)
+        form = VersionFeedbackForm(request.POST)
         STATUS: tuple = ("require_action", "ask_review", "comment")
-        status: str = request.POST.get('status_review')
+        status: str = request.POST.get('status_feedback')
         if form.is_valid() and status and status in STATUS:
-            review: PluginVersionReview = form.save(commit=False)
+            review: PluginVersionFeedback = form.save(commit=False)
             review.version = version
             review.reviewer = request.user
             review.save()
             return HttpResponseRedirect(
-                reverse("version_review",
+                reverse("version_feedback",
                         args=[plugin.package_name, version.version])
             )
-    comments = PluginVersionReview.objects.filter(version=version)
+    comments = PluginVersionFeedback.objects.filter(version=version)
     return render(
         request,
-        "plugins/plugin_review.html",
+        "plugins/plugin_feedback.html",
         {
             "comments": comments,
             "form": form,

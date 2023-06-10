@@ -6,7 +6,7 @@ from django.contrib.auth.models import User
 from django.forms import CharField, ModelForm, ValidationError
 from django.utils.safestring import mark_safe
 from django.utils.translation import ugettext_lazy as _
-from plugins.models import Plugin, PluginVersion, PluginVersionReview
+from plugins.models import Plugin, PluginVersion, PluginVersionFeedback
 from plugins.validator import validator
 from taggit.forms import *
 
@@ -210,14 +210,14 @@ class PackageUploadForm(forms.Form):
         return package
 
 
-class VersionReviewForm(ModelForm):
-    """Review a plugin"""
+class VersionFeedbackForm(ModelForm):
+    """Feedback for a plugin version"""
 
     comment = forms.CharField(
         widget=forms.Textarea(
             attrs={
                 "placeholder": ("Please provide clear feedback if you decided "
-                                "to require actions for this plugin."),
+                                "to require actions for this plugin version."),
                 "rows": "5",
                 "class": "span12"
             }
@@ -225,5 +225,5 @@ class VersionReviewForm(ModelForm):
     )
 
     class Meta:
-        model = PluginVersionReview
+        model = PluginVersionFeedback
         fields = ("comment", )
