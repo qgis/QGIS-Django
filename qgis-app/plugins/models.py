@@ -772,7 +772,9 @@ class PluginVersionFeedback(models.Model):
     """Feedback for a plugin version."""
 
     STATUS = (
-        ''
+        ("require_action", "require_action"),
+        ("ask_review", "ask_review"),
+        ("comment", "comment")
     )
 
     version = models.ForeignKey(
@@ -791,6 +793,13 @@ class PluginVersionFeedback(models.Model):
         help_text=_("The user who reviewed this plugin."),
         on_delete=models.CASCADE,
     )
+    status = models.CharField(
+        verbose_name=_("Status"),
+        help_text=_("Status of this feedback."),
+        max_length=15,
+        blank=False,
+        null=False
+    )
     comment = models.TextField(
         verbose_name=_("Comment"),
         help_text=_("A review comment. Please write your review."),
@@ -801,6 +810,15 @@ class PluginVersionFeedback(models.Model):
 
     class Meta:
         ordering = ["created_on"]
+
+    @property
+    def status_text(self) -> str:
+        text = {
+            "require_action": "required actions",
+            "ask_review": "asked review",
+            "comment": "commented"
+        }
+        return text[self.status]
 
 
 def delete_version_package(sender, instance, **kw):

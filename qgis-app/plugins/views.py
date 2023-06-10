@@ -945,22 +945,23 @@ def version_feedback(request, package_name, version):
     is_user_plugin_owner: bool = request.user in plugin.editors
     is_user_has_approval_rights: bool = check_plugin_version_approval_rights(
         request.user, plugin)
-    form = VersionFeedbackForm()
     if not is_user_plugin_owner and not is_user_has_approval_rights:
         return render(request, "plugins/version_permission_deny.html", {})
     if request.method == "POST":
         form = VersionFeedbackForm(request.POST)
-        STATUS: tuple = ("require_action", "ask_review", "comment")
+        STATUS: tuple = tuple(_[0] for _ in PluginVersionFeedback.STATUS)
         status: str = request.POST.get('status_feedback')
-        if form.is_valid() and status and status in STATUS:
+        if form.is_valid() and status in STATUS:
             review: PluginVersionFeedback = form.save(commit=False)
             review.version = version
             review.reviewer = request.user
+            review.status = status
             review.save()
             return HttpResponseRedirect(
                 reverse("version_feedback",
                         args=[plugin.package_name, version.version])
             )
+    form = VersionFeedbackForm()
     comments = PluginVersionFeedback.objects.filter(version=version)
     return render(
         request,

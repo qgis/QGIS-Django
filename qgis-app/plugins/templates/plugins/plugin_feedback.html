@@ -21,7 +21,8 @@
             <div class="span8 previous-comment">
                 <div class="previous-comment-header">
                     {% if comment.reviewer in version.plugin.editors %}<b>[Owner]</b> {% endif %}
-                    <b>{{ comment.reviewer.first_name }} {{ comment.reviewer.last_name }}</b>
+                    <b>{% if comment.reviewer.first_name %}{{ comment.reviewer.first_name }} {{ comment.reviewer.last_name }}{% else %}{{ comment.reviewer.username }}{% endif %}</b>
+                    {{ comment.status_text }}
                     {{ comment.created_on|timesince }} ago
                 </div>
                 <p>{{ comment.comment }}</p>
