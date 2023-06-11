@@ -272,6 +272,41 @@ class ServerPlugins(ApprovedPlugins):
         return super(ServerPlugins, self).get_queryset().filter(server=True).distinct()
 
 
+class FeedbackReceivedPlugins(models.Manager):
+    """
+    Show only unapproved plugins with a feedback
+    """
+    def get_queryset(self):
+        return (
+            super(FeedbackReceivedPlugins, self)
+            .get_queryset()
+            .annotate(latest_feedback=models.Max('pluginversion__feedback__created_on'))
+            .filter(
+                pluginversion__approved=False,
+                pluginversion__feedback__status='require_action',
+                pluginversion__feedback__created_on=models.F('latest_feedback')
+            ).distinct()
+        )
+
+
+class FeedbackPendingPlugins(models.Manager):
+    """
+    Show only unapproved plugins with a feedback
+    """
+    def get_queryset(self):
+        return (
+            super(FeedbackPendingPlugins, self)
+            .get_queryset()
+            .annotate(latest_feedback=models.Max('pluginversion__feedback__created_on'))
+            .filter(
+                pluginversion__approved=False,
+                pluginversion__feedback__status='ask_review',
+                pluginversion__feedback__created_on=models.F('latest_feedback')
+            ).distinct()
+        )
+
+
+
 class Plugin(models.Model):
     """
     Plugins model
@@ -351,6 +386,8 @@ class Plugin(models.Model):
     most_voted_objects = MostVotedPlugins()
     most_rated_objects = MostRatedPlugins()
     server_objects = ServerPlugins()
+    feedback_received_objects = FeedbackReceivedPlugins()
+    feedback_pending_objects = FeedbackPendingPlugins()
 
     rating = AnonymousRatingField(
         range=5, use_cookies=True, can_change_vote=True, allow_delete=True
@@ -780,7 +817,7 @@ class PluginVersionFeedback(models.Model):
     version = models.ForeignKey(
         PluginVersion,
         on_delete=models.CASCADE,
-        related_name="review"
+        related_name="feedback"
     )
     created_on = models.DateTimeField(
         verbose_name=_("Created on"),

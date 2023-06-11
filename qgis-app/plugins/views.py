@@ -693,6 +693,36 @@ class TagsPluginsList(PluginsList):
         return context
 
 
+class FeedbackReceivedPluginsList(PluginsList):
+    """List of Plugins that has feedback received in its versions.
+
+    The plugins editor can only see their plugin feedbacks.
+    The staff can see all plugin feedbacks.
+    """
+    queryset = Plugin.feedback_received_objects.all()
+
+    def get_filtered_queryset(self, qs):
+        user = get_object_or_404(User, username=self.request.user)
+        if user.is_staff:
+            return qs
+        return qs.filter(Q(owners=user) | Q(created_by=user)).distinct()
+
+
+class FeedbackPendingPluginsList(PluginsList):
+    """List of Plugins that has feedback pending in its versions.
+
+    The plugins editor can only see their plugin feedbacks.
+    The staff can see all plugin feedbacks.
+    """
+    queryset = Plugin.feedback_pending_objects.all()
+
+    def get_filtered_queryset(self, qs):
+        user = get_object_or_404(User, username=self.request.user)
+        if user.is_staff:
+            return qs
+        return qs.filter(Q(owners=user) | Q(created_by=user)).distinct()
+
+
 @login_required
 @require_POST
 def plugin_manage(request, package_name):
