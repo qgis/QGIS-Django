@@ -168,6 +168,41 @@ def plugin_approve_notify(plugin, msg, user):
         )
 
 
+def version_feedback_notify(version,  user):
+    """
+    Sends a message when a version is receiving feedback.
+    """
+    if settings.DEBUG:
+        return
+    plugin = version.plugin
+    recipients = [u.email for u in plugin.editors if u.email]
+    if len(recipients):
+        domain = Site.objects.get_current().domain
+        mail_from = settings.DEFAULT_FROM_EMAIL
+        logging.debug(
+            "Sending email feedback notification for %s plugin version %s, recipients:  %s"
+            % (plugin, version.version, recipients)
+        )
+        send_mail_wrapper(
+            _("Plugin %s feedback notification.") % (plugin, ),
+            _("\r\nPlugin %s reviewed by %s and received a feedback.\r\nLink: http://%s%s/feedback\r\n")
+            % (
+                plugin.name,
+                user,
+                domain,
+                version.get_absolute_url(),
+            ),
+            mail_from,
+            recipients,
+            fail_silently=True,
+        )
+    else:
+        logging.warning(
+            "No recipients found for %s plugin feedback notification"
+            % (plugin, )
+        )
+
+
 def user_trust_notify(user):
     """
     Sends a message when an author is trusted or untrusted.
@@ -987,6 +1022,8 @@ def version_feedback(request, package_name, version):
             review.reviewer = request.user
             review.status = status
             review.save()
+            if status == 'require_action':
+                version_feedback_notify(version, request.user)
             return HttpResponseRedirect(
                 reverse("version_feedback",
                         args=[plugin.package_name, version.version])
