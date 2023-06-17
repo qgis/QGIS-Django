@@ -272,6 +272,37 @@ class ServerPlugins(ApprovedPlugins):
         return super(ServerPlugins, self).get_queryset().filter(server=True).distinct()
 
 
+class FeedbackReceivedPlugins(models.Manager):
+    """
+    Show only unapproved plugins with a feedback
+    """
+    def get_queryset(self):
+        return (
+            super(FeedbackReceivedPlugins, self)
+            .get_queryset()
+            .filter(
+                pluginversion__approved=False,
+                pluginversion__feedback__isnull=False
+            ).distinct()
+        )
+
+
+class FeedbackPendingPlugins(models.Manager):
+    """
+    Show only unapproved plugins with a feedback
+    """
+    def get_queryset(self):
+        return (
+            super(FeedbackPendingPlugins, self)
+            .get_queryset()
+            .filter(
+                pluginversion__approved=False,
+                pluginversion__feedback__isnull=True
+            ).distinct()
+        )
+
+
+
 class Plugin(models.Model):
     """
     Plugins model
@@ -351,6 +382,8 @@ class Plugin(models.Model):
     most_voted_objects = MostVotedPlugins()
     most_rated_objects = MostRatedPlugins()
     server_objects = ServerPlugins()
+    feedback_received_objects = FeedbackReceivedPlugins()
+    feedback_pending_objects = FeedbackPendingPlugins()
 
     rating = AnonymousRatingField(
         range=5, use_cookies=True, can_change_vote=True, allow_delete=True
@@ -766,6 +799,54 @@ class PluginVersion(models.Model):
 
     def __str__(self):
         return self.__unicode__()
+
+
+class PluginVersionFeedback(models.Model):
+    """Feedback for a plugin version."""
+
+    version = models.ForeignKey(
+        PluginVersion,
+        on_delete=models.CASCADE,
+        related_name="feedback"
+    )
+    reviewer = models.ForeignKey(
+        User,
+        verbose_name=_("Reviewed by"),
+        help_text=_("The user who reviewed this plugin."),
+        on_delete=models.CASCADE,
+    )
+    task = models.TextField(
+        verbose_name=_("Task"),
+        help_text=_("A feedback task. Please write your review as a task for this plugin."),
+        max_length=1000,
+        blank=False,
+        null=False
+    )
+    created_on = models.DateTimeField(
+        verbose_name=_("Created on"),
+        auto_now_add=True,
+        editable=False
+    )
+    completed_on = models.DateTimeField(
+        verbose_name=_("Completed on"),
+        blank=True,
+        null=True
+    )
+    is_completed = models.BooleanField(
+        verbose_name=_("Completed"),
+        default=False,
+        db_index=True
+    )
+
+    class Meta:
+        ordering = ["created_on"]
+
+    def save(self, *args, **kwargs):
+        if self.is_completed is True:
+            self.completed_on = datetime.datetime.now()
+        else:
+            self.completed_on = None
+        super(PluginVersionFeedback, self).save(*args, **kwargs)
 
 
 def delete_version_package(sender, instance, **kw):
