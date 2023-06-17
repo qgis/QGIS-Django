@@ -178,6 +178,20 @@ urlpatterns = [
         name="most_rated_plugins",
     ),
     url(
+        r"^feedback_pending/$",
+        FeedbackPendingPluginsList.as_view(
+            additional_context={"title": _("Feedback pending plugins")}
+        ),
+        name="feedback_pending_plugins",
+    ),
+    url(
+        r"^feedback_received/$",
+        FeedbackReceivedPluginsList.as_view(
+            additional_context={"title": _("Feedback received plugins")}
+        ),
+        name="feedback_received_plugins",
+    ),
+    url(
         r"^author/(?P<author>[^/]+)/$",
         AuthorPluginsList.as_view(),
         name="author_plugins",
