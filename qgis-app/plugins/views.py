@@ -1110,6 +1110,7 @@ def version_feedback(request, package_name, version):
                     reviewer=request.user,
                     task=task
                 )
+            version_feedback_notify(version, request.user)
     form = VersionFeedbackForm()
     feedbacks = PluginVersionFeedback.objects.filter(version=version)
     return render(
