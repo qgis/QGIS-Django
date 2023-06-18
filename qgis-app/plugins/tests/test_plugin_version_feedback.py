@@ -8,7 +8,7 @@ from plugins.views import version_feedback_notify
 
 
 class SetupMixin:
-    fixtures = ["fixtures/auth.json"]
+    fixtures = ["fixtures/auth.json", "fixtures/simplemenu.json"]
 
     def setUp(self) -> None:
         self.creator = User.objects.get(id=2)
@@ -203,3 +203,108 @@ class TestPluginFeedbackPendingList(SetupMixin, TestCase):
             list(response.context['object_list']),
             []
         )
+
+
+class TestCreateVersionFeedback(SetupMixin, TestCase):
+    def setUp(self) -> None:
+        super().setUp()
+        self.url = reverse(
+            "version_feedback",
+            kwargs={
+                "package_name": self.plugin_2.package_name,
+                "version": self.version_2.version
+            }
+        )
+        self.new_user = User.objects.create(
+            username="new-user",
+            is_staff=False
+        )
+
+    def test_version_feedback_required_login(self):
+        response = self.client.get(self.url)
+        self.assertEqual(response.status_code, 302)
+        self.assertRedirects(
+            response,
+            f"/accounts/login/?next={self.url}"
+        )
+
+    def test_only_plugin_editor_and_staff_can_see_version_feedback_page(self):
+        self.client.force_login(self.new_user)
+        response = self.client.get(self.url)
+        self.assertEqual(response.status_code, 403)
+        self.client.force_login(user=self.staff)
+        response = self.client.get(self.url)
+        self.assertEqual(response.status_code, 200)
+
+    def test_only_staff_can_see_new_feedback_form(self):
+        self.client.force_login(user=self.creator)
+        response = self.client.get(self.url)
+        self.assertEqual(response.status_code, 200)
+        self.assertNotContains(response, '<div class="span8 new-feedback">')
+        self.client.force_login(user=self.staff)
+        response = self.client.get(self.url)
+        self.assertEqual(response.status_code, 200)
+        self.assertContains(response, '<div class="span8 new-feedback">')
+
+    def test_post_create_single_task_feedback(self):
+        self.client.force_login(self.staff)
+        response = self.client.post(
+            self.url,
+            data={
+                "status_feedback": "create",
+                "feedback": "single line feedback"
+            }
+        )
+        self.assertEqual(response.status_code, 200)
+        feedbacks = PluginVersionFeedback.objects.filter(
+            version=self.version_2).all()
+        self.assertEqual(len(feedbacks), 1)
+        self.assertEqual(feedbacks[0].task, "single line feedback")
+
+    def test_post_create_multiple_task_feedback(self):
+        self.client.force_login(self.staff)
+        response = self.client.post(
+            self.url,
+            data={
+                "status_feedback": "create",
+                "feedback": "- [ ] task one\n - [ ] task two"
+            }
+        )
+        self.assertEqual(response.status_code, 200)
+        feedbacks = PluginVersionFeedback.objects.filter(
+            version=self.version_2).all()
+        self.assertEqual(len(feedbacks), 2)
+        self.assertEqual(feedbacks[0].task, "task one")
+        self.assertEqual(feedbacks[1].task, "task two")
+
+    def test_post_create_invalid_bullet_point_1(self):
+        self.client.force_login(self.staff)
+        self.client.post(
+            self.url,
+            data={
+                "status_feedback": "create",
+                "feedback": "-[ ] invalid bullet point \n -[ ] invalid two"
+            }
+        )
+        feedbacks = PluginVersionFeedback.objects.filter(
+            version=self.version_2).all()
+        self.assertEqual(len(feedbacks), 1)
+        self.assertEqual(
+            feedbacks[0].task,
+            "-[ ] invalid bullet point \n -[ ] invalid two"
+        )
+
+    def test_post_create_invalid_bullet_point_2(self):
+        self.client.force_login(self.staff)
+        self.client.post(
+            self.url,
+            data={
+                "status_feedback": "create",
+                "feedback": ("-[ ] invalid bullet point\n"
+                             " - [ ] only save valid bullet point")
+            }
+        )
+        feedbacks = PluginVersionFeedback.objects.filter(
+            version=self.version_2).all()
+        self.assertEqual(len(feedbacks), 1)
+        self.assertEqual(feedbacks[0].task, "only save valid bullet point")

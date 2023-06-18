@@ -1082,6 +1082,49 @@ def version_manage(request, package_name, version):
     return HttpResponseRedirect(reverse("plugin_detail", args=[package_name]))
 
 
+@login_required
+def version_feedback(request, package_name, version):
+    """
+    The form will add a comment/ feedback for the package version.
+    """
+    plugin = get_object_or_404(Plugin, package_name=package_name)
+    version = get_object_or_404(PluginVersion, plugin=plugin, version=version)
+    is_user_plugin_owner: bool = request.user in plugin.editors
+    is_user_has_approval_rights: bool = check_plugin_version_approval_rights(
+        request.user, plugin)
+    if not is_user_plugin_owner and not is_user_has_approval_rights:
+        return render(
+            request,
+            template_name="plugins/version_permission_deny.html",
+            context={},
+            status=403
+        )
+    if request.method == "POST":
+        form = VersionFeedbackForm(request.POST)
+        status: str = request.POST.get('status_feedback')
+        if status == "create" and form.is_valid():
+            tasks = form.cleaned_data['tasks']
+            for task in tasks:
+                PluginVersionFeedback.objects.create(
+                    version=version,
+                    reviewer=request.user,
+                    task=task
+                )
+    form = VersionFeedbackForm()
+    feedbacks = PluginVersionFeedback.objects.filter(version=version)
+    return render(
+        request,
+        "plugins/plugin_feedback.html",
+        {
+            "feedbacks": feedbacks,
+            "form": form,
+            "version": version,
+            "is_user_has_approval_rights": is_user_has_approval_rights,
+            "is_user_plugin_owner": is_user_plugin_owner
+        }
+    )
+
+
 def version_download(request, package_name, version):
     """
     Update download counter(s)

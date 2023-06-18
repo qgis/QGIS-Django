@@ -1,0 +1,73 @@
+{% extends 'plugins/plugin_base.html' %}{% load i18n %}
+{% block content %}
+    <h2>{% trans "Feedback Plugin" %} {{ version.plugin.name }} {{ version.version }}</h2>
+    {% if form.errors %}
+    <div class="alert alert-error">
+        <button type="button" class="close" data-dismiss="alert">&times;</button>
+        <p>{% trans "The form contains errors and cannot be submitted, please check the fields highlighted in red." %}</p>
+    </div>
+    {% endif %}
+    {% if form.non_field_errors %}
+    <div class="alert alert-error">
+        <button type="button" class="close" data-dismiss="alert">&times;</button>
+        {% for error in form.non_field_errors %}
+            <p>{{ error }}</p>
+        {% endfor %}
+    </div>
+    {% endif %}
+    <div>
+        {% for feedback in feedbacks %}
+        <div>
+            <div class="span8 previous-feedback">
+                <div class="previous-feedback-header">
+                    <input type="checkbox" id="myCheckbox">
+                    {% if feedback.reviewer in version.plugin.editors %}<b>[Owner]</b> {% endif %}
+                    <b>{% if feedback.reviewer.first_name %}{{ feedback.reviewer.first_name }} {{ feedback.reviewer.last_name }}{% else %}{{ feedback.reviewer.username }}{% endif %}</b>
+                    gave feedback {{ feedback.created_on|timesince }} ago
+                </div>
+                <p>{{ feedback.task }}</p>
+            </div>
+        </div>
+        {% endfor %}
+
+        {% if is_user_has_approval_rights %}
+        <div>
+            <div class="span8 new-feedback">
+                <form method="post" action="{% url 'version_feedback' version.plugin.package_name version.version %}">{% csrf_token %}
+                    <b>Feedback</b>
+                        {{ form.feedback }}
+                        <div class="text-right">
+                            <button class="btn btn-primary" type="submit" name="status_feedback" value="create">{% trans "Submit Feedback" %}</button>
+                        </div>
+                </form>
+            </div>
+        </div>
+        {% endif %}
+    </div>
+
+{% endblock %}
+
+{% block extrajs %}
+    <style>
+    .new-feedback{
+        background-color: lightgray;
+        padding: 5px;
+        border-radius: 5px;
+        margin-top: 20px;
+        margin-bottom: 5px;
+    }
+    .previous-feedback{
+        border: 1px solid #e8e8e8;
+        padding: 5px;
+        border-radius: 5px;
+        margin-top: 5px;
+    }
+    .previous-feedback-header{
+        background-color: #e8e8e8;
+        padding: 5px;
+        border-radius: 2px;
+        margin: -5px -5px 0;
+    }
+
+    </style>
+{% endblock %}

@@ -6,7 +6,7 @@ from django.contrib.auth.models import User
 from django.forms import CharField, ModelForm, ValidationError
 from django.utils.safestring import mark_safe
 from django.utils.translation import ugettext_lazy as _
-from plugins.models import Plugin, PluginVersion
+from plugins.models import Plugin, PluginVersion, PluginVersionFeedback
 from plugins.validator import validator
 from taggit.forms import *
 
@@ -208,3 +208,32 @@ class PackageUploadForm(forms.Form):
         # Clean tags
         self.cleaned_data["tags"] = _clean_tags(self.cleaned_data.get("tags", None))
         return package
+
+
+class VersionFeedbackForm(forms.Form):
+    """Feedback for a plugin version"""
+
+    feedback = forms.CharField(
+        widget=forms.Textarea(
+            attrs={
+                "placeholder": _("Please provide clear feedback as a task."),
+                "rows": "5",
+                "class": "span12"
+            }
+        )
+    )
+
+    def clean(self):
+        super().clean()
+        feedback = self.cleaned_data.get('feedback')
+
+        if feedback:
+            lines: list = feedback.split('\n')
+            bullet_points: list = [
+                line[6:].strip() for line in lines if line.strip().startswith('- [ ]')
+            ]
+            has_bullet_point = len(bullet_points) >= 1
+            tasks: list = bullet_points if has_bullet_point else [feedback]
+            self.cleaned_data['tasks'] = tasks
+
+        return self.cleaned_data
