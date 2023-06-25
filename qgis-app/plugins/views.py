@@ -21,6 +21,7 @@ from django.urls import reverse
 from django.utils.decorators import method_decorator
 from django.utils.encoding import DjangoUnicodeDecodeError
 from django.utils.translation import ugettext_lazy as _
+from django.views.decorators.cache import never_cache
 from django.views.decorators.csrf import csrf_protect, ensure_csrf_cookie
 from django.views.decorators.http import require_POST
 from django.views.generic.detail import DetailView
@@ -1083,6 +1084,7 @@ def version_manage(request, package_name, version):
 
 
 @login_required
+@never_cache
 def version_feedback(request, package_name, version):
     """
     The form will add a comment/ feedback for the package version.
