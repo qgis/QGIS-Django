@@ -1,7 +1,11 @@
+import datetime
+
 from django.contrib.auth.models import User
 from django.core import mail
 from django.test import TestCase
 from django.urls import reverse
+
+from freezegun import freeze_time
 
 from plugins.models import Plugin, PluginVersion, PluginVersionFeedback
 from plugins.views import version_feedback_notify
@@ -308,3 +312,87 @@ class TestCreateVersionFeedback(SetupMixin, TestCase):
             version=self.version_2).all()
         self.assertEqual(len(feedbacks), 1)
         self.assertEqual(feedbacks[0].task, "only save valid bullet point")
+
+
+class TestUpdateVersionFeedback(SetupMixin, TestCase):
+    def setUp(self) -> None:
+        super().setUp()
+        self.url = reverse(
+            "version_feedback_update",
+            kwargs={
+                "package_name": self.plugin_1.package_name,
+                "version": self.version_1.version,
+                "feedback": self.feedback_1.id
+            }
+        )
+
+    def test_only_the_reviewer_can_delete_a_feedback(self):
+        self.client.force_login(user=self.creator)
+        response = self.client.post(
+            self.url,
+            data={
+                "status_feedback": "delete"
+            }
+        )
+        self.assertRedirects(response,
+                             '/plugins/test-feedback/version/0.1/feedback/')
+        self.assertTrue(self.version_1.feedback.exists())
+        self.client.force_login(user=self.staff)
+        response = self.client.post(
+            self.url,
+            data={
+                "status_feedback": "delete"
+            }
+        )
+        self.assertRedirects(response,
+                             '/plugins/test-feedback/version/0.1/feedback/')
+
+        self.assertFalse(self.version_1.feedback.exists())
+
+    @freeze_time("2023-06-30 10:00:00")
+    def test_staff_and_editor_can_completed_uncompleted_feedback(self):
+        feedbacks = self.version_1.feedback.all()
+        self.assertEqual(len(feedbacks), 1)
+        self.assertFalse(feedbacks[0].is_completed)
+        self.client.force_login(user=self.creator)
+        response = self.client.post(
+            self.url,
+            data={
+                "status_feedback": "completed"
+            }
+        )
+        self.assertRedirects(response,
+                             '/plugins/test-feedback/version/0.1/feedback/')
+        feedbacks = self.version_1.feedback.all()
+        self.assertEqual(len(feedbacks), 1)
+        self.assertTrue(feedbacks[0].is_completed)
+        self.assertEqual(
+            feedbacks[0].completed_on, datetime.datetime(2023, 6, 30, 10, 0, 0))
+
+        self.client.force_login(user=self.staff)
+        response = self.client.post(
+            self.url,
+            data={
+                "status_feedback": "uncompleted"
+            }
+        )
+        self.assertRedirects(response,
+                             '/plugins/test-feedback/version/0.1/feedback/')
+        feedbacks = self.version_1.feedback.all()
+        self.assertEqual(len(feedbacks), 1)
+        self.assertFalse(feedbacks[0].is_completed)
+        self.assertIsNone(feedbacks[0].completed_on)
+
+    def test_non_staff_and_non_editor_cannot_update_feedback(self):
+        new_user = User.objects.create(username="new-user")
+        self.client.force_login(user=new_user)
+        self.client.post(
+            self.url,
+            data={
+                "status_feedback": "completed"
+            }
+        )
+        feedbacks = self.version_1.feedback.all()
+        self.assertEqual(len(feedbacks), 1)
+        self.assertFalse(feedbacks[0].is_completed)
+        self.assertIsNone(feedbacks[0].completed_on)

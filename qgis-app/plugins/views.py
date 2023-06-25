@@ -1126,6 +1126,28 @@ def version_feedback(request, package_name, version):
     )
 
 
+@login_required
+@require_POST
+def version_feedback_update(request, package_name, version, feedback):
+    feedback = get_object_or_404(PluginVersionFeedback, pk=feedback)
+    plugin = feedback.version.plugin
+    status = request.POST.get('status_feedback')
+    is_user_can_update_feedback: bool = (
+            request.user in plugin.editors
+            or check_plugin_version_approval_rights(request.user, plugin)
+    )
+    if status == "delete" and feedback.reviewer == request.user:
+        feedback.delete()
+    elif (status == "completed" or status == "uncompleted") and (
+            is_user_can_update_feedback):
+        feedback.is_completed = (status == "completed")
+        feedback.save()
+    return HttpResponseRedirect(reverse(
+        "version_feedback",
+        kwargs={"package_name": package_name, "version": version})
+    )
+
+
 def version_download(request, package_name, version):
     """
     Update download counter(s)
