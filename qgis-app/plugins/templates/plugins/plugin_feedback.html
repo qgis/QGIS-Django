@@ -18,12 +18,19 @@
     <div>
         {% for feedback in feedbacks %}
         <div>
-            <div class="span8 previous-feedback">
+            <div class="span8 previous-feedback" data-feedback-id="{{ feedback.id }}">
                 <div class="previous-feedback-header">
-                    <input type="checkbox" id="myCheckbox">
+                    <!-- Checkbox for status -->
+                    <input type="checkbox" class="statusCheckbox pull-left" name="statusCheckbox" data-feedback-id="{{ feedback.id }}" {% if feedback.is_completed %}checked{% endif %}>
+
                     {% if feedback.reviewer in version.plugin.editors %}<b>[Owner]</b> {% endif %}
                     <b>{% if feedback.reviewer.first_name %}{{ feedback.reviewer.first_name }} {{ feedback.reviewer.last_name }}{% else %}{{ feedback.reviewer.username }}{% endif %}</b>
                     gave feedback {{ feedback.created_on|timesince }} ago
+
+                    {% if feedback.reviewer == request.user %}
+                    <!-- Delete button -->
+                    <button type="button" class="btn btn-danger btn-mini deleteButton pull-right" data-feedback-id="{{ feedback.id }}"><i class="icon-remove"></i></button>
+                    {% endif %}
                 </div>
                 <p>{{ feedback.task }}</p>
             </div>
@@ -37,7 +44,7 @@
                     <b>Feedback</b>
                         {{ form.feedback }}
                         <div class="text-right">
-                            <button class="btn btn-primary" type="submit" name="status_feedback" value="create">{% trans "Submit Feedback" %}</button>
+                            <button class="btn btn-primary" type="submit">{% trans "Submit Feedback" %}</button>
                         </div>
                 </form>
             </div>
@@ -68,6 +75,77 @@
         border-radius: 2px;
         margin: -5px -5px 0;
     }
+    input.statusCheckbox{
+        margin-right: 5px;
+    }
 
     </style>
+
+    <script>
+    $(document).ready(function(){
+        const url = window.location.href;
+        // Checkbox click event
+        $('.statusCheckbox').on('click', function() {
+            const checkbox = $(this);
+            const feedbackId = checkbox.data('feedback-id');
+            const status = checkbox.is(':checked') ? 'completed' : 'uncompleted';
+            const formData = {
+              'status_feedback': status,
+              'csrfmiddlewaretoken': '{{ csrf_token }}'
+            };
+            console.log("checkbox: ", feedbackId, status);
+            updateStatus(feedbackId, formData);
+        });
+
+        // Delete button click event
+        $('.deleteButton').on('click', function() {
+          const button = $(this);
+          const feedbackId = button.data('feedback-id');
+          const formData = {
+              'status_feedback': "deleted",
+              'csrfmiddlewaretoken': '{{ csrf_token }}'
+            };
+          console.log("deleted: ", feedbackId);
+          deleteFeedback(feedbackId, formData);
+        });
+
+        // Function to update status
+        function updateStatus(feedbackId, formData) {
+            $.ajax({
+                type: 'POST',
+                url: url + feedbackId + '/',
+                data: formData,
+                success: function (response) {
+                    if (response.success) {
+                        console.log("succeed updated feedback:", feedbackId)
+                    }
+                },
+                error: function (xhr, textStatus, errorThrown) {
+                    console.error('Error updating status:', errorThrown);
+                }
+            });
+        }
+
+        // Function to delete feedback
+        function deleteFeedback(feedbackId, formData) {
+            const msg = "This task will be permanently deleted. Please confirm."
+            if (confirm(msg)) {
+                $.ajax({
+                    type: 'POST',
+                    url: url + feedbackId + '/',
+                    data: formData,
+                    success: function (response) {
+                        if (response.success) {
+                            const feedbackItem = $('.previous-feedback[data-feedback-id="' + feedbackId + '"]');
+                            feedbackItem.remove();
+                        }
+                    },
+                    error: function (xhr, textStatus, errorThrown) {
+                        console.error('Error updating status:', errorThrown);
+                    }
+                });
+            }
+        }
+    })
+    </script>
 {% endblock %}

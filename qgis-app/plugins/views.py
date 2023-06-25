@@ -15,7 +15,7 @@ from django.db import IntegrityError, connection
 from django.db.models import Max, Q
 from django.db.models.expressions import RawSQL
 from django.db.models.functions import Lower
-from django.http import Http404, HttpResponse, HttpResponseRedirect
+from django.http import Http404, HttpResponse, HttpResponseRedirect, JsonResponse
 from django.shortcuts import get_object_or_404, render
 from django.urls import reverse
 from django.utils.decorators import method_decorator
@@ -1101,8 +1101,7 @@ def version_feedback(request, package_name, version):
         )
     if request.method == "POST":
         form = VersionFeedbackForm(request.POST)
-        status: str = request.POST.get('status_feedback')
-        if status == "create" and form.is_valid():
+        if form.is_valid():
             tasks = form.cleaned_data['tasks']
             for task in tasks:
                 PluginVersionFeedback.objects.create(
@@ -1132,20 +1131,20 @@ def version_feedback_update(request, package_name, version, feedback):
     feedback = get_object_or_404(PluginVersionFeedback, pk=feedback)
     plugin = feedback.version.plugin
     status = request.POST.get('status_feedback')
+    is_update_succeed: bool = False
     is_user_can_update_feedback: bool = (
             request.user in plugin.editors
             or check_plugin_version_approval_rights(request.user, plugin)
     )
-    if status == "delete" and feedback.reviewer == request.user:
+    if status == "deleted" and feedback.reviewer == request.user:
         feedback.delete()
+        is_update_succeed: bool = True
     elif (status == "completed" or status == "uncompleted") and (
             is_user_can_update_feedback):
         feedback.is_completed = (status == "completed")
         feedback.save()
-    return HttpResponseRedirect(reverse(
-        "version_feedback",
-        kwargs={"package_name": package_name, "version": version})
-    )
+        is_update_succeed: bool = True
+    return JsonResponse({"success": is_update_succeed})
 
 
 def version_download(request, package_name, version):

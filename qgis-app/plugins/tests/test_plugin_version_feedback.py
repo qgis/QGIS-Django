@@ -255,7 +255,6 @@ class TestCreateVersionFeedback(SetupMixin, TestCase):
         response = self.client.post(
             self.url,
             data={
-                "status_feedback": "create",
                 "feedback": "single line feedback"
             }
         )
@@ -270,7 +269,6 @@ class TestCreateVersionFeedback(SetupMixin, TestCase):
         response = self.client.post(
             self.url,
             data={
-                "status_feedback": "create",
                 "feedback": "- [ ] task one\n - [ ] task two"
             }
         )
@@ -286,7 +284,6 @@ class TestCreateVersionFeedback(SetupMixin, TestCase):
         self.client.post(
             self.url,
             data={
-                "status_feedback": "create",
                 "feedback": "-[ ] invalid bullet point \n -[ ] invalid two"
             }
         )
@@ -303,7 +300,6 @@ class TestCreateVersionFeedback(SetupMixin, TestCase):
         self.client.post(
             self.url,
             data={
-                "status_feedback": "create",
                 "feedback": ("-[ ] invalid bullet point\n"
                              " - [ ] only save valid bullet point")
             }
@@ -331,22 +327,20 @@ class TestUpdateVersionFeedback(SetupMixin, TestCase):
         response = self.client.post(
             self.url,
             data={
-                "status_feedback": "delete"
+                "status_feedback": "deleted"
             }
         )
-        self.assertRedirects(response,
-                             '/plugins/test-feedback/version/0.1/feedback/')
+        self.assertEqual(response.status_code, 200)
         self.assertTrue(self.version_1.feedback.exists())
         self.client.force_login(user=self.staff)
         response = self.client.post(
             self.url,
             data={
-                "status_feedback": "delete"
+                "status_feedback": "deleted"
             }
         )
-        self.assertRedirects(response,
-                             '/plugins/test-feedback/version/0.1/feedback/')
 
+        self.assertEqual(response.status_code, 200)
         self.assertFalse(self.version_1.feedback.exists())
 
     @freeze_time("2023-06-30 10:00:00")
@@ -361,8 +355,7 @@ class TestUpdateVersionFeedback(SetupMixin, TestCase):
                 "status_feedback": "completed"
             }
         )
-        self.assertRedirects(response,
-                             '/plugins/test-feedback/version/0.1/feedback/')
+        self.assertEqual(response.status_code, 200)
         feedbacks = self.version_1.feedback.all()
         self.assertEqual(len(feedbacks), 1)
         self.assertTrue(feedbacks[0].is_completed)
@@ -376,8 +369,7 @@ class TestUpdateVersionFeedback(SetupMixin, TestCase):
                 "status_feedback": "uncompleted"
             }
         )
-        self.assertRedirects(response,
-                             '/plugins/test-feedback/version/0.1/feedback/')
+        self.assertEqual(response.status_code, 200)
         feedbacks = self.version_1.feedback.all()
         self.assertEqual(len(feedbacks), 1)
         self.assertFalse(feedbacks[0].is_completed)
