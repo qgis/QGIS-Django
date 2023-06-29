@@ -797,11 +797,9 @@ class PluginVersionDownload(models.Model):
         PluginVersion, 
         on_delete=models.CASCADE
     )
-
     download_date = models.DateField(
         default=timezone.now
     )
-    
     download_count = models.IntegerField(
         default=0
     )
