@@ -1288,6 +1288,8 @@ def xml_plugins_new(request, qg_version=None, stable_only=None, package_name=Non
                 "pv_table": PluginVersion._meta.db_table,
                 "p_table": Plugin._meta.db_table,
                 "qg_version": qg_version,
+                "qg_version_with_patch_0": _add_patch_version(qg_version, '0'),
+                "qg_version_with_patch_99": _add_patch_version(qg_version, '99'),
                 "experimental": "False",
                 "trusted_users_ids": str(trusted_users_ids),
             }
