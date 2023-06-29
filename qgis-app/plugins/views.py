@@ -1091,7 +1091,7 @@ def _add_patch_version(version: str, additional_patch: str ) -> str:
     return version
 
 
-# @cache_page(60 * 15)
+@cache_page(60 * 15)
 def xml_plugins(request, qg_version=None, stable_only=None, package_name=None):
     """
     The XML file
@@ -1207,7 +1207,7 @@ def xml_plugins(request, qg_version=None, stable_only=None, package_name=None):
     )
 
 
-# @cache_page(60 * 15)
+@cache_page(60 * 15)
 def xml_plugins_new(request, qg_version=None, stable_only=None, package_name=None):
     """
     The XML file
