@@ -9,6 +9,7 @@ from django.contrib.auth.models import User
 from django.db import models
 from django.urls import reverse
 from django.utils.translation import ugettext_lazy as _
+from django.utils import timezone
 from djangoratings.fields import AnonymousRatingField
 from taggit_autosuggest.managers import TaggableManager
 
@@ -786,6 +787,29 @@ def delete_plugin_icon(sender, instance, **kw):
         os.remove(instance.icon.path)
     except:
         pass
+
+
+class PluginVersionDownload(models.Model):
+    """
+    Plugin version downloads
+    """
+    plugin_version = models.ForeignKey(
+        PluginVersion, 
+        on_delete=models.CASCADE
+    )
+
+    download_date = models.DateField(
+        default=timezone.now
+    )
+    
+    download_count = models.IntegerField(
+        default=0
+    )
+    class Meta:
+        unique_together = (
+            'plugin_version',
+            'download_date'
+        )
 
 
 models.signals.post_delete.connect(delete_version_package, sender=PluginVersion)
