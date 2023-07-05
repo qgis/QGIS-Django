@@ -1,5 +1,5 @@
 from django.contrib import admin
-from plugins.models import Plugin, PluginVersion  # , PluginCrashReport
+from plugins.models import Plugin, PluginVersion, PluginVersionDownload  # , PluginCrashReport
 
 
 class PluginAdmin(admin.ModelAdmin):
@@ -28,10 +28,21 @@ class PluginVersionAdmin(admin.ModelAdmin):
     )
 
 
+class PluginVersionDownloadAdmin(admin.ModelAdmin):
+    list_display = (
+        "plugin_version",
+        "download_date",
+        "download_count"
+    )
+    raw_id_fields = (
+        "plugin_version",
+    )
+
 # class PluginCrashReportAdmin(admin.ModelAdmin):
 # pass
 
 
 admin.site.register(Plugin, PluginAdmin)
 admin.site.register(PluginVersion, PluginVersionAdmin)
+admin.site.register(PluginVersionDownload, PluginVersionDownloadAdmin)
 # admin.site.register(PluginCrashReport, PluginCrashReportAdmin)

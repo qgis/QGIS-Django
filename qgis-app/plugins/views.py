@@ -18,6 +18,7 @@ from django.db.models.functions import Lower
 from django.http import Http404, HttpResponse, HttpResponseRedirect
 from django.shortcuts import get_object_or_404, render
 from django.urls import reverse
+from django.utils.timezone import now
 from django.utils.decorators import method_decorator
 from django.utils.encoding import DjangoUnicodeDecodeError
 from django.utils.translation import ugettext_lazy as _
@@ -28,7 +29,7 @@ from django.views.generic.detail import DetailView
 # from sortable_listview import SortableListView
 from django.views.generic.list import ListView
 from plugins.forms import *
-from plugins.models import Plugin, PluginVersion, vjust
+from plugins.models import Plugin, PluginVersion, PluginVersionDownload, vjust
 from plugins.validator import PLUGIN_REQUIRED_METADATA
 
 try:
@@ -1029,6 +1030,18 @@ def version_download(request, package_name, version):
     plugin = version.plugin
     plugin.downloads = plugin.downloads + 1
     plugin.save(keep_date=True)
+
+    download_record, created = PluginVersionDownload.objects.get_or_create(
+        plugin_version = version, 
+        download_date = now().date(), 
+        defaults = {'download_count': 1}
+    )
+    if not created:
+        download_record.download_count = (
+            download_record.download_count + 1
+        )
+        download_record.save()
+
     if not version.package.file.file.closed:
         version.package.file.file.close()
     zipfile = open(version.package.file.name, "rb")
