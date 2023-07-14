@@ -267,10 +267,16 @@ urlpatterns += [
         name="version_feedback",
     ),
     url(
-        r"^(?P<package_name>[A-Za-z][A-Za-z0-9-_]+)/version/(?P<version>[^\/]+)/feedback/(?P<feedback>[0-9]+)/$",
+        r"^(?P<package_name>[A-Za-z][A-Za-z0-9-_]+)/version/(?P<version>[^\/]+)/feedback/update/$",
         version_feedback_update,
         {},
         name="version_feedback_update",
+    ),
+    url(
+        r"^(?P<package_name>[A-Za-z][A-Za-z0-9-_]+)/version/(?P<version>[^\/]+)/feedback/(?P<feedback>[0-9]+)/$",
+        version_feedback_delete,
+        {},
+        name="version_feedback_delete",
     ),
 ]
 

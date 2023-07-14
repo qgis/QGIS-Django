@@ -1,6 +1,5 @@
 {% extends 'plugins/plugin_base.html' %}{% load i18n %}
 {% block content %}
-    <h2>{% trans "Feedback Plugin" %} {{ version.plugin.name }} {{ version.version }}</h2>
     {% if form.errors %}
     <div class="alert alert-error">
         <button type="button" class="close" data-dismiss="alert">&times;</button>
@@ -15,13 +14,14 @@
         {% endfor %}
     </div>
     {% endif %}
-    <div>
+    <h2>{% trans "Feedback Plugin" %} {{ version.plugin.name }} {{ version.version }}</h2>
+    <div class="feedback-list">
         {% for feedback in feedbacks %}
-        <div>
+        <div class="row">
             <div class="span8 previous-feedback" data-feedback-id="{{ feedback.id }}">
                 <div class="previous-feedback-header">
                     <!-- Checkbox for status -->
-                    <input type="checkbox" class="statusCheckbox pull-left" name="statusCheckbox" data-feedback-id="{{ feedback.id }}" {% if feedback.is_completed %}checked{% endif %}>
+                    <input type="checkbox" class="statusCheckbox pull-left" name="statusCheckbox" data-feedback-id="{{ feedback.id }}" {% if feedback.is_completed %}checked disabled{% endif %}>
 
                     {% if feedback.reviewer in version.plugin.editors %}<b>[Owner]</b> {% endif %}
                     <b>{% if feedback.reviewer.first_name %}{{ feedback.reviewer.first_name }} {{ feedback.reviewer.last_name }}{% else %}{{ feedback.reviewer.username }}{% endif %}</b>
@@ -36,15 +36,22 @@
             </div>
         </div>
         {% endfor %}
+        {% if feedbacks %}
+        <div class="row">
+            <div class="span8">
+                <button type="button" id="updateButton" class="btn btn-primary">Update</button>
+            </div>
+        </div>
+        {% endif %}
 
         {% if is_user_has_approval_rights %}
-        <div>
+        <div class="row">
             <div class="span8 new-feedback">
                 <form method="post" action="{% url 'version_feedback' version.plugin.package_name version.version %}">{% csrf_token %}
                     <b>Feedback</b>
                         {{ form.feedback }}
                         <div class="text-right">
-                            <button class="btn btn-primary" type="submit">{% trans "Submit Feedback" %}</button>
+                            <button class="btn btn-primary" type="submit">{% trans "New Feedback" %}</button>
                         </div>
                 </form>
             </div>
@@ -84,20 +91,7 @@
     <script>
     $(document).ready(function(){
         const url = window.location.href;
-        // Checkbox click event
-        $('.statusCheckbox').on('click', function() {
-            const checkbox = $(this);
-            const feedbackId = checkbox.data('feedback-id');
-            const status = checkbox.is(':checked') ? 'completed' : 'uncompleted';
-            const formData = {
-              'status_feedback': status,
-              'csrfmiddlewaretoken': '{{ csrf_token }}'
-            };
-            console.log("checkbox: ", feedbackId, status);
-            updateStatus(feedbackId, formData);
-        });
 
-        // Delete button click event
         $('.deleteButton').on('click', function() {
           const button = $(this);
           const feedbackId = button.data('feedback-id');
@@ -105,28 +99,44 @@
               'status_feedback': "deleted",
               'csrfmiddlewaretoken': '{{ csrf_token }}'
             };
-          console.log("deleted: ", feedbackId);
           deleteFeedback(feedbackId, formData);
         });
 
-        // Function to update status
-        function updateStatus(feedbackId, formData) {
-            $.ajax({
+        $("#updateButton").on('click', function() {
+            let completedTasks = [];
+            $('.statusCheckbox:checked').each(function() {
+              const feedbackId = $(this).data('feedback-id');
+              completedTasks.push(feedbackId);
+            });
+            const formData = {
+                completed_tasks: completedTasks,
+                'csrfmiddlewaretoken': '{{ csrf_token }}'
+            };
+            updateStatus(formData);
+          });
+
+        function updateStatus(formData) {
+            const msg = "Update the task(s) as completed. Please confirm."
+            if (confirm((msg))) {
+                $.ajax({
+                url: url + 'update/',
                 type: 'POST',
-                url: url + feedbackId + '/',
                 data: formData,
-                success: function (response) {
+                traditional: true,
+                success: function(response) {
                     if (response.success) {
-                        console.log("succeed updated feedback:", feedbackId)
+                        $('.statusCheckbox:checked').each(function() {
+                            $(this).prop('disabled', true);
+                        });
                     }
                 },
-                error: function (xhr, textStatus, errorThrown) {
-                    console.error('Error updating status:', errorThrown);
+                error: function(xhr, status, error) {
+                  console.error('Error updating status:', error);
                 }
             });
+            }
         }
 
-        // Function to delete feedback
         function deleteFeedback(feedbackId, formData) {
             const msg = "This task will be permanently deleted. Please confirm."
             if (confirm(msg)) {

@@ -310,11 +310,11 @@ class TestCreateVersionFeedback(SetupMixin, TestCase):
         self.assertEqual(feedbacks[0].task, "only save valid bullet point")
 
 
-class TestUpdateVersionFeedback(SetupMixin, TestCase):
+class TestDeleteVersionFeedback(SetupMixin, TestCase):
     def setUp(self) -> None:
         super().setUp()
         self.url = reverse(
-            "version_feedback_update",
+            "version_feedback_delete",
             kwargs={
                 "package_name": self.plugin_1.package_name,
                 "version": self.version_1.version,
@@ -343,8 +343,20 @@ class TestUpdateVersionFeedback(SetupMixin, TestCase):
         self.assertEqual(response.status_code, 200)
         self.assertFalse(self.version_1.feedback.exists())
 
+
+class TestUpdateVersionFeedback(SetupMixin, TestCase):
+    def setUp(self) -> None:
+        super().setUp()
+        self.url = reverse(
+            "version_feedback_update",
+            kwargs={
+                "package_name": self.plugin_1.package_name,
+                "version": self.version_1.version
+            }
+        )
+
     @freeze_time("2023-06-30 10:00:00")
-    def test_staff_and_editor_can_completed_uncompleted_feedback(self):
+    def test_staff_and_editor_can_update_feedback(self):
         feedbacks = self.version_1.feedback.all()
         self.assertEqual(len(feedbacks), 1)
         self.assertFalse(feedbacks[0].is_completed)
@@ -352,39 +364,26 @@ class TestUpdateVersionFeedback(SetupMixin, TestCase):
         response = self.client.post(
             self.url,
             data={
-                "status_feedback": "completed"
+                "completed_tasks": [feedbacks[0].id]
             }
         )
-        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.status_code, 201)
         feedbacks = self.version_1.feedback.all()
         self.assertEqual(len(feedbacks), 1)
         self.assertTrue(feedbacks[0].is_completed)
         self.assertEqual(
             feedbacks[0].completed_on, datetime.datetime(2023, 6, 30, 10, 0, 0))
 
-        self.client.force_login(user=self.staff)
-        response = self.client.post(
-            self.url,
-            data={
-                "status_feedback": "uncompleted"
-            }
-        )
-        self.assertEqual(response.status_code, 200)
-        feedbacks = self.version_1.feedback.all()
-        self.assertEqual(len(feedbacks), 1)
-        self.assertFalse(feedbacks[0].is_completed)
-        self.assertIsNone(feedbacks[0].completed_on)
-
     def test_non_staff_and_non_editor_cannot_update_feedback(self):
+        feedback = self.version_1.feedback.first()
         new_user = User.objects.create(username="new-user")
         self.client.force_login(user=new_user)
         self.client.post(
             self.url,
             data={
-                "status_feedback": "completed"
+                "status_feedback": [feedback.id]
             }
         )
-        feedbacks = self.version_1.feedback.all()
-        self.assertEqual(len(feedbacks), 1)
-        self.assertFalse(feedbacks[0].is_completed)
-        self.assertIsNone(feedbacks[0].completed_on)
+        feedback = self.version_1.feedback.first()
+        self.assertFalse(feedback.is_completed)
+        self.assertIsNone(feedback.completed_on)

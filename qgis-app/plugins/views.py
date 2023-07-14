@@ -1129,8 +1129,37 @@ def version_feedback(request, package_name, version):
 
 @login_required
 @require_POST
-def version_feedback_update(request, package_name, version, feedback):
-    feedback = get_object_or_404(PluginVersionFeedback, pk=feedback)
+def version_feedback_update(request, package_name, version):
+    plugin = get_object_or_404(Plugin, package_name=package_name)
+    version = get_object_or_404(PluginVersion, plugin=plugin, version=version)
+    has_update_permission: bool = (
+        request.user in plugin.editors
+        or check_plugin_version_approval_rights(request.user, plugin)
+    )
+    if not has_update_permission:
+        return JsonResponse({"success": False}, status=401)
+    completed_tasks = request.POST.getlist('completed_tasks')
+    for task_id in completed_tasks:
+        try:
+            task_id = int(task_id)
+        except ValueError:
+            continue
+        feedback = PluginVersionFeedback.objects.filter(
+            version=version, pk=task_id).first()
+        feedback.is_completed = True
+        feedback.save()
+    return JsonResponse({"success": True}, status=201)
+
+
+@login_required
+@require_POST
+def version_feedback_delete(request, package_name, version, feedback):
+    feedback = get_object_or_404(
+        PluginVersionFeedback,
+        version__plugin__package_name=package_name,
+        version__version=version,
+        pk=feedback
+    )
     plugin = feedback.version.plugin
     status = request.POST.get('status_feedback')
     is_update_succeed: bool = False
