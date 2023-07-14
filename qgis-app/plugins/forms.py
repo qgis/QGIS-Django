@@ -216,7 +216,13 @@ class VersionFeedbackForm(forms.Form):
     feedback = forms.CharField(
         widget=forms.Textarea(
             attrs={
-                "placeholder": _("Please provide clear feedback as a task."),
+                "placeholder": _(
+                    "Please provide clear feedback as a task. \n"
+                    "You can create multiple tasks with '- [ ]'.\n"
+                    "e.g:\n"
+                    "- [ ] first task\n"
+                    "- [ ] second task"
+                ),
                 "rows": "5",
                 "class": "span12"
             }
