@@ -90,7 +90,9 @@
                 {% if not user.is_anonymous %}<td>{% if object.approved %}<img src="{% static "images/tick_16.png" %}" />{% else %}&mdash;{% endif %}</td>{% endif %}
                 <td>{% if object.featured%}<img src="{% static "images/tick_16.png" %}" />{% else %}&mdash;{% endif %}</td>
                 <td>{{ object.downloads }}</td>
+                {% if object.author %}
                 <td><a title="{% trans "See all plugins by"%} {{ object.author }}" href="{% url "author_plugins" object.author %}">{{ object.author }}</a></td>
+                {% endif %}
                 <td>{{ object.latest_version_date|naturalday }}</td>
                 <td>{{ object.created_on|naturalday }}</td>
                 <td><div><div class="star-ratings"><span style="width:{% widthratio object.average_vote 5 100 %}%" class="rating"></span></div> ({{ object.rating_votes }})</div></td>
