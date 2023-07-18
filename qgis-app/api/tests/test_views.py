@@ -104,6 +104,8 @@ class TestResourceAPIList(TestCase):
         self.assertEqual(result[s_index]["resource_type"], "Style")
         self.assertEqual(result[s_index]["resource_subtype"], "Marker")
         self.assertEqual(result[s_index]["creator"], "creator")
+        self.assertIsNotNone(result[s_index]["thumbnail"])
+        self.assertIsNotNone(result[s_index]["thumbnail_full"])
 
     def test_get_list_resources_with_filter(self):
         param = "resource_type=geopackage"
