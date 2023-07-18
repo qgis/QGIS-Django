@@ -10,6 +10,7 @@ class ResourceBaseSerializer(serializers.ModelSerializer):
     creator = serializers.ReadOnlyField(source="get_creator_name")
     resource_type = serializers.SerializerMethodField()
     resource_subtype = serializers.SerializerMethodField()
+    thumbnail_full = serializers.ImageField(source="thumbnail_image")
 
     # A thumbnail image, sorl options and read-only
     thumbnail = HyperlinkedSorlImageField(
@@ -28,6 +29,7 @@ class ResourceBaseSerializer(serializers.ModelSerializer):
             "description",
             "file",
             "thumbnail",
+            "thumbnail_full"
         ]
 
     def validate(self, attrs):
