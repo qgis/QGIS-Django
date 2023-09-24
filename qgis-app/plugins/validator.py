@@ -180,7 +180,8 @@ def validator(package):
     for zname in zip.namelist():
         if zname.find("..") != -1 or zname.find(os.path.sep) == 0:
             raise ValidationError(
-                _("For security reasons, zip file cannot contain path informations")
+                _("For security reasons, zip file cannot contain path "
+                  "information (found '{}')".format(zname))
             )
         if zname.find(".pyc") != -1:
             raise ValidationError(
