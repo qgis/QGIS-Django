@@ -319,13 +319,13 @@ class Plugin(models.Model):
     name = models.CharField(
         _("Name"), help_text=_("Must be unique"), max_length=256, unique=True
     )
-    
+
     allow_update_name = models.BooleanField(
         _("Allow update name"), 
         help_text=_("Allow name in metadata.txt to update the plugin name"), 
         default=False
     )
-    
+
     description = models.TextField(_("Description"))
     about = models.TextField(_("About"), blank=False, null=True)
 

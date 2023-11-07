@@ -144,7 +144,7 @@ class PluginVersionForm(ModelForm):
                             f"Plugin name mismatch: the plugin name in the metadata.txt file ({self.cleaned_data.get('name')}) is different from the plugin name ({self.instance.plugin.name})."
                         )
                     )
-            
+
             # Check plugin folder name 
             if (
                 self.cleaned_data.get("package_name")
