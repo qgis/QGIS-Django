@@ -36,6 +36,13 @@ $ make devweb-runserver
 ```
 and now, you can see your site at `http://0.0.0.0:62202` (skip this step if you are using PyCharm interpreter)
 
+- If 'None' appears in the search results, it indicates a misalignment between the search index and the database. This discrepancy often arises when a plugin is deleted from the model but persists in the search index. To rectify this issue, it is essential to synchronize the search index with the database by rebuilding it. Execute the following command to initiate the rebuilding process:
+
+```bash
+$ make rebuild_index
+```
+This command ensures that the search index accurately reflects the current state of the database, resolving the presence of 'None' in the search results. Automatic synchronization is currently managed in settings.py: `HAYSTACK_SIGNAL_PROCESSOR = "haystack.signals.RealtimeSignalProcessor"`.
+
 ---
 
 ### Setup git-hooks and local linting
