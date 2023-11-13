@@ -814,8 +814,13 @@ def _main_plugin_update(request, plugin, form):
     """
     Updates the main plugin object from version metadata
     """
+    # Check if update name from metadata is allowed
+    metadata_fields = ["author", "email", "description", "about", "homepage", "tracker"]
+    if plugin.allow_update_name:
+        metadata_fields.insert(0, "name")
+
     # Update plugin from metadata
-    for f in ["name", "author", "email", "description", "about", "homepage", "tracker"]:
+    for f in metadata_fields:
         if form.cleaned_data.get(f):
             setattr(plugin, f, form.cleaned_data.get(f))
 

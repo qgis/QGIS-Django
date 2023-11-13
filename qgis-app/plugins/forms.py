@@ -132,18 +132,6 @@ class PluginVersionForm(ModelForm):
                 self.cleaned_data.get("version")
             )
             self.instance.server = self.cleaned_data.get("server")
-            # Check if name update is allowed and names match
-            if not self.instance.plugin.allow_update_name:
-                if (
-                    self.cleaned_data.get("name") 
-                    and self.cleaned_data.get("name")
-                    != self.instance.plugin.name
-                    ):
-                    raise ValidationError(
-                        _(
-                            f"Plugin name mismatch: the plugin name in the metadata.txt file ({self.cleaned_data.get('name')}) is different from the plugin name ({self.instance.plugin.name})."
-                        )
-                    )
 
             # Check plugin folder name 
             if (

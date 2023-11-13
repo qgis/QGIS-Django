@@ -6,7 +6,7 @@ from django.test import Client, TestCase, override_settings
 from django.contrib.auth.models import User
 from django.core.files.uploadedfile import SimpleUploadedFile
 from plugins.models import Plugin, PluginVersion
-from plugins.forms import PackageUploadForm, PluginVersionForm
+from plugins.forms import PluginVersionForm
 
 def do_nothing(*args, **kwargs):
     pass
@@ -48,6 +48,8 @@ class PluginRenameTestCase(TestCase):
         })
 
         self.plugin = Plugin.objects.get(name='Test Plugin')
+        self.plugin.name = "New name Test Plugin"
+        self.plugin.save()
 
     @patch("plugins.tasks.generate_plugins_xml.delay", new=do_nothing)
     @patch("plugins.validator._check_url_link", new=do_nothing)
@@ -67,30 +69,13 @@ class PluginRenameTestCase(TestCase):
         self.assertEqual(response.status_code, 200)
         self.assertFalse(response.context['form'].is_valid())
 
-        # Test POST request without rename permission
-        valid_plugin = os.path.join(TESTFILE_DIR, "valid_plugin_rename.zip_")
+        # Test POST request without allowing name from metadata
+        valid_plugin = os.path.join(TESTFILE_DIR, "valid_plugin_0.0.2.zip_")
         with open(valid_plugin, "rb") as file:
             uploaded_file = SimpleUploadedFile(
-                "valid_plugin_rename.zip", file.read(),
+                "valid_plugin_0.0.2.zip_", file.read(),
                 content_type="application/zip_")
 
-        response = self.client.post(self.url_add_version, {
-            'package': uploaded_file,
-            'experimental': False,
-            'changelog': ''
-        })
-        self.assertEqual(response.status_code, 200)
-        self.assertFalse(response.context['form'].is_valid())
-
-        # Test POST request with rename permission
-        self.plugin.allow_update_name = True
-        self.plugin.save()
-
-        valid_plugin = os.path.join(TESTFILE_DIR, "valid_plugin_rename.zip_")
-        with open(valid_plugin, "rb") as file:
-            uploaded_file = SimpleUploadedFile(
-                "valid_plugin_rename.zip", file.read(),
-                content_type="application/zip_")
         response = self.client.post(self.url_add_version, {
             'package': uploaded_file,
             'experimental': False,
@@ -100,6 +85,26 @@ class PluginRenameTestCase(TestCase):
         self.assertTrue(PluginVersion.objects.filter(
             plugin__name='New name Test Plugin', 
             version='0.0.2').exists()
+        )
+
+        # Test POST request with allowing name from metadata
+        self.plugin.allow_update_name = True
+        self.plugin.save()
+
+        valid_plugin = os.path.join(TESTFILE_DIR, "valid_plugin_0.0.3.zip_")
+        with open(valid_plugin, "rb") as file:
+            uploaded_file = SimpleUploadedFile(
+                "valid_plugin_0.0.3.zip_", file.read(),
+                content_type="application/zip_")
+        response = self.client.post(self.url_add_version, {
+            'package': uploaded_file,
+            'experimental': False,
+            'changelog': ''
+        })
+        self.assertEqual(response.status_code, 302)
+        self.assertTrue(PluginVersion.objects.filter(
+            plugin__name='Test Plugin', 
+            version='0.0.3').exists()
         )
 
     def tearDown(self):
