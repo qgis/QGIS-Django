@@ -605,6 +605,8 @@ class PluginsList(ListView):
         context.update(self.additional_context)
         context["current_sort_query"] = self.get_sortstring()
         context["current_querystring"] = self.get_querystring()
+        context["per_page_list"] = [20, 50, 75, 100]
+        context["show_more_items_number"] = context["paginator"].per_page + 50
         return context
 
     def get_sortstring(self):
