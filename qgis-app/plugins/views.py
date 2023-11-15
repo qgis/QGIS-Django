@@ -689,6 +689,7 @@ class TagsPluginsList(PluginsList):
         context.update(
             {
                 "title": _("Plugins tagged with: %s") % unquote(self.kwargs["tags"]),
+                "page_title": _("Tag: %s") % unquote(self.kwargs["tags"])
             }
         )
         return context
