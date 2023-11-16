@@ -193,3 +193,28 @@ class TestValidatorForbiddenFileFolder(TestCase):
             exception.message,
             "For security reasons, zip file cannot contain '.git' directory",
         )
+
+
+class TestLicenseValidator(TestCase):
+    """Test if zipfile contains LICENSE file """    
+
+    def setUp(self) -> None:
+        plugin_without_license = os.path.join(TESTFILE_DIR, "plugin_without_license.zip_")
+        self.invalid_plugin = open(plugin_without_license, "rb")
+
+    def tearDown(self):
+        self.invalid_plugin.close()
+
+    def test_zipfile_without_license(self):
+        self.assertRaises(
+            ValidationError,
+            validator,
+            InMemoryUploadedFile(
+                self.invalid_plugin,
+                field_name="tempfile",
+                name="testfile.zip",
+                content_type="application/zip",
+                size=39889,
+                charset="utf8",
+            ),
+        )

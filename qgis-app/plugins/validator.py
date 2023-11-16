@@ -237,6 +237,11 @@ def validator(package):
     if initname not in namelist:
         raise ValidationError(_("Cannot find __init__.py in plugin package."))
 
+    # Checks for LICENCE file precense
+    licensename = package_name+"/LICENSE"
+    if licensename not in namelist:
+        raise ValidationError(_("Cannot find LICENSE in plugin package."))
+
     # Checks metadata
     metadata = []
     # First parse metadata.txt
