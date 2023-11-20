@@ -126,3 +126,10 @@ dbseed:
 	@echo "Seed db with JSON data from /fixtures/*.json"
 	@echo "------------------------------------------------------------------"
 	@docker-compose -p $(PROJECT_ID) exec devweb bash -c 'python manage.py loaddata fixtures/*.json'
+
+rebuild_index:
+	@echo
+	@echo "------------------------------------------------------------------"
+	@echo "Rebuild search index in PRODUCTION mode"
+	@echo "------------------------------------------------------------------"
+	@docker-compose -p $(PROJECT_ID) exec web bash -c 'python manage.py rebuild_index'
