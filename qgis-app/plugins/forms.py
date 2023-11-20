@@ -132,7 +132,8 @@ class PluginVersionForm(ModelForm):
                 self.cleaned_data.get("version")
             )
             self.instance.server = self.cleaned_data.get("server")
-            # Check plugin name
+
+            # Check plugin folder name 
             if (
                 self.cleaned_data.get("package_name")
                 and self.cleaned_data.get("package_name")
@@ -140,7 +141,7 @@ class PluginVersionForm(ModelForm):
             ):
                 raise ValidationError(
                     _(
-                        "Plugin name mismatch: the plugin main folder name in the compressed file (%s) is different from the original plugin package name (%s)."
+                        "Plugin folder name mismatch: the plugin main folder name in the compressed file (%s) is different from the original plugin package name (%s)."
                     )
                     % (
                         self.cleaned_data.get("package_name"),
