@@ -1,5 +1,6 @@
 from django.test import TestCase
 from django.urls import reverse
+from ..models import Plugin
 
 class PluginsListViewTestCase(TestCase):
     fixtures = [
@@ -32,9 +33,9 @@ class PluginsListViewTestCase(TestCase):
         self.assertTrue('show_more_items_number' in response.context)
 
         show_more_items_number = response.context['show_more_items_number']
-        self.assertEqual(show_more_items_number, 70)
+        self.assertEqual(show_more_items_number, 50)
 
-        response = self.client.get(reverse('approved_plugins'), {'per_page': show_more_items_number})
+        response = self.client.get(reverse('approved_plugins'), {'per_page': 110})
         self.assertEqual(response.status_code, 200)
         self.assertTrue('current_sort_query' in response.context)
         self.assertTrue('current_querystring' in response.context)
@@ -42,7 +43,8 @@ class PluginsListViewTestCase(TestCase):
         self.assertTrue('show_more_items_number' in response.context)
 
         show_more_items_number = response.context['show_more_items_number']
-        self.assertEqual(show_more_items_number, 120)
+        records_count = Plugin.approved_objects.count()
+        self.assertEqual(show_more_items_number, records_count + 1)
 
     def test_plugins_list_sorting(self):
         # Test the plugins list view with sorting
