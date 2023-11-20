@@ -22,6 +22,10 @@
         {% endif %}
         {% if user.is_staff %}
         <li class="staff"><a href="{% url "unapproved_plugins" %}">{% trans "Unapproved"%}</a></li>
+        <ul>
+            <li class="sub-list"><a href="{% url "feedback_received_plugins" %}">{% trans "Feedback received"%}</a></li>
+            <li class="sub-list"><a href="{% url "feedback_pending_plugins" %}">{% trans "Feedback pending"%}</a></li>
+        </ul>
         <li class="staff"><a href="{% url "deprecated_plugins" %}">{% trans "Deprecated"%}</a></li>
         {% endif %}
         <li><a href="{% url "featured_plugins" %}">{% trans "Featured "%}</a></li>

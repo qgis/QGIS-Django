@@ -178,6 +178,20 @@ urlpatterns = [
         name="most_rated_plugins",
     ),
     url(
+        r"^feedback_pending/$",
+        FeedbackPendingPluginsList.as_view(
+            additional_context={"title": _("Feedback pending plugins")}
+        ),
+        name="feedback_pending_plugins",
+    ),
+    url(
+        r"^feedback_received/$",
+        FeedbackReceivedPluginsList.as_view(
+            additional_context={"title": _("Feedback received plugins")}
+        ),
+        name="feedback_received_plugins",
+    ),
+    url(
         r"^author/(?P<author>[^/]+)/$",
         AuthorPluginsList.as_view(),
         name="author_plugins",
@@ -245,6 +259,24 @@ urlpatterns += [
         version_unapprove,
         {},
         name="version_unapprove",
+    ),
+    url(
+        r"^(?P<package_name>[A-Za-z][A-Za-z0-9-_]+)/version/(?P<version>[^\/]+)/feedback/$",
+        version_feedback,
+        {},
+        name="version_feedback",
+    ),
+    url(
+        r"^(?P<package_name>[A-Za-z][A-Za-z0-9-_]+)/version/(?P<version>[^\/]+)/feedback/update/$",
+        version_feedback_update,
+        {},
+        name="version_feedback_update",
+    ),
+    url(
+        r"^(?P<package_name>[A-Za-z][A-Za-z0-9-_]+)/version/(?P<version>[^\/]+)/feedback/(?P<feedback>[0-9]+)/$",
+        version_feedback_delete,
+        {},
+        name="version_feedback_delete",
     ),
 ]
 

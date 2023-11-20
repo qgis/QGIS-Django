@@ -15,13 +15,14 @@ from django.db import IntegrityError, connection
 from django.db.models import Max, Q
 from django.db.models.expressions import RawSQL
 from django.db.models.functions import Lower
-from django.http import Http404, HttpResponse, HttpResponseRedirect
+from django.http import Http404, HttpResponse, HttpResponseRedirect, JsonResponse
 from django.shortcuts import get_object_or_404, render
 from django.urls import reverse
 from django.utils.timezone import now
 from django.utils.decorators import method_decorator
 from django.utils.encoding import DjangoUnicodeDecodeError
 from django.utils.translation import ugettext_lazy as _
+from django.views.decorators.cache import never_cache
 from django.views.decorators.csrf import csrf_protect, ensure_csrf_cookie
 from django.views.decorators.http import require_POST
 from django.views.generic.detail import DetailView
@@ -166,6 +167,41 @@ def plugin_approve_notify(plugin, msg, user):
         logging.warning(
             "No recipients found for %s plugin %s notification"
             % (plugin, approval_state)
+        )
+
+
+def version_feedback_notify(version,  user):
+    """
+    Sends a message when a version is receiving feedback.
+    """
+    if settings.DEBUG:
+        return
+    plugin = version.plugin
+    recipients = [u.email for u in plugin.editors if u.email]
+    if recipients:
+        domain = Site.objects.get_current().domain
+        mail_from = settings.DEFAULT_FROM_EMAIL
+        logging.debug(
+            "Sending email feedback notification for %s plugin version %s, recipients:  %s"
+            % (plugin, version.version, recipients)
+        )
+        send_mail_wrapper(
+            _("Plugin %s feedback notification.") % (plugin, ),
+            _("\r\nPlugin %s reviewed by %s and received a feedback.\r\nLink: http://%s%sfeedback/\r\n")
+            % (
+                plugin.name,
+                user,
+                domain,
+                version.get_absolute_url(),
+            ),
+            mail_from,
+            recipients,
+            fail_silently=True,
+        )
+    else:
+        logging.warning(
+            "No recipients found for %s plugin feedback notification"
+            % (plugin, )
         )
 
 
@@ -694,6 +730,35 @@ class TagsPluginsList(PluginsList):
         return context
 
 
+class FeedbackReceivedPluginsList(PluginsList):
+    """List of Plugins that has feedback received in its versions.
+
+    The plugins editor can only see their plugin feedbacks.
+    The staff can see all plugin feedbacks.
+    """
+    queryset = Plugin.feedback_received_objects.all()
+
+    def get_filtered_queryset(self, qs):
+        user = get_object_or_404(User, username=self.request.user)
+        if not user.is_staff:
+            raise Http404
+        return qs
+
+
+class FeedbackPendingPluginsList(PluginsList):
+    """List of Plugins that has feedback pending in its versions.
+
+    Only staff can see plugin feedback list.
+    """
+    queryset = Plugin.feedback_pending_objects.all()
+
+    def get_filtered_queryset(self, qs):
+        user = get_object_or_404(User, username=self.request.user)
+        if not user.is_staff:
+            raise Http404
+        return qs
+
+
 @login_required
 @require_POST
 def plugin_manage(request, package_name):
@@ -1017,6 +1082,101 @@ def version_manage(request, package_name, version):
         return version_unapprove(request, package_name, version)
 
     return HttpResponseRedirect(reverse("plugin_detail", args=[package_name]))
+
+
+@login_required
+@never_cache
+def version_feedback(request, package_name, version):
+    """
+    The form will add a comment/ feedback for the package version.
+    """
+    plugin = get_object_or_404(Plugin, package_name=package_name)
+    version = get_object_or_404(PluginVersion, plugin=plugin, version=version)
+    is_user_plugin_owner: bool = request.user in plugin.editors
+    is_user_has_approval_rights: bool = check_plugin_version_approval_rights(
+        request.user, plugin)
+    if not is_user_plugin_owner and not is_user_has_approval_rights:
+        return render(
+            request,
+            template_name="plugins/version_permission_deny.html",
+            context={},
+            status=403
+        )
+    if request.method == "POST":
+        form = VersionFeedbackForm(request.POST)
+        if form.is_valid():
+            tasks = form.cleaned_data['tasks']
+            for task in tasks:
+                PluginVersionFeedback.objects.create(
+                    version=version,
+                    reviewer=request.user,
+                    task=task
+                )
+            version_feedback_notify(version, request.user)
+    form = VersionFeedbackForm()
+    feedbacks = PluginVersionFeedback.objects.filter(version=version)
+    return render(
+        request,
+        "plugins/plugin_feedback.html",
+        {
+            "feedbacks": feedbacks,
+            "form": form,
+            "version": version,
+            "is_user_has_approval_rights": is_user_has_approval_rights,
+            "is_user_plugin_owner": is_user_plugin_owner
+        }
+    )
+
+
+@login_required
+@require_POST
+def version_feedback_update(request, package_name, version):
+    plugin = get_object_or_404(Plugin, package_name=package_name)
+    version = get_object_or_404(PluginVersion, plugin=plugin, version=version)
+    has_update_permission: bool = (
+        request.user in plugin.editors
+        or check_plugin_version_approval_rights(request.user, plugin)
+    )
+    if not has_update_permission:
+        return JsonResponse({"success": False}, status=401)
+    completed_tasks = request.POST.getlist('completed_tasks')
+    for task_id in completed_tasks:
+        try:
+            task_id = int(task_id)
+        except ValueError:
+            continue
+        feedback = PluginVersionFeedback.objects.filter(
+            version=version, pk=task_id).first()
+        feedback.is_completed = True
+        feedback.save()
+    return JsonResponse({"success": True}, status=201)
+
+
+@login_required
+@require_POST
+def version_feedback_delete(request, package_name, version, feedback):
+    feedback = get_object_or_404(
+        PluginVersionFeedback,
+        version__plugin__package_name=package_name,
+        version__version=version,
+        pk=feedback
+    )
+    plugin = feedback.version.plugin
+    status = request.POST.get('status_feedback')
+    is_update_succeed: bool = False
+    is_user_can_update_feedback: bool = (
+            request.user in plugin.editors
+            or check_plugin_version_approval_rights(request.user, plugin)
+    )
+    if status == "deleted" and feedback.reviewer == request.user:
+        feedback.delete()
+        is_update_succeed: bool = True
+    elif (status == "completed" or status == "uncompleted") and (
+            is_user_can_update_feedback):
+        feedback.is_completed = (status == "completed")
+        feedback.save()
+        is_update_succeed: bool = True
+    return JsonResponse({"success": is_update_succeed})
 
 
 def version_download(request, package_name, version):
