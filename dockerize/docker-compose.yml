@@ -92,13 +92,6 @@ services:
     entrypoint: []
     command: celery -A plugins worker -l INFO
 
-  beat:
-    <<: *uwsgi-common
-    container_name: qgis-plugins-beat
-    working_dir: /home/web/django_project
-    entrypoint: [ ]
-    command: celery --app=plugins.celery:app beat -s /home/web/celerybeat-schedule/schedule -l INFO
-
   web:
     # Note you cannot scale if you use container_name
     container_name: qgis-plugins-web
