@@ -53,6 +53,12 @@ devweb-test: db
 devweb: db
 	@echo
 	@echo "------------------------------------------------------------------"
+	@echo "Recreate qgis-plugins-uwsgi"
+	@echo "------------------------------------------------------------------"
+	@docker stop qgis-plugins-uwsgi
+	@docker rm qgis-plugins-uwsgi
+	@echo
+	@echo "------------------------------------------------------------------"
 	@echo "Running in DEVELOPMENT mode"
 	@echo "------------------------------------------------------------------"
 	@docker-compose -p $(PROJECT_ID) up --no-deps -d devweb rabbitmq worker beat
@@ -75,26 +81,26 @@ migrate:
 	@# We add the '-' prefix to the next line as the migration may fail
 	@# but we want to continue anyway.
 	@#We need to migrate accounts first as it has a reference to user model
-	-@docker-compose -p $(PROJECT_ID) exec web python manage.py migrate auth
-	@docker-compose -p $(PROJECT_ID) exec web python manage.py migrate
+	-@docker-compose -p $(PROJECT_ID) exec uwsgi python manage.py migrate auth
+	@docker-compose -p $(PROJECT_ID) exec uwsgi python manage.py migrate
 
 update-migrations:
 	@echo
 	@echo "------------------------------------------------------------------"
 	@echo "Running update migrations in production mode"
 	@echo "------------------------------------------------------------------"
-	@docker-compose -p $(PROJECT_ID) exec web python manage.py makemigrations
+	@docker-compose -p $(PROJECT_ID) exec uwsgi python manage.py makemigrations
 
 collectstatic:
 	@echo
 	@echo "------------------------------------------------------------------"
 	@echo "Collecting static in production mode"
 	@echo "------------------------------------------------------------------"
-	#@docker-compose -p $(PROJECT_ID) run uwsgi python manage.py collectstatic --noinput
+	@docker-compose -p $(PROJECT_ID) run uwsgi python manage.py collectstatic --noinput
 	#We need to run collect static in the same context as the running
 	# uwsgi container it seems so I use docker exec here
 	# no -it flag so we can run over remote shell
-	@docker exec $(PROJECT_ID)-web python manage.py collectstatic --noinput
+	# @docker exec $(PROJECT_ID)-web python manage.py collectstatic --noinput
 
 reload:
 	@echo
@@ -174,4 +180,4 @@ rebuild_index:
 	@echo "------------------------------------------------------------------"
 	@echo "Rebuild search index in PRODUCTION mode"
 	@echo "------------------------------------------------------------------"
-	@docker-compose -p $(PROJECT_ID) exec web bash -c 'python manage.py rebuild_index'
+	@docker-compose -p $(PROJECT_ID) exec uwsgi bash -c 'python manage.py rebuild_index'

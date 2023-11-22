@@ -66,6 +66,11 @@ services:
       context: ${PWD}/../
       dockerfile: dockerize/docker/Dockerfile
       target: dev
+    ports:
+      # for django test server
+      - "62202:8080"
+      # for ssh
+      - "62203:22"
 
   rabbitmq:
     image: rabbitmq:3.7-alpine
