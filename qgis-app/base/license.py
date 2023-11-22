@@ -24,7 +24,7 @@ def zip_a_file_if_not_zipfile(filename: str) -> io.BytesIO:
     """ Zip a file without license """
 
     if zipfile.is_zipfile(filename):
-        with open(filename, 'rb') as file:
+        with open(filename, "rb") as file:
             return io.BytesIO(file.read())
     else:
         in_memory_data = io.BytesIO()

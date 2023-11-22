@@ -23,22 +23,22 @@ def anchor_sort_arrow(name, order_by, current_order, current_query):
         class_arrow = ""
 
     if not current_query:
-        current_query = ''
+        current_query = ""
 
     if not desc_current_order:
         result = (
             '%s <a href="?order_by=%s&&q=%s&&" class="%s">'
             '<i class="icon-arrow-up"></i></a>'
             '<a href="?order_by=-%s&&q=%s&&" class="">'
-            '<i class="icon-arrow-down"></i></a>' % (
-                name, order_by, current_query, class_arrow,
-                order_by, current_query))
+            '<i class="icon-arrow-down"></i></a>'
+            % (name, order_by, current_query, class_arrow, order_by, current_query)
+        )
     else:
         result = (
             '%s <a href="?order_by=%s&&q=%s&&" class="">'
             '<i class="icon-arrow-up"></i></a>'
             '<a href="?order_by=-%s&&q=%s&&" class="%s">'
-            '<i class="icon-arrow-down"></i></a>' % (
-                name, order_by, current_query,
-                order_by, current_query, class_arrow))
+            '<i class="icon-arrow-down"></i></a>'
+            % (name, order_by, current_query, order_by, current_query, class_arrow)
+        )
     return mark_safe(result)

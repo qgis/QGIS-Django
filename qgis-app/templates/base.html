@@ -6,21 +6,21 @@
   <title>{% block title %}QGIS {% block extratitle %}Plugins{% endblock %}{% endblock %}</title>
   <meta name="AUTHOR" content="QGIS Web Team" />
   <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 
     <link rel="stylesheet" href="{% static "style/new/basic.css" %}" type="text/css" />
     <link rel="stylesheet" href="{% static "bootstrap/css/bootstrap.min.css" %}" type="text/css" />
     <link rel="stylesheet" href="{% static "style/new/qgis-style.css" %}" type="text/css" />
     <link rel="stylesheet" href="{% static "style/new/bootstrap-sphinx.css" %}" type="text/css" />
     <link rel="stylesheet" href="{% static "bootstrap/css/bootstrap-responsive.min.css" %}" type="text/css" />
-    <link rel="stylesheet" href="{% static "font-awesome/css/font-awesome.min.css" %}">
+    <link rel="stylesheet" href="{% static "font-awesome/css/font-awesome.min.css" %}" />
     <link type="text/css" href="{% static "style/style.css" %}" rel="stylesheet" />
     {% block extracss %}{% endblock %}
 
     <link rel="shortcut icon" href="{% static "images/favicon.ico" %}"/>
 
     <script type="text/javascript" src="{% static "js/jquery-1.11.1.min.js" %}"></script>
-    <script type="text/javascript" src="{% static "bootstrap/js/bootstrap.min.js" %}"></script>
+    <script type="text/javascript" src="{% static "bootstrap/js/bootstrap-3.4.1.min.js" %}"></script>
 
     <!-- Cookie disclaimer -->
     <script type="text/javascript" id="cookieinfo" src="{% static 'js/cookieinfo/cookieinfo.min.js' %}" data-bg="#1c2028"
@@ -46,17 +46,19 @@
                       <span class="icon-bar"></span>
                     </button>
 
-                    <a class="brand" href="https://www.qgis.org">QGIS</a>
-                    {% if user.is_authenticated %}
-                    <a id="user-tooltip" href="{% if user.is_superuser %}{% url "admin:index" %}{% else %}{% url "logout" %}{% endif %}"
-                       data-toggle="tooltip" data-placement="bottom" title="{{ user.username }}" style="float: right !important"><i class="icon-user icon-3x"></i></a>
-                    {% else %}
-                    <a href="{% url "login" %}"><i class="icon-signin icon-3x"></i></a>
-                    {% endif %}
+                        <a class="brand" href="https://www.qgis.org">QGIS</a>
+                        {% if user.is_authenticated %}
+                        <a id="user-tooltip" href="{% if user.is_superuser %}{% url "admin:index" %}{% else %}{% url "logout" %}{% endif %}"
+                           data-toggle="tooltip" data-placement="bottom" title="{{ user.username }}" style="float: right !important"><i class="icon-user icon-3x"></i></a>
+                        {% else %}
+                            <div class="signin-wrapper">
+                                <a href="{% url "login" %}"><i class="icon-signin icon-3x"></i></a>
+                            </div>
+                        {% endif %}
 
                     <form class="navbar-search" action="{% url "haystack_search" %}" method="get">
                       <input type="text"  id="id_q" name="q" class="search-query" placeholder="Search" />
-                      <input type="submit" class="btn" value="Search" />
+                      <button type="submit" class="btn btn-search"><i class="icon-search" aria-hidden="true"></i></button>
                     </form>
 
                     {% get_namedmenu Navigation as menu %}
@@ -94,11 +96,16 @@
         {% endblock %}
         <div class="container-fluid">
             <div class="row-fluid">
-                {% block leftbar %}
-                <div class="span3 well" id="leftcolumn">
-                    {% block menu %}&nbsp;{% endblock %}
+                <div class="span3 well" id="leftcolumn" data-spy="scroll">
+                    <a class="related-plugins-collapser" data-toggle="collapse" data-target="#collapse-related-plugins">
+                        Related Plugins and Tags
+                    </a>
+                    <div id="collapse-related-plugins" class="collapse">
+                        {% block leftbar %}
+                            {% block menu %}&nbsp;{% endblock %}
+                        {% endblock %}
+                    </div>
                 </div>
-                {% endblock %}
                 <div class="span9" id="maincolumn">
                     <section class="info">
                         {% block app_title %}{% endblock %}
@@ -144,7 +151,7 @@
                 </div>-->
                 <div class="span12">
                     <div class="sponsor">
-                        <img src="//www.qgis.org/en/_static/images/members.png" width="900px" alt="Sustaining member logos">
+                        <img src="//www.qgis.org/en/_static/images/members.png" width="900px" alt="Sustaining member logos" />
                     </div>
                 </div>
             </a>
@@ -165,7 +172,7 @@
                 <p class="credit">{% trans "All content is licensed under" %} <a href="http://creativecommons.org/licenses/by-sa/3.0/">Creative Commons Attribution-ShareAlike 3.0 licence (CC BY-SA)</a>.</p>
                 {% block "credits" %}
                 <p class="credit">{% trans "Select graphics from " %}<a href="http://thenounproject.com" target="_blank">{% trans "The Noun Project collection" %}</a>.</p>
-                  <p class="credit">{% trans "This web application was developed by:" %}&nbsp;<a href="https://www.itopen.it">Alessandro Pasotti</a> and &nbsp;<a href="https://kartoza.com"><img src="{% static 'images/kartoza-logo-only.png' %}" alt="Kartoza icon" width="16" height="16">Kartoza</a>. <span>Version: {% version_tag %}</span>.</p>
+                  <p class="credit">{% trans "This web application was developed by:" %}&nbsp;<a href="https://www.itopen.it">Alessandro Pasotti</a> and &nbsp;<a href="https://kartoza.com"><img src="{% static 'images/kartoza-logo-only.png' %}" alt="Kartoza icon" width="16" height="16" />Kartoza</a>. <span>Version: {% version_tag %}</span>.</p>
                 {% endblock %}
             </div>
         </footer>

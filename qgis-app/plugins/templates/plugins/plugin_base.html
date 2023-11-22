@@ -22,6 +22,10 @@
         {% endif %}
         {% if user.is_staff %}
         <li class="staff"><a href="{% url "unapproved_plugins" %}">{% trans "Unapproved"%}</a></li>
+        <ul>
+            <li class="sub-list"><a href="{% url "feedback_received_plugins" %}">{% trans "Feedback received"%}</a></li>
+            <li class="sub-list"><a href="{% url "feedback_pending_plugins" %}">{% trans "Feedback pending"%}</a></li>
+        </ul>
         <li class="staff"><a href="{% url "deprecated_plugins" %}">{% trans "Deprecated"%}</a></li>
         {% endif %}
         <li><a href="{% url "featured_plugins" %}">{% trans "Featured "%}</a></li>
@@ -36,6 +40,10 @@
         <li><a href="{% url "most_rated_plugins" %}">{% trans "Most rated" %}</a></li>
         <li><a href="{% url "server_plugins" %}">{% trans "QGIS Server plugins" %}</a></li>
 </ul>
+
+<hr>
+{% include_plugins_tagcloud_modal 'plugins.plugin' %}
+
 {% endblock %}
 
 {% block "credits" %}

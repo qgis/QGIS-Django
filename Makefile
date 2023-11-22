@@ -13,7 +13,7 @@ all:
 
 
 run: kill_server
-	cd $(PRJ_DIR) && python manage.py runserver 0.0.0.0:8000 
+	cd $(PRJ_DIR) && python manage.py runserver 0.0.0.0:8000
 
 kill_server:
 	@if /usr/sbin/lsof -i :8000; then \

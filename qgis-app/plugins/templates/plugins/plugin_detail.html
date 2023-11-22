@@ -131,7 +131,7 @@
                         <a href="{% url "user_details" object.created_by %}">{{ object.created_by }}</a>
                     </dd>
                     {% if object.owners.count %}
-                        <dt>{% trans "Owners"%}</dt>
+                        <dt>{% trans "Collaborators"%}</dt>
                         <dd>
                             {% for owner in object.owners.all %}
                             <a href="{% url "user_details" owner.username %}">{{ owner.username }}</a>{% if not forloop.last %},{% endif %}
@@ -179,7 +179,8 @@
                                 <th>{% trans "Version" %}</th>
                                 {% if not user.is_anonymous %}<th>{% trans "Approved" %}</th>{% endif %}
                                 <th>{% trans "Experimental" %}</th>
-                                <th>{% trans "Minimum QGIS version" %}</th>
+                                <th>{% trans "Min QGIS version" %}</th>
+                                <th>{% trans "Max QGIS version" %}</th>
                                 <th>{% trans "Downloads" %}</th>
                                 <th>{% trans "Uploaded by" %}</th>
                                 <th>{% trans "Date" %}</th>
@@ -194,6 +195,7 @@
                                 {% if not user.is_anonymous %}<td>{{ version.approved|yesno }}</td>{% endif %}
                                 <td>{{ version.experimental|yesno }}</td>
                                 <td>{{ version.min_qg_version }}</td>
+                                <td>{{ version.max_qg_version }}</td>
                                 <td>{{ version.downloads }}</td>
                                 <td><a href="{% url "user_details" version.created_by.username %}">{{ version.created_by }}</a></td>
                                 <td>{{ version.created_on|local_timezone }}</td>
@@ -201,6 +203,9 @@
                                 {% if user.is_staff or user in version.plugin.approvers %}
                                     {% if not version.approved %}<button class="btn btn-success btn-mini" type="submit" name="version_approve" id="version_approve"title="{% trans "Approve" %}"><i class="icon-thumbs-up icon-white"></i></button>{% else %}<button class="btn btn-warning btn-mini" type="submit" name="version_unapprove" id="version_unapprove" title="{% trans "Unapprove" %}"><i class="icon-thumbs-down icon-white"></i></button>{% endif %}
                                 {% endif %}
+                                <a class="btn {% if version.feedback.exists %}btn-warning{% else %}btn-primary{% endif %} btn-mini"
+                                   href="{% url "version_feedback" object.package_name version.version %}" title="{% trans "Feedback" %}"><i class="icon-comments icon-white"></i>
+                                </a>
                                 {% if user.is_staff or user in version.plugin.editors %}
                                 <a class="btn btn-primary btn-mini" href="{% url "version_update" object.package_name version.version %}" title="{% trans "Edit" %}"><i class="icon-pencil icon-white"></i></a>&nbsp;<a class="btn btn-danger btn-mini delete" href="{% url "version_delete" object.package_name version.version %}" title="{% trans "Delete" %}"><i class="icon-remove icon-white"></i></a>{% endif %}</form>
                                 </td>

@@ -1,6 +1,6 @@
 from rest_framework import permissions
 
-MANAGER_GROUP = 'Style Managers'
+MANAGER_GROUP = "Style Managers"
 
 
 class ReadOnly(permissions.BasePermission):

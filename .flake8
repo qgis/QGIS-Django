@@ -1,6 +1,6 @@
 [flake8]
 exclude = */docs/*,*/.tox/*,*/.venv/*,*/.pycharm_helpers/*,*/migrations/*,docs/*,*/__init__.py,
-    */manage.py,*/wsgi.py,
+    */manage.py,*/wsgi.py,*/django.wsgi,
     # we don't check this for now, until it's been fixed. otherwise it will throw lot of errors
     qgis-app/plugins/*,
     qgis-app/userexport/*,
@@ -19,4 +19,4 @@ max-line-length = 79
 # E12x continuation line indentation
 # E251 no spaces around keyword / parameter equals
 # E303 too many blank lines (3)
-ignore = E121,E122,E123,E124,E125,E126,E127,E128,E251,E303,W503,W504,W60,F405
+ignore = E121,E122,E123,E124,E125,E126,E127,E128,E251,E303,W503,W504,W60,F405,E501

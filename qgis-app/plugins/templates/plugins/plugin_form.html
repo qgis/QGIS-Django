@@ -1,8 +1,9 @@
 {% extends 'plugins/plugin_base.html' %}{% load static i18n %}
 {% block extrajs %}
 {{ block.super }}
-<script type="text/javascript" src="{% static "js/jquery-1.11.1.min.js" %}"></script>
-<link rel="stylesheet" media="all" type="text/css" href="% static "jquery-autosuggest/css/autoSuggest.css" %}">
+<script src="{% static "js/jquery-1.12.4.min.js" %}" type="text/javascript"></script>
+<link rel="stylesheet" media="all" type="text/css" href="{% static "jquery-autosuggest/css/autoSuggest.css" %}">
+<link rel="stylesheet" media="all" type="text/css" href="{% static "js/chosen.min.css" %}">
 <style type="text/css">
 /* for autocomplete */
 .vTextField {
@@ -31,6 +32,8 @@ ul.as-list {
     };
 </script>
 <script src="{% static "jquery-autosuggest/js/jquery.autoSuggest.minified.js" %}" type="text/javascript"></script>
+<script src="{% static "js/chosen.jquery.min.js" %}" type="text/javascript"></script>
+
 {% endblock %}
 {% block content %}
     <h2>{{ form_title }} {{ plugin }}</h2>
@@ -58,6 +61,18 @@ ul.as-list {
         </div>
     </form>
     <script type="text/javascript">
+
+    let checkElement = setInterval(function() {
+        let element = document.getElementById('id_owners');
+        if(element) {
+            $('#id_owners').chosen({
+                placeholder_text_multiple: "Select Some Owners",
+                no_results_text: "Oops, nothing found!"
+            });
+            clearInterval(checkElement);
+        }
+    }, 200);
+
     (function ($) {
                 var tags_as_string;
                 $(document).ready(function (){
@@ -85,6 +100,7 @@ ul.as-list {
                         $("#id_tags__tagautosuggest").remove();
                         $("#id_tags").val(tags_as_string);
                     });
+
                 });
             })(django.jQuery);
         </script>

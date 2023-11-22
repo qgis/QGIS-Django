@@ -4,7 +4,6 @@
     {{ content|safe }}
 {% endblock %}
 {% block leftbar %}
-    <div class="span3 well" id="leftcolumn" data-spy="scroll">
         {% if featured %}
         <div class="module_menu">
             <h3>{% trans "Featured plugins" %}</h3>
@@ -37,7 +36,10 @@
             </ul>
         </div>
         {% endif %}
-    </div>
+
+        <hr>
+        {% include_plugins_tagcloud_modal 'plugins.plugin' %}
+
 {% endblock %}
 
 {% block rightbar %}

@@ -6,10 +6,10 @@ import zipfile
 
 
 def create_license_file(string):
-    tmp_dir = f'/tmp/{uuid.uuid4().hex}'
-    file = f'{tmp_dir}/license.txt'
+    tmp_dir = f"/tmp/{uuid.uuid4().hex}"
+    file = f"{tmp_dir}/license.txt"
     os.mkdir(tmp_dir)
-    with open(file, 'w') as f:
+    with open(file, "w") as f:
         f.write(string)
         f.seek(0)
     return file, tmp_dir

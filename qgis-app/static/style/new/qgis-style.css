@@ -171,12 +171,16 @@ pre, code {
     text-decoration:none !important;
 }
 
+.signin-wrapper {
+    height: 60px;
+    float: right !important;
+    display: flex;
+    align-items: center;
+    padding: 0 20px 0 20px;
+}
+
 .icon-signin {
     color: #fff;
-    top: 100px !important;
-    float: right !important;
-    margin: 16px 0 0 20px !important;
-    text-decoration:none !important;
 }
 
 .navbar-inner > select body, .navbar-inner > select html {
@@ -770,3 +774,31 @@ section.sponsors {
     height: 16px;
     display:block;
   }
+
+
+@media (max-width: 500px) {
+    #page_bg {
+        width: 100%;
+    }
+    .navbar .brand {
+        background-size: 30px !important;
+        height: 30px;
+        width: 30px;
+        margin: 10px 0 0 0 !important;
+    }
+
+    .navbar-search {
+        margin: 10px 0 0 0 !important;
+    }
+
+    .signin-wrapper {
+        height: 100%;
+        margin-top: 3px;
+    }
+}
+
+@media (max-width: 375px) {
+    .navbar .brand {
+        display: none;
+    }
+}

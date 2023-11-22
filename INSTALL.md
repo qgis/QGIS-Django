@@ -24,13 +24,36 @@ If you have a backup, you can restore it:
 ```bash
 make dbrestore
 ```
-otherwise, you will have to create the superuser, adding menu etc.
+
+otherwise, you can seed initial data from fixtures:
+```
+make dbseed
+```
 
 - Set up python interpreter in PyCharm or just runserver from devweb container:
 ```bash
 $ make devweb-runserver
 ```
 and now, you can see your site at `http://0.0.0.0:62202` (skip this step if you are using PyCharm interpreter)
+
+- If 'None' appears in the search results, it indicates a misalignment between the search index and the database. This discrepancy often arises when a plugin is deleted from the model but persists in the search index. To rectify this issue, it is essential to synchronize the search index with the database by rebuilding it. Execute the following command to initiate the rebuilding process:
+
+```bash
+$ make rebuild_index
+```
+This command ensures that the search index accurately reflects the current state of the database, resolving the presence of 'None' in the search results. Automatic synchronization is currently managed in settings.py: `HAYSTACK_SIGNAL_PROCESSOR = "haystack.signals.RealtimeSignalProcessor"`.
+
+---
+
+### Setup git-hooks and local linting
+
+In the root directory of the repo, run:
+
+```bash
+pip install -r REQUIREMENTS-dev.txt
+
+pre-commit install --config .pre-commit-config.yaml
+```
 
 ---
 
@@ -104,7 +127,7 @@ Follow these steps for setting up:
 - Create new Group: `Authentication and Authorization > Groups > Add group`
 - Set the options:
   - **Name:** `Style Managers`
-  - **Permissions:** 
+  - **Permissions:**
     choose all styles | in **Available permissions** by typing `styles` in search input and click `Choose all`
     - styles | style | Can add style
     - styles | style | Can change style
@@ -118,7 +141,7 @@ Follow these steps for setting up:
     - styles | style type | Can change style type
     - styles | style type | Can delete style type
     - styles | style type | Can view style type
-  
+
 ---
 ## Backup and Restore
 
@@ -126,7 +149,7 @@ Follow these steps for setting up:
 ```bash
 $ ./backup.sh
 ```
-- You will find dumps file in backups directory 
+- You will find dumps file in backups directory
 ```bash
 $ tree -L 3 backups
 backups
@@ -158,7 +181,7 @@ backups
 │`
 ```
 
-- Copy the dump file you wish to restore to dockerize/backups/latest.dmp file 
+- Copy the dump file you wish to restore to dockerize/backups/latest.dmp file
 ```bash
 $ cp backups/2020/December/PG_QGIS_PLUGINS_gis.16-December-2020.dmp dockerize/backups/latest.dmp
 ```
@@ -182,9 +205,9 @@ $ make dbrestore
 - In Containers tab, click on tripe-dot icon > `Execute Shell`
 
   ![image](https://user-images.githubusercontent.com/40058076/102454128-7352ee00-4078-11eb-80aa-f782c6ea9f6f.png)
-  
+
   Now you are inside the container and ready to deploy your update.
-  
+
   ![image](https://user-images.githubusercontent.com/40058076/102455185-1ce6af00-407a-11eb-8318-3e084b24c095.png)
 - Pull the latest commit: `git pull origin master`
 - Run migration: `python manage.py migrate`

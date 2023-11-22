@@ -12,5 +12,8 @@ urlpatterns = [
 ]
 
 urlpatterns += [
-    url(r'^edit/email_confirm.html$',TemplateView.as_view(template_name='email_confirm.html')),
+    url(
+        r"^edit/email_confirm.html$",
+        TemplateView.as_view(template_name="email_confirm.html"),
+    ),
 ]

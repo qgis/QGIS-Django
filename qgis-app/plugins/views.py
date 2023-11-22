@@ -1,82 +1,88 @@
 # Create your views here.
+import copy
+import logging
 import os
-from django.db import IntegrityError
-from django.db import connection
-from django.db.models import Q, Max
-from django.db.models.functions import Lower
-from django.db.models.expressions import RawSQL
-from django.shortcuts import get_object_or_404, render
-from django.http import Http404, HttpResponse, HttpResponseRedirect
+
+from django.conf import settings
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required, user_passes_test
-from django.urls import reverse
-from django.core.exceptions import FieldDoesNotExist
-from django.conf import settings
-from django.contrib.auth.models import User, Permission
+from django.contrib.auth.models import Permission, User
 from django.contrib.contenttypes.models import ContentType
-from django.utils.encoding import DjangoUnicodeDecodeError
+from django.contrib.sites.models import Site
+from django.core.exceptions import FieldDoesNotExist
+from django.core.mail import send_mail
+from django.db import IntegrityError, connection
+from django.db.models import Max, Q
+from django.db.models.expressions import RawSQL
+from django.db.models.functions import Lower
+from django.http import Http404, HttpResponse, HttpResponseRedirect, JsonResponse
+from django.shortcuts import get_object_or_404, render
+from django.urls import reverse
+from django.utils.timezone import now
 from django.utils.decorators import method_decorator
+from django.utils.encoding import DjangoUnicodeDecodeError
 from django.utils.translation import ugettext_lazy as _
-#from sortable_listview import SortableListView
-from django.views.generic.list import ListView
+from django.views.decorators.cache import never_cache
+from django.views.decorators.csrf import csrf_protect, ensure_csrf_cookie
+from django.views.decorators.http import require_POST
 from django.views.generic.detail import DetailView
-from plugins.models import Plugin, PluginVersion, vjust
+
+# from sortable_listview import SortableListView
+from django.views.generic.list import ListView
 from plugins.forms import *
+from plugins.models import Plugin, PluginVersion, PluginVersionDownload, vjust
 from plugins.validator import PLUGIN_REQUIRED_METADATA
 
-from django.views.decorators.http import require_POST
-from django.views.decorators.csrf import csrf_protect, ensure_csrf_cookie
-
-
-from django.core.mail import send_mail
-from django.contrib.sites.models import Site
-import logging
-import copy
-
 try:
-    from urllib import urlencode, unquote
-    from urlparse import urlparse, parse_qs
+    from urllib import unquote, urlencode
+
+    from urlparse import parse_qs, urlparse
 except ImportError:
-    from urllib.parse import urlencode, urlparse, parse_qs, unquote
+    from urllib.parse import parse_qs, unquote, urlencode, urlparse
 
 # Decorator
 staff_required = user_passes_test(lambda u: u.is_staff)
 from plugins.tasks.generate_plugins_xml import generate_plugins_xml
 
 
-def send_mail_wrapper(subject,
-        message,
-        mail_from,
-        recipients,
-        fail_silently=True):
+def send_mail_wrapper(subject, message, mail_from, recipients, fail_silently=True):
     if settings.DEBUG:
         logging.debug("Mail not sent (DEBUG=True)")
     else:
-        send_mail(subject,
-            message,
-            mail_from,
-            recipients,
-            fail_silently)
+        send_mail(subject, message, mail_from, recipients, fail_silently)
+
 
 def plugin_notify(plugin):
     """
     Sends a message to staff on new plugins
     """
-    recipients = [u.email for u in User.objects.filter(is_staff=True, email__isnull=False).exclude(email='')]
+    recipients = [
+        u.email
+        for u in User.objects.filter(is_staff=True, email__isnull=False).exclude(
+            email=""
+        )
+    ]
 
     if recipients:
-      domain = Site.objects.get_current().domain
-      mail_from = settings.DEFAULT_FROM_EMAIL
+        domain = Site.objects.get_current().domain
+        mail_from = settings.DEFAULT_FROM_EMAIL
 
-      send_mail_wrapper(
-          _('A new plugin has been created by %s.') % plugin.created_by,
-          _('\r\nPlugin name is: %s\r\nPlugin description is: %s\r\nLink: http://%s%s\r\n') % (plugin.name, plugin.description, domain, plugin.get_absolute_url()),
-          mail_from,
-          recipients,
-          fail_silently=True)
-      logging.debug('Sending email notification for %s plugin, recipients:  %s' % (plugin, recipients))
+        send_mail_wrapper(
+            _("A new plugin has been created by %s.") % plugin.created_by,
+            _(
+                "\r\nPlugin name is: %s\r\nPlugin description is: %s\r\nLink: http://%s%s\r\n"
+            )
+            % (plugin.name, plugin.description, domain, plugin.get_absolute_url()),
+            mail_from,
+            recipients,
+            fail_silently=True,
+        )
+        logging.debug(
+            "Sending email notification for %s plugin, recipients:  %s"
+            % (plugin, recipients)
+        )
     else:
-      logging.warning('No recipients found for %s plugin notification' % plugin)
+        logging.warning("No recipients found for %s plugin notification" % plugin)
 
 
 def version_notify(plugin_version):
@@ -85,22 +91,40 @@ def version_notify(plugin_version):
     """
     plugin = plugin_version.plugin
 
-    recipients = [u.email for u in User.objects.filter(is_staff=True, email__isnull=False).exclude(email='')]
+    recipients = [
+        u.email
+        for u in User.objects.filter(is_staff=True, email__isnull=False).exclude(
+            email=""
+        )
+    ]
 
     if recipients:
         domain = Site.objects.get_current().domain
         mail_from = settings.DEFAULT_FROM_EMAIL
 
         send_mail_wrapper(
-            _('A new plugin version has been uploaded by %s.') % plugin.created_by,
-            _('\r\nPlugin name is: %s\r\nPlugin description is: %s\r\nLink: http://%s%s\r\n') % (plugin.name, plugin.description, domain, plugin_version.get_absolute_url()),
+            _("A new plugin version has been uploaded by %s.") % plugin.created_by,
+            _(
+                "\r\nPlugin name is: %s\r\nPlugin description is: %s\r\nLink: http://%s%s\r\n"
+            )
+            % (
+                plugin.name,
+                plugin.description,
+                domain,
+                plugin_version.get_absolute_url(),
+            ),
             mail_from,
             recipients,
-            fail_silently=True)
-        logging.debug('Sending email notification for %s plugin version, recipients:  %s' % (plugin_version, recipients))
+            fail_silently=True,
+        )
+        logging.debug(
+            "Sending email notification for %s plugin version, recipients:  %s"
+            % (plugin_version, recipients)
+        )
     else:
-        logging.warning('No recipients found for %s plugin version notification' % plugin_version)
-
+        logging.warning(
+            "No recipients found for %s plugin version notification" % plugin_version
+        )
 
 
 def plugin_approve_notify(plugin, msg, user):
@@ -113,24 +137,72 @@ def plugin_approve_notify(plugin, msg, user):
     if settings.QGIS_DEV_MAILING_LIST_ADDRESS:
         recipients.append(settings.QGIS_DEV_MAILING_LIST_ADDRESS)
     if plugin.approved:
-        approval_state = 'approval'
-        approved_state = 'approved'
+        approval_state = "approval"
     else:
-        approval_state = 'unapproval'
-        approved_state = 'unapproved'
+        approval_state = "unapproval"
 
     if len(recipients):
         domain = Site.objects.get_current().domain
         mail_from = settings.DEFAULT_FROM_EMAIL
-        logging.debug('Sending email %s notification for %s plugin, recipients:  %s' % (approval_state, plugin, recipients))
+        logging.debug(
+            "Sending email %s notification for %s plugin, recipients:  %s"
+            % (approval_state, plugin, recipients)
+        )
         send_mail_wrapper(
-          _('Plugin %s %s notification.') % (plugin, approval_state),
-          _('\r\nPlugin %s %s by %s.\r\n%s\r\nLink: http://%s%s\r\n') % (plugin.name, approval_state, user, msg, domain, plugin.get_absolute_url()),
-          mail_from,
-          recipients,
-          fail_silently=True)
+            _("Plugin %s %s notification.") % (plugin, approval_state),
+            _("\r\nPlugin %s %s by %s.\r\n%s\r\nLink: http://%s%s\r\n")
+            % (
+                plugin.name,
+                approval_state,
+                user,
+                msg,
+                domain,
+                plugin.get_absolute_url(),
+            ),
+            mail_from,
+            recipients,
+            fail_silently=True,
+        )
     else:
-        logging.warning('No recipients found for %s plugin %s notification' % (plugin, approval_state))
+        logging.warning(
+            "No recipients found for %s plugin %s notification"
+            % (plugin, approval_state)
+        )
+
+
+def version_feedback_notify(version,  user):
+    """
+    Sends a message when a version is receiving feedback.
+    """
+    if settings.DEBUG:
+        return
+    plugin = version.plugin
+    recipients = [u.email for u in plugin.editors if u.email]
+    if recipients:
+        domain = Site.objects.get_current().domain
+        mail_from = settings.DEFAULT_FROM_EMAIL
+        logging.debug(
+            "Sending email feedback notification for %s plugin version %s, recipients:  %s"
+            % (plugin, version.version, recipients)
+        )
+        send_mail_wrapper(
+            _("Plugin %s feedback notification.") % (plugin, ),
+            _("\r\nPlugin %s reviewed by %s and received a feedback.\r\nLink: http://%s%sfeedback/\r\n")
+            % (
+                plugin.name,
+                user,
+                domain,
+                version.get_absolute_url(),
+            ),
+            mail_from,
+            recipients,
+            fail_silently=True,
+        )
+    else:
+        logging.warning(
+            "No recipients found for %s plugin feedback notification"
+            % (plugin, )
+        )
 
 
 def user_trust_notify(user):
@@ -140,30 +212,33 @@ def user_trust_notify(user):
     if settings.DEBUG:
         return
     if user.is_staff:
-        logging.debug('Skipping trust notification for staff user %s' % user)
+        logging.debug("Skipping trust notification for staff user %s" % user)
     else:
         if user.email:
             recipients = [user.email]
             mail_from = settings.DEFAULT_FROM_EMAIL
 
-            if user.has_perm('plugins.can_approve'):
-                subject = _('User trust notification.')
-                message = _('\r\nYou can now approve your own plugins and the plugins you can edit.\r\n')
+            if user.has_perm("plugins.can_approve"):
+                subject = _("User trust notification.")
+                message = _(
+                    "\r\nYou can now approve your own plugins and the plugins you can edit.\r\n"
+                )
             else:
-                subject = _('User untrust notification.')
-                message = _('\r\nYou cannot approve any plugin.\r\n')
+                subject = _("User untrust notification.")
+                message = _("\r\nYou cannot approve any plugin.\r\n")
 
-            logging.debug('Sending email trust change notification to %s' % recipients)
+            logging.debug("Sending email trust change notification to %s" % recipients)
             send_mail_wrapper(
-            subject,
-            message,
-            mail_from,
-            recipients,
-            fail_silently=True)
+                subject, message, mail_from, recipients, fail_silently=True
+            )
         else:
-            logging.warning('No email found for %s user trust change notification' % user)
+            logging.warning(
+                "No email found for %s user trust change notification" % user
+            )
+
 
 ## Access control ##
+
 
 def check_plugin_access(user, plugin):
     """
@@ -184,7 +259,9 @@ def check_plugin_version_approval_rights(user, plugin):
         * is owner and is trusted
 
     """
-    return user.is_staff or (user in plugin.editors and user.has_perm('plugins.can_approve'))
+    return user.is_staff or (
+        user in plugin.editors and user.has_perm("plugins.can_approve")
+    )
 
 
 @login_required
@@ -194,11 +271,13 @@ def plugin_create(request):
     There is a more "automatic" alternative for creating new Plugins in a single step
     through package upload
     """
-    if request.method == 'POST':
+    if request.method == "POST":
         form = PluginForm(request.POST, request.FILES)
-        form.fields['owners'].queryset = User.objects.exclude(pk=request.user.pk).order_by('username')
+        form.fields["owners"].queryset = User.objects.exclude(
+            pk=request.user.pk
+        ).order_by("username")
         if form.is_valid():
-            plugin = form.save(commit = False)
+            plugin = form.save(commit=False)
             plugin.created_by = request.user
             plugin.save()
             plugin_notify(plugin)
@@ -207,10 +286,15 @@ def plugin_create(request):
             return HttpResponseRedirect(plugin.get_absolute_url())
     else:
         form = PluginForm()
-        form.fields['owners'].queryset = User.objects.exclude(pk=request.user.pk).order_by('username')
+        form.fields["owners"].queryset = User.objects.exclude(
+            pk=request.user.pk
+        ).order_by("username")
 
-    return render(request, 'plugins/plugin_form.html', { 'form' : form , 'form_title' : _('New plugin')})
-
+    return render(
+        request,
+        "plugins/plugin_form.html",
+        {"form": form, "form_title": _("New plugin")},
+    )
 
 
 @staff_required
@@ -248,63 +332,82 @@ def plugin_upload(request):
     uploads a package and creates a new Plugin with a new PluginVersion
     can also update an existing plugin
     """
-    if request.method == 'POST':
+    if request.method == "POST":
         form = PackageUploadForm(request.POST, request.FILES)
         if form.is_valid():
             try:
                 plugin_data = {
-                    'name'              : form.cleaned_data['name'],
-                    'package_name'      : form.cleaned_data['package_name'],
-                    'description'       : form.cleaned_data['description'],
-                    'created_by'        : request.user,
-                    'author'            : form.cleaned_data['author'],
-                    'email'             : form.cleaned_data['email'],
-                    'created_by'        : request.user,
-                    'icon'              : form.cleaned_data['icon_file'],
+                    "name": form.cleaned_data["name"],
+                    "package_name": form.cleaned_data["package_name"],
+                    "description": form.cleaned_data["description"],
+                    "created_by": request.user,
+                    "author": form.cleaned_data["author"],
+                    "email": form.cleaned_data["email"],
+                    "created_by": request.user,
+                    "icon": form.cleaned_data["icon_file"],
                 }
 
                 # Gets existing plugin
                 try:
-                    plugin = Plugin.objects.get(package_name=plugin_data['package_name'])
+                    plugin = Plugin.objects.get(
+                        package_name=plugin_data["package_name"]
+                    )
                     if not check_plugin_access(request.user, plugin):
-                        return render(request, 'plugins/plugin_permission_deny.html', {})
+                        return render(
+                            request, "plugins/plugin_permission_deny.html", {}
+                        )
                     # Apply new values
-                    plugin.name         = plugin_data['name']
-                    plugin.description  = plugin_data['description']
-                    plugin.author       = plugin_data['author']
-                    plugin.email        = plugin_data['email']
+                    plugin.name = plugin_data["name"]
+                    plugin.description = plugin_data["description"]
+                    plugin.author = plugin_data["author"]
+                    plugin.email = plugin_data["email"]
                     is_new = False
                 except Plugin.DoesNotExist:
                     plugin = Plugin(**plugin_data)
                     is_new = True
 
                 # Check icon, don't change if not valid
-                if plugin_data['icon']:
-                    plugin.icon         = plugin_data['icon']
+                if plugin_data["icon"]:
+                    plugin.icon = plugin_data["icon"]
 
                 # Server is optional
-                plugin.server = form.cleaned_data.get('server', False)
+                plugin.server = form.cleaned_data.get("server", False)
 
                 # Other optional fields
                 warnings = []
 
-                if form.cleaned_data.get('homepage'):
-                    plugin.homepage = form.cleaned_data.get('homepage')
+                if form.cleaned_data.get("homepage"):
+                    plugin.homepage = form.cleaned_data.get("homepage")
                 elif not plugin.homepage:
-                    warnings.append(_('<strong>homepage</strong> field is empty, this field is not required but is recommended, please consider adding it to metadata.'))
-                if form.cleaned_data.get('tracker'):
-                    plugin.tracker = form.cleaned_data.get('tracker')
+                    warnings.append(
+                        _(
+                            "<strong>homepage</strong> field is empty, this field is not required but is recommended, please consider adding it to metadata."
+                        )
+                    )
+                if form.cleaned_data.get("tracker"):
+                    plugin.tracker = form.cleaned_data.get("tracker")
                 elif not plugin.tracker:
-                    raise ValidationError(_('"tracker" metadata is required! Please add it to <code>metadata.txt</code>.'))
-                if form.cleaned_data.get('repository'):
-                    plugin.repository = form.cleaned_data.get('repository')
+                    raise ValidationError(
+                        _(
+                            '"tracker" metadata is required! Please add it to <code>metadata.txt</code>.'
+                        )
+                    )
+                if form.cleaned_data.get("repository"):
+                    plugin.repository = form.cleaned_data.get("repository")
                 elif not plugin.repository:
-                    raise ValidationError(_('"repository" metadata is required! Please add it to <code>metadata.txt</code>.'))
-                if form.cleaned_data.get('about'):
-                    plugin.about = form.cleaned_data.get('about')
+                    raise ValidationError(
+                        _(
+                            '"repository" metadata is required! Please add it to <code>metadata.txt</code>.'
+                        )
+                    )
+                if form.cleaned_data.get("about"):
+                    plugin.about = form.cleaned_data.get("about")
                 elif not plugin.about:
-                    raise ValidationError(_('"about" metadata is required! Please add it to <code>metadata.txt</code>.'))
-
+                    raise ValidationError(
+                        _(
+                            '"about" metadata is required! Please add it to <code>metadata.txt</code>.'
+                        )
+                    )
 
                 # Save main Plugin object
                 plugin.save()
@@ -313,20 +416,26 @@ def plugin_upload(request):
                     plugin_notify(plugin)
 
                 # Takes care of tags
-                if form.cleaned_data.get('tags'):
-                    plugin.tags.set(*[t.strip().lower() for t in form.cleaned_data.get('tags').split(',')])
+                if form.cleaned_data.get("tags"):
+                    plugin.tags.set(
+                        [
+                            t.strip().lower()
+                            for t in form.cleaned_data.get("tags").split(",")
+                        ]
+                    )
 
-                version_data =  {
-                    'plugin'            : plugin,
-                    'min_qg_version'    : form.cleaned_data.get('qgisMinimumVersion'),
-                    'max_qg_version'    : form.cleaned_data.get('qgisMaximumVersion'),
-                    'version'           : form.cleaned_data.get('version'),
-                    'created_by'        : request.user,
-                    'package'           : form.cleaned_data.get('package'),
-                    'approved'          : request.user.has_perm('plugins.can_approve') or plugin.approved,
-                    'experimental'      : form.cleaned_data.get('experimental'),
-                    'changelog'         : form.cleaned_data.get('changelog', ''),
-                    'external_deps'     : form.cleaned_data.get('external_deps', ''),
+                version_data = {
+                    "plugin": plugin,
+                    "min_qg_version": form.cleaned_data.get("qgisMinimumVersion"),
+                    "max_qg_version": form.cleaned_data.get("qgisMaximumVersion"),
+                    "version": form.cleaned_data.get("version"),
+                    "created_by": request.user,
+                    "package": form.cleaned_data.get("package"),
+                    "approved": request.user.has_perm("plugins.can_approve")
+                    or plugin.approved,
+                    "experimental": form.cleaned_data.get("experimental"),
+                    "changelog": form.cleaned_data.get("changelog", ""),
+                    "external_deps": form.cleaned_data.get("external_deps", ""),
                 }
 
                 new_version = PluginVersion(**version_data)
@@ -338,30 +447,37 @@ def plugin_upload(request):
                 generate_plugins_xml.delay()
 
                 if not new_version.approved:
-                    msg = _("Your plugin is awaiting approval from a staff member and will be approved as soon as possible.")
+                    msg = _(
+                        "Your plugin is awaiting approval from a staff member and will be approved as soon as possible."
+                    )
                     warnings.append(msg)
                     if not is_new:
                         version_notify(new_version)
-                if not  form.cleaned_data.get('metadata_source') == 'metadata.txt':
-                    msg = _("Your plugin does not contain a metadata.txt file, metadata have been read from the __init__.py file. This is deprecated and its support will eventually cease.")
+                if not form.cleaned_data.get("metadata_source") == "metadata.txt":
+                    msg = _(
+                        "Your plugin does not contain a metadata.txt file, metadata have been read from the __init__.py file. This is deprecated and its support will eventually cease."
+                    )
                     warnings.append(msg)
 
                 # Grouped messages:
                 if warnings:
-                    messages.warning(request, _('<p><strong>Warnings:</strong></p>') + '\n'.join([("<p>%s</p>" % w) for w in warnings]), fail_silently=True)
-
+                    messages.warning(
+                        request,
+                        _("<p><strong>Warnings:</strong></p>")
+                        + "\n".join([("<p>%s</p>" % w) for w in warnings]),
+                        fail_silently=True,
+                    )
 
             except (IntegrityError, ValidationError, DjangoUnicodeDecodeError) as e:
                 connection.close()
                 messages.error(request, e, fail_silently=True)
                 if not plugin.pk:
-                    return render(request, 'plugins/plugin_upload.html', { 'form' : form })
+                    return render(request, "plugins/plugin_upload.html", {"form": form})
             return HttpResponseRedirect(plugin.get_absolute_url())
     else:
         form = PackageUploadForm()
 
-    return render(request, 'plugins/plugin_upload.html', { 'form' : form })
-
+    return render(request, "plugins/plugin_upload.html", {"form": form})
 
 
 class PluginDetailView(DetailView):
@@ -373,21 +489,29 @@ class PluginDetailView(DetailView):
         return super(PluginDetailView, self).dispatch(*args, **kwargs)
 
     def get_context_data(self, **kwargs):
-        plugin = kwargs.get('object')
+        plugin = kwargs.get("object")
         context = super(PluginDetailView, self).get_context_data(**kwargs)
         # Warnings for owners
         if check_plugin_access(self.request.user, plugin):
             if not plugin.homepage:
-                msg = _('<strong>homepage</strong> metadata is missing, this is not required but recommended. Please consider adding "homepage" to  <code>metadata.txt</code>.')
+                msg = _(
+                    '<strong>homepage</strong> metadata is missing, this is not required but recommended. Please consider adding "homepage" to  <code>metadata.txt</code>.'
+                )
                 messages.warning(self.request, msg, fail_silently=True)
-            for md in set(PLUGIN_REQUIRED_METADATA)  - set(('version', 'qgisMinimumVersion')):
+            for md in set(PLUGIN_REQUIRED_METADATA) - set(
+                ("version", "qgisMinimumVersion")
+            ):
                 if not getattr(plugin, md, None):
-                    msg = _('<strong>%s</strong> metadata is missing, this metadata entry is <strong>required</strong>. Please add <strong>%s</strong> to <code>metadata.txt</code>.')% (md, md)
+                    msg = _(
+                        "<strong>%s</strong> metadata is missing, this metadata entry is <strong>required</strong>. Please add <strong>%s</strong> to <code>metadata.txt</code>."
+                    ) % (md, md)
                     messages.error(self.request, msg, fail_silently=True)
-        context.update({
-            'rating': int(plugin.rating.get_rating()),
-            'votes': plugin.rating.votes,
-        })
+        context.update(
+            {
+                "rating": int(plugin.rating.get_rating()),
+                "votes": plugin.rating.votes,
+            }
+        )
         return context
 
 
@@ -395,21 +519,27 @@ class PluginDetailView(DetailView):
 def plugin_delete(request, package_name):
     plugin = get_object_or_404(Plugin, package_name=package_name)
     if not check_plugin_access(request.user, plugin):
-        return render(request, 'plugins/plugin_permission_deny.html', {})
-    if 'delete_confirm' in request.POST:
+        return render(request, "plugins/plugin_permission_deny.html", {})
+    if "delete_confirm" in request.POST:
         plugin.delete()
         msg = _("The Plugin has been successfully deleted.")
         messages.success(request, msg, fail_silently=True)
-        return HttpResponseRedirect(reverse('approved_plugins'))
-    return render(request, 'plugins/plugin_delete_confirm.html', { 'plugin' : plugin })
+        return HttpResponseRedirect(reverse("approved_plugins"))
+    return render(request, "plugins/plugin_delete_confirm.html", {"plugin": plugin})
 
 
 def _check_optional_metadata(form, request):
     """
     Checks for the presence of optional metadata
     """
-    if not form.cleaned_data.get('homepage'):
-        messages.warning(request, _('Homepage field is empty, this field is not required but is recommended, please consider adding it to  <code>metadata.txt</code>.'), fail_silently=True)
+    if not form.cleaned_data.get("homepage"):
+        messages.warning(
+            request,
+            _(
+                "Homepage field is empty, this field is not required but is recommended, please consider adding it to  <code>metadata.txt</code>."
+            ),
+            fail_silently=True,
+        )
 
 
 @login_required
@@ -419,10 +549,12 @@ def plugin_update(request, package_name):
     """
     plugin = get_object_or_404(Plugin, package_name=package_name)
     if not check_plugin_access(request.user, plugin):
-        return render(request, 'plugins/plugin_permission_deny.html', {})
-    if request.method == 'POST':
+        return render(request, "plugins/plugin_permission_deny.html", {})
+    if request.method == "POST":
         form = PluginForm(request.POST, request.FILES, instance=plugin)
-        form.fields['owners'].queryset = User.objects.exclude(pk=plugin.created_by.pk).order_by('username')
+        form.fields["owners"].queryset = User.objects.exclude(
+            pk=plugin.created_by.pk
+        ).order_by("username")
         if form.is_valid():
             new_object = form.save(commit=False)
             new_object.modified_by = request.user
@@ -430,7 +562,7 @@ def plugin_update(request, package_name):
             # Without this next line the tags won't be saved.
             form.save_m2m()
             new_object.owners.clear()
-            for o in form.cleaned_data['owners']:
+            for o in form.cleaned_data["owners"]:
                 new_object.owners.add(o)
             msg = _("The Plugin has been successfully updated.")
             messages.success(request, msg, fail_silently=True)
@@ -440,17 +572,22 @@ def plugin_update(request, package_name):
 
             return HttpResponseRedirect(new_object.get_absolute_url())
     else:
-        form = PluginForm(instance = plugin)
-        form.fields['owners'].queryset = User.objects.exclude(pk=plugin.created_by.pk).order_by('username')
+        form = PluginForm(instance=plugin)
+        form.fields["owners"].queryset = User.objects.exclude(
+            pk=plugin.created_by.pk
+        ).order_by("username")
 
-    return render(request, 'plugins/plugin_form.html', { 'form' : form , 'form_title' : _('Edit plugin'), 'plugin' : plugin})
-
+    return render(
+        request,
+        "plugins/plugin_form.html",
+        {"form": form, "form_title": _("Edit plugin"), "plugin": plugin},
+    )
 
 
 class PluginsList(ListView):
     model = Plugin
     queryset = Plugin.approved_objects.all()
-    title =  _('All plugins')
+    title = _("All plugins")
     additional_context = {}
     paginate_by = settings.PAGINATION_DEFAULT_PAGINATION
 
@@ -459,7 +596,7 @@ class PluginsList(ListView):
         Paginate by specified value in querystring, or use default class property value.
         """
         try:
-            paginate_by = int(self.request.GET.get('per_page', self.paginate_by))
+            paginate_by = int(self.request.GET.get("per_page", self.paginate_by))
         except ValueError:
             paginate_by = self.paginate_by
         return paginate_by
@@ -470,9 +607,9 @@ class PluginsList(ListView):
     def get_queryset(self):
         qs = super(PluginsList, self).get_queryset()
         qs = self.get_filtered_queryset(qs)
-        sort_by = self.request.GET.get('sort', None)
+        sort_by = self.request.GET.get("sort", None)
         if sort_by:
-            if sort_by[0] == '-':
+            if sort_by[0] == "-":
                 _sort_by = sort_by[1:]
             else:
                 _sort_by = sort_by
@@ -480,41 +617,57 @@ class PluginsList(ListView):
             # Check if the sort criterion is a field or 'average_vote'
             # or 'latest_version_date'
             try:
-                (_sort_by == 'average_vote'
-                 or _sort_by == 'latest_version_date'
-                 or self.model._meta.get_field(_sort_by))
+                (
+                    _sort_by == "average_vote"
+                    or _sort_by == "latest_version_date"
+                    or self.model._meta.get_field(_sort_by)
+                )
             except FieldDoesNotExist:
                 return qs
             qs = qs.order_by(sort_by)
         else:
             # default
             if not qs.ordered:
-                qs = qs.order_by(Lower('name'))
+                qs = qs.order_by(Lower("name"))
         return qs
 
     def get_context_data(self, **kwargs):
         context = super(PluginsList, self).get_context_data(**kwargs)
-        context.update({
-            'title': self.title,
-        })
+        context.update(
+            {
+                "title": self.title,
+            }
+        )
         context.update(self.additional_context)
-        context['current_sort_query'] = self.get_sortstring()
-        context['current_querystring'] = self.get_querystring()
+        context["current_sort_query"] = self.get_sortstring()
+        context["current_querystring"] = self.get_querystring()
+        context["per_page_list"] = [20, 50, 75, 100]
+
+        try:
+            # Get the next value of per page from per_page_list
+            next_per_page_id = context["per_page_list"].index(context["paginator"].per_page) + 1
+            next_per_page = context["per_page_list"][next_per_page_id]
+        except (ValueError, IndexError):
+            # If the 'per_page' value in the request parameter 
+            # is not found in the 'per_page_list' or if the 
+            # next index is out of range, set the 'next_per_page' 
+            # value to a number greater than the total count 
+            # of records. This action effectively disables the button."
+            next_per_page = context["paginator"].count + 1
+        context["show_more_items_number"] = next_per_page
         return context
 
-
     def get_sortstring(self):
-        if self.request.GET.get('sort', None):
-            return 'sort=%s' % self.request.GET.get('sort')
-        return ''
-
+        if self.request.GET.get("sort", None):
+            return "sort=%s" % self.request.GET.get("sort")
+        return ""
 
     def get_querystring(self):
         """
         Clean existing query string (GET parameters) by removing
         arguments that we don't want to preserve (sort parameter, 'page')
         """
-        to_remove = ['page', 'sort']
+        to_remove = ["page", "sort"]
         query_string = urlparse(self.request.get_full_path()).query
         query_dict = parse_qs(query_string)
         for arg in to_remove:
@@ -525,67 +678,100 @@ class PluginsList(ListView):
 
 
 class MyPluginsList(PluginsList):
-
     def get_filtered_queryset(self, qs):
-        return Plugin.base_objects.filter(owners=self.request.user).distinct()\
-         | Plugin.objects.filter(created_by=self.request.user).distinct()
+        return (
+            Plugin.base_objects.filter(owners=self.request.user).distinct()
+            | Plugin.objects.filter(created_by=self.request.user).distinct()
+        )
 
 
 class UserPluginsList(PluginsList):
-
     def get_filtered_queryset(self, qs):
-        user = get_object_or_404(User, username=self.kwargs['username'])
+        user = get_object_or_404(User, username=self.kwargs["username"])
         return qs.filter(created_by=user)
 
 
 class AuthorPluginsList(PluginsList):
-
     def get_filtered_queryset(self, qs):
-        return qs.filter(author=unquote(self.kwargs['author']))
+        return qs.filter(author=unquote(self.kwargs["author"]))
 
     def get_context_data(self, **kwargs):
         context = super(AuthorPluginsList, self).get_context_data(**kwargs)
-        context.update({
-            'title' : _('Plugins by %s') % unquote(self.kwargs['author']),
-        })
+        context.update(
+            {
+                "title": _("Plugins by %s") % unquote(self.kwargs["author"]),
+            }
+        )
         return context
-
 
 
 class UserDetailsPluginsList(PluginsList):
     """
     List plugins created_by OR owned by user
     """
-    template_name = 'plugins/user.html'
+
+    template_name = "plugins/user.html"
+
     def get_filtered_queryset(self, qs):
-        user = get_object_or_404(User, username=self.kwargs['username'])
+        user = get_object_or_404(User, username=self.kwargs["username"])
         return qs.filter(Q(created_by=user) | Q(owners=user))
 
     def get_context_data(self, **kwargs):
-        user = get_object_or_404(User, username=self.kwargs['username'])
-        user_is_trusted = user.has_perm('plugins.can_approve')
+        user = get_object_or_404(User, username=self.kwargs["username"])
+        user_is_trusted = user.has_perm("plugins.can_approve")
         context = super(UserDetailsPluginsList, self).get_context_data(**kwargs)
-        context.update({
-            'title' : _('Plugins from %s') % user,
-            'user_is_trusted' : user_is_trusted,
-            'plugin_user': user,
-        })
+        context.update(
+            {
+                "title": _("Plugins from %s") % user,
+                "user_is_trusted": user_is_trusted,
+                "plugin_user": user,
+            }
+        )
         return context
 
 
 class TagsPluginsList(PluginsList):
-
     def get_filtered_queryset(self, qs):
-        return (
-            qs.filter(tagged_items__tag__slug=unquote(self.kwargs['tags']))
-        )
+        return qs.filter(tagged_items__tag__slug=unquote(self.kwargs["tags"]))
 
     def get_context_data(self, **kwargs):
         context = super(TagsPluginsList, self).get_context_data(**kwargs)
-        context.update({
-            'title' : _('Plugins tagged with: %s') % unquote(self.kwargs['tags']),
-        })
+        context.update(
+            {
+                "title": _("Plugins tagged with: %s") % unquote(self.kwargs["tags"]),
+                "page_title": _("Tag: %s") % unquote(self.kwargs["tags"])
+            }
+        )
         return context
+
+
+class FeedbackReceivedPluginsList(PluginsList):
+    """List of Plugins that has feedback received in its versions.
+
+    The plugins editor can only see their plugin feedbacks.
+    The staff can see all plugin feedbacks.
+    """
+    queryset = Plugin.feedback_received_objects.all()
+
+    def get_filtered_queryset(self, qs):
+        user = get_object_or_404(User, username=self.request.user)
+        if not user.is_staff:
+            raise Http404
+        return qs
+
+
+class FeedbackPendingPluginsList(PluginsList):
+    """List of Plugins that has feedback pending in its versions.
+
+    Only staff can see plugin feedback list.
+    """
+    queryset = Plugin.feedback_pending_objects.all()
+
+    def get_filtered_queryset(self, qs):
+        user = get_object_or_404(User, username=self.request.user)
+        if not user.is_staff:
+            raise Http404
+        return qs
 
 
 @login_required
@@ -594,15 +780,14 @@ def plugin_manage(request, package_name):
     """
     Entry point for the plugin management functions
     """
-    if request.POST.get('set_featured'):
+    if request.POST.get("set_featured"):
         return plugin_set_featured(request, package_name)
-    if request.POST.get('unset_featured'):
+    if request.POST.get("unset_featured"):
         return plugin_unset_featured(request, package_name)
-    if request.POST.get('delete'):
+    if request.POST.get("delete"):
         return plugin_delete(request, package_name)
 
-    return HttpResponseRedirect(reverse('user_details', args=[username]))
-
+    return HttpResponseRedirect(reverse("user_details", args=[username]))
 
 
 ###############################################
@@ -624,7 +809,7 @@ def user_block(request, username):
     user.save()
     msg = _("The user %s is now blocked." % user)
     messages.success(request, msg, fail_silently=True)
-    return HttpResponseRedirect(reverse('user_details', args=[user.username]))
+    return HttpResponseRedirect(reverse("user_details", args=[user.username]))
 
 
 @staff_required
@@ -639,7 +824,7 @@ def user_unblock(request, username):
     user.save()
     msg = _("The user %s is now unblocked." % user)
     messages.success(request, msg, fail_silently=True)
-    return HttpResponseRedirect(reverse('user_details', args=[user.username]))
+    return HttpResponseRedirect(reverse("user_details", args=[user.username]))
 
 
 @staff_required
@@ -649,11 +834,16 @@ def user_trust(request, username):
     Assigns can_approve permission to the plugin creator
     """
     user = get_object_or_404(User, username=username)
-    user.user_permissions.add(Permission.objects.get(codename='can_approve', content_type=ContentType.objects.get(app_label="plugins", model='plugin')))
+    user.user_permissions.add(
+        Permission.objects.get(
+            codename="can_approve",
+            content_type=ContentType.objects.get(app_label="plugins", model="plugin"),
+        )
+    )
     msg = _("The user %s is now a trusted user." % user)
     messages.success(request, msg, fail_silently=True)
     user_trust_notify(user)
-    return HttpResponseRedirect(reverse('user_details', args=[user.username]))
+    return HttpResponseRedirect(reverse("user_details", args=[user.username]))
 
 
 @staff_required
@@ -663,11 +853,16 @@ def user_untrust(request, username):
     Revokes can_approve permission to the plugin creator
     """
     user = get_object_or_404(User, username=username)
-    user.user_permissions.remove(Permission.objects.get(codename='can_approve', content_type=ContentType.objects.get(app_label="plugins", model='plugin')))
+    user.user_permissions.remove(
+        Permission.objects.get(
+            codename="can_approve",
+            content_type=ContentType.objects.get(app_label="plugins", model="plugin"),
+        )
+    )
     msg = _("The user %s is now an untrusted user." % user)
     messages.success(request, msg, fail_silently=True)
     user_trust_notify(user)
-    return HttpResponseRedirect(reverse('user_details', args=[user.username]))
+    return HttpResponseRedirect(reverse("user_details", args=[user.username]))
 
 
 @staff_required
@@ -676,16 +871,16 @@ def user_permissions_manage(request, username):
     """
     Entry point for the user management functions
     """
-    if request.POST.get('user_block'):
+    if request.POST.get("user_block"):
         return user_block(request, username)
-    if request.POST.get('user_unblock'):
+    if request.POST.get("user_unblock"):
         return user_unblock(request, username)
-    if request.POST.get('user_trust'):
+    if request.POST.get("user_trust"):
         return user_trust(request, username)
-    if request.POST.get('user_untrust'):
+    if request.POST.get("user_untrust"):
         return user_untrust(request, username)
 
-    return HttpResponseRedirect(reverse('user_details', args=[username]))
+    return HttpResponseRedirect(reverse("user_details", args=[username]))
 
 
 ###############################################
@@ -699,16 +894,23 @@ def _main_plugin_update(request, plugin, form):
     """
     Updates the main plugin object from version metadata
     """
+    # Check if update name from metadata is allowed
+    metadata_fields = ["author", "email", "description", "about", "homepage", "tracker"]
+    if plugin.allow_update_name:
+        metadata_fields.insert(0, "name")
+
     # Update plugin from metadata
-    for f in ['name', 'author', 'email', 'description', 'about', 'homepage', 'tracker']:
+    for f in metadata_fields:
         if form.cleaned_data.get(f):
             setattr(plugin, f, form.cleaned_data.get(f))
 
     # Icon has a special treatment
-    if form.cleaned_data.get('icon_file'):
-        setattr(plugin, 'icon', form.cleaned_data.get('icon_file'))
-    if form.cleaned_data.get('tags'):
-        plugin.tags.set(*[t.strip().lower() for t in form.cleaned_data.get('tags').split(',')])
+    if form.cleaned_data.get("icon_file"):
+        setattr(plugin, "icon", form.cleaned_data.get("icon_file"))
+    if form.cleaned_data.get("tags"):
+        plugin.tags.set(
+            [t.strip().lower() for t in form.cleaned_data.get("tags").split(",")]
+        )
     plugin.save()
 
 
@@ -721,12 +923,19 @@ def version_create(request, package_name):
     """
     plugin = get_object_or_404(Plugin, package_name=package_name)
     if not check_plugin_access(request.user, plugin):
-        return render(request, 'plugins/version_permission_deny.html', { 'plugin' : plugin })
+        return render(
+            request, "plugins/version_permission_deny.html", {"plugin": plugin}
+        )
 
-    version = PluginVersion(plugin = plugin, created_by = request.user)
-    if request.method == 'POST':
+    version = PluginVersion(plugin=plugin, created_by=request.user)
+    if request.method == "POST":
 
-        form = PluginVersionForm(request.POST, request.FILES, instance=version, is_trusted=request.user.has_perm('plugins.can_approve'))
+        form = PluginVersionForm(
+            request.POST,
+            request.FILES,
+            instance=version,
+            is_trusted=request.user.has_perm("plugins.can_approve"),
+        )
         if form.is_valid():
             try:
                 new_object = form.save()
@@ -734,13 +943,19 @@ def version_create(request, package_name):
                 messages.success(request, msg, fail_silently=True)
                 # The approved flag is also controlled in the form, but we
                 # are checking it here in any case for additional security
-                if not request.user.has_perm('plugins.can_approve'):
+                if not request.user.has_perm("plugins.can_approve"):
                     new_object.approved = False
                     new_object.save()
-                    messages.warning(request, _('You do not have approval permissions, plugin version has been set unapproved.'), fail_silently=True)
+                    messages.warning(
+                        request,
+                        _(
+                            "You do not have approval permissions, plugin version has been set unapproved."
+                        ),
+                        fail_silently=True,
+                    )
                     version_notify(new_object)
-                if form.cleaned_data.get('icon_file'):
-                    form.cleaned_data['icon'] = form.cleaned_data.get('icon_file')
+                if form.cleaned_data.get("icon_file"):
+                    form.cleaned_data["icon"] = form.cleaned_data.get("icon_file")
                 _main_plugin_update(request, new_object.plugin, form)
                 _check_optional_metadata(form, request)
                 return HttpResponseRedirect(new_object.plugin.get_absolute_url())
@@ -749,13 +964,15 @@ def version_create(request, package_name):
                 connection.close()
             return HttpResponseRedirect(plugin.get_absolute_url())
     else:
-        form = PluginVersionForm(is_trusted=request.user.has_perm('plugins.can_approve'))
+        form = PluginVersionForm(
+            is_trusted=request.user.has_perm("plugins.can_approve")
+        )
 
-    return render(request, 'plugins/version_form.html', {
-        'form' : form,
-        'plugin' : plugin,
-        'form_title' : _('New version for plugin')
-    })
+    return render(
+        request,
+        "plugins/version_form.html",
+        {"form": form, "plugin": plugin, "form_title": _("New version for plugin")},
+    )
 
 
 @login_required
@@ -763,13 +980,20 @@ def version_update(request, package_name, version):
     """
     The form will update versions according to permissions
     """
-    plugin =  get_object_or_404(Plugin, package_name=package_name)
+    plugin = get_object_or_404(Plugin, package_name=package_name)
     version = get_object_or_404(PluginVersion, plugin=plugin, version=version)
     if not check_plugin_access(request.user, plugin):
-        return render(request, 'plugins/version_permission_deny.html', { 'plugin' : plugin })
+        return render(
+            request, "plugins/version_permission_deny.html", {"plugin": plugin}
+        )
 
-    if request.method == 'POST':
-        form = PluginVersionForm(request.POST, request.FILES, instance=version, is_trusted=request.user.has_perm('plugins.can_approve'))
+    if request.method == "POST":
+        form = PluginVersionForm(
+            request.POST,
+            request.FILES,
+            instance=version,
+            is_trusted=request.user.has_perm("plugins.can_approve"),
+        )
         if form.is_valid():
             try:
                 new_object = form.save()
@@ -782,30 +1006,40 @@ def version_update(request, package_name, version):
                 connection.close()
             return HttpResponseRedirect(plugin.get_absolute_url())
     else:
-        form = PluginVersionForm(instance=version, is_trusted=request.user.has_perm('plugins.can_approve'))
+        form = PluginVersionForm(
+            instance=version, is_trusted=request.user.has_perm("plugins.can_approve")
+        )
 
-    return render(request, 'plugins/version_form.html', {
-        'form' : form,
-        'plugin' : plugin,
-        'version' : version,
-        'form_title' : _('Edit version for plugin')
-    })
-
+    return render(
+        request,
+        "plugins/version_form.html",
+        {
+            "form": form,
+            "plugin": plugin,
+            "version": version,
+            "form_title": _("Edit version for plugin"),
+        },
+    )
 
 
 @login_required
 def version_delete(request, package_name, version):
-    plugin =  get_object_or_404(Plugin, package_name=package_name)
+    plugin = get_object_or_404(Plugin, package_name=package_name)
     version = get_object_or_404(PluginVersion, plugin=plugin, version=version)
     if not check_plugin_access(request.user, plugin):
-        return render(request, 'plugins/version_permission_deny.html', {})
-    if 'delete_confirm' in request.POST:
+        return render(request, "plugins/version_permission_deny.html", {})
+    if "delete_confirm" in request.POST:
         version.delete()
         msg = _("The Plugin Version has been successfully deleted.")
         messages.success(request, msg, fail_silently=True)
-        return HttpResponseRedirect(reverse('plugin_detail', args=(plugin.package_name,)))
-    return render(request, 'plugins/version_delete_confirm.html', { 'plugin' : plugin, 'version' : version })
-
+        return HttpResponseRedirect(
+            reverse("plugin_detail", args=(plugin.package_name,))
+        )
+    return render(
+        request,
+        "plugins/version_delete_confirm.html",
+        {"plugin": plugin, "version": version},
+    )
 
 
 @login_required
@@ -814,7 +1048,7 @@ def version_approve(request, package_name, version):
     """
     Approves the plugin version
     """
-    plugin =  get_object_or_404(Plugin, package_name=package_name)
+    plugin = get_object_or_404(Plugin, package_name=package_name)
     version = get_object_or_404(PluginVersion, plugin=plugin, version=version)
     if not check_plugin_version_approval_rights(request.user, version.plugin):
         msg = _("You do not have approval rights for this plugin.")
@@ -822,11 +1056,11 @@ def version_approve(request, package_name, version):
         return HttpResponseRedirect(version.get_absolute_url())
     version.approved = True
     version.save()
-    msg = _("The plugin version \"%s\" is now approved" % version)
+    msg = _('The plugin version "%s" is now approved' % version)
     messages.success(request, msg, fail_silently=True)
     plugin_approve_notify(version.plugin, msg, request.user)
     try:
-        redirect_to = request.META['HTTP_REFERER']
+        redirect_to = request.META["HTTP_REFERER"]
     except:
         redirect_to = version.get_absolute_url()
     return HttpResponseRedirect(redirect_to)
@@ -838,7 +1072,7 @@ def version_unapprove(request, package_name, version):
     """
     unapproves the plugin version
     """
-    plugin =  get_object_or_404(Plugin, package_name=package_name)
+    plugin = get_object_or_404(Plugin, package_name=package_name)
     version = get_object_or_404(PluginVersion, plugin=plugin, version=version)
     if not check_plugin_version_approval_rights(request.user, version.plugin):
         msg = _("You do not have approval rights for this plugin.")
@@ -846,15 +1080,14 @@ def version_unapprove(request, package_name, version):
         return HttpResponseRedirect(version.get_absolute_url())
     version.approved = False
     version.save()
-    msg = _("The plugin version \"%s\" is now unapproved" % version)
+    msg = _('The plugin version "%s" is now unapproved' % version)
     messages.success(request, msg, fail_silently=True)
     plugin_approve_notify(version.plugin, msg, request.user)
     try:
-        redirect_to = request.META['HTTP_REFERER']
+        redirect_to = request.META["HTTP_REFERER"]
     except:
         redirect_to = version.get_absolute_url()
     return HttpResponseRedirect(redirect_to)
-
 
 
 @login_required
@@ -863,31 +1096,141 @@ def version_manage(request, package_name, version):
     """
     Entry point for the user management functions
     """
-    if 'version_approve' in request.POST:
+    if "version_approve" in request.POST:
         return version_approve(request, package_name, version)
-    if 'version_unapprove' in request.POST:
+    if "version_unapprove" in request.POST:
         return version_unapprove(request, package_name, version)
 
-    return HttpResponseRedirect(reverse('plugin_detail', args=[package_name]))
+    return HttpResponseRedirect(reverse("plugin_detail", args=[package_name]))
+
+
+@login_required
+@never_cache
+def version_feedback(request, package_name, version):
+    """
+    The form will add a comment/ feedback for the package version.
+    """
+    plugin = get_object_or_404(Plugin, package_name=package_name)
+    version = get_object_or_404(PluginVersion, plugin=plugin, version=version)
+    is_user_plugin_owner: bool = request.user in plugin.editors
+    is_user_has_approval_rights: bool = check_plugin_version_approval_rights(
+        request.user, plugin)
+    if not is_user_plugin_owner and not is_user_has_approval_rights:
+        return render(
+            request,
+            template_name="plugins/version_permission_deny.html",
+            context={},
+            status=403
+        )
+    if request.method == "POST":
+        form = VersionFeedbackForm(request.POST)
+        if form.is_valid():
+            tasks = form.cleaned_data['tasks']
+            for task in tasks:
+                PluginVersionFeedback.objects.create(
+                    version=version,
+                    reviewer=request.user,
+                    task=task
+                )
+            version_feedback_notify(version, request.user)
+    form = VersionFeedbackForm()
+    feedbacks = PluginVersionFeedback.objects.filter(version=version)
+    return render(
+        request,
+        "plugins/plugin_feedback.html",
+        {
+            "feedbacks": feedbacks,
+            "form": form,
+            "version": version,
+            "is_user_has_approval_rights": is_user_has_approval_rights,
+            "is_user_plugin_owner": is_user_plugin_owner
+        }
+    )
+
+
+@login_required
+@require_POST
+def version_feedback_update(request, package_name, version):
+    plugin = get_object_or_404(Plugin, package_name=package_name)
+    version = get_object_or_404(PluginVersion, plugin=plugin, version=version)
+    has_update_permission: bool = (
+        request.user in plugin.editors
+        or check_plugin_version_approval_rights(request.user, plugin)
+    )
+    if not has_update_permission:
+        return JsonResponse({"success": False}, status=401)
+    completed_tasks = request.POST.getlist('completed_tasks')
+    for task_id in completed_tasks:
+        try:
+            task_id = int(task_id)
+        except ValueError:
+            continue
+        feedback = PluginVersionFeedback.objects.filter(
+            version=version, pk=task_id).first()
+        feedback.is_completed = True
+        feedback.save()
+    return JsonResponse({"success": True}, status=201)
+
+
+@login_required
+@require_POST
+def version_feedback_delete(request, package_name, version, feedback):
+    feedback = get_object_or_404(
+        PluginVersionFeedback,
+        version__plugin__package_name=package_name,
+        version__version=version,
+        pk=feedback
+    )
+    plugin = feedback.version.plugin
+    status = request.POST.get('status_feedback')
+    is_update_succeed: bool = False
+    is_user_can_update_feedback: bool = (
+            request.user in plugin.editors
+            or check_plugin_version_approval_rights(request.user, plugin)
+    )
+    if status == "deleted" and feedback.reviewer == request.user:
+        feedback.delete()
+        is_update_succeed: bool = True
+    elif (status == "completed" or status == "uncompleted") and (
+            is_user_can_update_feedback):
+        feedback.is_completed = (status == "completed")
+        feedback.save()
+        is_update_succeed: bool = True
+    return JsonResponse({"success": is_update_succeed})
 
 
 def version_download(request, package_name, version):
     """
     Update download counter(s)
     """
-    plugin =  get_object_or_404(Plugin, package_name=package_name)
+    plugin = get_object_or_404(Plugin, package_name=package_name)
     version = get_object_or_404(PluginVersion, plugin=plugin, version=version)
     version.downloads = version.downloads + 1
     version.save()
     plugin = version.plugin
     plugin.downloads = plugin.downloads + 1
     plugin.save(keep_date=True)
+
+    download_record, created = PluginVersionDownload.objects.get_or_create(
+        plugin_version = version, 
+        download_date = now().date(), 
+        defaults = {'download_count': 1}
+    )
+    if not created:
+        download_record.download_count = (
+            download_record.download_count + 1
+        )
+        download_record.save()
+
     if not version.package.file.file.closed:
         version.package.file.file.close()
-    zipfile = open(version.package.file.name, 'rb')
+    zipfile = open(version.package.file.name, "rb")
     file_content = zipfile.read()
-    response = HttpResponse(file_content, content_type='application/zip')
-    response['Content-Disposition'] = 'attachment; filename=%s-%s.zip' % (version.plugin.package_name, version.version)
+    response = HttpResponse(file_content, content_type="application/zip")
+    response["Content-Disposition"] = "attachment; filename=%s-%s.zip" % (
+        version.plugin.package_name,
+        version.version,
+    )
     return response
 
 
@@ -895,9 +1238,9 @@ def version_detail(request, package_name, version):
     """
     Show version details
     """
-    plugin =  get_object_or_404(Plugin, package_name=package_name)
+    plugin = get_object_or_404(Plugin, package_name=package_name)
     version = get_object_or_404(PluginVersion, plugin=plugin, version=version)
-    return render(request, 'plugins/version_detail.html', {'version' : version })
+    return render(request, "plugins/version_detail.html", {"version": version})
 
 
 ###############################################
@@ -940,9 +1283,21 @@ def xml_plugins(request, qg_version=None, stable_only=None, package_name=None):
         * package_name: Plugin.package_name
 
     """
-    qg_version = qg_version if qg_version is not None else vjust(request.GET.get('qgis', '1.8.0'), fillchar='0', level=2, force_zero=True)
-    stable_only = stable_only if stable_only is not None else request.GET.get('stable_only', '0')
-    package_name = package_name if package_name is not None else request.GET.get('package_name', None)
+    qg_version = (
+        qg_version
+        if qg_version is not None
+        else vjust(
+            request.GET.get("qgis", "1.8.0"), fillchar="0", level=2, force_zero=True
+        )
+    )
+    stable_only = (
+        stable_only if stable_only is not None else request.GET.get("stable_only", "0")
+    )
+    package_name = (
+        package_name
+        if package_name is not None
+        else request.GET.get("package_name", None)
+    )
 
     filters = {}
     version_filters = {}
@@ -954,55 +1309,82 @@ def xml_plugins(request, qg_version=None, stable_only=None, package_name=None):
         filters.update({'pluginversion__max_qg_version__gte' : _add_patch_version(qg_version, '0')})
         version_filters.update({'max_qg_version__gte' : _add_patch_version(qg_version, '0')})
 
-
     # Get all versions for the given plugin)
     if package_name:
-        filters.update({'package_name' : package_name})
+        filters.update({"package_name": package_name})
         try:
             plugin = Plugin.approved_objects.get(**filters)
             plugin_version_filters = copy.copy(version_filters)
-            plugin_version_filters.update({'plugin' : plugin})
-            for plugin_version in PluginVersion.stable_objects.filter(**plugin_version_filters):
+            plugin_version_filters.update({"plugin": plugin})
+            for plugin_version in PluginVersion.stable_objects.filter(
+                **plugin_version_filters
+            ):
                 object_list.append(plugin_version)
-            if stable_only != '1':
-                for plugin_version in PluginVersion.experimental_objects.filter(**plugin_version_filters):
+            if stable_only != "1":
+                for plugin_version in PluginVersion.experimental_objects.filter(
+                    **plugin_version_filters
+                ):
                     object_list.append(plugin_version)
         except Plugin.DoesNotExist:
             pass
     else:
 
         # Checked the cached plugins
-        qgis_version = request.GET.get('qgis', None)
-        qgis_filename = 'plugins_{}.xml'.format(qgis_version)
-        folder_name = os.path.join(
-            settings.MEDIA_ROOT,
-            'cached_xmls'
-        )
+        qgis_version = request.GET.get("qgis", None)
+        qgis_filename = "plugins_{}.xml".format(qgis_version)
+        folder_name = os.path.join(settings.MEDIA_ROOT, "cached_xmls")
         path_file = os.path.join(folder_name, qgis_filename)
         if os.path.exists(path_file):
-            return HttpResponse(
-                open(path_file).read(), content_type='application/xml')
+            return HttpResponse(open(path_file).read(), content_type="application/xml")
 
-        trusted_users_ids = list(zip(*User.objects.filter(Q(user_permissions__codename='can_approve', user_permissions__content_type__app_label='plugins') | Q(is_superuser=True)).distinct().values_list('id')))[0]
-        qs = Plugin.approved_objects.filter(**filters).annotate(is_trusted=RawSQL('%s.created_by_id in (%s)' % (Plugin._meta.db_table, (',').join([str(tu) for tu in trusted_users_ids])), ()))
+        trusted_users_ids = list(
+            zip(
+                *User.objects.filter(
+                    Q(
+                        user_permissions__codename="can_approve",
+                        user_permissions__content_type__app_label="plugins",
+                    )
+                    | Q(is_superuser=True)
+                )
+                .distinct()
+                .values_list("id")
+            )
+        )[0]
+        qs = Plugin.approved_objects.filter(**filters).annotate(
+            is_trusted=RawSQL(
+                "%s.created_by_id in (%s)"
+                % (
+                    Plugin._meta.db_table,
+                    (",").join([str(tu) for tu in trusted_users_ids]),
+                ),
+                (),
+            )
+        )
         for plugin in qs:
             plugin_version_filters = copy.copy(version_filters)
-            plugin_version_filters.update({'plugin_id' : plugin.pk})
+            plugin_version_filters.update({"plugin_id": plugin.pk})
             try:
                 data = PluginVersion.stable_objects.filter(**plugin_version_filters)[0]
-                setattr(data, 'is_trusted', plugin.is_trusted)
+                setattr(data, "is_trusted", plugin.is_trusted)
                 object_list.append(data)
             except IndexError:
                 pass
-            if stable_only != '1':
+            if stable_only != "1":
                 try:
-                    data = PluginVersion.experimental_objects.filter(**plugin_version_filters)[0]
-                    setattr(data, 'is_trusted', plugin.is_trusted)
+                    data = PluginVersion.experimental_objects.filter(
+                        **plugin_version_filters
+                    )[0]
+                    setattr(data, "is_trusted", plugin.is_trusted)
                     object_list.append(data)
                 except IndexError:
                     pass
 
-    return render(request, 'plugins/plugins.xml', {'object_list': object_list}, content_type='text/xml')
+    return render(
+        request,
+        "plugins/plugins.xml",
+        {"object_list": object_list},
+        content_type="text/xml",
+    )
 
 
 @cache_page(60 * 15)
@@ -1017,9 +1399,21 @@ def xml_plugins_new(request, qg_version=None, stable_only=None, package_name=Non
         * package_name: Plugin.package_name
 
     """
-    qg_version = qg_version if qg_version is not None else vjust(request.GET.get('qgis', '1.8.0'), fillchar='0', level=2, force_zero=True)
-    stable_only = stable_only if stable_only is not None else request.GET.get('stable_only', '0')
-    package_name = package_name if package_name is not None else request.GET.get('package_name', None)
+    qg_version = (
+        qg_version
+        if qg_version is not None
+        else vjust(
+            request.GET.get("qgis", "1.8.0"), fillchar="0", level=2, force_zero=True
+        )
+    )
+    stable_only = (
+        stable_only if stable_only is not None else request.GET.get("stable_only", "0")
+    )
+    package_name = (
+        package_name
+        if package_name is not None
+        else request.GET.get("package_name", None)
+    )
 
     filters = {}
     version_filters = {}
@@ -1033,15 +1427,19 @@ def xml_plugins_new(request, qg_version=None, stable_only=None, package_name=Non
 
     # Get all versions for the given plugin
     if package_name:
-        filters.update({'package_name' : package_name})
+        filters.update({"package_name": package_name})
         try:
             plugin = Plugin.approved_objects.get(**filters)
             plugin_version_filters = copy.copy(version_filters)
-            plugin_version_filters.update({'plugin' : plugin})
-            for plugin_version in PluginVersion.stable_objects.filter(**plugin_version_filters):
+            plugin_version_filters.update({"plugin": plugin})
+            for plugin_version in PluginVersion.stable_objects.filter(
+                **plugin_version_filters
+            ):
                 object_list.append(plugin_version)
-            if stable_only != '1':
-                for plugin_version in PluginVersion.experimental_objects.filter(**plugin_version_filters):
+            if stable_only != "1":
+                for plugin_version in PluginVersion.experimental_objects.filter(
+                    **plugin_version_filters
+                ):
                     object_list.append(plugin_version)
         except Plugin.DoesNotExist:
             pass
@@ -1050,7 +1448,7 @@ def xml_plugins_new(request, qg_version=None, stable_only=None, package_name=Non
 
         # Fast lane: uses raw queries
 
-        trusted_users_ids = '''
+        trusted_users_ids = """
         (SELECT DISTINCT "auth_user"."id"
             FROM "auth_user"
             LEFT OUTER JOIN "auth_user_user_permissions"
@@ -1062,9 +1460,9 @@ def xml_plugins_new(request, qg_version=None, stable_only=None, package_name=Non
         WHERE (("auth_permission"."codename" = 'can_approve'
             AND "django_content_type"."app_label" = 'plugins')
             OR "auth_user"."is_superuser" = True))
-        '''
+        """
 
-        sql = '''
+        sql = """
         SELECT DISTINCT ON (pv.plugin_id) pv.*,
         pv.created_by_id IN %(trusted_users_ids)s AS is_trusted
             FROM %(pv_table)s pv
@@ -1075,8 +1473,20 @@ def xml_plugins_new(request, qg_version=None, stable_only=None, package_name=Non
                 AND pv.experimental = %(experimental)s
             )
             ORDER BY pv.plugin_id, pv.version DESC
-        '''
+        """
 
+        object_list_new = PluginVersion.objects.raw(
+            sql
+            % {
+                "pv_table": PluginVersion._meta.db_table,
+                "p_table": Plugin._meta.db_table,
+                "qg_version": qg_version,
+                "qg_version_with_patch_0": _add_patch_version(qg_version, '0'),
+                "qg_version_with_patch_99": _add_patch_version(qg_version, '99'),
+                "experimental": "False",
+                "trusted_users_ids": str(trusted_users_ids),
+            }
+        )
 
         object_list_new = PluginVersion.objects.raw(sql % {
             'pv_table': PluginVersion._meta.db_table,
@@ -1100,5 +1510,9 @@ def xml_plugins_new(request, qg_version=None, stable_only=None, package_name=Non
                 'trusted_users_ids': str(trusted_users_ids),
             })]
 
-
-    return render(request, 'plugins/plugins.xml', {'object_list': object_list_new}, content_type='text/xml')
+    return render(
+        request,
+        "plugins/plugins.xml",
+        {"object_list": object_list_new},
+        content_type="text/xml",
+    )

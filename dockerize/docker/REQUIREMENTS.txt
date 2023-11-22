@@ -37,6 +37,11 @@ git+https://github.com/dimasciput/feedjack.git
 feedparser==5.2.1
 celery==5.2.7
 django-celery-beat==2.3.0
+
+# pin due to issues with a breaking change
+# https://github.com/celery/celery/issues/7783
+importlib_metadata<5
+
 requests==2.23.0
 
 markdown==3.2.1

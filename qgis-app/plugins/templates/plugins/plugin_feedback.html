@@ -1,0 +1,170 @@
+{% extends 'plugins/plugin_base.html' %}{% load i18n %}
+{% block content %}
+    {% if form.errors %}
+    <div class="alert alert-error">
+        <button type="button" class="close" data-dismiss="alert">&times;</button>
+        <p>{% trans "The form contains errors and cannot be submitted, please check the fields highlighted in red." %}</p>
+    </div>
+    {% endif %}
+    {% if form.non_field_errors %}
+    <div class="alert alert-error">
+        <button type="button" class="close" data-dismiss="alert">&times;</button>
+        {% for error in form.non_field_errors %}
+            <p>{{ error }}</p>
+        {% endfor %}
+    </div>
+    {% endif %}
+    <h2>{% trans "Feedback Plugin" %} {{ version.plugin.name }} {{ version.version }}</h2>
+    <div class="feedback-list">
+        <p>Please tick the checkbox when the task is completed and click the "Update" button to update status.</p>
+        {% for feedback in feedbacks %}
+        <div class=" previous-feedback {% if feedback.reviewer == request.user %}with-box{% endif %}" data-feedback-id="{{ feedback.id }}">
+            <input type="checkbox" class="statusCheckbox pull-left" name="statusCheckbox" data-feedback-id="{{ feedback.id }}" {% if feedback.is_completed %}checked disabled{% endif %}>
+            <label class="feedback">
+                {{ feedback.task }}
+                <span class="feedback-info"> &mdash;{% if feedback.reviewer.first_name %}{{ feedback.reviewer.first_name }} {{ feedback.reviewer.last_name }}{% else %}{{ feedback.reviewer.username }}{% endif %}
+                    wrote {{ feedback.created_on|timesince }} ago
+                </span>
+            </label>
+            {% if feedback.reviewer == request.user %}
+            <button type="button" class="btn btn-danger btn-mini deleteButton pull-right" data-feedback-id="{{ feedback.id }}"><i class="icon-remove"></i></button>
+            {% endif %}
+        </div>
+        {% endfor %}
+        {% if feedbacks %}
+        <div class="text-center update-feedback">
+            <button type="button" id="updateButton" class="btn btn-primary">Update</button>
+        </div>
+        {% endif %}
+
+        {% if is_user_has_approval_rights %}
+        <div class="new-feedback">
+            <form method="post" action="{% url 'version_feedback' version.plugin.package_name version.version %}">{% csrf_token %}
+                <b>New Feedback</b>
+                    {{ form.feedback }}
+                    <div class="text-right">
+                        <button class="btn btn-primary" type="submit">{% trans "Submit New Feedback" %}</button>
+                    </div>
+            </form>
+        </div>
+        {% endif %}
+    </div>
+
+{% endblock %}
+
+{% block extrajs %}
+    <style>
+    .with-box {
+        border: 1px solid #e8e8e8;
+        padding: 5px;
+        border-radius: 5px;
+        margin-top: 5px;
+    }
+    label.feedback{
+        width: 90%;
+        display: inline-block;
+        vertical-align: top;
+    }
+    .feedback-info{
+        font-size: 0.75rem;
+        color: #8D8D8D;
+        white-space: nowrap;
+    }
+    .update-feedback {
+        margin-top: 10px;
+    }
+    .new-feedback{
+        padding: 5px;
+        border-radius: 5px;
+        margin-top: 20px;
+        margin-bottom: 5px;
+    }
+    input.statusCheckbox{
+        margin-right: 5px;
+    }
+    button#updateButton[disabled] {
+        background-color: #545454;
+    }
+    </style>
+
+    <script>
+    $(document).ready(function(){
+        const url = window.location.href;
+        // Disable submit button initially
+        $("#updateButton").prop("disabled", true);
+        // Handle checkbox change event
+        $(".statusCheckbox").change(function() {
+          // Check if any new checkbox (excluding disabled ones) is checked
+          const anyNewCheckboxChecked = $(".statusCheckbox:not(:disabled):checked").length > 0;
+          // Enable or disable the submit button based on new checkbox checked state
+          $("#updateButton").prop("disabled", !anyNewCheckboxChecked);
+        });
+
+        $('.deleteButton').on('click', function() {
+          const button = $(this);
+          const feedbackId = button.data('feedback-id');
+          const formData = {
+              'status_feedback': "deleted",
+              'csrfmiddlewaretoken': '{{ csrf_token }}'
+            };
+          deleteFeedback(feedbackId, formData);
+        });
+
+        $("#updateButton").on('click', function() {
+            let completedTasks = [];
+            $('.statusCheckbox:checked').each(function() {
+              const feedbackId = $(this).data('feedback-id');
+              completedTasks.push(feedbackId);
+            });
+            const formData = {
+                completed_tasks: completedTasks,
+                'csrfmiddlewaretoken': '{{ csrf_token }}'
+            };
+            updateStatus(formData);
+          });
+
+        function updateStatus(formData) {
+            const msg = "Update the task(s) as completed. You cannot revert the update. Please confirm."
+            if (confirm((msg))) {
+                $.ajax({
+                url: url + 'update/',
+                type: 'POST',
+                data: formData,
+                traditional: true,
+                success: function(response) {
+                    if (response.success) {
+                        $('.statusCheckbox:checked').each(function() {
+                            $(this).prop('disabled', true);
+                        });
+                        $("#updateButton").prop("disabled", true);
+                    }
+                },
+                error: function(xhr, status, error) {
+                  console.error('Error updating status:', error);
+                }
+            });
+            }
+        }
+
+        function deleteFeedback(feedbackId, formData) {
+            const msg = "This task will be permanently deleted. Please confirm."
+            if (confirm(msg)) {
+                $.ajax({
+                    type: 'POST',
+                    url: url + feedbackId + '/',
+                    data: formData,
+                    success: function (response) {
+                        if (response.success) {
+                            const feedbackItem = $('.previous-feedback[data-feedback-id="' + feedbackId + '"]');
+                            feedbackItem.remove();
+                        }
+                    },
+                    error: function (xhr, textStatus, errorThrown) {
+                        console.error('Error updating status:', errorThrown);
+                    }
+                });
+            }
+        }
+    })
+    </script>
+{% endblock %}

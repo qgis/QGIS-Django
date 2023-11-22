@@ -161,3 +161,17 @@ wait-db:
 create-test-db:
 	@docker-compose exec -p $(PROJECT_ID) db su - postgres -c "psql -c 'create database test_db;'"
 	@docker-compose exec -p $(PROJECT_ID) db su - postgres -c "psql -d test_db -c 'create extension postgis;'"
+
+dbseed:
+	@echo
+	@echo "------------------------------------------------------------------"
+	@echo "Seed db with JSON data from /fixtures/*.json"
+	@echo "------------------------------------------------------------------"
+	@docker-compose -p $(PROJECT_ID) exec devweb bash -c 'python manage.py loaddata fixtures/*.json'
+
+rebuild_index:
+	@echo
+	@echo "------------------------------------------------------------------"
+	@echo "Rebuild search index in PRODUCTION mode"
+	@echo "------------------------------------------------------------------"
+	@docker-compose -p $(PROJECT_ID) exec web bash -c 'python manage.py rebuild_index'
