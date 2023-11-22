@@ -641,6 +641,20 @@ class PluginsList(ListView):
         context.update(self.additional_context)
         context["current_sort_query"] = self.get_sortstring()
         context["current_querystring"] = self.get_querystring()
+        context["per_page_list"] = [20, 50, 75, 100]
+
+        try:
+            # Get the next value of per page from per_page_list
+            next_per_page_id = context["per_page_list"].index(context["paginator"].per_page) + 1
+            next_per_page = context["per_page_list"][next_per_page_id]
+        except (ValueError, IndexError):
+            # If the 'per_page' value in the request parameter 
+            # is not found in the 'per_page_list' or if the 
+            # next index is out of range, set the 'next_per_page' 
+            # value to a number greater than the total count 
+            # of records. This action effectively disables the button."
+            next_per_page = context["paginator"].count + 1
+        context["show_more_items_number"] = next_per_page
         return context
 
     def get_sortstring(self):

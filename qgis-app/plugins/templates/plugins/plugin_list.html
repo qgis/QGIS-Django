@@ -108,8 +108,54 @@
             {% endfor %}
         </tbody>
     </table>
-    <div class="pagination">
+    <div class="pagination" style="display:flex;justify-content: space-between;align-items: center;">
     {% include 'sortable_listview/pagination.html' %}
+
+    <div style="margin-top:20px;">
+        {% if show_more_items_number <= page_obj.paginator.count %}
+        <button class="btn" onclick="set_per_page({{show_more_items_number}})">
+            {% trans "Show more" %}
+        </button>
+        {% else %}
+        <button class="btn" disabled>
+            {% trans "Show more" %}
+        </button>
+        {% endif %}
+    </div>
+    <div style="margin-top:20px;">
+        <span>
+            {% trans "Elements per page:" %}&nbsp;
+        </span>
+        <select class="form-select" id="items_per_page" style="margin:0;">
+            {% if paginator.per_page not in per_page_list%}
+                <option>{{paginator.per_page}}</option>
+            {% endif %}
+            {% for p in per_page_list %}
+                <option value="{{ p }}" {% if p ==  paginator.per_page%} selected {% endif %}>{{ p }}</option>
+            {% endfor %}
+        </select>
+
+    </div>
+    <script type="text/javascript">
+        function set_per_page(n){
+            if(window.location.href.search('per_page') >= 0){
+                 new_page = window.location.href.replace(/per_page=\d+/, 'per_page=' + n);
+            } else {
+                new_page = -1 == window.location.href.search('\\?') ? window.location.href + '?' + 'per_page=' + n : window.location.href + '&' + 'per_page=' + n;
+            }
+            // Reset page
+            new_page = new_page.replace(/&page=\d+/, '&page=1');
+            new_page = new_page.replace(/\?page=\d+/, '?page=1');
+            window.location.href = new_page;
+        }
+
+        let itemsPerPageSelect = document.getElementById("items_per_page");
+        itemsPerPageSelect.addEventListener("change", function () {
+            if (itemsPerPageSelect.value) {
+                set_per_page(itemsPerPageSelect.value)
+            }
+        });
+    </script>
     </div>
     <div class="alert">
         <button type="button" class="close" data-dismiss="alert">&times;</button>
