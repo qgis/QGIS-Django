@@ -238,9 +238,10 @@ def validator(package):
         raise ValidationError(_("Cannot find __init__.py in plugin package."))
 
     # Checks for LICENCE file precense
-    licensename = package_name + "/LICENSE"
-    if licensename not in namelist:
-        raise ValidationError(_("Cannot find LICENSE in plugin package."))
+    # This should be just a warning for now according to https://github.com/qgis/QGIS-Django/issues/38#issuecomment-1824010198
+    # licensename = package_name + "/LICENSE"
+    # if licensename not in namelist:
+    #     raise ValidationError(_("Cannot find LICENSE in plugin package."))
 
     # Checks metadata
     metadata = []

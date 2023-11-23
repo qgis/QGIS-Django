@@ -195,26 +195,27 @@ class TestValidatorForbiddenFileFolder(TestCase):
         )
 
 
-class TestLicenseValidator(TestCase):
-    """Test if zipfile contains LICENSE file """    
+# This should be just a warning for now according to https://github.com/qgis/QGIS-Django/issues/38#issuecomment-1824010198
+# class TestLicenseValidator(TestCase):
+#     """Test if zipfile contains LICENSE file """    
 
-    def setUp(self) -> None:
-        plugin_without_license = os.path.join(TESTFILE_DIR, "plugin_without_license.zip_")
-        self.invalid_plugin = open(plugin_without_license, "rb")
+#     def setUp(self) -> None:
+#         plugin_without_license = os.path.join(TESTFILE_DIR, "plugin_without_license.zip_")
+#         self.invalid_plugin = open(plugin_without_license, "rb")
 
-    def tearDown(self):
-        self.invalid_plugin.close()
+#     def tearDown(self):
+#         self.invalid_plugin.close()
 
-    def test_zipfile_without_license(self):
-        self.assertRaises(
-            ValidationError,
-            validator,
-            InMemoryUploadedFile(
-                self.invalid_plugin,
-                field_name="tempfile",
-                name="testfile.zip",
-                content_type="application/zip",
-                size=39889,
-                charset="utf8",
-            ),
-        )
+#     def test_zipfile_without_license(self):
+#         self.assertRaises(
+#             ValidationError,
+#             validator,
+#             InMemoryUploadedFile(
+#                 self.invalid_plugin,
+#                 field_name="tempfile",
+#                 name="testfile.zip",
+#                 content_type="application/zip",
+#                 size=39889,
+#                 charset="utf8",
+#             ),
+#         )
