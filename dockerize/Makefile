@@ -141,6 +141,7 @@ dbrestore:
 	@echo "Restore dump from backups/latest.dmp in production mode"
 	@echo "------------------------------------------------------------------"
 	@# - prefix causes command to continue even if it fails
+	@# - TODO: This command needs update since postgis has been updated. 
 	@echo "stopping web container"
 	@docker-compose -p $(PROJECT_ID) stop web
 	@echo "dropping gis"
