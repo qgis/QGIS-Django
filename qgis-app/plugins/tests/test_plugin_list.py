@@ -1,6 +1,6 @@
 from django.test import TestCase
 from django.urls import reverse
-from ..models import Plugin
+from plugins.models import Plugin
 
 class PluginsListViewTestCase(TestCase):
     fixtures = [

@@ -33,7 +33,7 @@ services:
     restart: unless-stopped
 
   uwsgi: &uwsgi-common
-    container_name: qgis-plugins-uwsgi
+    container_name: qgis-plugins-uwsgi-common
     image: kartoza/qgis-plugins-uwsgi
     hostname: uwsgi
     environment:
@@ -48,6 +48,7 @@ services:
       - RABBITMQ_HOST=${RABBITMQ_HOST:-rabbitmq}
       - BROKER_URL=amqp://rabbitmq:5672
     volumes:
+      - ../qgis-app:/home/web/django_project
       - static-data:/home/web/static:rw
       - media-data:/home/web/media:rw
       - celerybeat-schedule:/home/web/celerybeat-schedule:rw
@@ -66,6 +67,8 @@ services:
       context: ${PWD}/../
       dockerfile: dockerize/docker/Dockerfile
       target: dev
+    volumes:
+      - ../qgis-app:/home/web/django_project
     ports:
       # for django test server
       - "62202:8080"

@@ -65,9 +65,6 @@ class StyleType(models.Model):
 
     def __str__(self):
         return self.__unicode__()
-    
-    def get_absolute_url(self):
-        return ''
 
 
 class Style(Resource):

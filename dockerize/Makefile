@@ -53,12 +53,6 @@ devweb-test: db
 devweb: db
 	@echo
 	@echo "------------------------------------------------------------------"
-	@echo "Recreate qgis-plugins-uwsgi"
-	@echo "------------------------------------------------------------------"
-	@docker stop qgis-plugins-uwsgi
-	@docker rm qgis-plugins-uwsgi
-	@echo
-	@echo "------------------------------------------------------------------"
 	@echo "Running in DEVELOPMENT mode"
 	@echo "------------------------------------------------------------------"
 	@docker-compose -p $(PROJECT_ID) up --no-deps -d devweb rabbitmq worker beat

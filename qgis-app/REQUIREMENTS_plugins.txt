@@ -23,5 +23,8 @@ django-sortable-listview
 sorl-thumbnail
 django-extensions
 django-debug-toolbar==3.2.4
-whoosh
+
+# Updates for Django 3 & Python 3.7
+git+https://github.com/Xpirix/whoosh.git
+pickle5==0.0.12
 django-haystack

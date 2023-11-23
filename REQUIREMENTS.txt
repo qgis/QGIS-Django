@@ -13,7 +13,8 @@ Markdown==2.3.1
 #PIL==1.1.7
 Pillow
 Pygments==2.7.4
-Whoosh==2.5.6
+git+https://github.com/Xpirix/whoosh.git
+pickle5==0.0.12
 argparse==1.2.1
 #cab==0.2.0 # Not used anymore..-
 #distribute==0.7.3
