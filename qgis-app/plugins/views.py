@@ -956,6 +956,17 @@ def version_create(request, package_name):
                     version_notify(new_object)
                 if form.cleaned_data.get("icon_file"):
                     form.cleaned_data["icon"] = form.cleaned_data.get("icon_file")
+
+                if form.cleaned_data.get("license_recommended"):
+                    messages.warning(
+                        request,
+                        _(
+                            "Cannot find LICENSE in the plugin package. This file is not required for updating the plugin but is recommended, please consider adding it to the plugin package."
+                        ),
+                        fail_silently=True,
+                    )
+                    del form.cleaned_data["license_recommended"]
+
                 _main_plugin_update(request, new_object.plugin, form)
                 _check_optional_metadata(form, request)
                 return HttpResponseRedirect(new_object.plugin.get_absolute_url())
@@ -1001,6 +1012,17 @@ def version_update(request, package_name, version):
                 _main_plugin_update(request, new_object.plugin, form)
                 msg = _("The Plugin Version has been successfully updated.")
                 messages.success(request, msg, fail_silently=True)
+
+                if form.cleaned_data.get("license_recommended"):
+                    messages.warning(
+                        request,
+                        _(
+                            "Cannot find LICENSE in the plugin package. This file is not required for updating the plugin but is recommended, please consider adding it to the plugin package."
+                        ),
+                        fail_silently=True,
+                    )
+                    del form.cleaned_data["license_recommended"]
+
             except (IntegrityError, ValidationError, DjangoUnicodeDecodeError) as e:
                 messages.error(request, e, fail_silently=True)
                 connection.close()

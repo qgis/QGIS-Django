@@ -205,7 +205,7 @@ class TestLicenseValidator(TestCase):
     def tearDown(self):
         self.invalid_plugin.close()
 
-    def test_zipfile_without_license(self):
+    def test_new_plugin_without_license(self):
         self.assertRaises(
             ValidationError,
             validator,
@@ -217,4 +217,19 @@ class TestLicenseValidator(TestCase):
                 size=39889,
                 charset="utf8",
             ),
+            plugin_is_new=True
+        )
+
+    def test_update_plugin_without_license(self):
+        self.assertTrue(
+            validator(
+                InMemoryUploadedFile(
+                    self.invalid_plugin,
+                    field_name="tempfile",
+                    name="testfile.zip",
+                    content_type="application/zip",
+                    size=39889,
+                    charset="utf8",
+                )
+            )
         )
