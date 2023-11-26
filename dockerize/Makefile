@@ -111,12 +111,12 @@ dbrestore:
 	@echo "dropping gis"
 	@docker exec -t $(PROJECT_ID)-db su - postgres -c "dropdb gis"
 	@echo "creating gis"
-	@docker exec -t $(PROJECT_ID)-db su - postgres -c "createdb -O docker -T template_postgis gis"
+	@docker exec -t $(PROJECT_ID)-db su - postgres -c "createdb -O docker gis"
 	@echo "restoring gis"
 	@# Because we pipe from one docker command to another and we are going
 	@# to execute this Make command from a remote server at times, we need to using use interactive mode (-i)
 	@# in the first command and not use terminal (-t) in the second. Please do not change these!
-	@docker exec -t  $(PROJECT_ID)-db pg_restore /backups/latest.dmp | docker exec -i $(PROJECT_ID)-db su - postgres -c "psql gis"
+	@docker exec -t  $(PROJECT_ID)-db pg_restore -d gis /backups/latest.dmp
 	@docker-compose -p $(PROJECT_ID) start web
 	@echo "starting web container"
 
