@@ -180,7 +180,7 @@ class PackageUploadForm(forms.Form):
         """
         package = self.cleaned_data.get("package")
         try:
-            self.cleaned_data.update(validator(package, plugin_is_new=True))
+            self.cleaned_data.update(validator(package))
         except ValidationError as e:
             msg = _(
                 "There were errors reading plugin package (please check also your plugin's metadata)."

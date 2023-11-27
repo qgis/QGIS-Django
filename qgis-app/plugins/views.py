@@ -468,6 +468,16 @@ def plugin_upload(request):
                         fail_silently=True,
                     )
 
+                if form.cleaned_data.get("license_recommended"):
+                    messages.warning(
+                        request,
+                        _(
+                            "Cannot find LICENSE in the plugin package. This file is not required but recommended, please consider adding it to the plugin package."
+                        ),
+                        fail_silently=True,
+                    )
+                    del form.cleaned_data["license_recommended"]
+
             except (IntegrityError, ValidationError, DjangoUnicodeDecodeError) as e:
                 connection.close()
                 messages.error(request, e, fail_silently=True)
@@ -961,7 +971,7 @@ def version_create(request, package_name):
                     messages.warning(
                         request,
                         _(
-                            "Cannot find LICENSE in the plugin package. This file is not required for updating the plugin but is recommended, please consider adding it to the plugin package."
+                            "Cannot find LICENSE in the plugin package. This file is not required but recommended, please consider adding it to the plugin package."
                         ),
                         fail_silently=True,
                     )
@@ -1017,7 +1027,7 @@ def version_update(request, package_name, version):
                     messages.warning(
                         request,
                         _(
-                            "Cannot find LICENSE in the plugin package. This file is not required for updating the plugin but is recommended, please consider adding it to the plugin package."
+                            "Cannot find LICENSE in the plugin package. This file is not required but recommended, please consider adding it to the plugin package."
                         ),
                         fail_silently=True,
                     )
