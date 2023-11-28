@@ -472,7 +472,7 @@ def plugin_upload(request):
                     messages.warning(
                         request,
                         _(
-                            "Cannot find LICENSE in the plugin package. This file is not required but recommended, please consider adding it to the plugin package."
+                            "Please note that as of 1 June 2024, providing a license file will be mandatory for any new updates to existing plugins and for any new plugins published."
                         ),
                         fail_silently=True,
                     )
@@ -971,7 +971,7 @@ def version_create(request, package_name):
                     messages.warning(
                         request,
                         _(
-                            "Cannot find LICENSE in the plugin package. This file is not required but recommended, please consider adding it to the plugin package."
+                            "Please note that as of 1 June 2024, providing a license file will be mandatory for any new updates to existing plugins and for any new plugins published."
                         ),
                         fail_silently=True,
                     )
@@ -1027,7 +1027,7 @@ def version_update(request, package_name, version):
                     messages.warning(
                         request,
                         _(
-                            "Cannot find LICENSE in the plugin package. This file is not required but recommended, please consider adding it to the plugin package."
+                            "Please note that as of 1 June 2024, providing a license file will be mandatory for any new updates to existing plugins and for any new plugins published."
                         ),
                         fail_silently=True,
                     )
