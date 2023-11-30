@@ -5,12 +5,17 @@ $(".user-timezone").each(function (i) {
   $(this).text(localDate);
 })
 
-$(".short-user-timezone").each(function (i) {
-  let localDate = toUserTimeZone($(this).text(), false);
+$(".user-timezone-short").each(function (i) {
+  let localDate = toUserTimeZone($(this).text(), withTime=false);
   $(this).text(localDate);
 })
 
-function toUserTimeZone(date, withTime=true) {
+$(".user-timezone-short-naturalday").each(function (i) {
+  let localDate = toUserTimeZone($(this).text(), withTime=false, isNaturalDay=true);
+  $(this).text(localDate);
+})
+
+function toUserTimeZone(date, withTime=true, isNaturalDay=false) {
   try {
     date = new Date(date);
     let options = {
@@ -23,7 +28,7 @@ function toUserTimeZone(date, withTime=true) {
     }
     const diffInDays = moment().diff(moment(date), 'days');
 
-    if (diffInDays <= 1 && !withTime) {
+    if (diffInDays <= 1 && isNaturalDay) {
       const distance = moment(date).fromNow();
       return distance
     }

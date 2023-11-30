@@ -94,7 +94,7 @@
                 {% if object.author %}
                 <td><a title="{% trans "See all plugins by"%} {{ object.author }}" href="{% url "author_plugins" object.author %}">{{ object.author }}</a></td>
                 {% endif %}
-                <td>{{ object.latest_version_date|local_timezone:"SHORT" }}</td>
+                <td>{{ object.latest_version_date|local_timezone:"SHORT_NATURAL_DAY" }}</td>
                 <td>{{ object.created_on|local_timezone:"SHORT" }}</td>
                 <td><div><div class="star-ratings"><span style="width:{% widthratio object.average_vote 5 100 %}%" class="rating"></span></div> ({{ object.rating_votes }})</div></td>
                 <td>{% if object.stable %}<a href="{% url "version_download" object.package_name object.stable.version %}" title="{% trans "Download the stable version" %}" >{{ object.stable.version }}</a>{% else %}&mdash;{% endif %}</td>
