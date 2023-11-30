@@ -126,9 +126,16 @@
                         <dt>{% trans "Author's email"%}</dt>
                         <dd> <a href="mailto:{{ object.email }}">{{ object.email }}</a></dd>
                     {% endif %}
+                    {% if object.display_created_by %}
+                        <dt>{% trans "Created by"%}</dt>
+                        <dd>
+                            <a href="{% url "user_details" object.created_by %}">{{ object.created_by }}</a>
+                        </dd>
+                        
+                    {% endif %}
                     <dt>{% trans "Maintainer"%}</dt>
                     <dd>
-                        <a href="{% url "user_details" object.created_by %}">{{ object.created_by }}</a>
+                        <a href="{% url "user_details" object.maintainer %}">{{ object.maintainer }}</a>
                     </dd>
                     {% if object.owners.count %}
                         <dt>{% trans "Collaborators"%}</dt>

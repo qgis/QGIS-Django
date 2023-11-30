@@ -43,7 +43,8 @@ class PluginForm(ModelForm):
             "tracker",
             "repository",
             "owners",
-            "created_by",
+            "maintainer",
+            "display_created_by",
             "tags",
             "server",
         )
@@ -58,8 +59,8 @@ class PluginForm(ModelForm):
         for owner in self.instance.owners.exclude(pk=self.instance.created_by.pk):
             choices += ((owner.pk, owner.username + " (Collaborator)"),)
 
-        self.fields['created_by'].choices = choices
-        self.fields['created_by'].label = "Maintainer"
+        self.fields['maintainer'].choices = choices
+        self.fields['maintainer'].label = "Maintainer"
 
     def clean(self):
         """

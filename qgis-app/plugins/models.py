@@ -322,6 +322,22 @@ class Plugin(models.Model):
         related_name="plugins_created_by",
         on_delete=models.CASCADE,
     )
+
+    # maintainer
+    maintainer = models.ForeignKey(
+        User,
+        verbose_name=_("Maintainer"),
+        related_name="plugins_maintainer",
+        on_delete=models.CASCADE,
+        blank=True,
+        null=True
+    )
+
+    display_created_by = models.BooleanField(
+        _('Display "Created by" in plugin details'),
+        default=False
+    )
+
     author = models.CharField(
         _("Author"),
         help_text=_(
@@ -529,6 +545,7 @@ class Plugin(models.Model):
         """
         Soft triggers:
         * updates modified_on if keep_date is not set
+        * set maintainer to the plugin creator when not specified
         """
         if self.pk and not keep_date:
             import logging
@@ -537,6 +554,8 @@ class Plugin(models.Model):
             self.modified_on = datetime.datetime.now()
         if not self.pk:
             self.modified_on = datetime.datetime.now()
+        if not self.maintainer:
+            self.maintainer = self.created_by
         super(Plugin, self).save(*args, **kwargs)
 
 
