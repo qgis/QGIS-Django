@@ -146,7 +146,7 @@ def _check_url_link(url: str, forbidden_url: str, metadata_attr: str) -> None:
         raise error_check_if_exist
 
 
-def validator(package, plugin_is_new=False):
+def validator(package):
     """
     Analyzes a zipped file, returns metadata if success, False otherwise.
     If the new icon metadata is found, an inmemory file object is also returned
@@ -331,10 +331,7 @@ def validator(package, plugin_is_new=False):
     # according to https://github.com/qgis/QGIS-Django/issues/38#issuecomment-1824010198
     licensename = package_name + "/LICENSE"
     if licensename not in namelist:
-        if plugin_is_new:
-            raise ValidationError(_("Cannot find LICENSE in the plugin package. This file is required for a new plugin, please consider adding it to the plugin package."))
-        else:
-            metadata.append(("license_recommended", "Yes"))
+        metadata.append(("license_recommended", "Yes"))
 
     zip.close()
     del zip
