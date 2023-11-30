@@ -38,6 +38,44 @@
             });
         });
     });
+
+    // Handle URL anchor for tabs
+    $(window).load(function() {
+
+        // Store the current scroll position
+        var scrollPosition = 0;
+
+        // Handle tab clicks
+        $('.nav-tabs a').on('click', function (e) {
+            e.preventDefault();
+
+            // Store the current scroll position
+            scrollPosition = $(window).scrollTop();
+
+            // Update the URL without triggering a reload
+            window.location.hash = this.hash;
+
+            // Show the tab
+            $(this).tab('show');
+        });
+
+        // Restore the scroll position on tab change
+        $('.nav-tabs a').on('shown.bs.tab', function (e) {
+            $(window).scrollTop(scrollPosition);
+        });
+
+        // Activate the tab based on the URL fragment
+        var hash = window.location.hash;
+        if (hash) {
+            $('.nav-tabs a[href="' + hash + '"]').tab('show');
+        }
+
+        // Scroll to the top when the page loads
+        setTimeout(() => {
+            $(window).scrollTop(0);
+        })
+
+    });
 </script>
 {% endblock %}
 {% block extracss %}
