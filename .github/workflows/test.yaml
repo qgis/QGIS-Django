@@ -60,8 +60,10 @@ jobs:
           python manage.py makemigrations
           python manage.py migrate
           coverage run manage.py test
+          exit_code=$?
           coverage xml
           EOF
+          exit $exit_cod
 
       - name: Upload coverage to codecov
         uses: codecov/codecov-action@v2
