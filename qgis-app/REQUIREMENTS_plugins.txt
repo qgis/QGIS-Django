@@ -1,7 +1,7 @@
 django==2.2.25
 django-auth-ldap
 python-ldap
-django-taggit
+django-taggit==2.0.0
 django-tinymce==3.4.0
 psycopg2
 # Updates for Django 2
@@ -21,5 +21,8 @@ django-sortable-listview
 sorl-thumbnail
 django-extensions
 django-debug-toolbar==1.11.1
-whoosh
-django-haystack
+
+# Updates for Django 2 & Python 3.7
+git+https://github.com/Xpirix/whoosh.git
+pickle5==0.0.12
+django-haystack==3.2.1

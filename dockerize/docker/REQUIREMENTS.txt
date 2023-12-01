@@ -21,7 +21,8 @@ django-sortable-listview
 sorl-thumbnail
 django-extensions
 django-debug-toolbar==1.11.1
-# Updates for Django 2
+
+# Updates for Django 2  & Python 3.7
 git+https://github.com/Xpirix/whoosh.git
 pickle5==0.0.12
 django-haystack==3.2.1
