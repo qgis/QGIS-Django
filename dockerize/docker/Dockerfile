@@ -10,7 +10,7 @@ RUN apt-get clean all
 RUN echo "deb http://archive.debian.org/debian stretch main contrib non-free" > /etc/apt/sources.list
 
 RUN apt-get update && apt-get install -y libsasl2-dev python-dev libldap2-dev libssl-dev
-ADD REQUIREMENTS.txt /REQUIREMENTS.txt
+COPY REQUIREMENTS.txt /REQUIREMENTS.txt
 RUN pip install -r /REQUIREMENTS.txt
 RUN pip install uwsgi
 
@@ -28,7 +28,7 @@ ENV NOTVISIBLE "in users profile"
 RUN echo "export VISIBLE=now" >> /etc/profile
 
 RUN rm -rf /uwsgi.conf
-ADD uwsgi.conf /uwsgi.conf
+COPY uwsgi.conf /uwsgi.conf
 
 # Open port 8080 as we will be running our uwsgi socket on that
 EXPOSE 8080
