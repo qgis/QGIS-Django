@@ -50,10 +50,6 @@
                         {% if user.is_authenticated %}
                         <a id="user-tooltip" href="{% if user.is_superuser %}{% url "admin:index" %}{% else %}{% url "logout" %}{% endif %}"
                            data-toggle="tooltip" data-placement="bottom" title="{{ user.username }}" style="float: right !important"><i class="icon-user icon-3x"></i></a>
-                        {% else %}
-                            <div class="signin-wrapper">
-                                <a href="{% url "login" %}"><i class="icon-signin icon-3x"></i></a>
-                            </div>
                         {% endif %}
 
                     <form class="navbar-search" action="{% url "haystack_search" %}" method="get">
