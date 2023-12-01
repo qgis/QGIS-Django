@@ -1,8 +1,4 @@
 version: "3.8"
-
-volumes:
-  django-media-data: {}
-
 services:
   db:
     container_name: qgis-plugins-db
