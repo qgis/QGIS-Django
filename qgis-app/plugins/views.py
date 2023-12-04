@@ -1315,11 +1315,13 @@ def xml_plugins(request, qg_version=None, stable_only=None, package_name=None):
         * package_name: Plugin.package_name
 
     """
+    request_version = request.GET.get("qgis", "1.8.0")
+    version_level = len(str(request_version).split('.')) - 1
     qg_version = (
         qg_version
         if qg_version is not None
         else vjust(
-            request.GET.get("qgis", "1.8.0"), fillchar="0", level=2, force_zero=True
+            request_version, fillchar="0", level=version_level, force_zero=True
         )
     )
     stable_only = (
@@ -1431,11 +1433,13 @@ def xml_plugins_new(request, qg_version=None, stable_only=None, package_name=Non
         * package_name: Plugin.package_name
 
     """
+    request_version = request.GET.get("qgis", "1.8.0")
+    version_level = len(str(request_version).split('.')) - 1
     qg_version = (
         qg_version
         if qg_version is not None
         else vjust(
-            request.GET.get("qgis", "1.8.0"), fillchar="0", level=2, force_zero=True
+            request_version, fillchar="0", level=version_level, force_zero=True
         )
     )
     stable_only = (
