@@ -15,6 +15,10 @@ from drf_yasg.views import get_schema_view
 # from users.views import *
 from homepage import homepage
 from rest_framework import permissions
+from rest_framework_simplejwt.views import (
+    TokenObtainPairView,
+    TokenRefreshView,
+)
 
 admin.autodiscover()
 
@@ -112,6 +116,11 @@ if settings.DEBUG:
         url(r"^__debug__/", include(debug_toolbar.urls)),
     ]
 
+# Token
+urlpatterns += [
+    path('api/token/', TokenObtainPairView.as_view(), name='token_obtain_pair'),
+    path('api/token/refresh/', TokenRefreshView.as_view(), name='token_refresh'),
+]
 
 simplemenu.register(
     "/admin/",

@@ -31,6 +31,32 @@ To update QGIS versions, go to **[Admin](https://plugins.qgis.org/admin/)** -> *
 This application is based on Django, written in python and deployed on the server using
 docker and rancher.
 
+## Token based authentication
+
+Users have the ability to generate a Simple JWT token by providing their credentials, which can then be utilized to access endpoints requiring authentication. Detailed guidance on the utilization of Simple JWT is provided in the official [documentation](https://django-rest-framework-simplejwt.readthedocs.io/en/latest/getting_started.html#usage).
+
+The endpoints are: 
+- Create a token: `https://plugins.qgis.org/api/token/`
+- Refresh token: `https://plugins.qgis.org/api/token/refresh`
+
+Examples:
+
+```sh
+# Create a token
+curl \
+  -X POST \
+  -H "Content-Type: application/json" \
+  -d '{"username": "yourusername", "password": "yourpassword"}' \
+  https://plugins.qgis.org/api/token/
+```
+
+```sh
+# Use the returned access token with the upload plugin endpoint
+curl \
+  -H "Authorization: Bearer the_access_token" \
+  https://plugins.qgis.org/plugins/add/
+```
+
 
 ## Contributing
 

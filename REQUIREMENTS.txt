@@ -53,5 +53,7 @@ django-bootstrap-pagination==1.7.1
 django-sortable-listview==0.43
 django-user-map
 djangorestframework==3.12.2
+pyjwt==1.7.1
+djangorestframework-simplejwt==4.4 
 django-rest-auth==0.9.5
 drf-yasg
