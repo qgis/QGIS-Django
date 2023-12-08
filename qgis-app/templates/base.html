@@ -1,5 +1,6 @@
 {% load i18n simplemenu_tags static %}
 {% load resources_custom_tags %}
+{% load matomo_tags %}
 <!DOCTYPE html>
 <html xmlns="http://www.w3.org/1999/xhtml">
 <head>
@@ -20,7 +21,6 @@
     <link rel="shortcut icon" href="{% static "images/favicon.ico" %}"/>
 
     <script type="text/javascript" src="{% static "js/jquery-1.11.1.min.js" %}"></script>
-    <script type="text/javascript" src="{% static "js/matomo.js" %}"></script>
     <script type="text/javascript" src="{% static "bootstrap/js/bootstrap-3.4.1.min.js" %}"></script>
     
     <!-- Cookie disclaimer -->
@@ -182,5 +182,6 @@
 $('#user-tooltip').tooltip('hide');
 </script>
 <script type="text/javascript" src="{% static 'js/local_timezone.js' %}"></script>
+{% tracking_code %}
 </body>
 </html>
