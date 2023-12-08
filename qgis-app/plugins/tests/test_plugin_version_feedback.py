@@ -244,11 +244,11 @@ class TestCreateVersionFeedback(SetupMixin, TestCase):
         self.client.force_login(user=self.creator)
         response = self.client.get(self.url)
         self.assertEqual(response.status_code, 200)
-        self.assertNotContains(response, '<div class="span8 new-feedback">')
+        self.assertNotContains(response, '<div class="new-feedback">')
         self.client.force_login(user=self.staff)
         response = self.client.get(self.url)
         self.assertEqual(response.status_code, 200)
-        self.assertContains(response, '<div class="span8 new-feedback">')
+        self.assertContains(response, '<div class="new-feedback">')
 
     def test_post_create_single_task_feedback(self):
         self.client.force_login(self.staff)

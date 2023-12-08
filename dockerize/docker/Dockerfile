@@ -12,7 +12,7 @@ RUN echo "deb http://archive.debian.org/debian stretch main contrib non-free" > 
 RUN apt-get update && apt-get install -y libsasl2-dev python-dev libldap2-dev libssl-dev
 ADD REQUIREMENTS.txt /REQUIREMENTS.txt
 RUN pip install -r /REQUIREMENTS.txt
-RUN pip install uwsgi
+RUN pip install uwsgi freezegun==1.3.1
 
 # https://docs.docker.com/examples/running_ssh_service/
 # Sudo is needed by pycharm when it tries to pip install packages
