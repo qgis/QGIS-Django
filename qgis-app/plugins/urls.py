@@ -48,6 +48,12 @@ urlpatterns = [
         name="plugin_update",
     ),
     url(
+        r"^(?P<package_name>[A-Za-z][A-Za-z0-9-_]+)/token/$",
+        plugin_token,
+        {},
+        name="plugin_token",
+    ),
+    url(
         r"^(?P<package_name>[A-Za-z][A-Za-z0-9-_]+)/set_featured/$",
         plugin_set_featured,
         {},

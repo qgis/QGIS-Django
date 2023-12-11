@@ -29,6 +29,7 @@ from django.views.generic.detail import DetailView
 
 # from sortable_listview import SortableListView
 from django.views.generic.list import ListView
+from plugins.decorators import has_valid_token
 from plugins.forms import *
 from plugins.models import Plugin, PluginVersion, PluginVersionDownload, vjust
 from plugins.validator import PLUGIN_REQUIRED_METADATA
@@ -593,6 +594,30 @@ def plugin_update(request, package_name):
         {"form": form, "form_title": _("Edit plugin"), "plugin": plugin},
     )
 
+from rest_framework_simplejwt.tokens import RefreshToken
+
+@login_required
+def plugin_token(request, package_name):
+    """
+    Plugin token management
+    """
+    plugin = get_object_or_404(Plugin, package_name=package_name)
+    user = request.user
+    if not check_plugin_access(user, plugin):
+        return render(request, "plugins/plugin_permission_deny.html", {})
+    
+    refresh = RefreshToken.for_user(user)
+    refresh['plugin_id'] = plugin.pk
+    
+    token = {
+        'refresh': str(refresh),
+        'access': str(refresh.access_token)
+    }
+
+    print(token, '#############')
+
+    return render(request, "plugins/plugin_permission_deny.html", {})
+
 
 class PluginsList(ListView):
     model = Plugin
@@ -924,6 +949,7 @@ def _main_plugin_update(request, plugin, form):
     plugin.save()
 
 
+@has_valid_token
 @login_required
 def version_create(request, package_name):
     """
@@ -996,6 +1022,7 @@ def version_create(request, package_name):
     )
 
 
+@has_valid_token
 @login_required
 def version_update(request, package_name, version):
     """
