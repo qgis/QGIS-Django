@@ -1,0 +1,116 @@
+{% extends 'plugins/plugin_base.html' %}{% load i18n %}
+{% load local_timezone %}
+{% block content %}
+    <h2>{% trans "Tokens for" %} {{ plugin.name }}</h2>
+    <div>
+        <table class="table table-striped plugins">
+            <thead>
+                <tr>
+                    <th>{% trans "User" %}</th>
+                    <th>{% trans "Token" %}</th>
+                    <th>{% trans "Created at" %}</th>
+                    <th>{% trans "Expires at" %}</th>
+                    <th>{% trans "Manage" %}</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for token in object_list %}
+                <tr class="{% cycle "even" "odd" %}">
+                    <td>{{ token.user }}</td>
+                    <td style="max-width:200px">
+                        <div style="display:flex">
+                            <span class="truncate">
+                                {{ token.token }}
+                            </span>
+                        </div>
+                    </td>
+                    <td>{{ token.created_at|local_timezone }}</td>
+                    <td>{{ token.expires_at|local_timezone }}</td>
+                    <td>
+                      <div class="tooltip">
+                        <button 
+                            class="btn btn-primary btn-mini" 
+                            onclick="copyToClipBoard('{{ token.token }}')"
+                            >
+                            <span class="tooltiptext" id="copyTooltip">{% trans "Copy token to clipboard" %}</span>
+                            <i class="icon-copy icon-white"></i>
+                        </button>
+                      </div>
+                      &nbsp;
+                      <a 
+                        class="btn btn-danger btn-mini delete" 
+                        href="{% url "token_delete" plugin.package_name token.id %}" 
+                        title="{% trans "Delete" %}"><i class="icon-remove icon-white"></i>
+                      </a>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+{% endblock %}
+
+{% block extracss %}
+{{ block.super }}
+<style>
+    .truncate {
+        overflow: hidden;
+        text-overflow: ellipsis;
+        display: -webkit-box;
+        -webkit-line-clamp: 1;
+        line-clamp: 1;
+        -webkit-box-orient: vertical;
+    }
+
+    .tooltip {
+      position: relative;
+      display: inline-block;
+      opacity: 1 !important;
+    }
+    
+    .tooltip .tooltiptext {
+      visibility: hidden;
+      width: 140px;
+      background-color: #555;
+      color: #fff;
+      text-align: center;
+      border-radius: 6px;
+      padding: 5px;
+      position: absolute;
+      z-index: 1;
+      bottom: 150%;
+      left: 50%;
+      margin-left: -75px;
+      opacity: 0;
+      transition: opacity 0.3s;
+    }
+    
+    .tooltip .tooltiptext::after {
+      content: "";
+      position: absolute;
+      top: 100%;
+      left: 50%;
+      margin-left: -5px;
+      border-width: 5px;
+      border-style: solid;
+      border-color: #555 transparent transparent transparent;
+    }
+    
+    .tooltip:hover .tooltiptext {
+      visibility: visible;
+      opacity: 1;
+    }
+</style>
+{% endblock %}
+
+{% block extrajs %}
+<script type="text/javascript">
+{{ block.super }}
+  function copyToClipBoard(token) {
+    navigator.clipboard.writeText(token);
+    
+    var tooltip = document.getElementById("copyTooltip");
+    tooltip.innerHTML = "Token copied!";
+  }
+</script>    
+{% endblock %}

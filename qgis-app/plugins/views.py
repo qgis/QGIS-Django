@@ -34,6 +34,9 @@ from plugins.forms import *
 from plugins.models import Plugin, PluginVersion, PluginVersionDownload, vjust
 from plugins.validator import PLUGIN_REQUIRED_METADATA
 
+from rest_framework_simplejwt.token_blacklist.models import OutstandingToken, BlacklistedToken
+from rest_framework_simplejwt.tokens import RefreshToken
+
 try:
     from urllib import unquote, urlencode
 
@@ -594,29 +597,55 @@ def plugin_update(request, package_name):
         {"form": form, "form_title": _("Edit plugin"), "plugin": plugin},
     )
 
-from rest_framework_simplejwt.tokens import RefreshToken
+
+
+class PluginTokenListView(ListView):
+    """
+    Plugin token list
+    """
+    model = OutstandingToken
+    queryset = OutstandingToken.objects.all()
+    template_name = "plugins/outstandingtoken_list.html"
+
+    @method_decorator(ensure_csrf_cookie)
+    def dispatch(self, *args, **kwargs):
+        return super(PluginTokenListView, self).dispatch(*args, **kwargs)
+
+    def get_context_data(self, **kwargs):
+        package_name = self.kwargs.get('package_name')
+        plugin = get_object_or_404(Plugin, package_name=package_name)
+        if not check_plugin_access(self.request.user, plugin):
+            context = {}
+            self.template_name = "plugins/token_permission_deny.html"
+            return context
+        context = super(PluginTokenListView, self).get_context_data(**kwargs)
+        context.update(
+            {
+                "plugin": plugin
+            }
+        )
+        return context
 
 @login_required
-def plugin_token(request, package_name):
-    """
-    Plugin token management
-    """
+def token_delete(request, package_name, token_id):
     plugin = get_object_or_404(Plugin, package_name=package_name)
-    user = request.user
-    if not check_plugin_access(user, plugin):
-        return render(request, "plugins/plugin_permission_deny.html", {})
-    
-    refresh = RefreshToken.for_user(user)
-    refresh['plugin_id'] = plugin.pk
-    
-    token = {
-        'refresh': str(refresh),
-        'access': str(refresh.access_token)
-    }
+    outstanting_token = get_object_or_404(OutstandingToken, pk=token_id)
+    token = RefreshToken(outstanting_token.token)
+    if not check_plugin_access(request.user, plugin):
+        return render(request, "plugins/version_permission_deny.html", {})
+    if "delete_confirm" in request.POST:
+        token.blacklist()
 
-    print(token, '#############')
-
-    return render(request, "plugins/plugin_permission_deny.html", {})
+        msg = _("The token has been successfully deleted.")
+        messages.success(request, msg, fail_silently=True)
+        return HttpResponseRedirect(
+            reverse("plugin_token", args=(plugin.package_name,))
+        )
+    return render(
+        request,
+        "plugins/token_delete_confirm.html",
+        {"plugin": plugin, "username": outstanting_token.user},
+    )
 
 
 class PluginsList(ListView):

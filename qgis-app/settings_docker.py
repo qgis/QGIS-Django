@@ -66,6 +66,7 @@ INSTALLED_APPS = [
     "rest_framework",
     'rest_framework.authtoken',
     'rest_framework_simplejwt',
+    'rest_framework_simplejwt.token_blacklist',
     "sorl_thumbnail_serializer",  # serialize image
     "drf_multiple_model",
     "drf_yasg",

@@ -49,9 +49,14 @@ urlpatterns = [
     ),
     url(
         r"^(?P<package_name>[A-Za-z][A-Za-z0-9-_]+)/token/$",
-        plugin_token,
-        {},
+        PluginTokenListView.as_view(),
         name="plugin_token",
+    ),
+    url(
+        r"^(?P<package_name>[A-Za-z][A-Za-z0-9-_]+)/token/(?P<token_id>[^\/]+)/delete$",
+        token_delete,
+        {},
+        name="token_delete",
     ),
     url(
         r"^(?P<package_name>[A-Za-z][A-Za-z0-9-_]+)/set_featured/$",
