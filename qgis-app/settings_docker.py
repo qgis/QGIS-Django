@@ -76,6 +76,7 @@ INSTALLED_APPS = [
     # models (sharing .model3 file feature)
     "models",
     "wavefronts",
+    "matomo"
 ]
 
 DATABASES = {
