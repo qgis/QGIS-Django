@@ -12,6 +12,7 @@ from django.utils.translation import ugettext_lazy as _
 from django.utils import timezone
 from djangoratings.fields import AnonymousRatingField
 from taggit_autosuggest.managers import TaggableManager
+from rest_framework_simplejwt.token_blacklist.models import OutstandingToken
 
 PLUGINS_STORAGE_PATH = getattr(settings, "PLUGINS_STORAGE_PATH", "packages/%Y")
 PLUGINS_FRESH_DAYS = getattr(settings, "PLUGINS_FRESH_DAYS", 30)
@@ -897,6 +898,19 @@ class PluginVersionDownload(models.Model):
             'download_date'
         )
 
+class PluginOutstandingToken(models.Model):
+    """
+    Plugin outstanding token
+    """
+    plugin = models.ForeignKey(
+        Plugin,
+        on_delete=models.CASCADE
+    )
+    token = models.ForeignKey(
+        OutstandingToken,
+        on_delete=models.CASCADE
+    )
+    is_blacklisted = models.BooleanField(default=False)
 
 models.signals.post_delete.connect(delete_version_package, sender=PluginVersion)
 models.signals.post_delete.connect(delete_plugin_icon, sender=Plugin)

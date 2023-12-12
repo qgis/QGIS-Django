@@ -3,6 +3,7 @@
 # ABP: More portable config
 import os
 
+from datetime import timedelta
 SITE_ROOT = os.path.dirname(os.path.realpath(__file__))
 
 TEMPLATE_DEBUG = False
@@ -332,3 +333,10 @@ BROKER_URL = "amqp://guest:guest@%s:5672//" % os.environ["RABBITMQ_HOST"]
 RESULT_BACKEND = BROKER_URL
 CELERY_BROKER_URL = BROKER_URL
 CELERY_RESULT_BACKEND = CELERY_BROKER_URL
+
+
+# Token access and refresh validity
+SIMPLE_JWT = {
+    'ACCESS_TOKEN_LIFETIME': timedelta(days=15),
+    'REFRESH_TOKEN_LIFETIME': timedelta(days=15),
+}

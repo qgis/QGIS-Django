@@ -1,0 +1,103 @@
+{% extends 'plugins/plugin_base.html' %}{% load i18n %}
+{% load local_timezone %}
+{% block content %}
+<h2>{% trans "Token for" %} {{ plugin.name }}</h2>
+<dl class="dl-horizontal">
+    <dt>{% trans "User"%}</dt>
+    <dd>
+        <a href="{% url "user_details" object.user %}">{{ object.user }}</a>
+    </dd>
+    <dt>{% trans "Jti"%}</dt>
+    <dd>
+       {{object.jti}}
+    </dd>
+    <dt>{% trans "Created at"%}</dt>
+    <dd>
+        {{ object.created_at|local_timezone }}
+    </dd>
+    <dt>{% trans "Expires at"%}</dt>
+    <dd>
+        {{ object.expires_at|local_timezone }}
+    </dd>
+    <dt>{% trans "Access token"%}</dt>
+    <dd>
+        <textarea 
+            id="access_token" 
+            name="access_token" 
+            rows="5" 
+            cols="50" 
+            style="width: auto"
+            readonly
+        >{{access_token}}</textarea>
+        <div class="tooltip">
+            <button class="btn btn-primary" onclick="copyToClipBoard('{{ access_token }}')">
+              <span class="tooltiptext" id="copyTooltip">{% trans "Copy token to clipboard" %}</span>
+              <i class="icon-copy icon-white"></i>
+            </button>
+        </div>
+
+    </dd>
+
+</dl>
+{% endblock %}
+{% block extracss %}
+{{ block.super }}
+<style>
+
+  .tooltip {
+    position: relative;
+    display: inline-block;
+    opacity: 1 !important;
+  }
+
+  .tooltip .tooltiptext {
+    visibility: hidden;
+    width: 140px;
+    background-color: #555;
+    color: #fff;
+    text-align: center;
+    border-radius: 6px;
+    padding: 5px;
+    position: absolute;
+    z-index: 1;
+    bottom: 150%;
+    left: 50%;
+    margin-left: -75px;
+    opacity: 0;
+    transition: opacity 0.3s;
+  }
+
+  .tooltip .tooltiptext::after {
+    content: "";
+    position: absolute;
+    top: 100%;
+    left: 50%;
+    margin-left: -5px;
+    border-width: 5px;
+    border-style: solid;
+    border-color: #555 transparent transparent transparent;
+  }
+
+  .tooltip:hover .tooltiptext {
+    visibility: visible;
+    opacity: 1;
+  }
+</style>
+{% endblock %}
+
+{% block extrajs %}
+<script type="text/javascript">
+  {
+    {
+      block.super
+    }
+  }
+
+  function copyToClipBoard(token) {
+    navigator.clipboard.writeText(token);
+
+    var tooltip = document.getElementById("copyTooltip");
+    tooltip.innerHTML = "Token copied!";
+  }
+</script>
+{% endblock %}

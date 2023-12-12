@@ -48,12 +48,23 @@ urlpatterns = [
         name="plugin_update",
     ),
     url(
-        r"^(?P<package_name>[A-Za-z][A-Za-z0-9-_]+)/token/$",
+        r"^(?P<package_name>[A-Za-z][A-Za-z0-9-_]+)/tokens/$",
         PluginTokenListView.as_view(),
-        name="plugin_token",
+        name="plugin_token_list",
     ),
     url(
-        r"^(?P<package_name>[A-Za-z][A-Za-z0-9-_]+)/token/(?P<token_id>[^\/]+)/delete$",
+        r"^(?P<package_name>[A-Za-z][A-Za-z0-9-_]+)/tokens/(?P<pk>\d+)/$",
+        PluginTokenDetailView.as_view(),
+        name="plugin_token_detail",
+    ),
+    url(
+        r"^(?P<package_name>[A-Za-z][A-Za-z0-9-_]+)/tokens/manage/$",
+        plugin_token_manage,
+        {},
+        name="plugin_token_manage",
+    ),
+    url(
+        r"^(?P<package_name>[A-Za-z][A-Za-z0-9-_]+)/tokens/(?P<token_id>[^\/]+)/delete/$",
         token_delete,
         {},
         name="token_delete",

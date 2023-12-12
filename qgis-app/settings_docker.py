@@ -128,5 +128,5 @@ REST_FRAMEWORK = {
 # Token access and refresh validity
 SIMPLE_JWT = {
     'ACCESS_TOKEN_LIFETIME': timedelta(days=15),
-    'REFRESH_TOKEN_LIFETIME': timedelta(days=180),
+    'REFRESH_TOKEN_LIFETIME': timedelta(days=15),
 }

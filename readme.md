@@ -33,30 +33,20 @@ docker and rancher.
 
 ## Token based authentication
 
-Users have the ability to generate a Simple JWT token by providing their credentials, which can then be utilized to access endpoints requiring authentication. Detailed guidance on the utilization of Simple JWT is provided in the official [documentation](https://django-rest-framework-simplejwt.readthedocs.io/en/latest/getting_started.html#usage).
+Users have the ability to generate a Simple JWT token by providing their credentials, which can then be utilized to access endpoints requiring authentication.
+Users can create specific tokens for a plugin at `https://plugins.qgis.org/<package_name>/tokens/`.
 
-The endpoints are: 
-- Create a token: `https://plugins.qgis.org/api/token/`
-- Refresh token: `https://plugins.qgis.org/api/token/refresh`
-
-Examples:
 
 ```sh
-# Create a token
-curl \
-  -X POST \
-  -H "Content-Type: application/json" \
-  -d '{"username": "yourusername", "password": "yourpassword"}' \
-  https://plugins.qgis.org/api/token/
-```
-
-```sh
-# Use the returned access token with the upload plugin endpoint
+# A specific plugin token can be used to upload or update a plugin version. For example:
 curl \
   -H "Authorization: Bearer the_access_token" \
-  https://plugins.qgis.org/plugins/add/
-```
+  https://plugins.qgis.org/plugins/<package_name>/version/add/
 
+curl \
+  -H "Authorization: Bearer the_access_token" \
+  https://plugins.qgis.org/plugins/<package_name>/version/<version>/update
+```
 
 ## Contributing
 

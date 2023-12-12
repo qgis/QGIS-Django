@@ -26,16 +26,18 @@ from django.views.decorators.cache import never_cache
 from django.views.decorators.csrf import csrf_protect, ensure_csrf_cookie
 from django.views.decorators.http import require_POST
 from django.views.generic.detail import DetailView
+from django.db import transaction
 
 # from sortable_listview import SortableListView
 from django.views.generic.list import ListView
 from plugins.decorators import has_valid_token
 from plugins.forms import *
-from plugins.models import Plugin, PluginVersion, PluginVersionDownload, vjust
+from plugins.models import Plugin, PluginOutstandingToken, PluginVersion, PluginVersionDownload, vjust
 from plugins.validator import PLUGIN_REQUIRED_METADATA
 
-from rest_framework_simplejwt.token_blacklist.models import OutstandingToken, BlacklistedToken
-from rest_framework_simplejwt.tokens import RefreshToken
+from rest_framework_simplejwt.token_blacklist.models import OutstandingToken
+from rest_framework_simplejwt.tokens import RefreshToken, api_settings
+
 
 try:
     from urllib import unquote, urlencode
@@ -604,19 +606,33 @@ class PluginTokenListView(ListView):
     Plugin token list
     """
     model = OutstandingToken
-    queryset = OutstandingToken.objects.all()
-    template_name = "plugins/outstandingtoken_list.html"
+    queryset = OutstandingToken.objects.all().order_by("-created_at")
+    template_name = "plugins/plugin_token_list.html"
 
     @method_decorator(ensure_csrf_cookie)
     def dispatch(self, *args, **kwargs):
         return super(PluginTokenListView, self).dispatch(*args, **kwargs)
+
+    def get_filtered_queryset(self, qs):
+        package_name = self.kwargs.get('package_name')
+        plugin = get_object_or_404(Plugin, package_name=package_name)
+        token_ids = PluginOutstandingToken.objects.filter(
+            plugin__pk=plugin.pk, 
+            is_blacklisted=False
+        ).values_list('token_id', flat=True)
+        return qs.filter(pk__in=token_ids)
+
+    def get_queryset(self):
+        qs = super(PluginTokenListView, self).get_queryset()
+        qs = self.get_filtered_queryset(qs)
+        return qs
 
     def get_context_data(self, **kwargs):
         package_name = self.kwargs.get('package_name')
         plugin = get_object_or_404(Plugin, package_name=package_name)
         if not check_plugin_access(self.request.user, plugin):
             context = {}
-            self.template_name = "plugins/token_permission_deny.html"
+            self.template_name = "plugins/plugin_token_permission_deny.html"
             return context
         context = super(PluginTokenListView, self).get_context_data(**kwargs)
         context.update(
@@ -626,25 +642,109 @@ class PluginTokenListView(ListView):
         )
         return context
 
+class PluginTokenDetailView(DetailView):
+    """
+    Plugin token detail
+    """
+    model = OutstandingToken
+    queryset = OutstandingToken.objects.all()
+    template_name = "plugins/plugin_token_detail.html"
+
+    @method_decorator(ensure_csrf_cookie)
+    def dispatch(self, *args, **kwargs):
+        return super(PluginTokenDetailView, self).dispatch(*args, **kwargs)
+
+    def get_context_data(self, **kwargs):
+        context = super(PluginTokenDetailView, self).get_context_data(**kwargs)
+        package_name = self.kwargs.get('package_name')
+        token_id = self.kwargs.get('pk')
+        plugin = get_object_or_404(Plugin, package_name=package_name)
+        if not check_plugin_access(self.request.user, plugin):
+            context = {}
+            self.template_name = "plugins/plugin_token_permission_deny.html"
+            return context
+
+        outstanding_token = get_object_or_404(OutstandingToken, pk=token_id, user=self.request.user)
+        plugin_token = get_object_or_404(
+            PluginOutstandingToken, 
+            token__pk=outstanding_token.pk, 
+            is_blacklisted=False
+        )
+
+        token = RefreshToken(outstanding_token.token)
+        token['plugin_id'] = plugin.pk
+
+        context.update(
+            {
+                "access_token": str(token.access_token),
+                "plugin": plugin,
+                "object": outstanding_token
+            }
+        )
+        return context
+
 @login_required
+@require_POST
+def plugin_token_manage(request, package_name):
+    """
+    Entry point for the plugin token management functions
+    """
+    if request.POST.get("plugin_token_create"):
+        return plugin_token_create(request, package_name)
+
+@login_required
+@transaction.atomic
+def plugin_token_create(request, package_name):
+    plugin = get_object_or_404(Plugin, package_name=package_name)
+    user = request.user
+    if not check_plugin_access(user, plugin):
+        return render(request, "plugins/plugin_permission_deny.html", {})
+
+    refresh = RefreshToken.for_user(user)
+    refresh["plugin_id"] = plugin.pk
+
+    jti = refresh[api_settings.JTI_CLAIM]
+
+    outstanding_token = OutstandingToken.objects.get(jti=jti)
+
+    plugin_token, created = PluginOutstandingToken.objects.update_or_create(
+        plugin=plugin,
+        token=outstanding_token,
+        is_blacklisted=False
+    )
+
+    return HttpResponseRedirect(
+        reverse("plugin_token_list", args=(plugin.package_name,))
+    )
+
+@login_required
+@transaction.atomic
 def token_delete(request, package_name, token_id):
     plugin = get_object_or_404(Plugin, package_name=package_name)
-    outstanting_token = get_object_or_404(OutstandingToken, pk=token_id)
-    token = RefreshToken(outstanting_token.token)
+    outstanding_token = get_object_or_404(OutstandingToken, pk=token_id, user=request.user)
+    plugin_token = get_object_or_404(
+        PluginOutstandingToken, 
+        token__pk=outstanding_token.pk, 
+        is_blacklisted=False
+    )
+
+    token = RefreshToken(outstanding_token.token)
     if not check_plugin_access(request.user, plugin):
         return render(request, "plugins/version_permission_deny.html", {})
     if "delete_confirm" in request.POST:
         token.blacklist()
+        plugin_token.is_blacklisted = True
+        plugin_token.save()
 
         msg = _("The token has been successfully deleted.")
         messages.success(request, msg, fail_silently=True)
         return HttpResponseRedirect(
-            reverse("plugin_token", args=(plugin.package_name,))
+            reverse("plugin_token_list", args=(plugin.package_name,))
         )
     return render(
         request,
-        "plugins/token_delete_confirm.html",
-        {"plugin": plugin, "username": outstanting_token.user},
+        "plugins/plugin_token_delete_confirm.html",
+        {"plugin": plugin, "username": outstanding_token.user},
     )
 
 

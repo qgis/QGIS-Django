@@ -263,6 +263,7 @@
                 <div>
                         <a class="btn btn-primary" href="{% url "plugin_update" object.package_name %}">{% trans "Edit" %}</a>
                         <a class="btn btn-primary" href="{% url "version_create" object.package_name %}">{% trans "Add version" %}</a>
+                        <a class="btn btn-primary" href="{% url "plugin_token_list" object.package_name %}">{% trans "Tokens" %}</a>
                     {% if user.is_staff  %}
                         {% if object.featured %}<input class="btn btn-warning" type="submit" name="unset_featured" id="unset_featured" value="{% trans "Unset featured" %}" />
                         {% else %}<input class="btn btn-primary" type="submit" name="set_featured" id="set_featured" value="{% trans "Set featured" %}" />
