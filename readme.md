@@ -41,11 +41,11 @@ Users can create specific tokens for a plugin at `https://plugins.qgis.org/<pack
 # A specific plugin token can be used to upload or update a plugin version. For example:
 curl \
   -H "Authorization: Bearer the_access_token" \
-  https://plugins.qgis.org/plugins/<package_name>/version/add/
+  https://plugins.qgis.org/plugins/api/<package_name>/version/add/
 
 curl \
   -H "Authorization: Bearer the_access_token" \
-  https://plugins.qgis.org/plugins/<package_name>/version/<version>/update
+  https://plugins.qgis.org/plugins/api/<package_name>/version/<version>/update
 ```
 
 ## Contributing

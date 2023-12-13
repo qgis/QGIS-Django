@@ -23,7 +23,7 @@ from django.utils.decorators import method_decorator
 from django.utils.encoding import DjangoUnicodeDecodeError
 from django.utils.translation import ugettext_lazy as _
 from django.views.decorators.cache import never_cache
-from django.views.decorators.csrf import csrf_protect, ensure_csrf_cookie
+from django.views.decorators.csrf import ensure_csrf_cookie, csrf_exempt, csrf_protect
 from django.views.decorators.http import require_POST
 from django.views.generic.detail import DetailView
 from django.db import transaction
@@ -38,7 +38,6 @@ from plugins.validator import PLUGIN_REQUIRED_METADATA
 from rest_framework_simplejwt.token_blacklist.models import OutstandingToken
 from rest_framework_simplejwt.tokens import RefreshToken, api_settings
 from rest_framework_simplejwt.exceptions import InvalidToken, TokenError
-
 
 try:
     from urllib import unquote, urlencode
@@ -674,6 +673,7 @@ class PluginTokenDetailView(DetailView):
         try:
             token = RefreshToken(outstanding_token.token)
             token['plugin_id'] = plugin.pk
+            token['refresh_jti'] = token[api_settings.JTI_CLAIM]
         except (InvalidToken, TokenError) as e:
             context = {}
             self.template_name = "plugins/plugin_token_invalid_or_expired.html"
@@ -1076,10 +1076,22 @@ def _main_plugin_update(request, plugin, form):
         )
     plugin.save()
 
-
 @has_valid_token
+@csrf_exempt
+def version_create_api(request, package_name):
+    """
+    Create a new version using a valid token. 
+    We make sure that the token is valid before 
+    disabling CSRF protection.
+    """
+    return _version_create(request, package_name)
+
+
 @login_required
 def version_create(request, package_name):
+    return _version_create(request, package_name)
+
+def _version_create(request, package_name):
     """
     The form will create versions according to permissions,
     plugin name and description are updated according to the info
@@ -1151,8 +1163,21 @@ def version_create(request, package_name):
 
 
 @has_valid_token
+@csrf_exempt
+def version_update_api(request, package_name, version):
+    """
+    Update a version using a valid token. 
+    We make sure that the token is valid before 
+    disabling CSRF protection.
+    """
+    return _version_update(request, package_name, version)
+
+
 @login_required
 def version_update(request, package_name, version):
+    return _version_update(request, package_name, version)
+
+def _version_update(request, package_name, version):
     """
     The form will update versions according to permissions
     """

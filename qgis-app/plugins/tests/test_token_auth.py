@@ -53,8 +53,8 @@ class UploadWithTokenTestCase(TestCase):
 
         package_name = self.plugin.package_name
         version = '0.0.1'
-        self.url_add_version = reverse('version_create', args=[package_name])
-        self.url_update_version = reverse('version_update', args=[package_name, version])
+        self.url_add_version = reverse('version_create_api', args=[package_name])
+        self.url_update_version = reverse('version_update_api', args=[package_name, version])
         self.url_token_list = reverse('plugin_token_list', args=[package_name])
         self.url_token_create = reverse('plugin_token_create', args=[package_name])
 

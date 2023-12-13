@@ -247,6 +247,12 @@ urlpatterns += [
         name="version_create",
     ),
     url(
+        r"^api/(?P<package_name>[A-Za-z][A-Za-z0-9-_]+)/version/add/$",
+        version_create_api,
+        {},
+        name="version_create_api",
+    ),
+    url(
         r"^(?P<package_name>[A-Za-z][A-Za-z0-9-_]+)/version/(?P<version>[^\/]+)/$",
         version_detail,
         {},
@@ -263,6 +269,12 @@ urlpatterns += [
         version_update,
         {},
         name="version_update",
+    ),
+    url(
+        r"^api/(?P<package_name>[A-Za-z][A-Za-z0-9-_]+)/version/(?P<version>[^\/]+)/update/$",
+        version_update_api,
+        {},
+        name="version_update_api",
     ),
     url(
         r"^(?P<package_name>[A-Za-z][A-Za-z0-9-_]+)/version/(?P<version>[^\/]+)/download/$",
