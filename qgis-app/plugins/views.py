@@ -37,6 +37,7 @@ from plugins.validator import PLUGIN_REQUIRED_METADATA
 
 from rest_framework_simplejwt.token_blacklist.models import OutstandingToken
 from rest_framework_simplejwt.tokens import RefreshToken, api_settings
+from rest_framework_simplejwt.exceptions import InvalidToken, TokenError
 
 
 try:
@@ -670,10 +671,13 @@ class PluginTokenDetailView(DetailView):
             token__pk=outstanding_token.pk, 
             is_blacklisted=False
         )
-
-        token = RefreshToken(outstanding_token.token)
-        token['plugin_id'] = plugin.pk
-
+        try:
+            token = RefreshToken(outstanding_token.token)
+            token['plugin_id'] = plugin.pk
+        except (InvalidToken, TokenError) as e:
+            context = {}
+            self.template_name = "plugins/plugin_token_invalid_or_expired.html"
+            return context        
         context.update(
             {
                 "access_token": str(token.access_token),
@@ -684,42 +688,34 @@ class PluginTokenDetailView(DetailView):
         return context
 
 @login_required
-@require_POST
-def plugin_token_manage(request, package_name):
-    """
-    Entry point for the plugin token management functions
-    """
-    if request.POST.get("plugin_token_create"):
-        return plugin_token_create(request, package_name)
-
-@login_required
 @transaction.atomic
 def plugin_token_create(request, package_name):
-    plugin = get_object_or_404(Plugin, package_name=package_name)
-    user = request.user
-    if not check_plugin_access(user, plugin):
-        return render(request, "plugins/plugin_permission_deny.html", {})
+    if request.method == "POST":
+        plugin = get_object_or_404(Plugin, package_name=package_name)
+        user = request.user
+        if not check_plugin_access(user, plugin):
+            return render(request, "plugins/plugin_permission_deny.html", {})
 
-    refresh = RefreshToken.for_user(user)
-    refresh["plugin_id"] = plugin.pk
+        refresh = RefreshToken.for_user(user)
+        refresh["plugin_id"] = plugin.pk
 
-    jti = refresh[api_settings.JTI_CLAIM]
+        jti = refresh[api_settings.JTI_CLAIM]
 
-    outstanding_token = OutstandingToken.objects.get(jti=jti)
+        outstanding_token = OutstandingToken.objects.get(jti=jti)
 
-    plugin_token, created = PluginOutstandingToken.objects.update_or_create(
-        plugin=plugin,
-        token=outstanding_token,
-        is_blacklisted=False
-    )
+        plugin_token, created = PluginOutstandingToken.objects.update_or_create(
+            plugin=plugin,
+            token=outstanding_token,
+            is_blacklisted=False
+        )
 
-    return HttpResponseRedirect(
-        reverse("plugin_token_list", args=(plugin.package_name,))
-    )
+        return HttpResponseRedirect(
+            reverse("plugin_token_list", args=(plugin.package_name,))
+        )
 
 @login_required
 @transaction.atomic
-def token_delete(request, package_name, token_id):
+def plugin_token_delete(request, package_name, token_id):
     plugin = get_object_or_404(Plugin, package_name=package_name)
     outstanding_token = get_object_or_404(OutstandingToken, pk=token_id, user=request.user)
     plugin_token = get_object_or_404(
@@ -728,12 +724,15 @@ def token_delete(request, package_name, token_id):
         is_blacklisted=False
     )
 
-    token = RefreshToken(outstanding_token.token)
     if not check_plugin_access(request.user, plugin):
         return render(request, "plugins/version_permission_deny.html", {})
     if "delete_confirm" in request.POST:
-        token.blacklist()
-        plugin_token.is_blacklisted = True
+        try:
+            token = RefreshToken(outstanding_token.token)
+            token.blacklist()
+            plugin_token.is_blacklisted = True
+        except (InvalidToken, TokenError) as e:
+            plugin_token.is_blacklisted = True
         plugin_token.save()
 
         msg = _("The token has been successfully deleted.")

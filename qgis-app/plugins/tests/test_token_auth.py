@@ -7,6 +7,8 @@ from django.contrib.auth.models import User
 from django.core.files.uploadedfile import SimpleUploadedFile
 from plugins.models import Plugin, PluginVersion
 from plugins.forms import PackageUploadForm
+from rest_framework_simplejwt.token_blacklist.models import OutstandingToken
+from rest_framework_simplejwt.tokens import RefreshToken
 
 def do_nothing(*args, **kwargs):
     pass
@@ -23,7 +25,7 @@ class UploadWithTokenTestCase(TestCase):
     @override_settings(MEDIA_ROOT="api/tests")
     def setUp(self):
         self.client = Client()
-        self.url = reverse('plugin_upload')
+        self.url_upload = reverse('plugin_upload')
 
         # Create a test user
         self.user = User.objects.create_user(
@@ -32,85 +34,124 @@ class UploadWithTokenTestCase(TestCase):
             email='test@example.com'
         )
 
-    def test_upload_with_token(self):
-        create_token_url = reverse('token_obtain_pair')
-        data = {
-            'username': 'testuser',
-            'password': 'testpassword'
-        }
+        # Log in the test user
+        self.client.login(username='testuser', password='testpassword')
 
-        # Test POST request to create token
-        response = self.client.post(create_token_url, data)
-        self.assertEqual(response.status_code, 200)
-        self.assertTrue('access' in response.json())
-        self.assertTrue('refresh' in response.json())
-
-        access_token = response.json()['access']
-
+        # Upload a plugin for renaming test. 
+        # This process is already tested in test_plugin_upload
         valid_plugin = os.path.join(TESTFILE_DIR, "valid_plugin.zip_")
         with open(valid_plugin, "rb") as file:
             uploaded_file = SimpleUploadedFile(
                 "valid_plugin.zip_", file.read(),
                 content_type="application/zip")
 
-        c = Client(HTTP_AUTHORIZATION=f"Bearer {access_token}")
-        # Test POST request with access token
-        response = c.post(self.url, {
+        self.client.post(self.url_upload, {
             'package': uploaded_file,
         })
 
+        self.plugin = Plugin.objects.get(name='Test Plugin')
 
+        package_name = self.plugin.package_name
+        version = '0.0.1'
+        self.url_add_version = reverse('version_create', args=[package_name])
+        self.url_update_version = reverse('version_update', args=[package_name, version])
+        self.url_token_list = reverse('plugin_token_list', args=[package_name])
+        self.url_token_create = reverse('plugin_token_create', args=[package_name])
+
+    def test_token_create(self):
+        # Test token create
+        response = self.client.post(self.url_token_create, {})
         self.assertEqual(response.status_code, 302)
-        self.assertTrue(Plugin.objects.filter(name='Test Plugin').exists())
-        self.assertEqual(
-            Plugin.objects.get(name='Test Plugin').tags.filter(
-                name__in=['python', 'example', 'test']).count(),
-            3)
-        self.assertTrue(PluginVersion.objects.filter(plugin__name='Test Plugin', version='0.0.1').exists())
+        self.assertRedirects(response, self.url_token_list)
+        tokens = OutstandingToken.objects.all()
+        self.assertEqual(tokens.count(), 1)
 
-    def test_refresh_token(self):
-        create_token_url = reverse('token_obtain_pair')
-        data = {
-            'username': 'testuser',
-            'password': 'testpassword'
-        }
+    def test_upload_new_version_with_valid_token(self):
+        # Generate a token for the authenticated user
+        refresh = RefreshToken.for_user(self.user)
+        refresh['plugin_id'] = self.plugin.pk
+        access_token = str(refresh.access_token)
 
-        # Test POST request to create token
-        response = self.client.post(create_token_url, data)
-        refresh_token = response.json()['refresh']
+        # Log out the user and use the token
+        self.client.logout()
 
-        refresh_token_url = reverse('token_refresh')
-
-        # Test POST request to create token
-        refresh_data = {
-            'refresh': refresh_token
-        }
-        response = self.client.post(refresh_token_url, refresh_data)
-        self.assertEqual(response.status_code, 200)
-        self.assertTrue('access' in response.json())
-
-        access_token = response.json()['access']
-
-        valid_plugin = os.path.join(TESTFILE_DIR, "valid_plugin.zip_")
+        valid_plugin = os.path.join(TESTFILE_DIR, "valid_plugin_0.0.2.zip_")
         with open(valid_plugin, "rb") as file:
             uploaded_file = SimpleUploadedFile(
-                "valid_plugin.zip_", file.read(),
-                content_type="application/zip")
+                "valid_plugin_0.0.2.zip_", file.read(),
+                content_type="application/zip_")
 
         c = Client(HTTP_AUTHORIZATION=f"Bearer {access_token}")
+
         # Test POST request with access token
-        response = c.post(self.url, {
+        response = c.post(self.url_add_version, {
             'package': uploaded_file,
         })
-
-
         self.assertEqual(response.status_code, 302)
-        self.assertTrue(Plugin.objects.filter(name='Test Plugin').exists())
-        self.assertEqual(
-            Plugin.objects.get(name='Test Plugin').tags.filter(
-                name__in=['python', 'example', 'test']).count(),
-            3)
+        self.assertTrue(PluginVersion.objects.filter(plugin__name='Test Plugin', version='0.0.2').exists())
+
+    def test_upload_new_version_with_invalid_token(self):
+        # Log out the user and use the token
+        self.client.logout()
+
+        access_token = 'invalid_token'
+        valid_plugin = os.path.join(TESTFILE_DIR, "valid_plugin_0.0.2.zip_")
+        with open(valid_plugin, "rb") as file:
+            uploaded_file = SimpleUploadedFile(
+                "valid_plugin_0.0.2.zip_", file.read(),
+                content_type="application/zip_")
+
+        c = Client(HTTP_AUTHORIZATION=f"Bearer {access_token}")
+
+        # Test POST request with access token
+        response = c.post(self.url_add_version, {
+            'package': uploaded_file,
+        })
+        self.assertEqual(response.status_code, 403)
+        self.assertFalse(PluginVersion.objects.filter(plugin__name='Test Plugin', version='0.0.2').exists())
+
+    def test_update_version_with_valid_token(self):
+        # Generate a token for the authenticated user
+        refresh = RefreshToken.for_user(self.user)
+        refresh['plugin_id'] = self.plugin.pk
+        access_token = str(refresh.access_token)
+
+        # Log out the user and use the token
+        self.client.logout()
+
+        valid_plugin = os.path.join(TESTFILE_DIR, "valid_plugin_0.0.2.zip_")
+        with open(valid_plugin, "rb") as file:
+            uploaded_file = SimpleUploadedFile(
+                "valid_plugin_0.0.2.zip_", file.read(),
+                content_type="application/zip_")
+
+        c = Client(HTTP_AUTHORIZATION=f"Bearer {access_token}")
+
+        # Test POST request with access token
+        response = c.post(self.url_update_version, {
+            'package': uploaded_file,
+        })
+        self.assertEqual(response.status_code, 302)
+        self.assertFalse(PluginVersion.objects.filter(plugin__name='Test Plugin', version='0.0.1').exists())
+        self.assertTrue(PluginVersion.objects.filter(plugin__name='Test Plugin', version='0.0.2').exists())
+
+    def test_update_version_with_invalid_token(self):
+        # Log out the user and use the token
+        self.client.logout()
+        access_token = 'invalid_token'
+
+        valid_plugin = os.path.join(TESTFILE_DIR, "valid_plugin_0.0.2.zip_")
+        with open(valid_plugin, "rb") as file:
+            uploaded_file = SimpleUploadedFile(
+                "valid_plugin_0.0.2.zip_", file.read(),
+                content_type="application/zip_")
+
+        c = Client(HTTP_AUTHORIZATION=f"Bearer {access_token}")
+
+        # Test POST request with access token
+        response = c.post(self.url_update_version, {
+            'package': uploaded_file,
+        })
+        self.assertEqual(response.status_code, 403)
         self.assertTrue(PluginVersion.objects.filter(plugin__name='Test Plugin', version='0.0.1').exists())
-
-
-
+        self.assertFalse(PluginVersion.objects.filter(plugin__name='Test Plugin', version='0.0.2').exists())

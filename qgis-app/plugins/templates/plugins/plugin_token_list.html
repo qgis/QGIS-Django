@@ -2,7 +2,7 @@
 {% load local_timezone %}
 {% block content %}
 <h2>{% trans "Tokens for" %} {{ plugin.name }}</h2>
-<form method="post" action="{% url "plugin_token_manage" plugin.package_name %}">{% csrf_token %}
+<form method="post" action="{% url "plugin_token_create" plugin.package_name %}">{% csrf_token %}
   <div style="margin:0; width:fit-content;">
     <h2>
       <button type="submit" name="plugin_token_create" id="plugin_token_create" value="{% trans "Generate a New Token" %}"
@@ -39,7 +39,7 @@
         <td>{{ token.created_at|local_timezone }}</td>
         <td>{{ token.expires_at|local_timezone }}</td>
         <td>
-          <a class="btn btn-danger btn-mini delete" href="{% url "token_delete" plugin.package_name token.id %}"
+          <a class="btn btn-danger btn-mini delete" href="{% url "plugin_token_delete" plugin.package_name token.id %}"
             title="{% trans "Delete" %}"><i class="icon-remove icon-white"></i>
           </a>
         </td>

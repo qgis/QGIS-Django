@@ -58,16 +58,16 @@ urlpatterns = [
         name="plugin_token_detail",
     ),
     url(
-        r"^(?P<package_name>[A-Za-z][A-Za-z0-9-_]+)/tokens/manage/$",
-        plugin_token_manage,
+        r"^(?P<package_name>[A-Za-z][A-Za-z0-9-_]+)/tokens/create/$",
+        plugin_token_create,
         {},
-        name="plugin_token_manage",
+        name="plugin_token_create",
     ),
     url(
         r"^(?P<package_name>[A-Za-z][A-Za-z0-9-_]+)/tokens/(?P<token_id>[^\/]+)/delete/$",
-        token_delete,
+        plugin_token_delete,
         {},
-        name="token_delete",
+        name="plugin_token_delete",
     ),
     url(
         r"^(?P<package_name>[A-Za-z][A-Za-z0-9-_]+)/set_featured/$",
