@@ -620,7 +620,7 @@ class PluginTokenListView(ListView):
             plugin__pk=plugin.pk, 
             is_blacklisted=False
         ).values_list('token_id', flat=True)
-        return qs.filter(pk__in=token_ids)
+        return qs.filter(pk__in=token_ids, user=self.request.user)
 
     def get_queryset(self):
         qs = super(PluginTokenListView, self).get_queryset()
