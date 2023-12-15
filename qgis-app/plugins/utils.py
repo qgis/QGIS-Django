@@ -1,5 +1,6 @@
 import requests
 import re
+from django.http import HttpRequest
 
 
 def extract_version(tag):
@@ -47,3 +48,11 @@ def get_qgis_versions():
         if version not in all_versions:
             all_versions.append(version)
     return all_versions
+
+
+def parse_remote_addr(request: HttpRequest) -> str:
+    """Extract client IP from request."""
+    x_forwarded_for = request.headers.get("X-Forwarded-For", "")
+    if x_forwarded_for:
+        return x_forwarded_for.split(",")[0]
+    return request.META.get("REMOTE_ADDR", "")

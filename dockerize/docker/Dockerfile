@@ -10,9 +10,18 @@ RUN apt-get clean all
 RUN echo "deb http://archive.debian.org/debian stretch main contrib non-free" > /etc/apt/sources.list
 
 RUN apt-get update && apt-get install -y libsasl2-dev python-dev libldap2-dev libssl-dev
+# Install C library for geoip2
+RUN apt-get install -y libmaxminddb0 libmaxminddb-dev mmdb-bin
 ADD REQUIREMENTS.txt /REQUIREMENTS.txt
 RUN pip install -r /REQUIREMENTS.txt
 RUN pip install uwsgi freezegun==1.3.1
+
+# GeoIp mmdb
+RUN apt-get update && apt-get install -y curl && curl -LJO https://github.com/P3TERX/GeoLite.mmdb/raw/download/GeoLite2-City.mmdb && \
+    mkdir /var/opt/maxmind && \
+    mv GeoLite2-City.mmdb /var/opt/maxmind/GeoLite2-City.mmdb
+
+ENV GEOIP_PATH=/var/opt/maxmind/
 
 # https://docs.docker.com/examples/running_ssh_service/
 # Sudo is needed by pycharm when it tries to pip install packages

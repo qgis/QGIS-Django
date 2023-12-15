@@ -59,3 +59,4 @@ django-user-map
 djangorestframework==3.12.2
 django-rest-auth==0.9.5
 drf-yasg
+geoip2==4.5.0

@@ -32,6 +32,8 @@ from django.views.generic.list import ListView
 from plugins.forms import *
 from plugins.models import Plugin, PluginVersion, PluginVersionDownload, vjust
 from plugins.validator import PLUGIN_REQUIRED_METADATA
+from django.contrib.gis.geoip2 import GeoIP2
+from plugins.utils import parse_remote_addr
 
 try:
     from urllib import unquote, urlencode
@@ -516,8 +518,10 @@ class PluginDetailView(DetailView):
                         "<strong>%s</strong> metadata is missing, this metadata entry is <strong>required</strong>. Please add <strong>%s</strong> to <code>metadata.txt</code>."
                     ) % (md, md)
                     messages.error(self.request, msg, fail_silently=True)
+        stats_url = f"{settings.METABASE_DASHBOARD_URL}?package_name={plugin.package_name}#hide_parameters=package_name"
         context.update(
             {
+                "stats_url": stats_url,
                 "rating": int(plugin.rating.get_rating()),
                 "votes": plugin.rating.votes,
             }
@@ -1243,8 +1247,22 @@ def version_download(request, package_name, version):
     plugin.downloads = plugin.downloads + 1
     plugin.save(keep_date=True)
 
+    remote_addr = parse_remote_addr(request)
+    g = GeoIP2()
+
+    if remote_addr:
+        try:
+            country_data = g.country(remote_addr)
+            country_code = country_data['country_code']
+            country_name = country_data['country_name']
+        except Exception as e:  # AddressNotFoundErrors:
+            country_code = 'N/D'
+            country_name = 'N/D'
+
     download_record, created = PluginVersionDownload.objects.get_or_create(
         plugin_version = version, 
+        country_code = country_code,
+        country_name = country_name,
         download_date = now().date(), 
         defaults = {'download_count': 1}
     )
