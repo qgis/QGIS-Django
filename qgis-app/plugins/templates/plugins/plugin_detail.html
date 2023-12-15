@@ -140,6 +140,7 @@
             <li><a href="#plugin-versions" data-toggle="tab">{% trans "Versions" %}</a></li>
             {% if user.is_staff or user in object.editors %}
             <li><a href="#plugin-manage" data-toggle="tab">{% trans "Manage" %}</a></li>
+            <li><a href="#plugin-stats" data-toggle="tab">{% trans "Stats" %}</a></li>
             {% endif %}
         </ul>
 
@@ -273,6 +274,15 @@
                     {% endif %}
                 </div>
                 </form>
+            </div>
+            <div class="tab-pane" id="plugin-stats">
+                <iframe
+                    src="{{stats_url}}"
+                    frameborder="0"
+                    width="1350"
+                    height="810"
+                    allowtransparency
+                ></iframe>
             </div>
             {% endif %}
             {# end admin #}
