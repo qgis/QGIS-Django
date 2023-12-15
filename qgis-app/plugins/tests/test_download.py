@@ -3,7 +3,7 @@ from django.contrib.auth.models import User
 from django.utils import timezone
 from django.core.files.uploadedfile import SimpleUploadedFile
 
-from plugins.models import Plugin, PluginVersion, PluginVersionDownload, PluginDownloadEvent
+from plugins.models import Plugin, PluginVersion, PluginVersionDownload
 from plugins.views import version_download
 from django.urls import reverse
 
@@ -58,9 +58,11 @@ class TestVersionDownloadView(TestCase):
 
         self.version.refresh_from_db()
         self.plugin.refresh_from_db()
-        download_event = PluginDownloadEvent.objects.get(
-            plugin_version=self.version
+        download_record = PluginVersionDownload.objects.get(
+            plugin_version=self.version, 
+            download_date=timezone.now().date()
         )
 
         self.assertEqual(response.status_code, 200)
-        self.assertTrue(download_event.country_code == 'ID')
+        self.assertTrue(download_record.country_code == 'ID')
+        self.assertTrue(download_record.country_name == 'Indonesia')

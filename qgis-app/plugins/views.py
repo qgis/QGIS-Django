@@ -30,7 +30,7 @@ from django.views.generic.detail import DetailView
 # from sortable_listview import SortableListView
 from django.views.generic.list import ListView
 from plugins.forms import *
-from plugins.models import Plugin, PluginDownloadEvent, PluginVersion, PluginVersionDownload, vjust
+from plugins.models import Plugin, PluginVersion, PluginVersionDownload, vjust
 from plugins.validator import PLUGIN_REQUIRED_METADATA
 from django.contrib.gis.geoip2 import GeoIP2
 from plugins.utils import parse_remote_addr
@@ -1245,8 +1245,22 @@ def version_download(request, package_name, version):
     plugin.downloads = plugin.downloads + 1
     plugin.save(keep_date=True)
 
+    remote_addr = parse_remote_addr(request)
+    g = GeoIP2()
+
+    if remote_addr:
+        try:
+            country_data = g.country(remote_addr)
+            country_code = country_data['country_code']
+            country_name = country_data['country_name']
+        except Exception as e:  # AddressNotFoundErrors:
+            country_code = 'N/D'
+            country_name = 'N/D'
+
     download_record, created = PluginVersionDownload.objects.get_or_create(
         plugin_version = version, 
+        country_code = country_code,
+        country_name = country_name,
         download_date = now().date(), 
         defaults = {'download_count': 1}
     )
@@ -1255,20 +1269,6 @@ def version_download(request, package_name, version):
             download_record.download_count + 1
         )
         download_record.save()
-
-    remote_addr = parse_remote_addr(request)
-    g = GeoIP2()
-    download_event = PluginDownloadEvent.objects.create(
-        plugin_version = version
-    )
-
-    if remote_addr:
-        try:
-            country_data = g.country(remote_addr)
-            download_event.country_code = country_data['country_code']
-        except Exception as e:  # AddressNotFoundErrors:
-            download_event.country_code = 'N/D'
-    download_event.save()
 
     if not version.package.file.file.closed:
         version.package.file.file.close()

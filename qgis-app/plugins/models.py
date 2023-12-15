@@ -888,6 +888,8 @@ class PluginVersionDownload(models.Model):
     download_date = models.DateField(
         default=timezone.now
     )
+    country_code = models.CharField(max_length=3, default='N/D')
+    country_name = models.CharField(max_length=100, default='N/D')
     download_count = models.IntegerField(
         default=0
     )
@@ -897,17 +899,6 @@ class PluginVersionDownload(models.Model):
             'download_date'
         )
 
-
-class PluginDownloadEvent(models.Model):
-    """
-    Plugin version download per country
-    """
-    plugin_version = models.ForeignKey(PluginVersion, on_delete=models.CASCADE)
-    country_code = models.CharField(max_length=3)
-    downloaded_on = models.DateTimeField(
-        auto_now_add=True,
-        editable=False
-    )
 
 models.signals.post_delete.connect(delete_version_package, sender=PluginVersion)
 models.signals.post_delete.connect(delete_plugin_icon, sender=Plugin)
