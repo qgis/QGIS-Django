@@ -64,6 +64,12 @@ urlpatterns = [
         name="plugin_token_create",
     ),
     url(
+        r"^(?P<package_name>[A-Za-z][A-Za-z0-9-_]+)/tokens/(?P<token_id>\d+)/update$",
+        plugin_token_update,
+        {},
+        name="plugin_token_update",
+    ),
+    url(
         r"^(?P<package_name>[A-Za-z][A-Za-z0-9-_]+)/tokens/(?P<token_id>[^\/]+)/delete/$",
         plugin_token_delete,
         {},

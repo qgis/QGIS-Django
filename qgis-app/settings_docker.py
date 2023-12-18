@@ -125,8 +125,8 @@ REST_FRAMEWORK = {
     "TEST_REQUEST_DEFAULT_FORMAT": "json",
 }
 
-# Token access and refresh validity
+# Set plugin token access and refresh validity to a very long duration
 SIMPLE_JWT = {
-    'ACCESS_TOKEN_LIFETIME': timedelta(days=15),
-    'REFRESH_TOKEN_LIFETIME': timedelta(days=15),
+    'ACCESS_TOKEN_LIFETIME': timedelta(days=365*1000),
+    'REFRESH_TOKEN_LIFETIME': timedelta(days=365*1000)
 }

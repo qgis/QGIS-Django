@@ -5,8 +5,8 @@
 <form method="post" action="{% url "plugin_token_create" plugin.package_name %}">{% csrf_token %}
   <div style="margin:0; width:fit-content;">
     <h2>
-      <button type="submit" name="plugin_token_create" id="plugin_token_create" value="{% trans "Generate a New Token" %}"
-        class="btn btn-block btn-primary" style="padding: 10px">
+      <button type="submit" name="plugin_token_create" id="plugin_token_create"
+        value="{% trans "Generate a New Token" %}" class="btn btn-block btn-primary" style="padding: 10px">
         <i class="icon-plus icon-white icon-2x" style=" vertical-align: middle;"></i>
         &nbsp;{% trans "Generate a New Token" %}
       </button>
@@ -19,27 +19,30 @@
     <thead>
       <tr>
         <th>{% trans "User" %}</th>
+        <th>{% trans "Description" %}</th>
         <th>{% trans "Jti" %}</th>
         <th>{% trans "Created at" %}</th>
-        <th>{% trans "Expires at" %}</th>
+        <th>{% trans "Last used at" %}</th>
         <th>{% trans "Manage" %}</th>
       </tr>
     </thead>
     <tbody>
-      {% for token in object_list %}
+      {% for plugin_token in object_list %}
       <tr class="{% cycle "even" "odd" %}">
-        <td>{{ token.user }}</td>
+        <td>{{ plugin_token.token.user }}</td>
+        <td>{{ plugin_token.description|default:"-" }}</td>
         <td style="max-width:200px">
           <span class="truncate" style="display:block !important;">
-            <a title="{% trans "Click here for token details" %}" href="{% url "plugin_token_detail" plugin.package_name token.id %}">
-              {{ token.jti }}
-            </a>
+            {{ plugin_token.token.jti }}
           </span>
         </td>
-        <td>{{ token.created_at|local_timezone }}</td>
-        <td>{{ token.expires_at|local_timezone }}</td>
+        <td>{{ plugin_token.token.created_at|local_timezone }}</td>
+        <td>{{ plugin_token.last_used_on|default:"-"|local_timezone }}</td>
         <td>
-          <a class="btn btn-danger btn-mini delete" href="{% url "plugin_token_delete" plugin.package_name token.id %}"
+          <a class="btn btn-primary btn-mini" href="{% url "plugin_token_update" plugin.package_name plugin_token.token.id %}"
+            title="{% trans "Edit description" %}"><i class="icon-pencil icon-white"></i></a>&nbsp;
+          <a class="btn btn-danger btn-mini delete"
+            href="{% url "plugin_token_delete" plugin.package_name plugin_token.token.id %}"
             title="{% trans "Delete" %}"><i class="icon-remove icon-white"></i>
           </a>
         </td>
@@ -70,6 +73,5 @@
     -webkit-box-orient: vertical;
     direction: rtl;
   }
-
 </style>
 {% endblock %}

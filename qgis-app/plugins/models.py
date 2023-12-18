@@ -911,6 +911,19 @@ class PluginOutstandingToken(models.Model):
         on_delete=models.CASCADE
     )
     is_blacklisted = models.BooleanField(default=False)
+    is_newly_created = models.BooleanField(default=False)
+    description = models.CharField(
+        verbose_name=_("Description"),
+        help_text=_("Describe this token so that it's easier to remember where you're using it."),
+        max_length=512,
+        blank=True,
+        null=True,
+    )
+    last_used_on = models.DateTimeField(
+        verbose_name=_("Last used on"),
+        blank=True,
+        null=True
+    )
 
 models.signals.post_delete.connect(delete_version_package, sender=PluginVersion)
 models.signals.post_delete.connect(delete_plugin_icon, sender=Plugin)

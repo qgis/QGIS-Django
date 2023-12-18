@@ -1,9 +1,10 @@
 from functools import wraps
 from django.http import HttpResponseForbidden
 from rest_framework_simplejwt.authentication import JWTAuthentication
-from plugins.models import Plugin
+from plugins.models import Plugin, PluginOutstandingToken
 from rest_framework_simplejwt.exceptions import InvalidToken, TokenError
 from rest_framework_simplejwt.token_blacklist.models import BlacklistedToken, OutstandingToken
+import datetime
 
 def has_valid_token(function):
   @wraps(function)
@@ -28,7 +29,9 @@ def has_valid_token(function):
       plugin = Plugin.objects.get(pk=plugin_id)
       if not plugin or plugin.package_name != package_name:
           raise InvalidToken("Invalid token")
-
+      plugin_token = PluginOutstandingToken.objects.get(token__pk=token_id, plugin=plugin)
+      plugin_token.last_used_on = datetime.datetime.now()
+      plugin_token.save()
       request.user = user
       return function(request, *args, **kwargs)
     except (InvalidToken, TokenError) as e:

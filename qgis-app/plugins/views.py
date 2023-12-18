@@ -38,7 +38,7 @@ from plugins.validator import PLUGIN_REQUIRED_METADATA
 from rest_framework_simplejwt.token_blacklist.models import OutstandingToken
 from rest_framework_simplejwt.tokens import RefreshToken, api_settings
 from rest_framework_simplejwt.exceptions import InvalidToken, TokenError
-
+import time
 try:
     from urllib import unquote, urlencode
 
@@ -255,6 +255,16 @@ def check_plugin_access(user, plugin):
 
     """
     return user.is_staff or user in plugin.editors
+
+def check_plugin_token_access(user, plugin):
+    """
+    Returns true if the user can access all the plugin's token:
+
+        * is_staff
+        * is maintainer
+
+    """
+    return user.is_staff or user.pk == plugin.created_by.pk
 
 
 def check_plugin_version_approval_rights(user, plugin):
@@ -605,8 +615,8 @@ class PluginTokenListView(ListView):
     """
     Plugin token list
     """
-    model = OutstandingToken
-    queryset = OutstandingToken.objects.all().order_by("-created_at")
+    model = PluginOutstandingToken
+    queryset = PluginOutstandingToken.objects.all().order_by("-token__created_at")
     template_name = "plugins/plugin_token_list.html"
 
     @method_decorator(ensure_csrf_cookie)
@@ -616,11 +626,16 @@ class PluginTokenListView(ListView):
     def get_filtered_queryset(self, qs):
         package_name = self.kwargs.get('package_name')
         plugin = get_object_or_404(Plugin, package_name=package_name)
-        token_ids = PluginOutstandingToken.objects.filter(
+        if not check_plugin_token_access(self.request.user, plugin):
+            return qs.filter(
+                plugin__pk=plugin.pk, 
+                is_blacklisted=False,
+                token__user=self.request.user
+            )
+        return qs.filter(
             plugin__pk=plugin.pk, 
-            is_blacklisted=False
-        ).values_list('token_id', flat=True)
-        return qs.filter(pk__in=token_ids, user=self.request.user)
+            is_blacklisted=False,
+        )
 
     def get_queryset(self):
         qs = super(PluginTokenListView, self).get_queryset()
@@ -668,7 +683,8 @@ class PluginTokenDetailView(DetailView):
         plugin_token = get_object_or_404(
             PluginOutstandingToken, 
             token__pk=outstanding_token.pk, 
-            is_blacklisted=False
+            is_blacklisted=False,
+            is_newly_created=True
         )
         try:
             token = RefreshToken(outstanding_token.token)
@@ -677,14 +693,18 @@ class PluginTokenDetailView(DetailView):
         except (InvalidToken, TokenError) as e:
             context = {}
             self.template_name = "plugins/plugin_token_invalid_or_expired.html"
-            return context        
+            return context
+        timestamp_from_last_edit = int(time.time())        
         context.update(
             {
                 "access_token": str(token.access_token),
                 "plugin": plugin,
-                "object": outstanding_token
+                "object": outstanding_token,
+                'timestamp_from_last_edit': timestamp_from_last_edit
             }
         )
+        plugin_token.is_newly_created = False
+        plugin_token.save()
         return context
 
 @login_required
@@ -703,21 +723,56 @@ def plugin_token_create(request, package_name):
 
         outstanding_token = OutstandingToken.objects.get(jti=jti)
 
-        plugin_token, created = PluginOutstandingToken.objects.update_or_create(
+        plugin_token = PluginOutstandingToken.objects.create(
             plugin=plugin,
             token=outstanding_token,
-            is_blacklisted=False
+            is_blacklisted=False,
+            is_newly_created=True
         )
 
         return HttpResponseRedirect(
-            reverse("plugin_token_list", args=(plugin.package_name,))
+            reverse("plugin_token_detail", args=(plugin.package_name, plugin_token.pk))
         )
+
+@login_required
+@transaction.atomic
+def plugin_token_update(request, package_name, token_id):
+    plugin = get_object_or_404(Plugin, package_name=package_name)
+    outstanding_token = get_object_or_404(OutstandingToken, pk=token_id)
+    if not check_plugin_token_access(request.user, plugin):
+        outstanding_token = get_object_or_404(OutstandingToken, pk=token_id, user=request.user)
+    plugin_token = get_object_or_404(
+        PluginOutstandingToken, 
+        token__pk=outstanding_token.pk, 
+        is_blacklisted=False
+    )
+    if not check_plugin_access(request.user, plugin):
+        return render(request, "plugins/version_permission_deny.html", {})
+    if request.method == "POST":
+        form = PluginTokenForm(request.POST, instance=plugin_token)
+        if form.is_valid():
+            form.save()
+            msg = _("The token description has been successfully updated.")
+            messages.success(request, msg, fail_silently=True)
+            return HttpResponseRedirect(
+                reverse("plugin_token_list", args=(plugin.package_name,))
+            )
+    else:
+        form = PluginTokenForm(instance=plugin_token)
+
+    return render(
+        request,
+        "plugins/plugin_token_form.html",
+        {"form": form, "token": plugin_token}
+    )
 
 @login_required
 @transaction.atomic
 def plugin_token_delete(request, package_name, token_id):
     plugin = get_object_or_404(Plugin, package_name=package_name)
-    outstanding_token = get_object_or_404(OutstandingToken, pk=token_id, user=request.user)
+    outstanding_token = get_object_or_404(OutstandingToken, pk=token_id)
+    if not check_plugin_token_access(request.user, plugin):
+        outstanding_token = get_object_or_404(OutstandingToken, pk=token_id, user=request.user)
     plugin_token = get_object_or_404(
         PluginOutstandingToken, 
         token__pk=outstanding_token.pk, 
