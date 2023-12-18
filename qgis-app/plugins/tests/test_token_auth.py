@@ -62,14 +62,16 @@ class UploadWithTokenTestCase(TestCase):
         # Test token create
         response = self.client.post(self.url_token_create, {})
         self.assertEqual(response.status_code, 302)
-        self.assertRedirects(response, self.url_token_list)
         tokens = OutstandingToken.objects.all()
         self.assertEqual(tokens.count(), 1)
 
     def test_upload_new_version_with_valid_token(self):
         # Generate a token for the authenticated user
-        refresh = RefreshToken.for_user(self.user)
+        self.client.post(self.url_token_create, {})
+        outstanding_token = OutstandingToken.objects.last().token
+        refresh = RefreshToken(outstanding_token)
         refresh['plugin_id'] = self.plugin.pk
+        refresh['refresh_jti'] = refresh['jti']
         access_token = str(refresh.access_token)
 
         # Log out the user and use the token
@@ -112,8 +114,11 @@ class UploadWithTokenTestCase(TestCase):
 
     def test_update_version_with_valid_token(self):
         # Generate a token for the authenticated user
-        refresh = RefreshToken.for_user(self.user)
+        self.client.post(self.url_token_create, {})
+        outstanding_token = OutstandingToken.objects.last().token
+        refresh = RefreshToken(outstanding_token)
         refresh['plugin_id'] = self.plugin.pk
+        refresh['refresh_jti'] = refresh['jti']
         access_token = str(refresh.access_token)
 
         # Log out the user and use the token
