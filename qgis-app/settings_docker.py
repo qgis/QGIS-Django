@@ -76,6 +76,7 @@ INSTALLED_APPS = [
     # models (sharing .model3 file feature)
     "models",
     "wavefronts",
+    "matomo"
 ]
 
 DATABASES = {
@@ -120,3 +121,6 @@ FILE_UPLOAD_PERMISSIONS = 0o644
 REST_FRAMEWORK = {
     "TEST_REQUEST_DEFAULT_FORMAT": "json",
 }
+
+MATOMO_SITE_ID="1"
+MATOMO_URL="//matomo.qgis.org/"

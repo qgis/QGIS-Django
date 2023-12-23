@@ -1,7 +1,7 @@
 django==2.2.25
 django-auth-ldap
 python-ldap
-django-taggit
+django-taggit==2.0.0
 django-tinymce==3.4.0
 psycopg2
 # Updates for Django 2
@@ -21,8 +21,11 @@ django-sortable-listview
 sorl-thumbnail
 django-extensions
 django-debug-toolbar==1.11.1
-whoosh
-django-haystack
+
+# Updates for Django 2  & Python 3.7
+git+https://github.com/Xpirix/whoosh.git@a306553
+pickle5==0.0.12
+django-haystack==3.2.1
 
 # Feedjack==0.9.18
 # So use George's fork rather
@@ -50,3 +53,4 @@ django-rest-multiple-models==2.1.3
 
 django-preferences==1.0.0
 PyWavefront==1.3.3
+django-matomo==0.1.6
