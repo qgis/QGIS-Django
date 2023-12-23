@@ -1,4 +1,5 @@
 {% extends 'plugins/plugin_base.html' %}{% load i18n bootstrap_pagination humanize static sort_anchor range_filter thumbnail %}
+{% load local_timezone %}
 {% block extrajs %}
   <script type="text/javascript" src="{% static "js/jquery.cookie.js" %}"></script>
   <script language="javascript">
@@ -93,8 +94,8 @@
                 {% if object.author %}
                 <td><a title="{% trans "See all plugins by"%} {{ object.author }}" href="{% url "author_plugins" object.author %}">{{ object.author }}</a></td>
                 {% endif %}
-                <td>{{ object.latest_version_date|naturalday }}</td>
-                <td>{{ object.created_on|naturalday }}</td>
+                <td>{{ object.latest_version_date|local_timezone:"SHORT_NATURAL_DAY" }}</td>
+                <td>{{ object.created_on|local_timezone:"SHORT" }}</td>
                 <td><div><div class="star-ratings"><span style="width:{% widthratio object.average_vote 5 100 %}%" class="rating"></span></div> ({{ object.rating_votes }})</div></td>
                 <td>{% if object.stable %}<a href="{% url "version_download" object.package_name object.stable.version %}" title="{% trans "Download the stable version" %}" >{{ object.stable.version }}</a>{% else %}&mdash;{% endif %}</td>
                 <td>{% if object.experimental %}<a href="{% url "version_download" object.package_name object.experimental.version %}" title="{% trans "Download the experimental version" %}" >{{ object.experimental.version }}</a>{% else %}&mdash;{% endif %}</td>
