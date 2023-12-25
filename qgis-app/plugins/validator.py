@@ -90,7 +90,7 @@ def _check_required_metadata(metadata):
         if md not in dict(metadata) or not dict(metadata)[md]:
             raise ValidationError(
                 _(
-                    'Cannot find metadata <strong>%s</strong> in metadata source <code>%s</code>.<br />For further informations about metadata, please see: <a target="_blank"  href="http://docs.qgis.org/testing/en/docs/pyqgis_developer_cookbook/plugins.html#plugin-metadata-table">metadata documentation</a>'
+                    'Cannot find metadata <strong>%s</strong> in metadata source <code>%s</code>.<br />For further informations about metadata, please see: <a target="_blank"  href="https://docs.qgis.org/testing/en/docs/pyqgis_developer_cookbook/plugins/plugins.html#metadata-txt">metadata documentation</a>'
                 )
                 % (md, dict(metadata).get("metadata_source"))
             )
