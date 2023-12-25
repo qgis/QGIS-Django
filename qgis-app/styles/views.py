@@ -100,7 +100,6 @@ class StyleUpdateView(ResourceMixin, ResourceBaseUpdateView):
                 symbol_type=xml_parse["type"]
             ).first()
         obj.require_action = False
-        obj.approved = False
         obj.save()
         resource_notify(obj, created=False, resource_type=self.resource_name)
         msg = _("The Style has been successfully updated.")
