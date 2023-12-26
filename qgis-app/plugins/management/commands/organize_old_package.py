@@ -22,12 +22,12 @@ class Command(BaseCommand):
             # Create the year folder if it doesn't exist
             os.makedirs(year_folder, exist_ok=True)
 
-            # Move the package file to the year folder
+            # Copy the package file to the year folder
             old_path = version.package.path
             if os.path.exists(old_path):
                 new_path = os.path.join(year_folder, os.path.basename(old_path))
                 if not os.path.exists(new_path):
-                    shutil.move(old_path, year_folder)
+                    shutil.copy(old_path, year_folder)
 
                     # Update the model with the new package path
                     version.package.name = os.path.relpath(new_path, settings.MEDIA_ROOT)
