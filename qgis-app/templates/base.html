@@ -49,7 +49,7 @@
 
                         <a class="brand" href="https://www.qgis.org">QGIS</a>
                         {% if user.is_authenticated %}
-                        <a id="user-tooltip" href="{% if user.is_superuser %}{% url "admin:index" %}{% else %}{% url "logout" %}{% endif %}"
+                        <a id="user-tooltip" href="{% if user.is_superuser %}{% url "admin:index" %}{% else %}{% url "my_plugins" %}{% endif %}"
                            data-toggle="tooltip" data-placement="bottom" title="{{ user.username }}" style="float: right !important"><i class="icon-user icon-3x"></i></a>
                         {% endif %}
 
