@@ -8,11 +8,11 @@ class Command(BaseCommand):
     help = 'Run collectstatic and delete folders from media that exist in static'
 
     def handle(self, *args, **options):
-        confirm = input(f"Do you want to run 'collectstatic' first? (yes/no): ")
+        confirm = input("Do you want to run 'collectstatic' first? (yes/no): ")
         if confirm.lower() == 'yes':
             # Run collectstatic command
             call_command('collectstatic', interactive=False)
-        
+
         # Get the paths of static and media folders
         static_root = settings.STATIC_ROOT
         media_root = settings.MEDIA_ROOT
@@ -35,4 +35,4 @@ class Command(BaseCommand):
                 else:
                     self.stdout.write(self.style.WARNING(f'Skipped deletion of {static_dir}.'))
 
-        self.stdout.write(self.style.SUCCESS(f'The media folder has been cleaned.'))
+        self.stdout.write(self.style.SUCCESS('The media folder has been cleaned.'))
