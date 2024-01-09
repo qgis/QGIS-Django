@@ -43,9 +43,24 @@ class PluginForm(ModelForm):
             "tracker",
             "repository",
             "owners",
+            "maintainer",
+            "display_created_by",
             "tags",
             "server",
         )
+
+    def __init__(self, *args, **kwargs):
+        super(PluginForm, self).__init__(*args, **kwargs)
+        self.fields['owners'].label = "Collaborators"
+
+        choices = (
+            (self.instance.created_by.pk, self.instance.created_by.username + " (Plugin creator)"),
+        )
+        for owner in self.instance.owners.exclude(pk=self.instance.created_by.pk):
+            choices += ((owner.pk, owner.username + " (Collaborator)"),)
+
+        self.fields['maintainer'].choices = choices
+        self.fields['maintainer'].label = "Maintainer"
 
     def clean(self):
         """

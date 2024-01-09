@@ -61,3 +61,4 @@ pyjwt==1.7.1
 djangorestframework-simplejwt==4.4 
 django-rest-auth==0.9.5
 drf-yasg
+django-matomo==0.1.6

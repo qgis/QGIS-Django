@@ -80,6 +80,7 @@ INSTALLED_APPS = [
     # models (sharing .model3 file feature)
     "models",
     "wavefronts",
+    "matomo"
 ]
 
 DATABASES = {
@@ -130,3 +131,6 @@ SIMPLE_JWT = {
     'ACCESS_TOKEN_LIFETIME': timedelta(days=365*1000),
     'REFRESH_TOKEN_LIFETIME': timedelta(days=365*1000)
 }
+
+MATOMO_SITE_ID="1"
+MATOMO_URL="//matomo.qgis.org/"

@@ -1,5 +1,6 @@
 {% load i18n simplemenu_tags static %}
 {% load resources_custom_tags %}
+{% load matomo_tags %}
 <!DOCTYPE html>
 <html xmlns="http://www.w3.org/1999/xhtml">
 <head>
@@ -21,7 +22,7 @@
 
     <script type="text/javascript" src="{% static "js/jquery-1.11.1.min.js" %}"></script>
     <script type="text/javascript" src="{% static "bootstrap/js/bootstrap-3.4.1.min.js" %}"></script>
-
+    
     <!-- Cookie disclaimer -->
     <script type="text/javascript" id="cookieinfo" src="{% static 'js/cookieinfo/cookieinfo.min.js' %}" data-bg="#1c2028"
             data-fg="#FFFFFF" data-link="#22961c" data-cookie="CookieInfoScript" data-text-align="left"
@@ -50,10 +51,6 @@
                         {% if user.is_authenticated %}
                         <a id="user-tooltip" href="{% if user.is_superuser %}{% url "admin:index" %}{% else %}{% url "logout" %}{% endif %}"
                            data-toggle="tooltip" data-placement="bottom" title="{{ user.username }}" style="float: right !important"><i class="icon-user icon-3x"></i></a>
-                        {% else %}
-                            <div class="signin-wrapper">
-                                <a href="{% url "login" %}"><i class="icon-signin icon-3x"></i></a>
-                            </div>
                         {% endif %}
 
                     <form class="navbar-search" action="{% url "haystack_search" %}" method="get">
@@ -180,6 +177,8 @@
 <script type="text/javascript">
 $('#user-tooltip').tooltip('hide');
 </script>
-<script type="text/javascript" src="{% static 'js/local_timezone.js' %}"></script>
+<script type="text/javascript" src="{% static 'js/moment.min.js' %}"></script>
+<script type="text/javascript" src="{% static 'js/local_timezone-1.0.js' %}"></script>
+{% tracking_code %}
 </body>
 </html>
