@@ -18,12 +18,11 @@ def has_valid_token(function):
     authentication = JWTAuthentication()
     try:
       validated_token = authentication.get_validated_token(auth_token[7:])
-      user = authentication.get_user(validated_token)
       plugin_id = validated_token.payload.get('plugin_id')
       jti = validated_token.payload.get('refresh_jti')
       token_id = OutstandingToken.objects.get(jti=jti).pk
       is_blacklisted = BlacklistedToken.objects.filter(token_id=token_id).exists()
-      if not plugin_id or not user or is_blacklisted:
+      if not plugin_id or is_blacklisted:
           raise InvalidToken("Invalid token")
 
       plugin = Plugin.objects.get(pk=plugin_id)
@@ -32,7 +31,7 @@ def has_valid_token(function):
       plugin_token = PluginOutstandingToken.objects.get(token__pk=token_id, plugin=plugin)
       plugin_token.last_used_on = datetime.datetime.now()
       plugin_token.save()
-      request.user = user
+      request.plugin_token = plugin_token
       return function(request, *args, **kwargs)
     except (InvalidToken, TokenError) as e:
         return HttpResponseForbidden(str(e))

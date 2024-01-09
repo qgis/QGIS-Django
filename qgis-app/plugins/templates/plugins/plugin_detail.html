@@ -235,7 +235,11 @@
                                 <td>{{ version.min_qg_version }}</td>
                                 <td>{{ version.max_qg_version }}</td>
                                 <td>{{ version.downloads }}</td>
+                                {% if version.is_from_token %}
+                                <td>Token {{ version.token.description|default:"" }}</td>
+                                {% else %}
                                 <td><a href="{% url "user_details" version.created_by.username %}">{{ version.created_by }}</a></td>
+                                {% endif %}
                                 <td>{{ version.created_on|local_timezone }}</td>
                                 {% if user.is_staff or user in version.plugin.approvers or user in version.plugin.editors %}<td><form method="post" action="{% url "version_manage" object.package_name version.version %}">{% csrf_token %}
                                 {% if user.is_staff or user in version.plugin.approvers %}

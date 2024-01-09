@@ -690,6 +690,7 @@ class PluginTokenDetailView(DetailView):
             token = RefreshToken(outstanding_token.token)
             token['plugin_id'] = plugin.pk
             token['refresh_jti'] = token[api_settings.JTI_CLAIM]
+            del token['user_id']
         except (InvalidToken, TokenError) as e:
             context = {}
             self.template_name = "plugins/plugin_token_invalid_or_expired.html"
@@ -1139,33 +1140,36 @@ def version_create_api(request, package_name):
     We make sure that the token is valid before 
     disabling CSRF protection.
     """
-    return _version_create(request, package_name)
+    plugin = get_object_or_404(Plugin, package_name=package_name)
+    version = PluginVersion(plugin=plugin, is_from_token=True, token=request.plugin_token)
+
+    return _version_create(request, plugin, version)
 
 
 @login_required
 def version_create(request, package_name):
-    return _version_create(request, package_name)
-
-def _version_create(request, package_name):
-    """
-    The form will create versions according to permissions,
-    plugin name and description are updated according to the info
-    contained in the package metadata
-    """
     plugin = get_object_or_404(Plugin, package_name=package_name)
     if not check_plugin_access(request.user, plugin):
         return render(
             request, "plugins/version_permission_deny.html", {"plugin": plugin}
         )
-
     version = PluginVersion(plugin=plugin, created_by=request.user)
+    is_trusted=request.user.has_perm("plugins.can_approve")
+    return _version_create(request, plugin, version, is_trusted=is_trusted)
+
+def _version_create(request, plugin, version, is_trusted=False):
+    """
+    The form will create versions according to permissions,
+    plugin name and description are updated according to the info
+    contained in the package metadata
+    """
     if request.method == "POST":
 
         form = PluginVersionForm(
             request.POST,
             request.FILES,
             instance=version,
-            is_trusted=request.user.has_perm("plugins.can_approve"),
+            is_trusted=is_trusted
         )
         if form.is_valid():
             try:
@@ -1174,7 +1178,7 @@ def _version_create(request, package_name):
                 messages.success(request, msg, fail_silently=True)
                 # The approved flag is also controlled in the form, but we
                 # are checking it here in any case for additional security
-                if not request.user.has_perm("plugins.can_approve"):
+                if not is_trusted:
                     new_object.approved = False
                     new_object.save()
                     messages.warning(
@@ -1207,7 +1211,7 @@ def _version_create(request, package_name):
             return HttpResponseRedirect(plugin.get_absolute_url())
     else:
         form = PluginVersionForm(
-            is_trusted=request.user.has_perm("plugins.can_approve")
+            is_trusted=is_trusted
         )
 
     return render(
@@ -1225,30 +1229,34 @@ def version_update_api(request, package_name, version):
     We make sure that the token is valid before 
     disabling CSRF protection.
     """
-    return _version_update(request, package_name, version)
+    plugin = get_object_or_404(Plugin, package_name=package_name)
+    version = PluginVersion(plugin=plugin, is_from_token=True, token=request.plugin_token)
+    return _version_update(request, plugin, version)
 
 
 @login_required
 def version_update(request, package_name, version):
-    return _version_update(request, package_name, version)
-
-def _version_update(request, package_name, version):
-    """
-    The form will update versions according to permissions
-    """
     plugin = get_object_or_404(Plugin, package_name=package_name)
     version = get_object_or_404(PluginVersion, plugin=plugin, version=version)
     if not check_plugin_access(request.user, plugin):
         return render(
             request, "plugins/version_permission_deny.html", {"plugin": plugin}
         )
+    version = PluginVersion(plugin=plugin, created_by=request.user)
+    is_trusted=request.user.has_perm("plugins.can_approve")
+    return _version_update(request, plugin, version, is_trusted=is_trusted)
+
+def _version_update(request, plugin, version, is_trusted=False):
+    """
+    The form will update versions according to permissions
+    """
 
     if request.method == "POST":
         form = PluginVersionForm(
             request.POST,
             request.FILES,
             instance=version,
-            is_trusted=request.user.has_perm("plugins.can_approve"),
+            is_trusted=is_trusted,
         )
         if form.is_valid():
             try:
@@ -1274,7 +1282,7 @@ def _version_update(request, package_name, version):
             return HttpResponseRedirect(plugin.get_absolute_url())
     else:
         form = PluginVersionForm(
-            instance=version, is_trusted=request.user.has_perm("plugins.can_approve")
+            instance=version, is_trusted=is_trusted
         )
 
     return render(
