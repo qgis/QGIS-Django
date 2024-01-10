@@ -28,6 +28,7 @@ from django.views.generic import (
     View,
 )
 from django.views.generic.base import ContextMixin
+from django.utils.encoding import escape_uri_path
 
 GROUP_NAME = "Style Managers"
 
@@ -484,9 +485,8 @@ class ResourceBaseDownload(ResourceBaseContextMixin, View):
         response = HttpResponse(
             zipfile.getvalue(), content_type="application/x-zip-compressed"
         )
-        response["Content-Disposition"] = "attachment; filename=%s.zip" % (
-            slugify(object.name, allow_unicode=True)
-        )
+        zip_name = slugify(object.name, allow_unicode=True)
+        response["Content-Disposition"] = f"attachment; filename*=utf-8''{escape_uri_path(zip_name)}.zip"
         return response
 
 
