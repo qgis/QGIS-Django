@@ -478,6 +478,17 @@ def plugin_upload(request):
                     )
                     del form.cleaned_data["license_recommended"]
 
+                if form.cleaned_data.get("multiple_parent_folders"):
+                    parent_folders = form.cleaned_data.get("multiple_parent_folders")
+                    messages.warning(
+                        request,
+                        _(
+                            f"Your plugin includes multiple parent folders: {parent_folders}. Please be aware that only the first folder has been recognized. It is strongly advised to have a single parent folder."
+                        ),
+                        fail_silently=True,
+                    )
+                    del form.cleaned_data["multiple_parent_folders"]
+
             except (IntegrityError, ValidationError, DjangoUnicodeDecodeError) as e:
                 connection.close()
                 messages.error(request, e, fail_silently=True)
@@ -977,6 +988,17 @@ def version_create(request, package_name):
                     )
                     del form.cleaned_data["license_recommended"]
 
+                if form.cleaned_data.get("multiple_parent_folders"):
+                    parent_folders = form.cleaned_data.get("multiple_parent_folders")
+                    messages.warning(
+                        request,
+                        _(
+                            f"Your plugin includes multiple parent folders: {parent_folders}. Please be aware that only the first folder has been recognized. It is strongly advised to have a single parent folder."
+                        ),
+                        fail_silently=True,
+                    )
+                    del form.cleaned_data["multiple_parent_folders"]
+
                 _main_plugin_update(request, new_object.plugin, form)
                 _check_optional_metadata(form, request)
                 return HttpResponseRedirect(new_object.plugin.get_absolute_url())
@@ -1032,6 +1054,17 @@ def version_update(request, package_name, version):
                         fail_silently=True,
                     )
                     del form.cleaned_data["license_recommended"]
+
+                if form.cleaned_data.get("multiple_parent_folders"):
+                    parent_folders = form.cleaned_data.get("multiple_parent_folders")
+                    messages.warning(
+                        request,
+                        _(
+                            f"Your plugin includes multiple parent folders: {parent_folders}. Please be aware that only the first folder has been recognized. It is strongly advised to have a single parent folder."
+                        ),
+                        fail_silently=True,
+                    )
+                    del form.cleaned_data["multiple_parent_folders"]
 
             except (IntegrityError, ValidationError, DjangoUnicodeDecodeError) as e:
                 messages.error(request, e, fail_silently=True)
