@@ -210,8 +210,20 @@ def validator(package):
                 errors="replace",
             )
 
-    # Checks that package_name  exists
+    # Metadata list, also usefull to pass warnings to the main view 
+    metadata = []
+
     namelist = zip.namelist()
+    # Check if the zip file contains multiple parent folders
+    # If it is, show a warning for now
+    try:
+        parent_folders = list(set([str(name).split('/')[0] for name in namelist]))
+        if len(parent_folders) > 1:
+            metadata.append(("multiple_parent_folders", ', '.join(parent_folders)))
+    except:
+        pass
+
+    # Checks that package_name  exists
     try:
         package_name = namelist[0][: namelist[0].index("/")]
     except:
@@ -238,8 +250,6 @@ def validator(package):
     if initname not in namelist:
         raise ValidationError(_("Cannot find __init__.py in plugin package."))
 
-    # Checks metadata
-    metadata = []
     # First parse metadata.txt
     if metadataname in namelist:
         try:
