@@ -4,6 +4,7 @@ import os
 from settings import *
 
 SITE_ROOT = os.path.dirname(os.path.realpath(__file__))
+from datetime import timedelta
 
 DEBUG = ast.literal_eval(os.environ.get("DEBUG", "True"))
 THUMBNAIL_DEBUG = DEBUG
@@ -63,6 +64,9 @@ INSTALLED_APPS = [
     "feedjack",
     "preferences",
     "rest_framework",
+    'rest_framework.authtoken',
+    'rest_framework_simplejwt',
+    'rest_framework_simplejwt.token_blacklist',
     "sorl_thumbnail_serializer",  # serialize image
     "drf_multiple_model",
     "drf_yasg",
@@ -120,6 +124,12 @@ FILE_UPLOAD_PERMISSIONS = 0o644
 
 REST_FRAMEWORK = {
     "TEST_REQUEST_DEFAULT_FORMAT": "json",
+}
+
+# Set plugin token access and refresh validity to a very long duration
+SIMPLE_JWT = {
+    'ACCESS_TOKEN_LIFETIME': timedelta(days=365*1000),
+    'REFRESH_TOKEN_LIFETIME': timedelta(days=365*1000)
 }
 
 MATOMO_SITE_ID="1"

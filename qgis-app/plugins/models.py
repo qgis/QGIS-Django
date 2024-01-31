@@ -12,6 +12,7 @@ from django.utils.translation import ugettext_lazy as _
 from django.utils import timezone
 from djangoratings.fields import AnonymousRatingField
 from taggit_autosuggest.managers import TaggableManager
+from rest_framework_simplejwt.token_blacklist.models import OutstandingToken
 
 PLUGINS_STORAGE_PATH = getattr(settings, "PLUGINS_STORAGE_PATH", "packages/%Y")
 PLUGINS_FRESH_DAYS = getattr(settings, "PLUGINS_FRESH_DAYS", 30)
@@ -671,6 +672,33 @@ class QGVersionZeroForcedField(models.CharField):
         return self.to_python(value)
 
 
+class PluginOutstandingToken(models.Model):
+    """
+    Plugin outstanding token
+    """
+    plugin = models.ForeignKey(
+        Plugin,
+        on_delete=models.CASCADE
+    )
+    token = models.ForeignKey(
+        OutstandingToken,
+        on_delete=models.CASCADE
+    )
+    is_blacklisted = models.BooleanField(default=False)
+    is_newly_created = models.BooleanField(default=False)
+    description = models.CharField(
+        verbose_name=_("Description"),
+        help_text=_("Describe this token so that it's easier to remember where you're using it."),
+        max_length=512,
+        blank=True,
+        null=True,
+    )
+    last_used_on = models.DateTimeField(
+        verbose_name=_("Last used on"),
+        blank=True,
+        null=True
+    )
+
 class PluginVersion(models.Model):
     """
     Plugin versions
@@ -686,7 +714,7 @@ class PluginVersion(models.Model):
     downloads = models.IntegerField(_("Downloads"), default=0, editable=False)
     # owners
     created_by = models.ForeignKey(
-        User, verbose_name=_("Created by"), on_delete=models.CASCADE
+        User, verbose_name=_("Created by"), on_delete=models.CASCADE, null=True, blank=True
     )
     # version info, the first should be read from plugin
     min_qg_version = QGVersionZeroForcedField(
@@ -721,6 +749,14 @@ class PluginVersion(models.Model):
         max_length=512,
         blank=False,
         null=True,
+    )
+    is_from_token = models.BooleanField(
+        _("Is uploaded using token"),
+        default=False
+    )
+    # Link to the token if upload is using token
+    token = models.ForeignKey(
+        PluginOutstandingToken, verbose_name=_("Token used"), on_delete=models.CASCADE, null=True, blank=True
     )
 
     # Managers, used in xml output

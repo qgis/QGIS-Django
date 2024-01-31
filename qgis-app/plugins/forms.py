@@ -6,7 +6,7 @@ from django.contrib.auth.models import User
 from django.forms import CharField, ModelForm, ValidationError
 from django.utils.safestring import mark_safe
 from django.utils.translation import ugettext_lazy as _
-from plugins.models import Plugin, PluginVersion, PluginVersionFeedback
+from plugins.models import Plugin, PluginOutstandingToken, PluginVersion, PluginVersionFeedback
 from plugins.validator import validator
 from taggit.forms import *
 
@@ -259,3 +259,14 @@ class VersionFeedbackForm(forms.Form):
             self.cleaned_data['tasks'] = tasks
 
         return self.cleaned_data
+
+class PluginTokenForm(ModelForm):
+    """
+    Form for token description editing
+    """
+
+    class Meta:
+        model = PluginOutstandingToken
+        fields = (
+            "description",
+        )

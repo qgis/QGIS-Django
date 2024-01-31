@@ -4,7 +4,7 @@
     <h2>{% trans "Version" %}: {{ version }}</h2>
     <div class="pull-right"><a href="{% url "version_download" version.plugin.package_name version.version %}" class="btn btn-primary"><i class="icon-download-alt icon-white"></i> {% trans "Download" %}</a></div>
 
-    {% if not version.created_by.is_active %}
+    {% if not version.created_by.is_active and not version.is_from_token %}
     <div class="alert alert-error">
         {% trans "The plugin author has been blocked." %}
     </div>
@@ -21,7 +21,13 @@
             <dl class="dl-horizontal">
                 {% if version.changelog %}<dt>{% trans "Changelog" %}</dt><dd><pre>{{ version.changelog|wordwrap:80 }}</pre></dd>{% endif %}
                 <dt>{% trans "Approved" %}</dt><dd>{{ version.approved|yesno }}</dd>
-                <dt>{% trans "Author" %}</dt><dd>{{ version.created_by }}</dd>
+                <dt>{% trans "Author" %}</dt><dd>
+                    {% if version.is_from_token %}
+                    Token {{ version.token.description|default:"" }}
+                    {% else %}
+                    {{ version.created_by }}
+                    {% endif %}
+                </dd>
                 <dt>{% trans "Uploaded" %}</dt><dd>{{ version.created_on|local_timezone }}</dd>
                 <dt>{% trans "Minimum QGIS version" %}</dt><dd>{{ version.min_qg_version }}</dd>
                 <dt>{% trans "Maximum QGIS version" %}</dt><dd>{{ version.max_qg_version }}</dd>
