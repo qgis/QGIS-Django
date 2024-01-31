@@ -24,3 +24,7 @@ def plugin_title(context):
     if "page_title" in context:
         title = context["page_title"]
     return title
+
+@register.filter
+def file_extension(value):
+    return value.split('.')[-1].lower()

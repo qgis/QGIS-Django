@@ -1,5 +1,6 @@
 {% extends 'plugins/plugin_base.html' %}{% load i18n static thumbnail %}
 {% load local_timezone %}
+{% load plugin_utils %}
 {% block extrajs %}
 {{ block.super }}
 <script type="text/javascript" src="{% static "js/jquery.cookie.js" %}"></script>
@@ -144,9 +145,15 @@
         {% endif %}
             <h2>{{ object.name }}
             {% if object.icon and object.icon.file %}
-                {% thumbnail object.icon "128x128" upscale=False format="PNG" as im %}
-                    <img class="pull-right plugin-icon" alt="{% trans "Plugin icon" %}" src="{{ im.url }}" width="{{ im.x }}" height="{{ im.y }}" />
-                {% endthumbnail %}
+                {% with image_extension=object.icon.name|file_extension %}
+                    {% if image_extension == 'svg' %}
+                        <img class="pull-right plugin-icon" alt="{% trans "Plugin icon" %}" src="{{ object.icon.url }}" width="24" height="24" />
+                    {% else %}
+                        {% thumbnail object.icon "128x128" upscale=False format="PNG" as im %}
+                            <img class="pull-right plugin-icon" alt="{% trans "Plugin icon" %}" src="{{ im.url }}" width="{{ im.x }}" height="{{ im.y }}" />
+                        {% endthumbnail %}
+                    {% endif %}
+                {% endwith %}
             {% endif %}
             </h2>
             <div>
