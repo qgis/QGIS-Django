@@ -76,11 +76,59 @@
         })
 
     });
+
+    function copyToClipBoard(plugin_id) {
+        navigator.clipboard.writeText(plugin_id);
+
+        var tooltip = document.getElementById("copyTooltip");
+        tooltip.innerHTML = "Plugin ID copied!";
+    }
 </script>
 {% endblock %}
 {% block extracss %}
 <link type="text/css" href="{% static "jquery-ratings/jquery.ratings.css" %}" rel="stylesheet" />
 {{ block.super }}
+<style>
+    .tooltip {
+      position: relative;
+      display: inline-block;
+      opacity: 1 !important;
+      margin-left: 10px;
+    }
+ 
+    .tooltip .tooltiptext {
+      visibility: hidden;
+      width: 140px;
+      background-color: #555;
+      color: #fff;
+      text-align: center;
+      border-radius: 6px;
+      padding: 5px;
+      position: absolute;
+      z-index: 1;
+      bottom: 150%;
+      left: 50%;
+      margin-left: -75px;
+      opacity: 0;
+      transition: opacity 0.3s;
+    }
+ 
+    .tooltip .tooltiptext::after {
+      content: "";
+      position: absolute;
+      top: 100%;
+      left: 50%;
+      margin-left: -5px;
+      border-width: 5px;
+      border-style: solid;
+      border-color: #555 transparent transparent transparent;
+    }
+ 
+    .tooltip:hover .tooltiptext {
+      visibility: visible;
+      opacity: 1;
+    }
+</style>
 {% endblock %}
 {% block content %}
     <div class="row">
@@ -101,6 +149,15 @@
                 {% endthumbnail %}
             {% endif %}
             </h2>
+            <div>
+                <span style="color:gray;">{% trans "Plugin ID:" %} {{ object.pk }}</span>
+                <div class="tooltip">
+                    <button class="btn btn-default" onclick="copyToClipBoard('{{ object.pk }}')">
+                      <span class="tooltiptext" id="copyTooltip">{% trans "Copy to clipboard" %}</span>
+                      <i class="icon-copy icon-white"></i>
+                    </button>
+                </div>
+            </div>
         </div>
     </div>
     <div>
@@ -211,6 +268,18 @@
                     {% if object.experimental %}
                         <dt>{% trans "Latest experimental version"%}:</dt>
                         <dd> <a title="{% trans "Click to download" %}" href="{% url "version_detail" object.package_name object.experimental.version %}">{{ object.experimental.version }}</a></dd>
+                    {% endif %}
+                    {% if object.pk %}
+                        <dt>{% trans "Plugin ID"%}</dt>
+                        <dd style="margin-top: -3px;">    
+                            <span>{{ object.pk }}</span>
+                            <div class="tooltip">
+                                <button class="btn btn-default" onclick="copyToClipBoard('{{ object.pk }}')">
+                                <span class="tooltiptext" id="copyTooltip">{% trans "Copy to clipboard" %}</span>
+                                <i class="icon-copy icon-white"></i>
+                                </button>
+                            </div>
+                        </dd>
                     {% endif %}
                 </dl>
             </div>
