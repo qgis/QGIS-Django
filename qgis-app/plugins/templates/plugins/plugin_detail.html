@@ -1,5 +1,6 @@
 {% extends 'plugins/plugin_base.html' %}{% load i18n static thumbnail %}
 {% load local_timezone %}
+{% load plugin_utils %}
 {% block extrajs %}
 {{ block.super }}
 <script type="text/javascript" src="{% static "js/jquery.cookie.js" %}"></script>
@@ -76,11 +77,59 @@
         })
 
     });
+
+    function copyToClipBoard(plugin_id) {
+        navigator.clipboard.writeText(plugin_id);
+
+        var tooltip = document.getElementById("copyTooltip");
+        tooltip.innerHTML = "Plugin ID copied!";
+    }
 </script>
 {% endblock %}
 {% block extracss %}
 <link type="text/css" href="{% static "jquery-ratings/jquery.ratings.css" %}" rel="stylesheet" />
 {{ block.super }}
+<style>
+    .tooltip {
+      position: relative;
+      display: inline-block;
+      opacity: 1 !important;
+      margin-left: 10px;
+    }
+ 
+    .tooltip .tooltiptext {
+      visibility: hidden;
+      width: 140px;
+      background-color: #555;
+      color: #fff;
+      text-align: center;
+      border-radius: 6px;
+      padding: 5px;
+      position: absolute;
+      z-index: 1;
+      bottom: 150%;
+      left: 50%;
+      margin-left: -75px;
+      opacity: 0;
+      transition: opacity 0.3s;
+    }
+ 
+    .tooltip .tooltiptext::after {
+      content: "";
+      position: absolute;
+      top: 100%;
+      left: 50%;
+      margin-left: -5px;
+      border-width: 5px;
+      border-style: solid;
+      border-color: #555 transparent transparent transparent;
+    }
+ 
+    .tooltip:hover .tooltiptext {
+      visibility: visible;
+      opacity: 1;
+    }
+</style>
 {% endblock %}
 {% block content %}
     <div class="row">
@@ -96,11 +145,26 @@
         {% endif %}
             <h2>{{ object.name }}
             {% if object.icon and object.icon.file %}
-                {% thumbnail object.icon "128x128" upscale=False format="PNG" as im %}
-                    <img class="pull-right plugin-icon" alt="{% trans "Plugin icon" %}" src="{{ im.url }}" width="{{ im.x }}" height="{{ im.y }}" />
-                {% endthumbnail %}
+                {% with image_extension=object.icon.name|file_extension %}
+                    {% if image_extension == 'svg' %}
+                        <img class="pull-right plugin-icon" alt="{% trans "Plugin icon" %}" src="{{ object.icon.url }}" width="24" height="24" />
+                    {% else %}
+                        {% thumbnail object.icon "128x128" upscale=False format="PNG" as im %}
+                            <img class="pull-right plugin-icon" alt="{% trans "Plugin icon" %}" src="{{ im.url }}" width="{{ im.x }}" height="{{ im.y }}" />
+                        {% endthumbnail %}
+                    {% endif %}
+                {% endwith %}
             {% endif %}
             </h2>
+            <div>
+                <span style="color:gray;">{% trans "Plugin ID:" %} {{ object.pk }}</span>
+                <div class="tooltip">
+                    <button class="btn btn-default" onclick="copyToClipBoard('{{ object.pk }}')">
+                      <span class="tooltiptext" id="copyTooltip">{% trans "Copy to clipboard" %}</span>
+                      <i class="icon-copy icon-white"></i>
+                    </button>
+                </div>
+            </div>
         </div>
     </div>
     <div>
@@ -212,6 +276,18 @@
                         <dt>{% trans "Latest experimental version"%}:</dt>
                         <dd> <a title="{% trans "Click to download" %}" href="{% url "version_detail" object.package_name object.experimental.version %}">{{ object.experimental.version }}</a></dd>
                     {% endif %}
+                    {% if object.pk %}
+                        <dt>{% trans "Plugin ID"%}</dt>
+                        <dd style="margin-top: -3px;">    
+                            <span>{{ object.pk }}</span>
+                            <div class="tooltip">
+                                <button class="btn btn-default" onclick="copyToClipBoard('{{ object.pk }}')">
+                                <span class="tooltiptext" id="copyTooltip">{% trans "Copy to clipboard" %}</span>
+                                <i class="icon-copy icon-white"></i>
+                                </button>
+                            </div>
+                        </dd>
+                    {% endif %}
                 </dl>
             </div>
             <div class="tab-pane" id="plugin-versions">
@@ -242,7 +318,11 @@
                                 <td>{{ version.min_qg_version }}</td>
                                 <td>{{ version.max_qg_version }}</td>
                                 <td>{{ version.downloads }}</td>
+                                {% if version.is_from_token %}
+                                <td>Token {{ version.token.description|default:"" }}</td>
+                                {% else %}
                                 <td><a href="{% url "user_details" version.created_by.username %}">{{ version.created_by }}</a></td>
+                                {% endif %}
                                 <td>{{ version.created_on|local_timezone }}</td>
                                 {% if user.is_staff or user in version.plugin.approvers or user in version.plugin.editors %}<td><form method="post" action="{% url "version_manage" object.package_name version.version %}">{% csrf_token %}
                                 {% if user.is_staff or user in version.plugin.approvers %}
@@ -270,6 +350,7 @@
                 <div>
                         <a class="btn btn-primary" href="{% url "plugin_update" object.package_name %}">{% trans "Edit" %}</a>
                         <a class="btn btn-primary" href="{% url "version_create" object.package_name %}">{% trans "Add version" %}</a>
+                        <a class="btn btn-primary" href="{% url "plugin_token_list" object.package_name %}">{% trans "Tokens" %}</a>
                     {% if user.is_staff  %}
                         {% if object.featured %}<input class="btn btn-warning" type="submit" name="unset_featured" id="unset_featured" value="{% trans "Unset featured" %}" />
                         {% else %}<input class="btn btn-primary" type="submit" name="set_featured" id="set_featured" value="{% trans "Set featured" %}" />

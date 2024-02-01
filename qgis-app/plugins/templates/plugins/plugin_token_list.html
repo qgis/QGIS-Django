@@ -1,0 +1,77 @@
+{% extends 'plugins/plugin_base.html' %}{% load i18n %}
+{% load local_timezone %}
+{% block content %}
+<h2>{% trans "Tokens for" %} {{ plugin.name }}</h2>
+<form method="post" action="{% url "plugin_token_create" plugin.package_name %}">{% csrf_token %}
+  <div style="margin:0; width:fit-content;">
+    <h2>
+      <button type="submit" name="plugin_token_create" id="plugin_token_create"
+        value="{% trans "Generate a New Token" %}" class="btn btn-block btn-primary" style="padding: 10px">
+        <i class="icon-plus icon-white icon-2x" style=" vertical-align: middle;"></i>
+        &nbsp;{% trans "Generate a New Token" %}
+      </button>
+    </h2>
+  </div>
+</form>
+{% if object_list.count %}
+<div>
+  <table class="table table-striped plugins">
+    <thead>
+      <tr>
+        <th>{% trans "User" %}</th>
+        <th>{% trans "Description" %}</th>
+        <th>{% trans "Jti" %}</th>
+        <th>{% trans "Created at" %}</th>
+        <th>{% trans "Last used at" %}</th>
+        <th>{% trans "Manage" %}</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for plugin_token in object_list %}
+      <tr class="{% cycle "even" "odd" %}">
+        <td>{{ plugin_token.token.user }}</td>
+        <td>{{ plugin_token.description|default:"-" }}</td>
+        <td style="max-width:200px">
+          <span class="truncate" style="display:block !important;">
+            {{ plugin_token.token.jti }}
+          </span>
+        </td>
+        <td>{{ plugin_token.token.created_at|local_timezone }}</td>
+        <td>{{ plugin_token.last_used_on|default:"-"|local_timezone }}</td>
+        <td>
+          <a class="btn btn-primary btn-mini" href="{% url "plugin_token_update" plugin.package_name plugin_token.token.id %}"
+            title="{% trans "Edit description" %}"><i class="icon-pencil icon-white"></i></a>&nbsp;
+          <a class="btn btn-danger btn-mini delete"
+            href="{% url "plugin_token_delete" plugin.package_name plugin_token.token.id %}"
+            title="{% trans "Delete" %}"><i class="icon-remove icon-white"></i>
+          </a>
+        </td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</div>
+{% else %}
+<div class="alert">
+  <button type="button" class="close" data-dismiss="alert">&times;</button>
+  {% trans "This list is empty!" %}
+</div>
+{% endif %}
+
+{% endblock %}
+
+{% block extracss %}
+{{ block.super }}
+<style>
+  .truncate {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    display: -webkit-box;
+    -webkit-line-clamp: 1;
+    line-clamp: 1;
+    -webkit-box-orient: vertical;
+    direction: rtl;
+  }
+</style>
+{% endblock %}

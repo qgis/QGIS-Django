@@ -46,6 +46,9 @@ requests==2.23.0
 markdown==3.2.1
 
 djangorestframework==3.11.2
+pyjwt==1.7.1
+djangorestframework-simplejwt==4.4 
+
 sorl-thumbnail-serializer-field==0.2.1
 django-rest-auth==0.9.5
 drf-yasg==1.17.1

@@ -148,7 +148,7 @@ class StyleReviewView(ResourceMixin, ResourceBaseReviewView):
 
 
 class StyleDownloadView(ResourceMixin, ResourceBaseDownload):
-    """Download a GeoPackage"""
+    """Download a style"""
 
 
 def style_nav_content(request):
