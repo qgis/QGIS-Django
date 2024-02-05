@@ -72,6 +72,13 @@ class TestUploadStyle(TestCase):
                 },
             )
         self.assertEqual(self.response.status_code, 200)
+
+        # Should send email to style managers
+        self.assertEqual(
+            mail.outbox[0].recipients(),
+            ['staff@email.com']
+        )
+
         # style should be in Waiting Review
         url = reverse("style_unapproved")
         self.response = self.client.get(url)
