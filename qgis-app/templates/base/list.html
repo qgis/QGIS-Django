@@ -85,7 +85,7 @@
         <tbody>
             {% for object in object_list %}
                 <tr>
-                    <td>
+                    <td style="min-width: 100px;">
                     {% if object.thumbnail_image and object.thumbnail_image.file %}
                         {% thumbnail object.thumbnail_image "420x420" format="PNG" as im %}
                             <img class="style-icon" alt="{% trans "Style icon" %}" src="{{ im.url }}" width="{{ im.x }}" height="{{ im.y }}" />
