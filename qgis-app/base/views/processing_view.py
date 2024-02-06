@@ -307,6 +307,7 @@ class ResourceBaseDetailView(ResourceBaseContextMixin, DetailView):
             context["reviewer"] = reviewer
         if user.is_staff or is_resources_manager(user):
             context["form"] = ResourceBaseReviewForm(resource_name=self.resource_name)
+            context["is_style_manager"] = is_resources_manager(user)
         if self.is_3d_model:
             context["url_viewer"] = "%s_viewer" % self.resource_name_url_base
         return context
