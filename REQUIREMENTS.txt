@@ -13,8 +13,12 @@ Markdown==2.3.1
 #PIL==1.1.7
 Pillow
 Pygments==2.7.4
-git+https://github.com/Xpirix/whoosh.git
+
+# Updates for Django 2 & Python 3.7
+git+https://github.com/Xpirix/whoosh.git@a306553
 pickle5==0.0.12
+django-haystack==3.2.1
+
 argparse==1.2.1
 #cab==0.2.0 # Not used anymore..-
 #distribute==0.7.3
@@ -25,7 +29,6 @@ django-debug-toolbar==3.2.4
 django-endless-pagination==2.0
 django-extensions==1.2.0
 django-generic-aggregation==0.3.2
-django-haystack==2.4.0
 #django-olwidget==0.61.0 unmaintained, use this fork
 git+https://github.com/Christophe31/olwidget.git
 django-pagination==1.0.7
@@ -37,7 +40,7 @@ git+https://github.com/gelo-zhukov/django-ratings.git
 django-simple-ratings==0.3.2
 # SIMPLEMENU
 git+https://github.com/elpaso/django-simplemenu.git
-django-taggit==0.14.0
+django-taggit==2.0.0
 django-taggit-autosuggest==0.2.7
 django-taggit-templatetags==0.4.6dev0
 django-templatetag-sugar==0.1
@@ -60,5 +63,8 @@ django-bootstrap-pagination==1.7.1
 django-sortable-listview==0.43
 django-user-map
 djangorestframework==3.12.2
+pyjwt==1.7.1
+djangorestframework-simplejwt==4.4 
 django-rest-auth==0.9.5
 drf-yasg
+django-matomo==0.1.6

@@ -1,4 +1,6 @@
 {% extends 'plugins/plugin_base.html' %}{% load i18n bootstrap_pagination humanize static sort_anchor range_filter thumbnail %}
+{% load local_timezone %}
+{% load plugin_utils %}
 {% block extrajs %}
   <script type="text/javascript" src="{% static "js/jquery.cookie.js" %}"></script>
   <script language="javascript">
@@ -79,9 +81,15 @@
             <tr class="pmain {% if object.deprecated %} error deprecated{% endif %}" id="pmain{{object.pk}}">
                 <td><a title="{% if object.deprecated %} [DEPRECATED] {% endif %}{% trans "Click here for plugin details" %}" href="{% url "plugin_detail" object.package_name %}">
                 {% if object.icon and object.icon.file %}
-                {% thumbnail object.icon "24x24" format="PNG" as im %}
-                    <img class="plugin-icon" alt="{% trans "Plugin icon" %}" src="{{ im.url }}" width="{{ im.x }}" height="{{ im.y }}" />
-                {% endthumbnail %}
+                    {% with image_extension=object.icon.name|file_extension %}
+                        {% if image_extension == 'svg' %}
+                            <img class="pull-right plugin-icon" alt="{% trans "Plugin icon" %}" src="{{ object.icon.url }}" width="24" height="24" />
+                        {% else %}
+                            {% thumbnail object.icon "24x24" format="PNG" as im %}
+                                <img class="plugin-icon" alt="{% trans "Plugin icon" %}" src="{{ im.url }}" width="{{ im.x }}" height="{{ im.y }}" />
+                            {% endthumbnail %}
+                        {% endif %}
+                    {% endwith %}
                 {% else %}
                     <img height="32" width="32" class="plugin-icon" src="{% static "images/qgis-icon-32x32.png" %}" alt="{% trans "Plugin icon" %}" />
                 {% endif %}
@@ -93,8 +101,8 @@
                 {% if object.author %}
                 <td><a title="{% trans "See all plugins by"%} {{ object.author }}" href="{% url "author_plugins" object.author %}">{{ object.author }}</a></td>
                 {% endif %}
-                <td>{{ object.latest_version_date|naturalday }}</td>
-                <td>{{ object.created_on|naturalday }}</td>
+                <td>{{ object.latest_version_date|local_timezone:"SHORT_NATURAL_DAY" }}</td>
+                <td>{{ object.created_on|local_timezone:"SHORT" }}</td>
                 <td><div><div class="star-ratings"><span style="width:{% widthratio object.average_vote 5 100 %}%" class="rating"></span></div> ({{ object.rating_votes }})</div></td>
                 <td>{% if object.stable %}<a href="{% url "version_download" object.package_name object.stable.version %}" title="{% trans "Download the stable version" %}" >{{ object.stable.version }}</a>{% else %}&mdash;{% endif %}</td>
                 <td>{% if object.experimental %}<a href="{% url "version_download" object.package_name object.experimental.version %}" title="{% trans "Download the experimental version" %}" >{{ object.experimental.version }}</a>{% else %}&mdash;{% endif %}</td>

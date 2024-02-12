@@ -13,6 +13,30 @@
     {% endif %}
     <form action="" method="post" enctype="multipart/form-data" class="horizontal">{% csrf_token %}
         {% include "plugins/form_snippet.html" %}
+        <div class="alert alert-info">
+        <button type="button" class="close" data-dismiss="alert">&times;</button>
+            {% blocktrans %} 
+                Please note that by uploading a plugin to the official QGIS plugin repository, 
+                you agree that we will use your email to contact you. We will only contact 
+                you for matters relating to the management of plugins and will not make 
+                your email available to third parties for marketing purposes.
+            {% endblocktrans %}
+        </div>
+        <div class="alert alert-info">
+            <button type="button" class="close" data-dismiss="alert">&times;</button>
+                {% blocktrans %} 
+                    By uploading your plugin to the QGIS plugin repository, 
+                    you agree to keep your email address current and to be 
+                    responsive to any correspondence we may send you 
+                    regarding the management of your plugin. We require 
+                    this in order to be able to provide our users assurance 
+                    that the plugins we host are well maintained and will be 
+                    fixed should serious issues arise during their use.
+                    We reserve the right to hide or remove plugins in cases 
+                    where the plugin author is not contactable and there 
+                    are issues reported about a plugin.
+                {% endblocktrans %}
+        </div>
         <div class="form-actions">
             <button class="btn btn-primary" type="submit">{% trans "Upload" %}</button>
         </div>

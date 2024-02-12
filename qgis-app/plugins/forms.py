@@ -6,7 +6,7 @@ from django.contrib.auth.models import User
 from django.forms import CharField, ModelForm, ValidationError
 from django.utils.safestring import mark_safe
 from django.utils.translation import ugettext_lazy as _
-from plugins.models import Plugin, PluginVersion, PluginVersionFeedback
+from plugins.models import Plugin, PluginOutstandingToken, PluginVersion, PluginVersionFeedback
 from plugins.validator import validator
 from taggit.forms import *
 
@@ -43,9 +43,24 @@ class PluginForm(ModelForm):
             "tracker",
             "repository",
             "owners",
+            "maintainer",
+            "display_created_by",
             "tags",
             "server",
         )
+
+    def __init__(self, *args, **kwargs):
+        super(PluginForm, self).__init__(*args, **kwargs)
+        self.fields['owners'].label = "Collaborators"
+
+        choices = (
+            (self.instance.created_by.pk, self.instance.created_by.username + " (Plugin creator)"),
+        )
+        for owner in self.instance.owners.exclude(pk=self.instance.created_by.pk):
+            choices += ((owner.pk, owner.username + " (Collaborator)"),)
+
+        self.fields['maintainer'].choices = choices
+        self.fields['maintainer'].label = "Maintainer"
 
     def clean(self):
         """
@@ -244,3 +259,14 @@ class VersionFeedbackForm(forms.Form):
             self.cleaned_data['tasks'] = tasks
 
         return self.cleaned_data
+
+class PluginTokenForm(ModelForm):
+    """
+    Form for token description editing
+    """
+
+    class Meta:
+        model = PluginOutstandingToken
+        fields = (
+            "description",
+        )

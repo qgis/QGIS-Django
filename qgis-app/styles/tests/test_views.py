@@ -8,6 +8,9 @@ from django.core import mail
 from django.test import Client, TestCase, override_settings
 from django.urls import reverse
 from styles.models import Style, StyleType
+from django.utils.text import slugify
+from django.utils.encoding import escape_uri_path
+
 
 STYLE_DIR = os.path.join(os.path.dirname(__file__), "stylefiles")
 
@@ -69,6 +72,13 @@ class TestUploadStyle(TestCase):
                 },
             )
         self.assertEqual(self.response.status_code, 200)
+
+        # Should send email to style managers
+        self.assertEqual(
+            mail.outbox[0].recipients(),
+            ['staff@email.com']
+        )
+
         # style should be in Waiting Review
         url = reverse("style_unapproved")
         self.response = self.client.get(url)
@@ -274,6 +284,18 @@ class TestDownloadStyles(TestCase):
             approved=True,
         )
 
+        self.newstyle_non_ascii = Style.objects.create(
+            pk=2,
+            creator=User.objects.get(pk=2),
+            style_type=StyleType.objects.get(pk=1),
+            name="三调符号库",
+            description="This file is saved in styles/tests/stylefiles folder",
+            thumbnail_image="thumbnail.png",
+            file="三调符号库.xml",
+            download_count=0,
+            approved=True,
+        )
+
     @override_settings(MEDIA_ROOT="styles/tests/stylefiles/")
     def test_anonymous_user_download(self):
         style = Style.objects.get(pk=1)
@@ -285,6 +307,27 @@ class TestDownloadStyles(TestCase):
         # download_count should be increased
         style = Style.objects.get(pk=1)
         self.assertEqual(style.download_count, 1)
+
+    @override_settings(MEDIA_ROOT="styles/tests/stylefiles/")
+    def test_non_ascii_name_download(self):
+        style = Style.objects.get(pk=2)
+        self.assertEqual(style.download_count, 0)
+        self.client.logout()
+        url = reverse("style_download", kwargs={"pk": 2})
+        response = self.client.get(url)
+        self.assertEqual(response.status_code, 200)
+
+        # Check if the Content-Disposition header is present in the response
+        self.assertTrue('Content-Disposition' in response)
+
+        style_name = escape_uri_path(slugify(style.name, allow_unicode=True))
+        # Extract the filename from the Content-Disposition header
+        content_disposition = response['Content-Disposition']
+        _, params = content_disposition.split(';')
+        downloaded_filename = params.split('=')[1].strip(' "').split("utf-8''")[1]
+
+        # Check if the downloaded filename matches the original filename
+        self.assertEqual(downloaded_filename, f"{style_name}.zip")
 
 
 class TestStyleApprovalNotify(TestCase):

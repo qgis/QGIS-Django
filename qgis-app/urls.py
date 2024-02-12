@@ -112,7 +112,6 @@ if settings.DEBUG:
         url(r"^__debug__/", include(debug_toolbar.urls)),
     ]
 
-
 simplemenu.register(
     "/admin/",
     "/planet/",

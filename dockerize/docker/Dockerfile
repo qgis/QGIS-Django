@@ -16,7 +16,8 @@ ADD dockerize/docker/uwsgi.conf /uwsgi.conf
 ADD qgis-app /home/web/django_project
 ADD dockerize/docker/REQUIREMENTS.txt /REQUIREMENTS.txt
 RUN pip install --upgrade pip && pip install -r /REQUIREMENTS.txt
-RUN pip install uwsgi
+RUN pip install uwsgi freezegun==1.3.1
+
 
 # Open port 8080 as we will be running our uwsgi socket on that
 EXPOSE 8080

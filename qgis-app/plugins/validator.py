@@ -90,7 +90,7 @@ def _check_required_metadata(metadata):
         if md not in dict(metadata) or not dict(metadata)[md]:
             raise ValidationError(
                 _(
-                    'Cannot find metadata <strong>%s</strong> in metadata source <code>%s</code>.<br />For further informations about metadata, please see: <a target="_blank"  href="http://docs.qgis.org/testing/en/docs/pyqgis_developer_cookbook/plugins.html#plugin-metadata-table">metadata documentation</a>'
+                    'Cannot find metadata <strong>%s</strong> in metadata source <code>%s</code>.<br />For further informations about metadata, please see: <a target="_blank"  href="https://docs.qgis.org/testing/en/docs/pyqgis_developer_cookbook/plugins/plugins.html#metadata-txt">metadata documentation</a>'
                 )
                 % (md, dict(metadata).get("metadata_source"))
             )
@@ -155,6 +155,7 @@ def validator(package):
 
         * size <= PLUGIN_MAX_UPLOAD_SIZE
         * zip contains __init__.py in first level dir
+        * Check for LICENCE file
         * mandatory metadata: ('name', 'description', 'version', 'qgisMinimumVersion', 'author', 'email')
         * package_name regexp: [A-Za-z][A-Za-z0-9-_]+
         * author regexp: [^/]+
@@ -209,8 +210,20 @@ def validator(package):
                 errors="replace",
             )
 
-    # Checks that package_name  exists
+    # Metadata list, also usefull to pass warnings to the main view 
+    metadata = []
+
     namelist = zip.namelist()
+    # Check if the zip file contains multiple parent folders
+    # If it is, show a warning for now
+    try:
+        parent_folders = list(set([str(name).split('/')[0] for name in namelist]))
+        if len(parent_folders) > 1:
+            metadata.append(("multiple_parent_folders", ', '.join(parent_folders)))
+    except:
+        pass
+
+    # Checks that package_name  exists
     try:
         package_name = namelist[0][: namelist[0].index("/")]
     except:
@@ -237,13 +250,6 @@ def validator(package):
     if initname not in namelist:
         raise ValidationError(_("Cannot find __init__.py in plugin package."))
 
-    # Checks for LICENCE file precense
-    licensename = package_name + "/LICENSE"
-    if licensename not in namelist:
-        raise ValidationError(_("Cannot find LICENSE in plugin package."))
-
-    # Checks metadata
-    metadata = []
     # First parse metadata.txt
     if metadataname in namelist:
         try:
@@ -328,6 +334,14 @@ def validator(package):
     _check_url_link(dict(metadata).get("tracker"), "http://bugs", "Bug tracker")
     _check_url_link(dict(metadata).get("repository"), "http://repo", "Repository")
     _check_url_link(dict(metadata).get("homepage"), "http://homepage", "Home page")
+
+
+    # Checks for LICENCE file presence
+    # This should be just a warning for now (for new version upload) 
+    # according to https://github.com/qgis/QGIS-Django/issues/38#issuecomment-1824010198
+    licensename = package_name + "/LICENSE"
+    if licensename not in namelist:
+        metadata.append(("license_recommended", "Yes"))
 
     zip.close()
     del zip

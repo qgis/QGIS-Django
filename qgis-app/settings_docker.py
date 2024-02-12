@@ -7,6 +7,7 @@ import os
 from settings import *
 
 SITE_ROOT = os.path.dirname(os.path.realpath(__file__))
+from datetime import timedelta
 
 DEBUG = ast.literal_eval(os.environ.get("DEBUG", "True"))
 THUMBNAIL_DEBUG = DEBUG
@@ -14,7 +15,7 @@ ALLOWED_HOSTS = ["*"]
 
 # Absolute filesystem path to the directory that will hold user-uploaded files.
 # Example: "/var/www/example.com/media/"
-MEDIA_ROOT = "/home/web/media/"
+MEDIA_ROOT = os.environ.get("MEDIA_ROOT", "/home/web/media")
 
 # URL that handles the media served from MEDIA_ROOT. Make sure to use a
 # trailing slash.
@@ -27,7 +28,7 @@ MEDIA_URL = "/media/"
 # Don't put anything in this directory yourself; store your static files
 # in apps' "static/" subdirectories and in STATICFILES_DIRS.
 # Example: "/var/www/example.com/static/"
-STATIC_ROOT = "/home/web/static"
+STATIC_ROOT = os.environ.get("STATIC_ROOT", "/home/web/static")
 
 # URL prefix for static files.
 # Example: "http://example.com/static/", "http://static.example.com/"
@@ -66,6 +67,9 @@ INSTALLED_APPS = [
     "feedjack",
     "preferences",
     "rest_framework",
+    'rest_framework.authtoken',
+    'rest_framework_simplejwt',
+    'rest_framework_simplejwt.token_blacklist',
     "sorl_thumbnail_serializer",  # serialize image
     "drf_multiple_model",
     "drf_yasg",
@@ -79,6 +83,7 @@ INSTALLED_APPS = [
     # models (sharing .model3 file feature)
     "models",
     "wavefronts",
+    "matomo"
 ]
 
 DATABASES = {
@@ -139,3 +144,11 @@ CELERY_BEAT_SCHEDULE = {
         'schedule': crontab(minute='*/30'),  # Execute every 30 minutes.
     }
 }
+# Set plugin token access and refresh validity to a very long duration
+SIMPLE_JWT = {
+    'ACCESS_TOKEN_LIFETIME': timedelta(days=365*1000),
+    'REFRESH_TOKEN_LIFETIME': timedelta(days=365*1000)
+}
+
+MATOMO_SITE_ID="1"
+MATOMO_URL="//matomo.qgis.org/"

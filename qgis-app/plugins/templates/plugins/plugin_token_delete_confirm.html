@@ -1,0 +1,9 @@
+{% extends 'plugins/plugin_base.html' %}{% load i18n %}
+{% block content %}
+    <h3>Delete token of "{{ username }}"</h3>
+    <form action="" method="post">{% csrf_token %}
+        <p class="alert alert-danger">{% trans "You asked to delete a token.<br />The token will be permanently deleted and this action cannot be undone.<br />Please confirm." %}</p>
+        <p><input type="submit" class="btn btn-danger" name="delete_confirm" value="{% trans "Ok" %}" /> <a class="btn btn-default" href="javascript:history.back()">{% trans "Cancel" %}</a></p>
+    </form>
+
+{% endblock %}
