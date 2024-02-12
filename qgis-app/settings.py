@@ -219,7 +219,7 @@ TAGGIT_TAGCLOUD_MAX = 30
 
 INTERNAL_IPS = ("127.0.0.1",)
 
-DEFAULT_FROM_EMAIL = "noreply@qgis.org"
+DEFAULT_FROM_EMAIL = "automation@qgis.org"
 
 
 # TINYMCE_JS_URL = 'http://debug.example.org/tiny_mce/tiny_mce_src.js'
