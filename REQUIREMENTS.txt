@@ -15,7 +15,7 @@ Pillow
 Pygments==2.7.4
 
 # Updates for Django 2 & Python 3.7
-git+https://github.com/Xpirix/whoosh.git@a306553
+git+https://github.com/Xpirix/whoosh.git@main
 pickle5==0.0.12
 django-haystack==3.2.1
 
