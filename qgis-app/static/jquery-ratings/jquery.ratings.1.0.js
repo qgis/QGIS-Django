@@ -73,6 +73,9 @@ jQuery.fn.ratings = function(stars, initialRating) {
       star.mouseenter(function() {
         //Highlight selected stars.
         for(var index = 0; index < this.rating; index++) {
+          starsCollection[index].removeClass('jquery-ratings-half-and-quarter');
+          starsCollection[index].removeClass('jquery-ratings-half');
+          starsCollection[index].removeClass('jquery-ratings-quarter');
           starsCollection[index].addClass('jquery-ratings-full');
         }
         //Unhighlight unselected stars.
@@ -102,7 +105,7 @@ jQuery.fn.ratings = function(stars, initialRating) {
           }
         }
         //Unhighlight unselected stars.
-        for(var index = containerElement.rating; index < stars ; index++) {
+        for(var index = Math.floor(containerElement.rating); index < stars ; index++) {
           starsCollection[index].removeClass('jquery-ratings-full');
         }
       });
