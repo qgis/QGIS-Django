@@ -34,7 +34,7 @@ STATIC_URL = "/static/"
 
 # Manage static files storage ensuring that their 
 # filenames contain a hash of their content for cache busting
-STATICFILES_STORAGE = 'django.contrib.staticfiles.storage.ManifestStaticFilesStorage'
+# STATICFILES_STORAGE = 'django.contrib.staticfiles.storage.ManifestStaticFilesStorage'
 
 INSTALLED_APPS = [
     "django.contrib.auth",
