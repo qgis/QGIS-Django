@@ -116,7 +116,7 @@ EMAIL_PORT = int(os.environ.get("EMAIL_PORT", "587"))
 # See fig.yml for where these are defined
 EMAIL_HOST_USER = os.environ.get("EMAIL_HOST_USER", "automation@qgis.org")
 EMAIL_HOST_PASSWORD = os.environ.get("EMAIL_HOST_PASSWORD", "docker")
-EMAIL_USE_TLS = ast.literal_eval(os.environ.get("EMAIL_USE_TLS", "False"))
+EMAIL_USE_TLS = ast.literal_eval(os.environ.get("EMAIL_USE_TLS", "True"))
 EMAIL_SUBJECT_PREFIX = os.environ.get("EMAIL_SUBJECT_PREFIX", "[QGIS Plugins]")
 
 # django uploaded file permission
@@ -134,3 +134,8 @@ SIMPLE_JWT = {
 
 MATOMO_SITE_ID="1"
 MATOMO_URL="//matomo.qgis.org/"
+
+try:
+    from settings_email import *
+except ImportError:
+    pass

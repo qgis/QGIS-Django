@@ -193,6 +193,21 @@ $ make dbrestore
 ```
 
 ---
+
+## Email-sending setup
+
+Create the file `settings_email.py` from the template:
+
+```sh
+cp settings_email.py.templ settings_email.py
+```
+
+Update the new file with your email settings variables:
+
+```python title="settings_email.py"
+EMAIL_HOST_PASSWORD = "your_email_app_password"
+```
+
 ## Deploy Update with Rancher
 
 - Go to [https://rancher.qgis.org](https://rancher.qgis.org)

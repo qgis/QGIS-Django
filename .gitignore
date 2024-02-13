@@ -9,6 +9,7 @@ venv
 *.session
 # ABP: ignore local settings
 qgis-app/settings_local.py
+qgis-app/settings_email.py
 # ABP: ignore pyc
 *.pyc
 # ABP: ignore zips
