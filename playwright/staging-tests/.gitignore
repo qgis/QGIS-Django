@@ -8,3 +8,4 @@ node_modules/
 .direnv/
 /test-results/
 __pycache__
+*package-lock.json
