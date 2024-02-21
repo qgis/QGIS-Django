@@ -1,3 +1,122 @@
-[{"model": "simplemenu.menu", "pk": 1, "fields": {"name": "Navigation"}},
-  {"model": "simplemenu.menu", "pk": 2, "fields": {"name": "Hub"}}
+[
+  { "model": "simplemenu.menu", "pk": 1, "fields": { "name": "Navigation" } },
+  { "model": "simplemenu.menu", "pk": 2, "fields": { "name": "Hub" } },
+  {
+    "model": "simplemenu.menuitem",
+    "pk": 1,
+    "fields": {
+      "name": "About plugins",
+      "menu": 1,
+      "rank": 1,
+      "urlobj_content_type": 28,
+      "urlobj_id": 1,
+      "urlstr": "/"
+    }
+  },
+  {
+    "model": "simplemenu.menuitem",
+    "pk": 2,
+    "fields": {
+      "name": "Plugins",
+      "menu": 1,
+      "rank": 2,
+      "urlobj_content_type": null,
+      "urlobj_id": null,
+      "urlstr": "/plugins/"
+    }
+  },
+  {
+    "model": "simplemenu.menuitem",
+    "pk": 3,
+    "fields": {
+      "name": "Planet",
+      "menu": 1,
+      "rank": 5,
+      "urlobj_content_type": null,
+      "urlobj_id": null,
+      "urlstr": "/planet/"
+    }
+  },
+  {
+    "model": "simplemenu.menuitem",
+    "pk": 6,
+    "fields": {
+      "name": "QGIS Home",
+      "menu": 1,
+      "rank": 0,
+      "urlobj_content_type": 31,
+      "urlobj_id": 2,
+      "urlstr": "http://www.qgis.org"
+    }
+  },
+  {
+    "model": "simplemenu.menuitem",
+    "pk": 7,
+    "fields": {
+      "name": "Styles",
+      "menu": 2,
+      "rank": 3,
+      "urlobj_content_type": null,
+      "urlobj_id": null,
+      "urlstr": "/styles/?order_by=-upload_date&&is_gallery=true"
+    }
+  },
+  {
+    "model": "simplemenu.menuitem",
+    "pk": 8,
+    "fields": {
+      "name": "Projects",
+      "menu": 2,
+      "rank": 4,
+      "urlobj_content_type": null,
+      "urlobj_id": null,
+      "urlstr": "/geopackages/?order_by=-upload_date&&is_gallery=true"
+    }
+  },
+  {
+    "model": "simplemenu.menuitem",
+    "pk": 9,
+    "fields": {
+      "name": "Models",
+      "menu": 2,
+      "rank": 6,
+      "urlobj_content_type": null,
+      "urlobj_id": null,
+      "urlstr": "/models/?order_by=-upload_date&&is_gallery=true"
+    }
+  },
+  {
+    "model": "simplemenu.menuitem",
+    "pk": 10,
+    "fields": {
+      "name": "3D Models",
+      "menu": 2,
+      "rank": 7,
+      "urlobj_content_type": null,
+      "urlobj_id": null,
+      "urlstr": "/wavefronts/?order_by=-upload_date&&is_gallery=true"
+    }
+  },
+  {
+    "model": "simplemenu.menuitem",
+    "pk": 11,
+    "fields": {
+      "name": "QGIS Layer Definition File",
+      "menu": 2,
+      "rank": 8,
+      "urlobj_content_type": null,
+      "urlobj_id": null,
+      "urlstr": "/layerdefinitions/?order_by=-upload_date&&is_gallery=true"
+    }
+  },
+  {
+    "model": "simplemenu.urlitem",
+    "pk": 1,
+    "fields": { "name": "Snippets", "url": "/snippets/" }
+  },
+  {
+    "model": "simplemenu.urlitem",
+    "pk": 2,
+    "fields": { "name": "Main QGIS website", "url": "http://www.qgis.org" }
+  }
 ]
