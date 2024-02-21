@@ -19,7 +19,7 @@ MEDIA_ROOT = os.environ.get("MEDIA_ROOT", "/home/web/media/")
 # Examples: "http://example.com/media/", "http://media.example.com/"
 # MEDIA_URL = '/media/'
 # setting full MEDIA_URL to be able to use it for the feeds
-MEDIA_URL = "/media/"
+MEDIA_URL = os.environ.get("MEDIA_URL", "/media/")
 
 # Absolute path to the directory static files should be collected to.
 # Don't put anything in this directory yourself; store your static files
@@ -29,7 +29,7 @@ STATIC_ROOT = os.environ.get("STATIC_ROOT", "/home/web/static/static/")
 
 # URL prefix for static files.
 # Example: "http://example.com/static/", "http://static.example.com/"
-STATIC_URL = "/static/static/"
+STATIC_URL = os.environ.get("STATIC_URL", "/static/")
 
 INSTALLED_APPS = [
     "django.contrib.auth",
