@@ -46,6 +46,9 @@ jobs:
         working-directory: dockerize
     steps:
       - uses: actions/checkout@v2
+      - uses: actions/setup-node@v3
+        with:
+          node-version: 20
 
       - name: Run docker-compose build
         run: docker-compose build
@@ -57,7 +60,7 @@ jobs:
         run: |
           cat << EOF | docker-compose exec -T devweb bash
           pip install coverage
-          python manage.py makemigrations
+          python manage.py makemigrations --merge --noinput
           python manage.py migrate
           coverage run manage.py test
           coverage xml
@@ -68,3 +71,33 @@ jobs:
         with:
           fail_ci_if_error: true
           token: ${{ secrets.CODECOV_TOKEN }}
+
+      - name: Start Django server
+        run: |
+            docker-compose exec -T devweb bash -c "python manage.py loaddata fixtures/*.json"
+            sleep 10
+            docker-compose exec -T devweb bash -c "nohup python manage.py runserver 0.0.0.0:8080 &"
+      
+      - name: Test django endpoint
+        run: |
+          curl -v http://0.0.0.0:62202
+          if [ $? -ne 0 ]; then
+            echo "Curl command failed"
+            exit 1
+          fi
+  
+      - name: Install playwright dependencies
+        working-directory: playwright/ci-test
+        run: |
+          npm install
+          npm ci
+          npx playwright install --with-deps
+      - name: Run Playwright tests
+        working-directory: playwright/ci-test
+        run: npx playwright test
+      - uses: actions/upload-artifact@v3
+        if: always()
+        with:
+          name: playwright-report
+          path: playwright/ci-test/playwright-report/
+          retention-days: 30
