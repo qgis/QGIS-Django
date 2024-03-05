@@ -5,7 +5,7 @@ let
   # If you want use a different version, go to nix packages search, and find the 
   # github hash of the version you want to be using, then replace in the URL below.
   #
-  nixpkgs = builtins.fetchTarball "https://github.com/NixOS/nixpkgs/archive/4059c4f71b3a7339261c0183e365fd8016f24bdb.tar.gz";
+  nixpkgs = builtins.fetchTarball "https://github.com/NixOS/nixpkgs/archive/1536926ef5621b09bba54035ae2bb6d806d72ac8.tar.gz";
   pkgs = import nixpkgs { config = { }; overlays = [ ]; };
 in
 with pkgs;
