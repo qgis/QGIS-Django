@@ -7,6 +7,7 @@ from django.contrib.auth.models import User
 from django.core.files.uploadedfile import SimpleUploadedFile
 from plugins.models import Plugin, PluginVersion
 from plugins.forms import PackageUploadForm
+from django.core import mail
 
 def do_nothing(*args, **kwargs):
     pass
@@ -67,5 +68,15 @@ class PluginUploadTestCase(TestCase):
             3)
         self.assertTrue(PluginVersion.objects.filter(plugin__name='Test Plugin', version='0.0.1').exists())
 
+        self.assertEqual(
+            mail.outbox[0].recipients(),
+            ['admin@admin.it', 'staff@staff.it']
+        )
+
+        # Should use the new email
+        self.assertEqual(
+            mail.outbox[0].from_email,
+            'automation@qgis.org'
+        )
     def tearDown(self):
         self.client.logout()

@@ -89,6 +89,12 @@ class TestFeedbackNotify(SetupMixin, TestCase):
             ['email@example.com']
         )
 
+        # Should use the new email
+        self.assertEqual(
+            mail.outbox[0].from_email,
+            'automation@qgis.org'
+        )
+
     def test_add_recipient_in_email_notification(self):
         self.creator.email = 'email@example.com'
         self.creator.save()
@@ -106,6 +112,12 @@ class TestFeedbackNotify(SetupMixin, TestCase):
         self.assertEqual(
             mail.outbox[0].recipients(),
             ['new@example.com', 'email@example.com']
+        )
+
+        # Should use the new email
+        self.assertEqual(
+            mail.outbox[0].from_email,
+            'automation@qgis.org'
         )
 
 

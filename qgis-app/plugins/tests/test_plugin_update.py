@@ -7,6 +7,7 @@ from django.contrib.auth.models import User
 from django.core.files.uploadedfile import SimpleUploadedFile
 from plugins.models import Plugin, PluginVersion
 from plugins.forms import PluginVersionForm
+from django.core import mail
 
 def do_nothing(*args, **kwargs):
     pass
@@ -90,6 +91,17 @@ class PluginUpdateTestCase(TestCase):
         self.assertEqual(self.plugin.tracker, "https://github.com/")
         self.assertEqual(self.plugin.repository, "https://github.com/")
 
+        self.assertEqual(
+            mail.outbox[0].recipients(),
+            ['admin@admin.it', 'staff@staff.it']
+        )
+
+        # Should use the new email
+        self.assertEqual(
+            mail.outbox[0].from_email,
+            'automation@qgis.org'
+        )
+
     @patch("plugins.tasks.generate_plugins_xml.delay", new=do_nothing)
     @patch("plugins.validator._check_url_link", new=do_nothing)
     def test_plugin_version_update(self):
@@ -130,6 +142,17 @@ class PluginUpdateTestCase(TestCase):
         self.assertEqual(self.plugin.homepage, "https://github.com/")
         self.assertEqual(self.plugin.tracker, "https://github.com/")
         self.assertEqual(self.plugin.repository, "https://github.com/")   
+
+        self.assertEqual(
+            mail.outbox[0].recipients(),
+            ['admin@admin.it', 'staff@staff.it']
+        )
+
+        # Should use the new email
+        self.assertEqual(
+            mail.outbox[0].from_email,
+            'automation@qgis.org'
+        )
 
 
     def tearDown(self):
