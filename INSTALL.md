@@ -193,6 +193,7 @@ $ make dbrestore
 ```
 
 ---
+
 ## Deploy Update with Rancher
 
 - Go to [https://rancher.qgis.org](https://rancher.qgis.org)

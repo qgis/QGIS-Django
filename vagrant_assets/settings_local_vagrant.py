@@ -156,7 +156,7 @@ HAYSTACK_CONNECTIONS = {
 # Tim Email settings
 EMAIL_HOST = "localhost"
 # EMAIL_PORT =
-DEFAULT_FROM_EMAIL = "noreply@qgis.org"
+DEFAULT_FROM_EMAIL = os.environ.get("EMAIL_HOST_USER", "automation")
 
 INSTALLED_APPS = [
     "django.contrib.auth",

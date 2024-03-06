@@ -119,7 +119,7 @@ EMAIL_HOST = os.environ.get("EMAIL_HOST", "smtp")
 EMAIL_PORT = int(os.environ.get("EMAIL_PORT", "25"))
 # SMTP authentication information for EMAIL_HOST.
 # See fig.yml for where these are defined
-EMAIL_HOST_USER = os.environ.get("EMAIL_HOST_USER", "noreply")
+EMAIL_HOST_USER = os.environ.get("EMAIL_HOST_USER", "automation")
 EMAIL_HOST_PASSWORD = os.environ.get("EMAIL_HOST_PASSWORD", "docker")
 EMAIL_USE_TLS = ast.literal_eval(os.environ.get("EMAIL_USE_TLS", "False"))
 EMAIL_SUBJECT_PREFIX = os.environ.get("EMAIL_SUBJECT_PREFIX", "[QGIS Plugins]")
