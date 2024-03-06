@@ -8,6 +8,7 @@ from django.core.files.uploadedfile import SimpleUploadedFile
 from plugins.models import Plugin, PluginVersion
 from plugins.forms import PluginVersionForm
 from django.core import mail
+from django.conf import settings
 
 def do_nothing(*args, **kwargs):
     pass
@@ -99,7 +100,7 @@ class PluginUpdateTestCase(TestCase):
         # Should use the new email
         self.assertEqual(
             mail.outbox[0].from_email,
-            'automation@qgis.org'
+            settings.EMAIL_HOST_USER
         )
 
     @patch("plugins.tasks.generate_plugins_xml.delay", new=do_nothing)
@@ -151,7 +152,7 @@ class PluginUpdateTestCase(TestCase):
         # Should use the new email
         self.assertEqual(
             mail.outbox[0].from_email,
-            'automation@qgis.org'
+            settings.EMAIL_HOST_USER
         )
 
 

@@ -58,7 +58,7 @@ HAYSTACK_WHOOSH_PATH = '/home/web/qgis-django/search-index'
 # Tim Email settings
 EMAIL_HOST = 'localhost'
 #EMAIL_PORT =
-DEFAULT_FROM_EMAIL = 'automation@qgis.org'
+DEFAULT_FROM_EMAIL = os.environ.get("EMAIL_HOST_USER", "automation")
 
 INSTALLED_APPS = [
     'django.contrib.auth',

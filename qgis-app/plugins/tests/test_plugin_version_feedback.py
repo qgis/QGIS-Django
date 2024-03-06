@@ -9,7 +9,7 @@ from freezegun import freeze_time
 
 from plugins.models import Plugin, PluginVersion, PluginVersionFeedback
 from plugins.views import version_feedback_notify
-
+from django.conf import settings
 
 class SetupMixin:
     fixtures = ["fixtures/auth.json", "fixtures/simplemenu.json"]
@@ -92,7 +92,7 @@ class TestFeedbackNotify(SetupMixin, TestCase):
         # Should use the new email
         self.assertEqual(
             mail.outbox[0].from_email,
-            'automation@qgis.org'
+            settings.EMAIL_HOST_USER
         )
 
     def test_add_recipient_in_email_notification(self):
@@ -117,7 +117,7 @@ class TestFeedbackNotify(SetupMixin, TestCase):
         # Should use the new email
         self.assertEqual(
             mail.outbox[0].from_email,
-            'automation@qgis.org'
+            settings.EMAIL_HOST_USER
         )
 
 

@@ -82,7 +82,7 @@ class TestUploadStyle(TestCase):
         # Should use the new email
         self.assertEqual(
             mail.outbox[0].from_email,
-            'automation@qgis.org'
+            settings.EMAIL_HOST_USER
         )
 
         # style should be in Waiting Review

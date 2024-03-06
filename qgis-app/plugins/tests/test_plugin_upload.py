@@ -8,6 +8,7 @@ from django.core.files.uploadedfile import SimpleUploadedFile
 from plugins.models import Plugin, PluginVersion
 from plugins.forms import PackageUploadForm
 from django.core import mail
+from django.conf import settings
 
 def do_nothing(*args, **kwargs):
     pass
@@ -76,7 +77,7 @@ class PluginUploadTestCase(TestCase):
         # Should use the new email
         self.assertEqual(
             mail.outbox[0].from_email,
-            'automation@qgis.org'
+            settings.EMAIL_HOST_USER
         )
     def tearDown(self):
         self.client.logout()
