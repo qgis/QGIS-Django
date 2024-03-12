@@ -13,24 +13,24 @@ ALLOWED_HOSTS = ["*"]
 
 # Absolute filesystem path to the directory that will hold user-uploaded files.
 # Example: "/var/www/example.com/media/"
-MEDIA_ROOT = os.environ.get("MEDIA_ROOT", "/home/web/media")
+MEDIA_ROOT = os.environ.get("MEDIA_ROOT", "/home/web/media/")
 
 # URL that handles the media served from MEDIA_ROOT. Make sure to use a
 # trailing slash.
 # Examples: "http://example.com/media/", "http://media.example.com/"
 # MEDIA_URL = '/media/'
 # setting full MEDIA_URL to be able to use it for the feeds
-MEDIA_URL = "/media/"
+MEDIA_URL = os.environ.get("MEDIA_URL", "/media/")
 
 # Absolute path to the directory static files should be collected to.
 # Don't put anything in this directory yourself; store your static files
 # in apps' "static/" subdirectories and in STATICFILES_DIRS.
 # Example: "/var/www/example.com/static/"
-STATIC_ROOT = os.environ.get("STATIC_ROOT", "/home/web/static")
+STATIC_ROOT = os.environ.get("STATIC_ROOT", "/home/web/static/static/")
 
 # URL prefix for static files.
 # Example: "http://example.com/static/", "http://static.example.com/"
-STATIC_URL = "/static/"
+STATIC_URL = os.environ.get("STATIC_URL", "/static/")
 
 # Manage static files storage ensuring that their 
 # filenames contain a hash of their content for cache busting
