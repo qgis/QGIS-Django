@@ -55,7 +55,7 @@ jobs:
 
       - name: Run Coverage test
         run: |
-          docker-compose exec devweb bash -c '
+          docker-compose exec -T devweb bash -c '
             set -e  # Exit immediately if any command fails
             pip install coverage &&
             python manage.py makemigrations &&
