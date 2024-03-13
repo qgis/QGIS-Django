@@ -18,7 +18,7 @@ test.describe('plugins upload', () => {
         await expect(page.getByRole('link', { name: '1.4' })).toBeVisible();
         await expect(page.getByRole('link', { name: '1.3' })).toBeVisible();
         await expect(page.getByRole('link', { name: '1.2' })).toBeVisible();
-        await expect(page.getByText('Nov 24, 2010')).toBeVisible();
+        await expect(page.getByText('Nov 24, 2010').first()).toBeVisible();
         await expect(page.getByRole('row', { name: '1.4 yes yes 1.0.0 None 1' }).locator('#version_unapprove')).toBeVisible();
         await expect(page.getByRole('link', { name: '' }).first()).toBeVisible();
         await expect(page.getByRole('link', { name: '' }).first()).toBeVisible();
