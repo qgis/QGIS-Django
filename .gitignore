@@ -51,3 +51,6 @@ qgis-app/api/tests/*/
 
 # whoosh_index
 qgis-app/whoosh_index/
+
+# playwright fixture
+!playwright/ci-test/tests/fixtures/qgis-logo.zip
