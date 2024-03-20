@@ -15,6 +15,13 @@ build:
 	@echo "------------------------------------------------------------------"
 	@docker-compose -p $(PROJECT_ID) build
 
+build-dev:
+	@echo
+	@echo "------------------------------------------------------------------"
+	@echo "Building in development mode only"
+	@echo "------------------------------------------------------------------"
+	@docker-compose -p $(PROJECT_ID) build devweb
+
 db:
 	@echo
 	@echo "------------------------------------------------------------------"
@@ -22,19 +29,33 @@ db:
 	@echo "------------------------------------------------------------------"
 	@docker-compose -p $(PROJECT_ID) up -d db
 
+metabase: db
+	@echo
+	@echo "------------------------------------------------------------------"
+	@echo "Running metabase in production mode"
+	@echo "------------------------------------------------------------------"
+	@docker-compose -p $(PROJECT_ID) up -d metabase
+
 web: db
 	@echo
 	@echo "------------------------------------------------------------------"
 	@echo "Running in production mode"
 	@echo "------------------------------------------------------------------"
-	@docker-compose -p $(PROJECT_ID) up -d web
+	@docker-compose -p $(PROJECT_ID) up -d uwsgi web smtp worker beat
+
+devweb-test: db
+	@echo
+	@echo "------------------------------------------------------------------"
+	@echo "Running in TESTING mode"
+	@echo "------------------------------------------------------------------"
+	@docker-compose -p $(PROJECT_ID) up --no-deps -d devweb
 
 devweb: db
 	@echo
 	@echo "------------------------------------------------------------------"
 	@echo "Running in DEVELOPMENT mode"
 	@echo "------------------------------------------------------------------"
-	@docker-compose -p $(PROJECT_ID) up --no-deps -d devweb
+	@docker-compose -p $(PROJECT_ID) up --no-deps -d devweb rabbitmq worker beat
 
 devweb-runserver: devweb
 	@echo
@@ -54,26 +75,26 @@ migrate:
 	@# We add the '-' prefix to the next line as the migration may fail
 	@# but we want to continue anyway.
 	@#We need to migrate accounts first as it has a reference to user model
-	-@docker-compose -p $(PROJECT_ID) exec web python manage.py migrate auth
-	@docker-compose -p $(PROJECT_ID) exec web python manage.py migrate
+	-@docker-compose -p $(PROJECT_ID) exec uwsgi python manage.py migrate auth
+	@docker-compose -p $(PROJECT_ID) exec uwsgi python manage.py migrate
 
 update-migrations:
 	@echo
 	@echo "------------------------------------------------------------------"
 	@echo "Running update migrations in production mode"
 	@echo "------------------------------------------------------------------"
-	@docker-compose -p $(PROJECT_ID) exec web python manage.py makemigrations
+	@docker-compose -p $(PROJECT_ID) exec uwsgi python manage.py makemigrations
 
 collectstatic:
 	@echo
 	@echo "------------------------------------------------------------------"
 	@echo "Collecting static in production mode"
 	@echo "------------------------------------------------------------------"
-	#@docker-compose -p $(PROJECT_ID) run uwsgi python manage.py collectstatic --noinput
+	@docker-compose -p $(PROJECT_ID) run uwsgi python manage.py collectstatic --noinput
 	#We need to run collect static in the same context as the running
 	# uwsgi container it seems so I use docker exec here
 	# no -it flag so we can run over remote shell
-	@docker exec $(PROJECT_ID)-web python manage.py collectstatic --noinput
+	# @docker exec $(PROJECT_ID)-web python manage.py collectstatic --noinput
 
 reload:
 	@echo
@@ -100,12 +121,27 @@ rm-only: kill
 	@echo "------------------------------------------------------------------"
 	@docker-compose -p $(PROJECT_ID) rm
 
+maillogs:
+	@echo
+	@echo "------------------------------------------------------------------"
+	@echo "Showing smtp logs in production mode"
+	@echo "------------------------------------------------------------------"
+	@docker-compose exec smtp tail -f /var/log/mail.log
+
+mailerrorlogs:
+	@echo
+	@echo "------------------------------------------------------------------"
+	@echo "Showing smtp error logs in production mode"
+	@echo "------------------------------------------------------------------"
+	@docker-compose exec smtp tail -f /var/log/mail.err
+
 dbrestore:
 	@echo
 	@echo "------------------------------------------------------------------"
 	@echo "Restore dump from backups/latest.dmp in production mode"
 	@echo "------------------------------------------------------------------"
 	@# - prefix causes command to continue even if it fails
+	@# - TODO: This command needs update since postgis has been updated. 
 	@echo "stopping web container"
 	@docker-compose -p $(PROJECT_ID) stop web
 	@echo "dropping gis"
@@ -120,6 +156,13 @@ dbrestore:
 	@docker-compose -p $(PROJECT_ID) start web
 	@echo "starting web container"
 
+wait-db:
+	@docker-compose exec -p $(PROJECT_ID) db su - postgres -c "until pg_isready; do sleep 5; done"
+
+create-test-db:
+	@docker-compose exec -p $(PROJECT_ID) db su - postgres -c "psql -c 'create database test_db;'"
+	@docker-compose exec -p $(PROJECT_ID) db su - postgres -c "psql -d test_db -c 'create extension postgis;'"
+
 dbseed:
 	@echo
 	@echo "------------------------------------------------------------------"
@@ -132,4 +175,4 @@ rebuild_index:
 	@echo "------------------------------------------------------------------"
 	@echo "Rebuild search index in PRODUCTION mode"
 	@echo "------------------------------------------------------------------"
-	@docker-compose -p $(PROJECT_ID) exec web bash -c 'python manage.py rebuild_index'
+	@docker-compose -p $(PROJECT_ID) exec uwsgi bash -c 'python manage.py rebuild_index'

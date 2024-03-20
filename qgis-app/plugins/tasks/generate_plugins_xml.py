@@ -2,8 +2,13 @@ import os
 
 import requests
 from celery import shared_task
+from celery.utils.log import get_task_logger
+from preferences import preferences
 from django.conf import settings
 from preferences import preferences
+
+
+logger = get_task_logger(__name__)
 
 
 @shared_task
@@ -13,6 +18,8 @@ def generate_plugins_xml(site=""):
     :param site: site domain where the plugins will be fetched, default to
                  http://plugins.qgis.org
     """
+    logger.info('generate_plugins_xml : {}'.format(site))
+
     if not site:
         if settings.DEFAULT_PLUGINS_SITE:
             site = settings.DEFAULT_PLUGINS_SITE
