@@ -8,6 +8,7 @@ from settings import *
 
 SITE_ROOT = os.path.dirname(os.path.realpath(__file__))
 from datetime import timedelta
+from django.contrib.staticfiles.storage import ManifestStaticFilesStorage
 
 DEBUG = ast.literal_eval(os.environ.get("DEBUG", "True"))
 THUMBNAIL_DEBUG = DEBUG
@@ -33,6 +34,10 @@ STATIC_ROOT = os.environ.get("STATIC_ROOT", "/home/web/static")
 # URL prefix for static files.
 # Example: "http://example.com/static/", "http://static.example.com/"
 STATIC_URL = "/static/"
+
+# Manage static files storage ensuring that their 
+# filenames contain a hash of their content for cache busting
+# STATICFILES_STORAGE = 'django.contrib.staticfiles.storage.ManifestStaticFilesStorage'
 
 INSTALLED_APPS = [
     "django.contrib.auth",
@@ -117,7 +122,7 @@ EMAIL_HOST = os.environ.get("EMAIL_HOST", "smtp")
 EMAIL_PORT = int(os.environ.get("EMAIL_PORT", "25"))
 # SMTP authentication information for EMAIL_HOST.
 # See fig.yml for where these are defined
-EMAIL_HOST_USER = os.environ.get("EMAIL_HOST_USER", "noreply")
+EMAIL_HOST_USER = os.environ.get("EMAIL_HOST_USER", "automation")
 EMAIL_HOST_PASSWORD = os.environ.get("EMAIL_HOST_PASSWORD", "docker")
 EMAIL_USE_TLS = ast.literal_eval(os.environ.get("EMAIL_USE_TLS", "False"))
 EMAIL_SUBJECT_PREFIX = os.environ.get("EMAIL_SUBJECT_PREFIX", "[QGIS Plugins]")
