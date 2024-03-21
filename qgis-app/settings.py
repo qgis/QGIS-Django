@@ -253,7 +253,7 @@ RATINGS_VOTES_PER_IP = 10000
 
 DEBUG_TOOLBAR_CONFIG = {"INTERCEPT_REDIRECTS": False}
 
-THUMBNAIL_ENGINE = "sorl.thumbnail.engines.convert_engine.Engine"
+# THUMBNAIL_ENGINE = "sorl.thumbnail.engines.convert_engine.Engine"
 
 USER_MAP = {
     "project_name": "QGIS",
