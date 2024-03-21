@@ -1,14 +1,9 @@
 version: '3.8'
 volumes:
-  backups-data:
-  static-data:
-  media-data:
-  logs-data:
+  postgres_data:
   nginx-conf:
-  db-backups:
   rabbitmq:
   celerybeat-schedule:
-  postgres-data:
 services:
 
   db:
@@ -20,8 +15,8 @@ services:
       - POSTGRES_PASS=${DATABASE_PASSWORD:-docker}
       - PASSWORD_AUTHENTICATION=${PASSWORD_AUTHENTICATION:-md5}
     volumes:
-      - postgres-data:/var/lib/postgresql
-      - backups-data:/backups
+      - postgres_data:/var/lib/postgresql
+      - ${QGISPLUGINS_BACKUP_VOLUME}:/backups
     restart: unless-stopped
 
   uwsgi: &uwsgi-common
@@ -44,8 +39,8 @@ services:
       - BROKER_URL=amqp://rabbitmq:5672
     volumes:
       - ../qgis-app:/home/web/django_project
-      - static-data:/home/web/static:rw
-      - media-data:/home/web/media:rw
+      - ${QGISPLUGINS_STATIC_VOLUME}:/home/web/static:rw
+      - ${QGISPLUGINS_MEDIA_VOLUME}:/home/web/media:rw
       - celerybeat-schedule:/home/web/celerybeat-schedule:rw
     links:
       - db:db
@@ -64,6 +59,8 @@ services:
       target: dev
     volumes:
       - ../qgis-app:/home/web/django_project
+      - ${QGISPLUGINS_STATIC_VOLUME}:/home/web/static:rw
+      - ${QGISPLUGINS_MEDIA_VOLUME}:/home/web/media:rw
     ports:
       # for django test server
       - "62202:8080"
@@ -102,8 +99,8 @@ services:
     hostname: web
     volumes:
       - nginx-conf:/etc/nginx/conf.d:ro
-      - static-data:/home/web/static:ro
-      - media-data:/home/web/media:ro
+      - ${QGISPLUGINS_STATIC_VOLUME}:/home/web/static:ro
+      - ${QGISPLUGINS_MEDIA_VOLUME}:/home/web/media:ro
     links:
       - uwsgi:uwsgi
       - metabase:metabase
@@ -118,7 +115,7 @@ services:
     image: kartoza/pg-backup:16-3.4
     hostname: pg-backups
     volumes:
-      - db-backups:/backups
+      - ${QGISPLUGINS_BACKUP_VOLUME}:/backups
     links:
       - db:db
     environment:
