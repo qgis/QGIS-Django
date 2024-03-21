@@ -11,17 +11,9 @@ volumes:
   postgres-data:
 services:
 
-  smtp:
-    image: catatnight/postfix:latest
-    hostname: postfix
-    environment:
-      - maildomain=qgis.org
-      - smtp_user=noreply:docker
-    restart: unless-stopped
-
   db:
     container_name: qgis-plugins-db
-    image: kartoza/postgis:14-3.3
+    image: kartoza/postgis:16-3.4
     environment:
       - ALLOW_IP_RANGE=0.0.0.0/0
       - POSTGRES_USER=${DATABASE_USERNAME:-docker}
@@ -34,7 +26,10 @@ services:
 
   uwsgi: &uwsgi-common
     container_name: qgis-plugins-uwsgi-common
-    image: kartoza/qgis-plugins-uwsgi
+    build:
+      context: ${PWD}/../
+      dockerfile: dockerize/docker/Dockerfile
+      target: prod
     hostname: uwsgi
     environment:
       - DATABASE_NAME=${DATABASE_NAME:-gis}
@@ -120,7 +115,7 @@ services:
     restart: unless-stopped
 
   dbbackups:
-    image: kartoza/pg-backup:14-3.3
+    image: kartoza/pg-backup:16-3.4
     hostname: pg-backups
     volumes:
       - db-backups:/backups

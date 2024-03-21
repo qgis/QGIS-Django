@@ -1,26 +1,31 @@
-#--------- Generic stuff all our Dockerfiles should start with so we get caching ------------
-# Note this base image is based on debian
-FROM kartoza/django-base:3.7 as prod
-MAINTAINER Dimas Ciputra<dimas@kartoza.com>
+# For more information, please refer to https://aka.ms/vscode-docker-python
+FROM python:3.12-slim as prod
 
-#RUN  ln -s /bin/true /sbin/initctl
-RUN apt-get clean all
+EXPOSE 8000
 
-# Debian stretch/updates release issue. please see https://serverfault.com/a/1130167
-RUN echo "deb http://archive.debian.org/debian stretch main contrib non-free" > /etc/apt/sources.list
+# Keeps Python from generating .pyc files in the container
+ENV PYTHONDONTWRITEBYTECODE=1
 
-RUN apt-get update && apt-get install -y libsasl2-dev python-dev libldap2-dev libssl-dev
+# Turns off buffering for easier container logging
+ENV PYTHONUNBUFFERED=1
+
+RUN apt-get update && apt-get install -y \
+    git python3-dev libxml2-dev \
+    libsasl2-dev libldap2-dev libssl-dev \
+    libxslt1-dev zlib1g-dev \
+    build-essential \
+    libffi-dev \
+    libjpeg-dev libpq-dev \
+    liblcms2-dev libblas-dev libatlas-base-dev
 
 RUN rm -rf /uwsgi.conf
 ADD dockerize/docker/uwsgi.conf /uwsgi.conf
 ADD qgis-app /home/web/django_project
 ADD dockerize/docker/REQUIREMENTS.txt /REQUIREMENTS.txt
+
 RUN pip install --upgrade pip && pip install -r /REQUIREMENTS.txt
-RUN pip install uwsgi freezegun==1.3.1
 
-
-# Open port 8080 as we will be running our uwsgi socket on that
-EXPOSE 8080
+RUN apt-get update && apt-get install -y gdal-bin
 
 RUN mkdir -p /var/log/uwsgi
 
