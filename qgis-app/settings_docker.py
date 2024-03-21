@@ -158,3 +158,6 @@ SIMPLE_JWT = {
 
 MATOMO_SITE_ID="1"
 MATOMO_URL="//matomo.qgis.org/"
+
+# Default primary key type
+DEFAULT_AUTO_FIELD = 'django.db.models.AutoField'

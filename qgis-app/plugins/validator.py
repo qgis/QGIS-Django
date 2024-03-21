@@ -61,16 +61,16 @@ def _read_from_init(initcontent, initname):
     i = 0
     lines = initcontent.split("\n")
     while i < len(lines):
-        if re.search("def\s+([^\(]+)", lines[i]):
-            k = re.search("def\s+([^\(]+)", lines[i]).groups()[0]
+        if re.search(r"def\s+([^\(]+)", lines[i]):
+            k = re.search(r"def\s+([^\(]+)", lines[i]).groups()[0]
             i += 1
             while i < len(lines) and lines[i] != "":
-                if re.search("return\s+[\"']?([^\"']+)[\"']?", lines[i]):
+                if re.search(r"return\s+[\"']?([^\"']+)[\"']?", lines[i]):
                     metadata.append(
                         (
                             k,
                             re.search(
-                                "return\s+[\"']?([^\"']+)[\"']?", lines[i]
+                                r"return\s+[\"']?([^\"']+)[\"']?", lines[i]
                             ).groups()[0],
                         )
                     )
