@@ -15,7 +15,7 @@ import requests
 from django.conf import settings
 from django.core.files.uploadedfile import SimpleUploadedFile
 from django.forms import ValidationError
-from django.utils.translation import ugettext_lazy as _
+from django.utils.translation import gettext_lazy as _
 
 PLUGIN_MAX_UPLOAD_SIZE = getattr(settings, "PLUGIN_MAX_UPLOAD_SIZE", 25000000)  # 25 mb
 PLUGIN_REQUIRED_METADATA = getattr(

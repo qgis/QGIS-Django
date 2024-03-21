@@ -12,7 +12,7 @@ from django.core.files.uploadedfile import InMemoryUploadedFile
 
 # Transaction
 from django.db import IntegrityError, connection
-from django.utils.translation import ugettext_lazy as _
+from django.utils.translation import gettext_lazy as _
 from plugins.models import *
 from plugins.validator import validator
 from plugins.views import plugin_notify

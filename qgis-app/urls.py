@@ -1,6 +1,6 @@
 import simplemenu
 from django.conf import settings
-from django.conf.urls import url
+from django.urls import re_path as url
 
 # Uncomment the next two lines to enable the admin:
 from django.contrib import admin
