@@ -255,7 +255,7 @@ def validator(package):
         try:
             parser = configparser.ConfigParser()
             parser.optionxform = str
-            parser.readfp(StringIO(codecs.decode(zip.read(metadataname), "utf8")))
+            parser.read_file(StringIO(codecs.decode(zip.read(metadataname), "utf8")))
             if not parser.has_section("general"):
                 raise ValidationError(
                     _("Cannot find a section named 'general' in %s") % metadataname
