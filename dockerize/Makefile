@@ -41,7 +41,7 @@ web: db
 	@echo "------------------------------------------------------------------"
 	@echo "Running in production mode"
 	@echo "------------------------------------------------------------------"
-	@docker-compose -p $(PROJECT_ID) up -d uwsgi web smtp worker beat
+	@docker-compose -p $(PROJECT_ID) up -d uwsgi web worker beat
 
 devweb-test: db
 	@echo
@@ -141,20 +141,19 @@ dbrestore:
 	@echo "Restore dump from backups/latest.dmp in production mode"
 	@echo "------------------------------------------------------------------"
 	@# - prefix causes command to continue even if it fails
-	@# - TODO: This command needs update since postgis has been updated. 
-	@echo "stopping web container"
-	@docker-compose -p $(PROJECT_ID) stop web
-	@echo "dropping gis"
-	@docker exec -t $(PROJECT_ID)-db su - postgres -c "dropdb gis"
-	@echo "creating gis"
-	@docker exec -t $(PROJECT_ID)-db su - postgres -c "createdb -O docker -T template_postgis gis"
-	@echo "restoring gis"
-	@# Because we pipe from one docker command to another and we are going
-	@# to execute this Make command from a remote server at times, we need to using use interactive mode (-i)
-	@# in the first command and not use terminal (-t) in the second. Please do not change these!
-	@docker exec -t  $(PROJECT_ID)-db pg_restore /backups/latest.dmp | docker exec -i $(PROJECT_ID)-db su - postgres -c "psql gis"
-	@docker-compose -p $(PROJECT_ID) start web
-	@echo "starting web container"
+	@echo "stopping uwsgi container"
+	@docker-compose -p $(PROJECT_ID) stop uwsgi
+	@echo "Dropping the gis and metabase databases"
+	-@docker-compose -p $(PROJECT_ID) exec db su - postgres -c "dropdb --force gis"
+	-@docker-compose -p $(PROJECT_ID) exec db su - postgres -c "dropdb --force metabase"
+	@echo "Creating the gis and metabase databases"
+	-@docker-compose -p $(PROJECT_ID) exec db su - postgres -c "createdb -O docker -T template1 gis"
+	-@docker-compose -p $(PROJECT_ID) exec db su - postgres -c "createdb -O docker -T template1 metabase"
+	@echo "Restore database from backups/latest-gis.dmp"
+	-@docker-compose -p $(PROJECT_ID) exec db su - postgres -c "pg_restore -c /backups/latest-gis.dmp -d gis"
+	-@docker-compose -p $(PROJECT_ID) exec db su - postgres -c "pg_restore -c /backups/latest-metabase.dmp -d metabase"
+	@echo "starting uwsgi container"
+	@docker-compose -p $(PROJECT_ID) up -d uwsgi
 
 wait-db:
 	@docker-compose exec -p $(PROJECT_ID) db su - postgres -c "until pg_isready; do sleep 5; done"
