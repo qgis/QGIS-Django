@@ -14,9 +14,9 @@ RUN apt-get update && apt-get install -y \
     libsasl2-dev libldap2-dev libssl-dev \
     libxslt1-dev zlib1g-dev \
     build-essential \
-    libffi-dev \
+    libffi-dev gdal-bin\
     libjpeg-dev libpq-dev \
-    liblcms2-dev libblas-dev libatlas-base-dev
+    liblcms2-dev libblas-dev libatlas-base-dev \
 
 RUN rm -rf /uwsgi.conf
 ADD dockerize/docker/uwsgi.conf /uwsgi.conf
@@ -24,8 +24,6 @@ ADD qgis-app /home/web/django_project
 ADD dockerize/docker/REQUIREMENTS.txt /REQUIREMENTS.txt
 
 RUN pip install --upgrade pip && pip install -r /REQUIREMENTS.txt
-
-RUN apt-get update && apt-get install -y gdal-bin
 
 RUN mkdir -p /var/log/uwsgi
 
