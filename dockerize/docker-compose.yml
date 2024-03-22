@@ -26,6 +26,8 @@ services:
       dockerfile: dockerize/docker/Dockerfile
       target: prod
     hostname: uwsgi
+    expose:
+      - "8080"
     environment:
       - DATABASE_NAME=${DATABASE_NAME:-gis}
       - DATABASE_USERNAME=${DATABASE_USERNAME:-docker}
@@ -103,6 +105,8 @@ services:
     container_name: qgis-plugins-web
     image: nginx
     hostname: web
+    ports:
+    - "80:8080"
     volumes:
       - nginx-conf:/etc/nginx/conf.d:ro
       - ${QGISPLUGINS_STATIC_VOLUME}:/home/web/static:ro
