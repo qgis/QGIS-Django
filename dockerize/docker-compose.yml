@@ -37,6 +37,12 @@ services:
       - DEBUG=${DEBUG:-False}
       - RABBITMQ_HOST=${RABBITMQ_HOST:-rabbitmq}
       - BROKER_URL=amqp://rabbitmq:5672
+      - EMAIL_BACKEND=${EMAIL_BACKEND}
+      - EMAIL_HOST=${EMAIL_HOST}
+      - EMAIL_PORT=${EMAIL_PORT}
+      - EMAIL_USE_TLS=${EMAIL_USE_TLS}
+      - EMAIL_HOST_USER=${EMAIL_HOST_USER:-automation}
+      - EMAIL_HOST_PASSWORD=${EMAIL_HOST_PASSWORD}
     volumes:
       - ../qgis-app:/home/web/django_project
       - ${QGISPLUGINS_STATIC_VOLUME}:/home/web/static:rw

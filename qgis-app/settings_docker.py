@@ -10,8 +10,7 @@ SITE_ROOT = os.path.dirname(os.path.realpath(__file__))
 from datetime import timedelta
 from django.contrib.staticfiles.storage import ManifestStaticFilesStorage
 
-# DEBUG = ast.literal_eval(os.environ.get("DEBUG", "True"))
-DEBUG = True
+DEBUG = ast.literal_eval(os.environ.get("DEBUG", "True"))
 THUMBNAIL_DEBUG = DEBUG
 ALLOWED_HOSTS = ["*"]
 
