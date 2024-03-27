@@ -16,7 +16,7 @@ RUN apt-get update && apt-get install -y \
     build-essential \
     libffi-dev gdal-bin\
     libjpeg-dev libpq-dev \
-    liblcms2-dev libblas-dev libatlas-base-dev \
+    liblcms2-dev libblas-dev libatlas-base-dev
 
 RUN rm -rf /uwsgi.conf
 ADD dockerize/docker/uwsgi.conf /uwsgi.conf

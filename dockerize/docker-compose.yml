@@ -61,6 +61,7 @@ services:
   # from prod environment if wanted
   devweb:
     <<: *uwsgi-common
+    container_name: qgis-plugins-devweb
     build:
       context: ${PWD}/../
       dockerfile: dockerize/docker/Dockerfile
