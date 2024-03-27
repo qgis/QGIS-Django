@@ -1,7 +1,6 @@
 version: '3.8'
 volumes:
   postgres_data:
-  nginx-conf:
   rabbitmq:
   celerybeat-schedule:
 services:
@@ -109,7 +108,7 @@ services:
     ports:
     - "80:8080"
     volumes:
-      - nginx-conf:/etc/nginx/conf.d:ro
+      - ./sites-enabled:/etc/nginx/conf.d:ro
       - ${QGISPLUGINS_STATIC_VOLUME}:/home/web/static:ro
       - ${QGISPLUGINS_MEDIA_VOLUME}:/home/web/media:ro
     links:
