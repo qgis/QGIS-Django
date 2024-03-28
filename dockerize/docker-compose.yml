@@ -44,6 +44,7 @@ services:
       - EMAIL_USE_TLS=${EMAIL_USE_TLS}
       - EMAIL_HOST_USER=${EMAIL_HOST_USER:-automation}
       - EMAIL_HOST_PASSWORD=${EMAIL_HOST_PASSWORD}
+      - DEFAULT_PLUGINS_SITE=${DEFAULT_PLUGINS_SITE:-https://plugins.qgis.org/}
     volumes:
       - ../qgis-app:/home/web/django_project
       - ${QGISPLUGINS_STATIC_VOLUME}:/home/web/static:rw

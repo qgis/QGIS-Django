@@ -109,7 +109,7 @@ PAGINATION_DEFAULT_PAGINATION = 20
 PAGINATION_DEFAULT_PAGINATION_HUB = 30
 LOGIN_REDIRECT_URL = "/"
 SERVE_STATIC_MEDIA = DEBUG
-DEFAULT_PLUGINS_SITE = os.environ.get("DEFAULT_PLUGINS_SITE", "")
+DEFAULT_PLUGINS_SITE = os.environ.get("DEFAULT_PLUGINS_SITE", "https://plugins.qgis.org/")
 
 # See fig.yml file for postfix container definition
 #
@@ -141,7 +141,7 @@ CELERY_BEAT_SCHEDULE = {
         'task': 'plugins.tasks.generate_plugins_xml.generate_plugins_xml',
         'schedule': crontab(minute='*/10'),  # Execute every 10 minutes.
         'kwargs': {
-            'site': 'https://plugins.qgis.org/'
+            'site': DEFAULT_PLUGINS_SITE
         }
     },
     'update_feedjack': {
