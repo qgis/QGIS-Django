@@ -120,10 +120,7 @@ class TestValidatorMetadataPlugins(TestCase):
     @mock.patch("requests.get", side_effect=requests.exceptions.HTTPError())
     def test_check_url_link_does_not_exist(self, mock_request):
         url = "http://example.com/"
-        self.assertRaises(
-            ValidationError,
-            _check_url_link(url, "forbidden_url", "metadata attribute"),
-        )
+        self.assertIsNone(_check_url_link(url, "forbidden_url", "metadata attribute"))
 
 
 class TestValidatorForbiddenFileFolder(TestCase):

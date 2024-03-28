@@ -1,6 +1,6 @@
 # Custom haystack search to match partial strings
 
-from django.conf.urls import include, url
+from django.urls import re_path as url
 from haystack.query import SearchQuerySet
 from haystack.views import SearchView
 

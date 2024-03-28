@@ -216,7 +216,7 @@ class TestResourceAPIList(TestCase):
         url = reverse("resource-download", kwargs={"uuid": self.style.uuid})
         response = self.client.get(url)
         self.assertEqual(response.status_code, 200)
-        self.assertEquals(
+        self.assertEqual(
             response.get("Content-Disposition"), "attachment; filename=style_zero.zip"
         )
         with io.BytesIO(response.content) as file:

@@ -1,7 +1,7 @@
 from django.contrib.flatpages.models import FlatPage
 from django.shortcuts import render
 from django.template import RequestContext
-from django.utils.translation import ugettext_lazy as _
+from django.utils.translation import gettext_lazy as _
 from plugins.models import Plugin
 
 # from feedjack.models import Post

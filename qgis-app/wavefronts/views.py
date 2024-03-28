@@ -20,7 +20,7 @@ from django.shortcuts import get_object_or_404
 from django.template.response import TemplateResponse
 from django.urls import reverse_lazy
 from django.utils.text import slugify
-from django.utils.translation import ugettext_lazy as _
+from django.utils.translation import gettext_lazy as _
 from wavefronts.forms import UpdateForm, UploadForm
 from wavefronts.models import Review, Wavefront
 from wavefronts.utilities import zipped_all_with_license

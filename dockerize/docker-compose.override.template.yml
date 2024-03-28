@@ -1,0 +1,55 @@
+version: '3'
+services:
+  devweb:
+    # Note you cannot scale if you use container_name
+    image: kartoza/qgis-plugins-uwsgi:dev-latest
+    container_name: qgis-plugins-devweb
+    volumes:
+      -  ../qgis-app:/home/web/django_project
+      - ./static:/home/web/static:rw
+      - ./media:/home/web/media:rw
+    build:
+      context: ${PWD}/../
+      dockerfile: dockerize/docker/Dockerfile
+      target: dev
+    ports:
+      # for django test server
+      - "62202:8080"
+      # for ssh
+      - "62203:22"
+
+  beat:
+    volumes:
+      -  ../qgis-app:/home/web/django_project
+      - ./static:/home/web/static:rw
+      - ./media:/home/web/media:rw
+
+  worker:
+    volumes:
+      -  ../qgis-app:/home/web/django_project
+      - ./static:/home/web/static:rw
+      - ./media:/home/web/media:rw
+
+  uwsgi:
+    container_name: qgis-plugins-uwsgi
+    volumes:
+      -  ../qgis-app:/home/web/django_project
+      - ./static:/home/web/static:rw
+      - ./media:/home/web/media:rw
+    build:
+      context: ${PWD}/../
+      dockerfile: dockerize/docker/Dockerfile
+      target: prod
+
+  db:
+    volumes:
+      - ./postgres_data:/var/lib/postgresql
+      - ./backups:/backups
+
+  web:
+    volumes:
+      - ./sites-enabled:/etc/nginx/conf.d:ro
+      - ./static:/home/web/static:ro
+      - ./media:/home/web/media:ro
+    ports:
+      - "62201:8080"
