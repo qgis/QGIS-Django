@@ -55,7 +55,7 @@ devweb-test: db
 	@echo "------------------------------------------------------------------"
 	@echo "Running in TESTING mode"
 	@echo "------------------------------------------------------------------"
-	@docker compose -p $(PROJECT_ID) up --no-deps -d devweb
+	@docker compose up --no-deps -d devweb
 
 devweb: db
 	@echo
@@ -163,11 +163,11 @@ dbrestore:
 	@docker compose -p $(PROJECT_ID) up -d uwsgi
 
 wait-db:
-	@docker compose exec -p $(PROJECT_ID) db su - postgres -c "until pg_isready; do sleep 5; done"
+	@docker compose -p $(PROJECT_ID) exec db su - postgres -c "until pg_isready; do sleep 5; done"
 
 create-test-db:
-	@docker compose exec -p $(PROJECT_ID) db su - postgres -c "psql -c 'create database test_db;'"
-	@docker compose exec -p $(PROJECT_ID) db su - postgres -c "psql -d test_db -c 'create extension postgis;'"
+	@docker compose -p $(PROJECT_ID) exec db su - postgres -c "psql -c 'create database test_db;'"
+	@docker compose -p $(PROJECT_ID) exec db su - postgres -c "psql -d test_db -c 'create extension postgis;'"
 
 dbseed:
 	@echo
