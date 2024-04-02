@@ -43,6 +43,13 @@ web: db
 	@echo "------------------------------------------------------------------"
 	@docker compose -p $(PROJECT_ID) up -d uwsgi web worker beat
 
+dbbackups: db
+	@echo
+	@echo "------------------------------------------------------------------"
+	@echo "Running dbbackups in production mode"
+	@echo "------------------------------------------------------------------"
+	@docker compose -p $(PROJECT_ID) up -d dbbackups
+
 devweb-test: db
 	@echo
 	@echo "------------------------------------------------------------------"

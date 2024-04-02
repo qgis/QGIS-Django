@@ -106,10 +106,12 @@ services:
     container_name: qgis-plugins-web
     image: nginx
     hostname: web
+    entrypoint:
+    - /etc/nginx/sites-available/docker-entrypoint.sh
     ports:
-    - "80:8080"
+    - "80:80"
     volumes:
-      - ./sites-enabled:/etc/nginx/conf.d:ro
+      - ./sites-enabled:/etc/nginx/sites-available/:ro
       - ${QGISPLUGINS_STATIC_VOLUME}:/home/web/static:ro
       - ${QGISPLUGINS_MEDIA_VOLUME}:/home/web/media:ro
     links:
@@ -121,6 +123,8 @@ services:
         max-size: "200k"
         max-file: "10"
     restart: unless-stopped
+    command:
+    - prod
 
   dbbackups:
     image: kartoza/pg-backup:16-3.4
@@ -147,3 +151,5 @@ services:
       - MB_DB_CONNECTION_URI=jdbc:postgresql://${DATABASE_HOST:-db}:5432/metabase?user=${DATABASE_USERNAME:-docker}&password=${DATABASE_PASSWORD:-docker}
     links:
       - db
+    expose:
+      - "3000"
