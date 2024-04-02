@@ -47,6 +47,9 @@ jobs:
     steps:
       - uses: actions/checkout@v2
 
+      - name: Generate the .env file
+        run: cp .env.template .env
+
       - name: Run docker-compose build
         run: docker-compose build devweb
 

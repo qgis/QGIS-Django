@@ -3,6 +3,9 @@ volumes:
   postgres_data:
   rabbitmq:
   celerybeat-schedule:
+  static-data:
+  media-data:
+  backups-data:
 services:
 
   db:
