@@ -43,6 +43,8 @@ static_media
 dockerize/static
 dockerize/media
 dockerize/logs
+dockerize/certbot-etc
+dockerize/webroot
 .editorconfig
 
 # test cache

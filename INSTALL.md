@@ -196,6 +196,8 @@ $ make dbrestore
 
 ## Deploy Update with Rancher
 
+**TO BE DEPRECATED**
+
 - Go to [https://rancher.qgis.org](https://rancher.qgis.org)
 - Click the home icon in the top left corner,  and choose the environment: `plugins.qgis.org`
 - You will be redirected to User Stacks page, choose the plugins stack by clicking on `plugins` link

@@ -17,7 +17,7 @@ if [ $# -eq 1 ]; then
 		# Production mode, run using uwsgi
 		[Pp][Rr][Oo][Dd])
 			echo "Run in prod mode"
-			CONF_FILE=prod.conf
+			CONF_FILE=prod-ssl.conf
 			ln -s /etc/nginx/sites-available/$CONF_FILE /etc/nginx/conf.d/$CONF_FILE
 			exec nginx -g "daemon off;"
 			;;

@@ -113,10 +113,13 @@ services:
     - /etc/nginx/sites-available/docker-entrypoint.sh
     ports:
     - "80:80"
+    - "443:443"
     volumes:
       - ./sites-enabled:/etc/nginx/sites-available/:ro
       - ${QGISPLUGINS_STATIC_VOLUME}:/home/web/static:ro
       - ${QGISPLUGINS_MEDIA_VOLUME}:/home/web/media:ro
+      - ./webroot:/var/www/webroot
+      - ./certbot-etc:/etc/letsencrypt
     links:
       - uwsgi:uwsgi
       - metabase:metabase
@@ -127,7 +130,7 @@ services:
         max-file: "10"
     restart: unless-stopped
     command:
-    - prod
+    - ${QGISPLUGINS_ENV}
 
   dbbackups:
     image: kartoza/pg-backup:16-3.4
@@ -156,3 +159,13 @@ services:
       - db
     expose:
       - "3000"
+
+  certbot:
+    image: certbot/certbot
+    container_name: certbot
+    volumes:
+      - ./webroot:/var/www/webroot
+      - ./certbot-etc:/etc/letsencrypt
+    depends_on:
+      - web
+    command: certonly --webroot --webroot-path=/var/www/webroot --email admin@qgis.org --agree-tos --no-eff-email --force-renewal -d plugins.qgis.org

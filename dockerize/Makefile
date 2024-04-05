@@ -50,6 +50,13 @@ dbbackups: db
 	@echo "------------------------------------------------------------------"
 	@docker compose -p $(PROJECT_ID) up -d dbbackups
 
+certbot: web
+	@echo
+	@echo "------------------------------------------------------------------"
+	@echo "Running cerbot in production mode"
+	@echo "------------------------------------------------------------------"
+	@docker compose -p $(PROJECT_ID) up -d certbot
+
 devweb-test: db
 	@echo
 	@echo "------------------------------------------------------------------"
