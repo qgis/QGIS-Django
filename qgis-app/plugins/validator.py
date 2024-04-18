@@ -96,7 +96,7 @@ def _check_required_metadata(metadata):
             )
         )
 
-def _check_urls(urls):
+def _check_url_link(urls):
     """
     Checks if all the url link is valid.
     """
@@ -104,7 +104,7 @@ def _check_urls(urls):
         # Check against forbidden_url
         if url == forbidden_url:
             return True
-        
+
         # Check if parsed URL is valid
         try:
             parsed_url = urlparse(url)
@@ -131,7 +131,7 @@ def _check_urls(urls):
         except Exception:
             return True
         return req.status_code >= 400
-        
+
     url_error = [item for item in [url_item['metadata_attr'] for url_item in urls if error_check(url_item['url'], url_item['forbidden_url'])]]
     if len(url_error) > 0:
         url_error_str = ", ".join(url_error)
@@ -339,7 +339,7 @@ def validator(package):
         {'url': dict(metadata).get("homepage"), 'forbidden_url': "http://homepage", 'metadata_attr': "homepage"},
     ]
 
-    _check_urls(urls_to_check)
+    _check_url_link(urls_to_check)
 
 
     # Checks for LICENCE file presence
