@@ -86,64 +86,67 @@ def _check_required_metadata(metadata):
     """
     Checks if required metadata are in place, raise ValidationError if not found
     """
-    for md in PLUGIN_REQUIRED_METADATA:
-        if md not in dict(metadata) or not dict(metadata)[md]:
-            raise ValidationError(
-                _(
-                    'Cannot find metadata <strong>%s</strong> in metadata source <code>%s</code>.<br />For further informations about metadata, please see: <a target="_blank"  href="https://docs.qgis.org/testing/en/docs/pyqgis_developer_cookbook/plugins/plugins.html#metadata-txt">metadata documentation</a>'
-                )
-                % (md, dict(metadata).get("metadata_source"))
+
+    missing_fields = [field for field in PLUGIN_REQUIRED_METADATA if field not in [item[0] for item in metadata]]
+    if len(missing_fields) > 0:
+        missing_fields_str = ', '.join(missing_fields)
+        raise ValidationError(
+            _(
+                f'Cannot find metadata <strong>{missing_fields_str}</strong> in metadata source <code>{dict(metadata).get("metadata_source")}</code>.<br />For further informations about metadata, please see: <a target="_blank"  href="https://docs.qgis.org/testing/en/docs/pyqgis_developer_cookbook/plugins/plugins.html#metadata-txt">metadata documentation</a>'
             )
-
-
-def _check_url_link(url: str, forbidden_url: str, metadata_attr: str) -> None:
-    """
-    Checks if the url link is valid.
-    """
-    error_check = ValidationError(
-        _("Please provide valid url link for %s in metadata.") % metadata_attr
-    )
-    error_check_if_exist = ValidationError(
-        _(
-            "Please provide valid url link for %s in metadata. "
-            "This website cannot be reached."
         )
-        % metadata_attr
+
+def _check_urls(urls):
+    """
+    Checks if all the url link is valid.
+    """
+    def error_check(url: str, forbidden_url: str)->bool:
+        # Check against forbidden_url
+        if url == forbidden_url:
+            return True
+        
+        # Check if parsed URL is valid
+        try:
+            parsed_url = urlparse(url)
+            return not all([parsed_url.scheme, parsed_url.netloc])
+        except Exception as e:
+            # Log the exception or handle it as per your requirement
+            print(f"Error occurred: {e}")
+            return True
+
+    def error_check_if_exist(url: str)->bool:
+        # Check if url is exist
+        try:
+            # https://stackoverflow.com/a/41950438/10268058
+            # add the headers parameter to make the request appears like coming
+            # from browser, otherwise some websites will return 403
+            headers = {
+                "User-Agent": "Mozilla/5.0 (Windows NT 6.1; WOW64) "
+                "AppleWebKit/537.36 (KHTML, like Gecko) "
+                "Chrome/56.0.2924.76 Safari/537.36"
+            }
+            req = requests.head(url, headers=headers)
+        except requests.exceptions.SSLError:
+            req = requests.head(url, verify=False)
+        except Exception:
+            return True
+        return req.status_code >= 400
+        
+    url_error = [item for item in [url_item['metadata_attr'] for url_item in urls if error_check(url_item['url'], url_item['forbidden_url'])]]
+    if len(url_error) > 0:
+        url_error_str = ", ".join(url_error)
+        raise ValidationError(
+        _(f"Please provide valid url link for the following key(s) in the metadata source: <strong>{url_error_str}</strong>. ")
     )
-
-    # check against forbidden_url
-    is_forbidden_url = url == forbidden_url
-    if is_forbidden_url:
-        raise error_check
-
-    # check if parsed url is valid
-    # https://stackoverflow.com/a/38020041
-    try:
-        parsed_url = urlparse(url)  # e.g https://plugins.qgis.org/
-        if not (
-            all([parsed_url.scheme, parsed_url.netloc])  # e.g http
-        ):  # e.g www.qgis.org
-            raise error_check
-    except Exception:
-        raise error_check
-
-    # Check if url is exist
-    try:
-        # https://stackoverflow.com/a/41950438/10268058
-        # add the headers parameter to make the request appears like coming
-        # from browser, otherwise some websites will return 403
-        headers = {
-            "User-Agent": "Mozilla/5.0 (Windows NT 6.1; WOW64) "
-            "AppleWebKit/537.36 (KHTML, like Gecko) "
-            "Chrome/56.0.2924.76 Safari/537.36"
-        }
-        req = requests.head(url, headers=headers)
-    except requests.exceptions.SSLError:
-        req = requests.head(url, verify=False)
-    except Exception:
-        raise error_check_if_exist
-    if req.status_code >= 400:
-        raise error_check_if_exist
+    exist_url_error = [item for item in [url_item['metadata_attr'] for url_item in urls if error_check_if_exist(url_item['url'])]]
+    if len(exist_url_error) > 0:
+        exist_url_error_str = ", ".join(exist_url_error)
+        raise ValidationError(
+        _(
+            f"Please provide valid url link for the following key(s) in the metadata source: <strong>{exist_url_error_str}</strong>. "
+            "The website(s) cannot be reached."
+            )
+    )
 
 
 def validator(package):
@@ -329,11 +332,14 @@ def validator(package):
                 )
                 % (min_qgs_version, ",".join(e.messages))
             )
-
     # check url_link
-    _check_url_link(dict(metadata).get("tracker"), "http://bugs", "Bug tracker")
-    _check_url_link(dict(metadata).get("repository"), "http://repo", "Repository")
-    _check_url_link(dict(metadata).get("homepage"), "http://homepage", "Home page")
+    urls_to_check = [
+        {'url': dict(metadata).get("tracker"), 'forbidden_url': "http://bugs", 'metadata_attr': "tracker"},
+        {'url': dict(metadata).get("repository"), 'forbidden_url': "http://repo", 'metadata_attr': "repository"},
+        {'url': dict(metadata).get("homepage"), 'forbidden_url': "http://homepage", 'metadata_attr': "homepage"},
+    ]
+
+    _check_urls(urls_to_check)
 
 
     # Checks for LICENCE file presence
