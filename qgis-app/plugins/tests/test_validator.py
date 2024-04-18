@@ -114,15 +114,15 @@ class TestValidatorMetadataPlugins(TestCase):
 
     @mock.patch("requests.get", side_effect=requests.exceptions.SSLError())
     def test_check_url_link_ssl_error(self, mock_request):
-        url = "http://example.com/"
-        self.assertIsNone(_check_url_link(url, "forbidden_url", "metadata attribute"))
+        urls = [{'url': "http://example.com/", 'forbidden_url': "forbidden_url", 'metadata_attr': "metadata attribute"}]
+        self.assertIsNone(_check_url_link(urls))
 
     @mock.patch("requests.get", side_effect=requests.exceptions.HTTPError())
     def test_check_url_link_does_not_exist(self, mock_request):
-        url = "http://example.com/"
+        urls = [{'url': "http://example.com/", 'forbidden_url': "forbidden_url", 'metadata_attr': "metadata attribute"}]
         self.assertRaises(
             ValidationError,
-            _check_url_link(url, "forbidden_url", "metadata attribute"),
+            _check_url_link(urls),
         )
 
 
