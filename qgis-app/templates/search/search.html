@@ -46,7 +46,7 @@
         </div>
 
         {% if query %}
-            <h3>Search results for "{{query}}" ({{paginator.count}} items found.)</h3>
+            <h3>Search results for "{{query}}" ({{paginator.count}} items found)</h3>
 
             {% for result in page.object_list %}
                 <p class="search-item">
