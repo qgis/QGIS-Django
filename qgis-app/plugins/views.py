@@ -1364,7 +1364,11 @@ def version_approve(request, package_name, version):
         return HttpResponseRedirect(version.get_absolute_url())
     version.approved = True
     version.save()
-    msg = _('The plugin version "%s" is now approved' % version)
+    msg = _(
+        "The plugin version '%s' is now approved. "
+        "Please note that there may be a delay of 10 to 15 minutes "
+        "between the approval of the plugin and its actual availability in the XML."
+    ) % version
     messages.success(request, msg, fail_silently=True)
     plugin_approve_notify(version.plugin, msg, request.user)
     try:
