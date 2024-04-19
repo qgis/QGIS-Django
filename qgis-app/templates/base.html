@@ -59,7 +59,7 @@
                     </form>
 
                     {% get_namedmenu Navigation as menu %}
-                     <div class="nav-collapse collapse">
+                     <div class="nav-collapse collapse" style="height: 0px;">
                         <ul class="unstyled nav main-menu">
                         {% for item in menu %}
                             <li><a href="{{ item.page.url }}">{{ item.name }}</a></li>
@@ -115,7 +115,7 @@
                         {% endfor %}
                     </div>
                     {% endif %}
-                    <div>
+                    <div class="responsive-content">
                     {% block content %}
                     {% endblock %}
                     </div>
@@ -179,6 +179,32 @@ $('#user-tooltip').tooltip('hide');
 </script>
 <script type="text/javascript" src="{% static 'js/moment.min.js' %}"></script>
 <script type="text/javascript" src="{% static 'js/local_timezone-1.0.js' %}"></script>
+<style>
+    @media (max-width: 979px) {
+        .nav-collapse, .nav-collapse.collapse {
+            height: auto;
+        }
+
+        .nav-collapse .nav>li {
+            float: none !important;
+        }
+
+        .nav-collapse .nav>li>ul {
+            display:block;
+        }
+
+        .responsive-content {
+            max-width: 100dvw;
+            overflow: auto;
+        }
+
+    }
+    @media (max-width: 500px){
+        #page_bg {
+            width: auto;
+        }
+    }
+</style>
 {% tracking_code %}
 </body>
 </html>
