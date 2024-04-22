@@ -454,6 +454,13 @@ def plugin_upload(request):
                     "external_deps": form.cleaned_data.get("external_deps", ""),
                 }
 
+                if form.cleaned_data.get("minQtVersion") and form.cleaned_data.get("maxQtVersion"):
+                    try:
+                        version_data["min_qt_version"] = int(form.cleaned_data.get("minQtVersion"))
+                        version_data["max_qt_version"] = int(form.cleaned_data.get("maxQtVersion"))
+                    except Exception as e:
+                        pass
+
                 new_version = PluginVersion(**version_data)
                 new_version.save()
                 msg = _("The Plugin has been successfully created.")
