@@ -157,7 +157,10 @@ class TestValidatorForbiddenFileFolder(TestCase):
         mock_namelist.return_value = ["__MACOSX/"]
         with self.assertRaisesMessage(
             Exception,
-            ("For security reasons, zip file cannot contain " "'__MACOSX' directory"),
+            (
+                "For security reasons, zip file cannot contain <strong> '__MACOSX' </strong> directory. "
+                "However, it has been found in your root folder."
+             ),
         ):
             validator(self.package)
 
@@ -167,8 +170,20 @@ class TestValidatorForbiddenFileFolder(TestCase):
         with self.assertRaisesMessage(
             Exception,
             (
-                "For security reasons, zip file cannot contain "
-                "'__pycache__' directory"
+                "For security reasons, zip file cannot contain <strong> '__pycache__' </strong> directory. "
+                "However, it has been found in your root folder."
+            ),
+        ):
+            validator(self.package)
+
+    @mock.patch("zipfile.ZipFile.namelist")
+    def test_zipfile_with_pycache_in_children(self, mock_namelist):
+        mock_namelist.return_value = ["path/to/__pycache__/"]
+        with self.assertRaisesMessage(
+            Exception,
+            (
+                "For security reasons, zip file cannot contain <strong> '__pycache__' </strong> directory. "
+                "However, it has been found at <strong> 'path/to/__pycache__/' </strong>."
             ),
         ):
             validator(self.package)
@@ -178,7 +193,10 @@ class TestValidatorForbiddenFileFolder(TestCase):
         mock_namelist.return_value = [".git"]
         with self.assertRaisesMessage(
             Exception,
-            ("For security reasons, zip file cannot contain " "'.git' directory"),
+            (
+                "For security reasons, zip file cannot contain <strong> '.git' </strong> directory. "
+                "However, it has been found in your root folder."
+            ),
         ):
             validator(self.package)
 
@@ -191,7 +209,8 @@ class TestValidatorForbiddenFileFolder(TestCase):
         exception = cm.exception
         self.assertNotEqual(
             exception.message,
-            "For security reasons, zip file cannot contain '.git' directory",
+            "For security reasons, zip file cannot contain <strong> '.git' </strong> directory. ",
+            "However, it has been found in your root folder."
         )
 
 

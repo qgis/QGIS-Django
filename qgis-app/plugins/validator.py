@@ -189,11 +189,19 @@ def validator(package):
                 _("For security reasons, zip file cannot contain .pyc file")
             )
         for forbidden_dir in ["__MACOSX", ".git", "__pycache__"]:
-            if forbidden_dir in zname.split("/"):
+            dir_name_list = zname.split("/")
+            if forbidden_dir in dir_name_list:
+                if forbidden_dir == dir_name_list[0]:
+                    raise ValidationError(
+                        _(
+                            "For security reasons, zip file "
+                            "cannot contain <strong> '%s' </strong> directory. However, it has been found in your root folder." % (forbidden_dir,)
+                        )
+                    )
                 raise ValidationError(
                     _(
                         "For security reasons, zip file "
-                        "cannot contain '%s' directory" % (forbidden_dir,)
+                        "cannot contain <strong> '%s' </strong> directory. However, it has been found at <strong> '%s' </strong>." % (forbidden_dir, zname)
                     )
                 )
     bad_file = zip.testzip()
