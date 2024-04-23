@@ -1,6 +1,6 @@
 from collections import OrderedDict
 
-from api.serializers import GeopackageSerializer, ModelSerializer, StyleSerializer
+from api.serializers import GeopackageSerializer, ModelSerializer, StyleSerializer, LayerDefinitionSerializer, WavefrontSerializer
 from base.license import zip_a_file_if_not_zipfile
 from django.contrib.postgres.search import SearchVector
 from django.http import Http404, HttpResponse
@@ -16,6 +16,8 @@ from models.models import Model
 from rest_framework import filters, permissions
 from rest_framework.views import APIView
 from styles.models import Style
+from layerdefinitions.models import LayerDefinition
+from wavefronts.models import Wavefront
 
 
 def filter_resource_type(queryset, request, *args, **kwargs):
@@ -115,6 +117,16 @@ class ResourceAPIList(FlatMultipleModelAPIView):
             "serializer_class": StyleSerializer,
             "filter_fn": filter_general,
         },
+        {
+            "queryset": LayerDefinition.approved_objects.all(),
+            "serializer_class": LayerDefinitionSerializer,
+            "filter_fn": filter_general,
+        },
+        {
+            "queryset": Wavefront.approved_objects.all(),
+            "serializer_class": WavefrontSerializer,
+            "filter_fn": filter_general,
+        },
     ]
 
 
@@ -135,6 +147,10 @@ class ResourceAPIDownload(APIView):
             object = Model.approved_objects.get(uuid=uuid)
         elif Style.approved_objects.filter(uuid=uuid).exists():
             object = Style.approved_objects.get(uuid=uuid)
+        elif LayerDefinition.approved_objects.filter(uuid=uuid).exists():
+            object = LayerDefinition.approved_objects.get(uuid=uuid)
+        elif Wavefront.approved_objects.filter(uuid=uuid).exists():
+            object = Wavefront.approved_objects.get(uuid=uuid)
         else:
             raise Http404
 

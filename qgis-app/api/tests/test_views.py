@@ -12,6 +12,8 @@ from django.urls import reverse
 from geopackages.models import Geopackage
 from models.models import Model
 from styles.models import Style, StyleType
+from layerdefinitions.models import LayerDefinition
+from wavefronts.models import Wavefront
 
 
 @override_settings(MEDIA_ROOT="api/tests")
@@ -75,6 +77,26 @@ class TestResourceAPIList(TestCase):
             approved=True,
         )
 
+        # create LayerDefinition
+        LayerDefinition.objects.create(
+            creator=self.creator0,
+            name="flooded buildings extractor",
+            description="A LayerDefinition for testing purpose",
+            thumbnail_image=self.thumbnail,
+            file=self.file,
+            approved=True,
+        )
+
+        # create Wavefront
+        Wavefront.objects.create(
+            creator=self.creator0,
+            name="flooded buildings extractor",
+            description="A Wavefront for testing purpose",
+            thumbnail_image=self.thumbnail,
+            file=self.file,
+            approved=True,
+        )
+
     def tearDown(self):
         pass
 
@@ -83,7 +105,7 @@ class TestResourceAPIList(TestCase):
         url = reverse("resource-list")
         response = self.client.get(url)
         json_parse = json.loads(response.content)
-        self.assertEqual(json_parse["total"], 3)
+        self.assertEqual(json_parse["total"], 5)
         result = json_parse["results"]
         for i, d in enumerate(result):
             if d["resource_type"] == "Geopackage":
@@ -92,15 +114,32 @@ class TestResourceAPIList(TestCase):
                 m_index = i
             elif d["resource_type"] == "Style":
                 s_index = i
+            elif d["resource_type"] == "LayerDefinition":
+                l_index = i
+            elif d["resource_type"] == "Wavefront":
+                w_index = i
         self.assertIsNotNone(g_index)
         self.assertIsNotNone(m_index)
         self.assertIsNotNone(s_index)
+        self.assertIsNotNone(l_index)
+        self.assertIsNotNone(w_index)
+
         self.assertEqual(result[g_index]["resource_type"], "Geopackage")
         self.assertEqual(result[g_index]["resource_subtype"], None)
         self.assertEqual(result[g_index]["creator"], "creator")
+
         self.assertEqual(result[m_index]["resource_type"], "Model")
         self.assertEqual(result[m_index]["resource_subtype"], None)
         self.assertEqual(result[m_index]["creator"], "creator 0")
+
+        self.assertEqual(result[l_index]["resource_type"], "LayerDefinition")
+        self.assertEqual(result[l_index]["resource_subtype"], None)
+        self.assertEqual(result[l_index]["creator"], "creator 0")
+
+        self.assertEqual(result[w_index]["resource_type"], "Wavefront")
+        self.assertEqual(result[w_index]["resource_subtype"], None)
+        self.assertEqual(result[w_index]["creator"], "creator 0")
+
         self.assertEqual(result[s_index]["resource_type"], "Style")
         self.assertEqual(result[s_index]["resource_subtype"], "Marker")
         self.assertEqual(result[s_index]["creator"], "creator")
@@ -117,6 +156,8 @@ class TestResourceAPIList(TestCase):
         g_index = None
         m_index = None
         s_index = None
+        l_index = None
+        w_index = None
         for i, d in enumerate(result):
             if d["resource_type"] == "Geopackage":
                 g_index = i
@@ -124,30 +165,15 @@ class TestResourceAPIList(TestCase):
                 m_index = i
             elif d["resource_type"] == "Style":
                 s_index = i
+            elif d["resource_type"] == "LayerDefinition":
+                l_index = i
+            elif d["resource_type"] == "Wavefront":
+                w_index = i
         self.assertIsNotNone(g_index)
         self.assertIsNone(m_index)
         self.assertIsNone(s_index)
-
-    def test_get_list_resources_with_filter_resource_type(self):
-        param = "resource_type=geopackage"
-        url = "%s?%s" % (reverse("resource-list"), param)
-        response = self.client.get(url)
-        json_parse = json.loads(response.content)
-        self.assertEqual(json_parse["total"], 1)
-        result = json_parse["results"]
-        g_index = None
-        m_index = None
-        s_index = None
-        for i, d in enumerate(result):
-            if d["resource_type"] == "Geopackage":
-                g_index = i
-            elif d["resource_type"] == "Model":
-                m_index = i
-            elif d["resource_type"] == "Style":
-                s_index = i
-        self.assertIsNotNone(g_index)
-        self.assertIsNone(m_index)
-        self.assertIsNone(s_index)
+        self.assertIsNone(l_index)
+        self.assertIsNone(w_index)
 
     def test_get_list_resources_with_filter_resource_subtype(self):
         param = "resource_subtype=Marker"
@@ -159,6 +185,8 @@ class TestResourceAPIList(TestCase):
         g_index = None
         m_index = None
         s_index = None
+        l_index = None
+        w_index = None
         for i, d in enumerate(result):
             if d["resource_type"] == "Geopackage":
                 g_index = i
@@ -166,33 +194,18 @@ class TestResourceAPIList(TestCase):
                 m_index = i
             elif d["resource_type"] == "Style":
                 s_index = i
+            elif d["resource_type"] == "LayerDefinition":
+                l_index = i
+            elif d["resource_type"] == "Wavefront":
+                w_index = i
         self.assertIsNone(g_index)
         self.assertIsNone(m_index)
+        self.assertIsNone(l_index)
+        self.assertIsNone(w_index)
         self.assertIsNotNone(s_index)
 
     def test_get_list_resources_with_filter_creator(self):
         param = "creator=creator 0"
-        url = "%s?%s" % (reverse("resource-list"), param)
-        response = self.client.get(url)
-        json_parse = json.loads(response.content)
-        self.assertEqual(json_parse["total"], 1)
-        result = json_parse["results"]
-        g_index = None
-        m_index = None
-        s_index = None
-        for i, d in enumerate(result):
-            if d["resource_type"] == "Geopackage":
-                g_index = i
-            elif d["resource_type"] == "Model":
-                m_index = i
-            elif d["resource_type"] == "Style":
-                s_index = i
-        self.assertIsNone(g_index)
-        self.assertIsNotNone(m_index)
-        self.assertIsNone(s_index)
-
-    def test_get_list_resources_with_filter_keyword(self):
-        param = "keyword=testing"
         url = "%s?%s" % (reverse("resource-list"), param)
         response = self.client.get(url)
         json_parse = json.loads(response.content)
@@ -201,6 +214,8 @@ class TestResourceAPIList(TestCase):
         g_index = None
         m_index = None
         s_index = None
+        l_index = None
+        w_index = None
         for i, d in enumerate(result):
             if d["resource_type"] == "Geopackage":
                 g_index = i
@@ -208,9 +223,44 @@ class TestResourceAPIList(TestCase):
                 m_index = i
             elif d["resource_type"] == "Style":
                 s_index = i
+            elif d["resource_type"] == "LayerDefinition":
+                l_index = i
+            elif d["resource_type"] == "Wavefront":
+                w_index = i
+        self.assertIsNone(g_index)
+        self.assertIsNotNone(m_index)
+        self.assertIsNotNone(l_index)
+        self.assertIsNotNone(w_index)
+        self.assertIsNone(s_index)
+
+    def test_get_list_resources_with_filter_keyword(self):
+        param = "keyword=testing"
+        url = "%s?%s" % (reverse("resource-list"), param)
+        response = self.client.get(url)
+        json_parse = json.loads(response.content)
+        self.assertEqual(json_parse["total"], 5)
+        result = json_parse["results"]
+        g_index = None
+        m_index = None
+        s_index = None
+        l_index = None
+        w_index = None
+        for i, d in enumerate(result):
+            if d["resource_type"] == "Geopackage":
+                g_index = i
+            elif d["resource_type"] == "Model":
+                m_index = i
+            elif d["resource_type"] == "Style":
+                s_index = i
+            elif d["resource_type"] == "LayerDefinition":
+                l_index = i
+            elif d["resource_type"] == "Wavefront":
+                w_index = i
         self.assertIsNotNone(g_index)
         self.assertIsNotNone(m_index)
         self.assertIsNotNone(s_index)
+        self.assertIsNotNone(l_index)
+        self.assertIsNotNone(w_index)
 
     def test_download_resource_should_be_a_file_in_a_zip(self):
         url = reverse("resource-download", kwargs={"uuid": self.style.uuid})
