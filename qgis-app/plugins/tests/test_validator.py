@@ -159,7 +159,7 @@ class TestValidatorForbiddenFileFolder(TestCase):
             Exception,
             (
                 "For security reasons, zip file cannot contain <strong> '__MACOSX' </strong> directory. "
-                "However, it has been found in your root folder."
+                "However, there is one present at the root of the archive."
              ),
         ):
             validator(self.package)
@@ -171,7 +171,7 @@ class TestValidatorForbiddenFileFolder(TestCase):
             Exception,
             (
                 "For security reasons, zip file cannot contain <strong> '__pycache__' </strong> directory. "
-                "However, it has been found in your root folder."
+                "However, there is one present at the root of the archive."
             ),
         ):
             validator(self.package)
@@ -195,7 +195,7 @@ class TestValidatorForbiddenFileFolder(TestCase):
             Exception,
             (
                 "For security reasons, zip file cannot contain <strong> '.git' </strong> directory. "
-                "However, it has been found in your root folder."
+                "However, there is one present at the root of the archive."
             ),
         ):
             validator(self.package)
@@ -210,7 +210,7 @@ class TestValidatorForbiddenFileFolder(TestCase):
         self.assertNotEqual(
             exception.message,
             "For security reasons, zip file cannot contain <strong> '.git' </strong> directory. ",
-            "However, it has been found in your root folder."
+            "However, there is one present at the root of the archive."
         )
 
 

@@ -195,7 +195,7 @@ def validator(package):
                     raise ValidationError(
                         _(
                             "For security reasons, zip file "
-                            "cannot contain <strong> '%s' </strong> directory. However, it has been found in your root folder." % (forbidden_dir,)
+                            "cannot contain <strong> '%s' </strong> directory. However, there is one present at the root of the archive." % (forbidden_dir,)
                         )
                     )
                 raise ValidationError(
