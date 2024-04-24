@@ -40,6 +40,8 @@ class ResourceBaseSerializer(serializers.ModelSerializer):
         return attrs
 
     def get_resource_type(self, obj):
+        if self.Meta.model.__name__ == "Wavefront":
+            return "3DModel"
         return self.Meta.model.__name__
 
 

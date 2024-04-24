@@ -22,6 +22,8 @@ from wavefronts.models import Wavefront
 
 def filter_resource_type(queryset, request, *args, **kwargs):
     resource_type = request.query_params["resource_type"]
+    if resource_type.lower() == "3dmodel":
+        resource_type = "wavefront"
     if queryset.model.__name__.lower() == resource_type.lower():
         return queryset
     else:

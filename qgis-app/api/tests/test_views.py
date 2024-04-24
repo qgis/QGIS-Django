@@ -87,11 +87,11 @@ class TestResourceAPIList(TestCase):
             approved=True,
         )
 
-        # create Wavefront
+        # create 3D model
         Wavefront.objects.create(
             creator=self.creator0,
             name="flooded buildings extractor",
-            description="A Wavefront for testing purpose",
+            description="A 3D model for testing purpose",
             thumbnail_image=self.thumbnail,
             file=self.file,
             approved=True,
@@ -116,7 +116,7 @@ class TestResourceAPIList(TestCase):
                 s_index = i
             elif d["resource_type"] == "LayerDefinition":
                 l_index = i
-            elif d["resource_type"] == "Wavefront":
+            elif d["resource_type"] == "3DModel":
                 w_index = i
         self.assertIsNotNone(g_index)
         self.assertIsNotNone(m_index)
@@ -136,7 +136,7 @@ class TestResourceAPIList(TestCase):
         self.assertEqual(result[l_index]["resource_subtype"], None)
         self.assertEqual(result[l_index]["creator"], "creator 0")
 
-        self.assertEqual(result[w_index]["resource_type"], "Wavefront")
+        self.assertEqual(result[w_index]["resource_type"], "3DModel")
         self.assertEqual(result[w_index]["resource_subtype"], None)
         self.assertEqual(result[w_index]["creator"], "creator 0")
 
@@ -167,7 +167,7 @@ class TestResourceAPIList(TestCase):
                 s_index = i
             elif d["resource_type"] == "LayerDefinition":
                 l_index = i
-            elif d["resource_type"] == "Wavefront":
+            elif d["resource_type"] == "3DModel":
                 w_index = i
         self.assertIsNotNone(g_index)
         self.assertIsNone(m_index)
@@ -196,7 +196,7 @@ class TestResourceAPIList(TestCase):
                 s_index = i
             elif d["resource_type"] == "LayerDefinition":
                 l_index = i
-            elif d["resource_type"] == "Wavefront":
+            elif d["resource_type"] == "3DModel":
                 w_index = i
         self.assertIsNone(g_index)
         self.assertIsNone(m_index)
@@ -225,7 +225,7 @@ class TestResourceAPIList(TestCase):
                 s_index = i
             elif d["resource_type"] == "LayerDefinition":
                 l_index = i
-            elif d["resource_type"] == "Wavefront":
+            elif d["resource_type"] == "3DModel":
                 w_index = i
         self.assertIsNone(g_index)
         self.assertIsNotNone(m_index)
@@ -254,7 +254,7 @@ class TestResourceAPIList(TestCase):
                 s_index = i
             elif d["resource_type"] == "LayerDefinition":
                 l_index = i
-            elif d["resource_type"] == "Wavefront":
+            elif d["resource_type"] == "3DModel":
                 w_index = i
         self.assertIsNotNone(g_index)
         self.assertIsNotNone(m_index)
