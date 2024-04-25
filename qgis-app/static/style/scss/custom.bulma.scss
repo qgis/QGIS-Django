@@ -1,0 +1,189 @@
+@charset "utf-8";
+
+@import "variables";
+
+@font-face {
+    font-family: "Montserrat";
+    src: url("../webfonts/Montserrat.ttf") format("truetype");
+}
+
+@font-face {
+    font-family: "Work Sans";
+    src: url("../webfonts/worksans.woff2") format("opentype");
+}
+
+@font-face {
+    font-family: "'Sevillana', cursive";
+    src: url("../webfonts/sevillana.woff2") format("opentype");
+}
+
+
+@font-face {
+  font-family: "Trueno";
+  src: url("../webfonts/TruenoLt.otf") format("opentype");
+  font-weight: 300;
+}
+
+@font-face {
+  font-family: "Trueno";
+  src: url("../webfonts/TruenoRg.otf") format("opentype");
+  font-weight: 400;
+}
+
+@font-face {
+  font-family: "Trueno";
+  src: url("../webfonts/TruenoSBd.otf") format("opentype");
+  font-weight: 500;
+}
+
+@font-face {
+  font-family: "Trueno";
+  src: url("../webfonts/TruenoBd.otf") format("opentype");
+  font-weight: 600;
+}
+             
+@font-face {
+  font-family: "Trueno";
+  src: url("../webfonts/TruenoUltBlk.otf") format("opentype");
+  font-weight: 700;
+}
+
+// Set your brand colors
+$primary1: $primary1;
+$primary1-invert: $primary1-invert;
+$primary2: $primary2;
+$primary2-invert: $primary2-invert;
+$primary3: $primary3;
+$primary3-invert: $primary3-invert;
+$primary4: $primary4;
+$primary4-invert: $primary4-invert;
+$primary5: $primary5;
+$primary5-invert: $primary5-invert;
+$complementary1: $complementary1;
+$complementary1-invert: findColorInvert($complementary1);
+$complementary2: $complementary2;
+$complementary2-invert: findColorInvert($complementary2);
+$complementary3: $complementary3;
+$complementary3-invert: findColorInvert($complementary3);
+$complementary4: $complementary4;
+$complementary4-invert: findColorInvert($complementary4);
+$complementary5: $light1;
+$complementary5-invert: findColorInvert($complementary5);
+$complementary6: $complementary6;
+$complementary7: $complementary7;
+$complementary7-invert: findColorInvert($complementary7);
+$complementary8: $complementary8;
+$complementary8-invert: findColorInvert($complementary8);
+$light1: $light1;
+$light1-invert: findColorInvert($light1);
+$light2: $light2;
+$light2-invert: findColorInvert($light2);
+$light3: $light3;
+$light3-invert: findColorInvert($light3);
+$dark1: $dark1;
+$dark1-invert: findColorInvert($dark1);
+$dark2: $dark2;
+$dark2-invert: findColorInvert($dark2);
+$white-ter:    hsl(0, 0%, 96%) !default;
+
+// The custom colours are set up so that in 
+// addition to using bulma's is-primary, is-info
+// colours, you can also use e.g. is-primary1, is-primary2 etc.
+// see https://stackoverflow.com/a/68419170
+// also dont indent the line starts below, you will break sass compilation
+$custom-colors: (
+    "primary1": ($primary1, $primary1-invert),
+    "primary2": ($primary2, $primary2-invert),
+    "primary3": ($primary3, $primary3-invert),
+    "primary4": ($primary4, $primary4-invert),
+    "primary5": ($primary5, $primary5-invert),
+    "complementary1" : ($complementary1, $complementary1-invert),
+    "complementary2" : ($complementary2, $complementary2-invert),
+    "complementary3" : ($complementary3, $complementary3-invert),
+    "complementary4" : ($complementary4, $complementary4-invert),
+    "complementary5" : ($complementary5, $complementary5-invert),
+    "complementary6" : ($complementary6, $complementary5-invert),
+    "complementary7" : ($complementary7, $complementary7-invert),
+    "complementary8" : ($complementary8, $complementary8-invert),
+    "light1": ($light1, $light1-invert),
+    "light2": ($light2, $light2-invert),
+    "light3": ($light3, $light3-invert),
+    "dark1": ($dark1, $dark1-invert),
+    "dark2": ($dark2, $dark2-invert)
+);
+
+// Brand fonts
+$heading-font: $heading-font;
+$text-font: $text-font;
+//not a brand font, just for testing...
+$fancy-font: $fancy-font;
+
+// Update Bulma's global variables
+$family-sans-serif: text-font;
+$family-primary: $text-font;
+$title-family: $heading-font;
+
+// Colors
+$grey-dark: $grey-dark;
+$grey-darker: $grey-darker;
+$grey-light: $grey-light;
+$primary: $primary;
+$danger: $danger;
+$info: $info;
+$success: $success;
+$warning: $warning;
+$link: $link;
+
+// Text colors
+$text-strong: $grey-darker !default;
+
+$widescreen-enabled: false;
+//$fullhd-enabled: false;
+
+// Update some of Bulma's component variables
+$background: $white-ter;
+$body-background-color: $light1;
+$control-border-width: 1px;
+$input-border-color: light1;
+$input-shadow: none;
+$box-shadow: none;
+$box-radius: $corner-radius;
+$box-background-color: $complementary1;
+$box-color: $text-primary1;
+$box-link-hover-shadow: none;
+
+$menu-item-color: $dark2;
+// Not really needed since we will hide it
+$navbar-dropdown-arrow: $dark2;
+$navbar-dropdown-arrow: none;
+$navbar-item-hover-color: $dark2;
+$navbar-background-color: $grey-light;
+$navbar-dropdown-background-color: $grey-light;
+// Add more spacing between menu items
+.navbar-item,
+.navbar-link {
+    padding: 0.5rem 2rem;
+}
+// The primary navbar needs to be over the secondary
+// so the dropdowns don't get obscured. TS.
+$navbar-fixed-z: 1000 !default;
+
+// Allow navbar logo to be larger than navbar specified height
+$navbar-item-img-max-height: 57px;;
+
+/* We are going for a more boxy look on our site */
+$notification-radius: $corner-radius;
+
+
+
+@import "../../../node_modules/bulma/sass/utilities/_all.sass";
+@import "../../../node_modules/bulma/sass/base/_all.sass";
+@import "../../../node_modules/bulma/sass/elements/_all.sass";
+@import "../../../node_modules/bulma/sass/components/_all.sass";
+@import "../../../node_modules/bulma/sass/grid/_all.sass";
+@import "../../../node_modules/bulma/sass/layout/_all.sass";
+@import "../../../node_modules/bulma/sass/helpers/_all.sass";
+@import "../../../node_modules/bulma/sass/form/_all.sass";
+
+// @import "footer.sass"
+// @import "bulma/layout/_all.sass"

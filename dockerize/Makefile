@@ -69,14 +69,14 @@ devweb: db
 	@echo "------------------------------------------------------------------"
 	@echo "Running in DEVELOPMENT mode"
 	@echo "------------------------------------------------------------------"
-	@docker compose -p $(PROJECT_ID) up --no-deps -d devweb rabbitmq worker beat
+	@docker compose -p $(PROJECT_ID) up --no-deps -d rabbitmq worker beat
 
 devweb-runserver: devweb
 	@echo
 	@echo "------------------------------------------------------------------"
 	@echo "Running in DEVELOPMENT mode"
 	@echo "------------------------------------------------------------------"
-	@docker compose -p $(PROJECT_ID) exec devweb python manage.py runserver 0.0.0.0:8080
+	@docker compose -p $(PROJECT_ID) up devweb webpack
 
 migrate:
 	@echo

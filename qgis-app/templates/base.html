@@ -1,6 +1,10 @@
 {% load i18n simplemenu_tags static %}
 {% load resources_custom_tags %}
 {% load matomo_tags %}
+
+{% load render_bundle from webpack_loader %}
+{% render_bundle 'main' %}
+
 <!DOCTYPE html>
 <html xmlns="http://www.w3.org/1999/xhtml">
 <head>
@@ -31,66 +35,22 @@
             By continuing to visit this site you agree to our use of cookies."
             data-close-text="Got it!">
     </script>
+
+    <script type="text/javascript" src="https://qgis.github.io/qgis-uni-navigation/index.js"></script>
     {% block extrajs %}{% endblock %}
 
 </head>
 <body id="page_bg" {% block onload %}{% endblock %}>
     <div id="main_bg">
-        {% block navigation %}
-        <div id="navbar" class="navbar navbar-inverse navbar-fixed-top">
-            <div class="navbar-inner">
-                <div class="container">
-                    <!-- .btn-navbar is used as the toggle for collapsed navbar content -->
-                    <button class="btn btn-navbar" data-toggle="collapse" data-target=".nav-collapse">
-                      <span class="icon-bar"></span>
-                      <span class="icon-bar"></span>
-                      <span class="icon-bar"></span>
-                    </button>
-
-                        <a class="brand" href="https://www.qgis.org">QGIS</a>
-                        {% if user.is_authenticated %}
-                        <a id="user-tooltip" href="{% if user.is_superuser %}{% url "admin:index" %}{% else %}{% url "my_plugins" %}{% endif %}"
-                           data-toggle="tooltip" data-placement="bottom" title="{{ user.username }}" style="float: right !important"><i class="icon-user icon-3x"></i></a>
-                        {% endif %}
-
-                    <form class="navbar-search" action="{% url "haystack_search" %}" method="get">
-                      <input type="text"  id="id_q" name="q" class="search-query" placeholder="Search" />
-                      <button type="submit" class="btn btn-search"><i class="icon-search" aria-hidden="true"></i></button>
-                    </form>
-
-                    {% get_namedmenu Navigation as menu %}
-                     <div class="nav-collapse collapse">
-                        <ul class="unstyled nav main-menu">
-                        {% for item in menu %}
-                            <li><a href="{{ item.page.url }}">{{ item.name }}</a></li>
-                        {% endfor %}
-
-                    {% get_namedmenu Hub as Hub %}
-                            <li class="dropdown">
-                              <a class="dropdown-toggle" id="drop4" role="button" data-toggle="dropdown" href="#">Hub<b class="caret"></b></a>
-                              <ul id="sharingAppMenu" class="dropdown-menu" role="menu" aria-labelledby="drop4">
-                                {% for item in Hub %}
-                                  <li role="presentation"><a role="menuitem" tabindex="-1" href="{{ item.page.url }}">{{ item.name }}</a></li>
-                                {% endfor %}
-                              </ul>
-                            </li>
-
-                            {% if user.is_authenticated %}
-                            <li><a href="{% url "logout" %}">{% trans "Logout" %}</a></li>
-                            {% else %}
-                            <li><a href="{% url "login" %}">{% trans "Login" %}</a></li>
-                            {% endif %}
-                            {% block navigation_extra %}
-                            {% endblock %}
-
-
-                        </ul>
-
-                    </div>
-                </div>
-            </div>
-        </div>
-        {% endblock %}
+        <section style="height: 60px">
+            <qg-top-nav
+            breakpoint="1024"
+            class="is-highest navbar is-fixed-top"
+            location-prefix="https://qgis.github.io/QGIS-Hugo"
+        ></qg-top-nav>
+        {% comment %} The location-prefix will be updated when the QGIS-Hugo site is migrated to qgis.org {% endcomment %}
+        {% include 'layouts/header.html' %}
+        </section>
         <div class="container-fluid">
             <div class="row-fluid">
                 <div class="span3 well" id="leftcolumn" data-spy="scroll">

@@ -88,7 +88,10 @@ INSTALLED_APPS = [
     # models (sharing .model3 file feature)
     "models",
     "wavefronts",
-    "matomo"
+    "matomo",
+
+    # Webpack
+    'webpack_loader'
 ]
 
 DATABASES = {
@@ -160,3 +163,14 @@ MATOMO_URL="//matomo.qgis.org/"
 
 # Default primary key type
 DEFAULT_AUTO_FIELD = 'django.db.models.AutoField'
+
+
+print(SITE_ROOT)
+
+# Webpack
+WEBPACK_LOADER = {
+    'DEFAULT': {
+        'BUNDLE_DIR_NAME': 'webpack-bundles',
+        'STATS_FILE': os.path.join(SITE_ROOT, 'webpack-stats.json'),
+    }
+}

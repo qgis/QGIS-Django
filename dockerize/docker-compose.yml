@@ -69,6 +69,8 @@ services:
       context: ${PWD}/../
       dockerfile: dockerize/docker/Dockerfile
       target: dev
+    working_dir: /home/web/django_project
+    command: python manage.py runserver 0.0.0.0:8080
     volumes:
       - ../qgis-app:/home/web/django_project
       - ${QGISPLUGINS_STATIC_VOLUME}:/home/web/static:rw
@@ -78,6 +80,22 @@ services:
       - "62202:8080"
       # for ssh
       - "62203:22"
+    restart: unless-stopped
+
+  webpack:
+    container_name: qgis-plugins-webpack
+    build:
+      context: ${PWD}/../
+      dockerfile: dockerize/docker/Dockerfile
+      target: dev
+    working_dir: /home/web/django_project
+    command: npm start
+    volumes:
+      - ../qgis-app:/home/web/django_project
+      - ${QGISPLUGINS_STATIC_VOLUME}:/home/web/static:rw
+      - ${QGISPLUGINS_MEDIA_VOLUME}:/home/web/media:rw
+    restart: unless-stopped
+
 
   rabbitmq:
     image: rabbitmq:3.7-alpine

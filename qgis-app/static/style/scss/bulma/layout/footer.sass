@@ -1,0 +1,75 @@
+@import "../utilities/derived-variables"
+
+$footer-tablet-breakpoint: 1450px !default
+$footer-background-color: #002033 !default
+$footer-padding: 4rem 0rem 1rem 0rem !default
+$footer-padding-mobile: 4rem 2rem 4rem !default
+
+.footer
+  font-weight: 400
+  background-color: $footer-background-color
+  text-align: center
+  padding: $footer-padding-mobile
+
+  .footertitle 
+    color: #637179
+
+  .copyright // I can't achieve this with the bulma classes
+    display: none
+    +from($desktop)
+      display: unset
+
+  +from($desktop)
+    padding: $footer-padding
+    text-align: unset
+
+  +between($desktop, $footer-tablet-breakpoint)
+    padding: 4rem 2rem 1rem 2rem
+
+
+  figure.image
+    height: auto
+    margin: 0 auto
+    margin-bottom: 4rem
+    +from($desktop)
+      margin: unset
+
+  button.button
+    padding: 40px 87.5px
+    font-weight: 600
+    border-radius: 10px
+    +from($desktop)
+      padding: 1rem 2rem
+      font-size: 20px
+      font-weight: 400
+
+
+  a > i
+    font-size: 26px
+    +from($desktop)
+        font-size: 32px
+
+  .social-icons-links
+    display: grid
+    grid-template-columns: repeat(3, 26px)
+    gap: 32px
+    justify-content: center
+    margin-top: 4rem !important
+    +from($desktop)
+      display: grid
+      grid-template-columns: repeat(auto-fit, 32px)
+      gap: 34px
+      justify-content: unset
+      margin-top: unset !important
+
+
+  .privacy-links
+    margin-top: 4rem
+    a 
+      color: #637179
+    +from($desktop)
+      margin-top: unset
+  .fa-foss 
+    background: url('../images/mastodon.svg') center center no-repeat
+    width: 32px
+    height: 34px

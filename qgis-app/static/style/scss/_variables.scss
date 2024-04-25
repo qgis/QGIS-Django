@@ -1,0 +1,51 @@
+// Brand colours:
+$primary1: #589632;
+$primary2: #55828b;
+$primary3: #395c6b;
+$primary4: #EEE766;
+$primary5: #93B023;
+$primary6: #ee7913;
+$primary1-invert: #fff;
+$primary2-invert: #eeeeee;
+$primary3-invert: #eeeeee;
+$primary4-invert: #363636;
+$primary5-invert: #eeeeee;
+$primary6-invert: #fff;
+$links: #3A9800;
+// TODO update these to gradient colours like above
+$complementary1: #93B023;
+$complementary2: #ee7913;
+$complementary3: #EEE766;
+$complementary4: #93b023;
+$complementary5: #a7cecb;
+$complementary6: #589732;
+$complementary7: #93B022;
+$complementary8: #385C6B;
+$light1: #fbfbfb;
+$light2: #eeeeee;
+$light3: #E7E7E7;
+$dark1: #808080;
+$dark2: #000;
+$text-primary1: #002033;
+$text-primary2: #4D6370;
+$base: #002033;
+// Bulma specific colours based on our branding
+$black: #000;
+$white: #ffffff;
+$grey-dark: #444444;
+$grey-darker: #363636;
+$grey-light: #d4d4d4;
+$primary: #a7cecb;
+$danger: #ee7913;
+$info: #93b023;
+$success: #589632;
+$warning: #EEE766;
+$link: #3A9800;
+// Brand fonts to override bulma font families
+$heading-font: 'Trueno', sans-serif;
+$text-font: 'Trueno', sans-serif;
+$fancy-font: 'Sevillana', cursive;
+$menuFontClass: is-size-6;
+
+// Radius for boxes
+$corner-radius: 0px;

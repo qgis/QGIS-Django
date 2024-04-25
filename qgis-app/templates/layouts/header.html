@@ -1,0 +1,60 @@
+{% load i18n simplemenu_tags static %}
+<div class="box mb-0 context-container" id="context">
+    <div class="container is-flex is-justify-content-flex-start">
+        <nav class="navbar" role="navigation" aria-label="main navigation">
+
+            
+            <div class="navbar-brand">
+                {% comment %} <a class="navbar-item brand">
+                    QGIS
+                </a> {% endcomment %}
+                <a role="button" class="navbar-burger" aria-label="menu" aria-expanded="false" data-target="menu">
+                    <span aria-hidden="true"></span>
+                    <span aria-hidden="true"></span>
+                    <span aria-hidden="true"></span>
+                </a>
+            </div>
+            
+            <div id="menu" class="navbar-menu">
+                <div class="navbar-end">
+
+                    {% get_namedmenu Navigation as menu %}
+                        {% for item in menu %}
+                            <a 
+                            class="navbar-item has-text-weight-semibold is-size-7" 
+                            href="{{ item.page.url }}">
+                                {{ item.name }}
+                            </a>
+                        {% endfor %}
+                    
+                    {% get_namedmenu Hub as Hub %}
+                    <div class="navbar-item has-dropdown is-hoverable">
+                        <a class="navbar-link">
+                            Hub
+                        </a>
+                
+                        <div class="navbar-dropdown">
+                            {% for item in Hub %}
+                                <a class="navbar-item"  href="{{ item.page.url }}">
+                                    {{ item.name }}
+                                </a>
+                            {% endfor %}
+                        </div>
+                </div>
+
+                <form action="{% url "haystack_search" %}" method="get">
+                    <div class="field has-addons">
+                        <div class="control">
+                        <input class="input"  id="id_q" name="q" type="text" placeholder="Search">
+                        </div>
+                        <div class="control">
+                        <button class="button is-info" type="submit">
+                            Search
+                        </button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </nav>
+    </div>
+</div>

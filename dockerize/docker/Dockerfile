@@ -25,6 +25,15 @@ ADD dockerize/docker/REQUIREMENTS.txt /REQUIREMENTS.txt
 
 RUN pip install --upgrade pip && pip install -r /REQUIREMENTS.txt
 
+# Install NodeJS and bulma css webpack
+RUN apt-get -qq update && apt-get -qq install -y --no-install-recommends wget && \
+    wget --no-check-certificate https://deb.nodesource.com/setup_20.x -O /tmp/node.sh && bash /tmp/node.sh && \
+    apt-get -qq update && apt-get -qq install -y nodejs build-essential
+
+WORKDIR /home/web/django_project
+COPY qgis-app/package.json /home/web/django_project/package.json
+RUN npm install -g npm@10.2.1 && npm install -g webpack@5.89.0 && npm install -g webpack-cli@5.1.4 && npm install
+
 RUN mkdir -p /var/log/uwsgi
 
 WORKDIR /home/web/django_project
