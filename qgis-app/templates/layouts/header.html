@@ -1,9 +1,7 @@
 {% load i18n simplemenu_tags static %}
 <div class="box mb-0 context-container" id="context">
-    <div class="container is-flex is-justify-content-flex-start">
+    <div class="container">
         <nav class="navbar" role="navigation" aria-label="main navigation">
-
-            
             <div class="navbar-brand">
                 {% comment %} <a class="navbar-item brand">
                     QGIS
@@ -16,44 +14,50 @@
             </div>
             
             <div id="menu" class="navbar-menu">
-                <div class="navbar-end">
-
+                <div class="navbar-start">
                     {% get_namedmenu Navigation as menu %}
                         {% for item in menu %}
                             <a 
                             class="navbar-item has-text-weight-semibold is-size-7" 
                             href="{{ item.page.url }}">
-                                {{ item.name }}
+                                <span>{{ item.name }}</span>
                             </a>
                         {% endfor %}
                     
                     {% get_namedmenu Hub as Hub %}
                     <div class="navbar-item has-dropdown is-hoverable">
-                        <a class="navbar-link">
-                            Hub
+                        <a class="navbar-link  has-text-weight-semibold is-size-7">
+                            <span>Hub</span>
                         </a>
                 
                         <div class="navbar-dropdown">
                             {% for item in Hub %}
                                 <a class="navbar-item"  href="{{ item.page.url }}">
-                                    {{ item.name }}
+                                    <span>{{ item.name }}</span>
                                 </a>
                             {% endfor %}
                         </div>
                 </div>
+            </div>
+            <div class="navbar-end">
+                <div class="navbar-item">
+                    <div class="control has-icons-right search-control">
+                    <form action="{% url "haystack_search" %}" method="get" style="margin:0;">
+                            <input class="input is-small"  id="id_q" name="q" type="text" placeholder="Search">
+                            <span class="icon is-right"><i class="fa-solid fa-magnifying-glass"></i></span>
+                    </form>
+                </div>
+                <div class="navbar-item">
+                    {% if user.is_authenticated %}
+                    <a class="button is-danger is-small" href="{% url "logout" %}">{% trans "Logout" %}</a>
+                    {% else %}
+                    <a class="button is-info is-small" href="{% url "login" %}">{% trans "Login" %}</a>
+                    {% endif %}
+                    {% block navigation_extra %}
+                    {% endblock %}
+                </div>
 
-                <form action="{% url "haystack_search" %}" method="get">
-                    <div class="field has-addons">
-                        <div class="control">
-                        <input class="input"  id="id_q" name="q" type="text" placeholder="Search">
-                        </div>
-                        <div class="control">
-                        <button class="button is-info" type="submit">
-                            Search
-                        </button>
-                        </div>
-                    </div>
-                </form>
+                </div>
             </div>
         </nav>
     </div>

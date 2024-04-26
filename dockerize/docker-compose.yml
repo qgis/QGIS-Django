@@ -80,7 +80,7 @@ services:
       - "62202:8080"
       # for ssh
       - "62203:22"
-    restart: unless-stopped
+    restart: always
 
   webpack:
     container_name: qgis-plugins-webpack
@@ -94,7 +94,6 @@ services:
       - ../qgis-app:/home/web/django_project
       - ${QGISPLUGINS_STATIC_VOLUME}:/home/web/static:rw
       - ${QGISPLUGINS_MEDIA_VOLUME}:/home/web/media:rw
-    restart: unless-stopped
 
 
   rabbitmq:

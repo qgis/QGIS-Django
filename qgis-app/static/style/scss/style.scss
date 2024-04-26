@@ -41,10 +41,11 @@ p {
   color: $text-primary2;
 }
 
-.input, .textarea, .select select {
+.input,
+.textarea,
+.select select {
   color: $text-primary2;
 }
-
 
 @media screen and (max-width: 768px) {
   .hero-body {
@@ -55,8 +56,9 @@ p {
 .navbar {
   background-color: unset;
 }
-.navbar-brand, .navbar-tabs {
-  min-height:unset;
+.navbar-brand,
+.navbar-tabs {
+  min-height: unset;
   a:hover {
     color: $primary1-invert;
   }
@@ -148,11 +150,11 @@ p {
 
 @media screen and (max-width: 1023px) {
   .navbar-menu {
-    background-color: #1D2027;
+    background-color: #1d2027;
   }
   .navbar-menu.is-active {
-      display: block;
-      position: fixed;
+    display: block;
+    position: fixed;
   }
 }
 
@@ -184,7 +186,6 @@ a.is-active > span {
   border-radius: 10px;
 }
 
-
 .is-semi-transparent {
   opacity: 0.9;
 }
@@ -195,14 +196,14 @@ a.is-active > span {
   font-weight: 500;
 }
 
-.gradient-row{
-  background: #1D2027;
+.gradient-row {
+  background: #002033;
   height: 3em;
   display: flex;
   align-items: center;
   justify-content: flex-end;
 }
-.context-container{
+.context-container {
   @extend .gradient-row;
   position: fixed;
   width: 100%;
@@ -210,18 +211,63 @@ a.is-active > span {
   z-index: 100;
   transition: top 0.3s;
 
-  .navbar-item {
-    color: white;
-    border-radius: 5px;
+  input {
+    background: #223745;
+    border: none;
+    color: $black;
+    border-radius: 5px !important;
+
+    &::placeholder {
+      color: $dark1;
+    }
+
+    &:not(:placeholder-shown):not(:focus) {
+      color: $white;
+    }
+
+    &:focus {
+      background: $white;
+    }
   }
 
-  a.navbar-item.is-active, .navbar-link.is-active {
+  .navbar-item,
+  .navbar-link {
+    color: white;
+    // border-radius: 5px;
+  }
+
+  a.navbar-item.is-active,
+  .navbar-link.is-active {
     color: white;
     background-color: unset;
     &:hover {
-      color: #0a0a0a;
+      color: #002033;
       background-color: #fafafa;
     }
   }
-}
 
+  a.navbar-item:focus,
+  a.navbar-item:focus-within,
+  a.navbar-item:hover,
+  a.navbar-item.is-active,
+  .navbar-link:focus,
+  .navbar-link:focus-within,
+  .navbar-link:hover,
+  .navbar-link.is-active {
+    color: #002033 !important;
+    background-color: #fafafa;
+  }
+
+  .navbar-item:hover {
+    .navbar-link {
+      color: #002033 !important;
+    }
+  }
+
+  @media screen and (min-width: 1024px) {
+    .navbar-dropdown {
+      background: #002033;
+      border-top: none;
+    }
+  }
+}
