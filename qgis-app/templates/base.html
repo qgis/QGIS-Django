@@ -16,7 +16,7 @@
     <link rel="stylesheet" href="{% static "style/new/basic.css" %}" type="text/css" />
     {% comment %} <link rel="stylesheet" href="{% static "bootstrap/css/bootstrap.min.css" %}" type="text/css" /> {% endcomment %}
     {% comment %} <link rel="stylesheet" href="{% static "style/new/qgis-style.css" %}" type="text/css" /> {% endcomment %}
-    <link rel="stylesheet" href="{% static "style/new/bootstrap-sphinx.css" %}" type="text/css" />
+    <!-- <link rel="stylesheet" href="{% static "style/new/bootstrap-sphinx.css" %}" type="text/css" /> -->
     <link rel="stylesheet" href="{% static "bootstrap/css/bootstrap-responsive.min.css" %}" type="text/css" />
     <link rel="stylesheet" href="{% static "style/fontawesome.css" %}" />
     <link type="text/css" href="{% static "style/style.css" %}" rel="stylesheet" />
@@ -116,7 +116,8 @@
 
     </div>
 </section>
-        <footer class="footer">
+        {% include 'layouts/footer.html' %}
+        <!-- <footer class="footer">
             <div class="container">
                 <div>
                   <ul class="unstyled inline" id="social">
@@ -132,7 +133,7 @@
                   <p class="credit">{% trans "This web application was developed by:" %}&nbsp;<a href="https://www.itopen.it">Alessandro Pasotti</a> and &nbsp;<a href="https://kartoza.com"><img src="{% static 'images/kartoza-logo-only.png' %}" alt="Kartoza icon" width="16" height="16" />Kartoza</a>. <span>Version: {% version_tag %}</span>.</p>
                 {% endblock %}
             </div>
-        </footer>
+        </footer> -->
     </div>
 <script type="text/javascript">
 $('#user-tooltip').tooltip('hide');
