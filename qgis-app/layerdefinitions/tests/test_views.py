@@ -193,7 +193,7 @@ class TestDownloadLayerDefinition(SetUpTest, TestCase):
         url = reverse("layerdefinition_download", kwargs={"pk": qlr.id})
         response = self.client.get(url)
         self.assertEqual(response.status_code, 200)
-        self.assertEquals(
+        self.assertEqual(
             response.get("Content-Disposition"),
             "attachment; filename=test-qlr-file.zip",
         )

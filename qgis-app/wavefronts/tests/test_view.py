@@ -170,7 +170,7 @@ class TestDownloadWavefront(SetUpTest, TestCase):
         url = reverse("wavefront_download", kwargs={"pk": wavefront.id})
         response = self.client.get(url)
         self.assertEqual(response.status_code, 200)
-        self.assertEquals(
+        self.assertEqual(
             response.get("Content-Disposition"),
             "attachment; filename=odm-texturing.zip",
         )

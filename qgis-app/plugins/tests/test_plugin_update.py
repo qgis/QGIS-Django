@@ -51,7 +51,7 @@ class PluginUpdateTestCase(TestCase):
 
         self.plugin = Plugin.objects.get(name='Test Plugin')
 
-    @patch("plugins.tasks.generate_plugins_xml.delay", new=do_nothing)
+    @patch("plugins.tasks.generate_plugins_xml", new=do_nothing)
     @patch("plugins.validator._check_url_link", new=do_nothing)
     def test_plugin_new_version(self):
         """
@@ -103,7 +103,7 @@ class PluginUpdateTestCase(TestCase):
             settings.EMAIL_HOST_USER
         )
 
-    @patch("plugins.tasks.generate_plugins_xml.delay", new=do_nothing)
+    @patch("plugins.tasks.generate_plugins_xml", new=do_nothing)
     @patch("plugins.validator._check_url_link", new=do_nothing)
     def test_plugin_version_update(self):
         """

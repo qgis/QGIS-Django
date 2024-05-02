@@ -1,0 +1,19 @@
+version: '3'
+services:
+  devweb:
+    # Note you cannot scale if you use container_name
+    image: kartoza/qgis-plugins-uwsgi:dev-latest
+    container_name: qgis-plugins-devweb
+    volumes:
+      -  ../qgis-app:/home/web/django_project
+      - ./static:/home/web/static:rw
+      - ./media:/home/web/media:rw
+    build:
+      context: ${PWD}/../
+      dockerfile: dockerize/docker/Dockerfile
+      target: dev
+    ports:
+      # for django test server
+      - "62202:8080"
+      # for ssh
+      - "62203:22"

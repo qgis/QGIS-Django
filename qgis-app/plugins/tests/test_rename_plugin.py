@@ -51,7 +51,7 @@ class PluginRenameTestCase(TestCase):
         self.plugin.name = "New name Test Plugin"
         self.plugin.save()
 
-    @patch("plugins.tasks.generate_plugins_xml.delay", new=do_nothing)
+    @patch("plugins.tasks.generate_plugins_xml", new=do_nothing)
     @patch("plugins.validator._check_url_link", new=do_nothing)
     def test_plugin_rename(self):
         """

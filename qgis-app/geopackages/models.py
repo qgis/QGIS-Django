@@ -5,7 +5,7 @@ from django.conf import settings
 from django.core.validators import FileExtensionValidator
 from django.db import models
 from django.urls import reverse
-from django.utils.translation import ugettext_lazy as _
+from django.utils.translation import gettext_lazy as _
 
 GEOPACKAGES_STORAGE_PATH = getattr(
     settings, "GEOPACKAGE_STORAGE_PATH", "geopackages/%Y"

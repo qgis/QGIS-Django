@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
-from django.conf.urls import include, url
+from django.urls import re_path as url
 from django.contrib.auth.decorators import login_required, user_passes_test
-from django.utils.translation import ugettext_lazy as _
+from django.utils.translation import gettext_lazy as _
 from plugins.models import Plugin, PluginVersion
 from plugins.views import *
 from rpc4django.views import serve_rpc_request
