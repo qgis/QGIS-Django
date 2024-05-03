@@ -57,19 +57,12 @@ jobs:
       - name: Wait for the containers to start
         run: sleep 15 
 
-      - name: Run Coverage test
+      - name: Run test
         run: |
           docker-compose exec -T devweb bash -c '
             set -e  # Exit immediately if any command fails
-            pip install coverage &&
             python manage.py makemigrations &&
             python manage.py migrate &&
-            coverage run manage.py test &&
-            coverage xml
+            python manage.py test
           '
 
-      - name: Upload coverage to codecov
-        uses: codecov/codecov-action@v4
-        with:
-          fail_ci_if_error: true
-          token: ${{ secrets.CODECOV_TOKEN }}
