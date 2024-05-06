@@ -71,12 +71,6 @@ jobs:
             python manage.py test
           '
 
-      - name: Upload coverage to codecov
-        uses: codecov/codecov-action@v2
-        with:
-          fail_ci_if_error: true
-          token: ${{ secrets.CODECOV_TOKEN }}
-
       - name: Start Django server
         run: |
             docker-compose exec -T devweb bash -c "python manage.py loaddata fixtures/*.json"
