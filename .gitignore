@@ -43,6 +43,8 @@ static_media
 dockerize/static
 dockerize/media
 dockerize/logs
+dockerize/certbot-etc
+dockerize/webroot
 .editorconfig
 
 # test cache
@@ -51,3 +53,5 @@ qgis-app/api/tests/*/
 
 # whoosh_index
 qgis-app/whoosh_index/
+docker-compose.override.yml
+.env
