@@ -16,7 +16,7 @@ jobs:
     steps:
 
       - name: Set up Python ${{ matrix.python-version }}
-        uses: actions/setup-python@v2
+        uses: actions/setup-python@v5
         with:
           python-version: ${{ matrix.python-version }}
           architecture: x64
@@ -24,7 +24,7 @@ jobs:
       - name: Checkout
         uses: actions/checkout@master
 
-      - uses: actions/cache@v2
+      - uses: actions/cache@v4
         with:
           path: ~/.cache/pip
           key: ${{ runner.os }}-pip-${{ hashFiles('REQUIREMENTS-dev.txt') }}
@@ -45,7 +45,7 @@ jobs:
       run:
         working-directory: dockerize
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v4
       - uses: actions/setup-node@v3
         with:
           node-version: 20
@@ -55,18 +55,21 @@ jobs:
 
       - name: Run the containers
         run: docker-compose up -d db devweb
+      
 
-      - name: Run Coverage test
+      - name: Wait for the containers to start
+        run: sleep 15 
+
+      - name: Run test
         run: |
-          cat << EOF | docker-compose exec -T devweb bash
-          pip install coverage
-          python manage.py makemigrations --merge --noinput
-          python manage.py makemigrations feedjack
-          python manage.py makemigrations
-          python manage.py migrate
-          coverage run manage.py test
-          coverage xml
-          EOF
+          docker-compose exec -T devweb bash -c '
+            set -e  # Exit immediately if any command fails
+            python manage.py makemigrations --merge --noinput &&
+            python manage.py makemigrations feedjack &&
+            python manage.py makemigrations &&
+            python manage.py migrate &&
+            python manage.py test
+          '
 
       - name: Upload coverage to codecov
         uses: codecov/codecov-action@v2

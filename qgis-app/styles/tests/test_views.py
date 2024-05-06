@@ -79,6 +79,12 @@ class TestUploadStyle(TestCase):
             ['staff@email.com']
         )
 
+        # Should use the new email
+        self.assertEqual(
+            mail.outbox[0].from_email,
+            settings.EMAIL_HOST_USER
+        )
+
         # style should be in Waiting Review
         url = reverse("style_unapproved")
         self.response = self.client.get(url)

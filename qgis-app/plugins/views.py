@@ -545,7 +545,7 @@ class PluginDetailView(DetailView):
                     messages.error(self.request, msg, fail_silently=True)
         context.update(
             {
-                "rating": int(plugin.rating.get_rating()),
+                "rating": plugin.rating.get_rating(),
                 "votes": plugin.rating.votes,
             }
         )
