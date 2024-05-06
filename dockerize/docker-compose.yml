@@ -16,8 +16,12 @@ services:
       - POSTGRES_USER=${DATABASE_USERNAME:-docker}
       - POSTGRES_PASS=${DATABASE_PASSWORD:-docker}
       - PASSWORD_AUTHENTICATION=${PASSWORD_AUTHENTICATION:-md5}
+      - DATADIR=/opt/postgres/data
+      - DEFAULT_ENCODING=UTF8
+      - DEFAULT_COLLATION=en_GB.utf8
+      - DEFAULT_CTYPE=en_GB.utf8
     volumes:
-      - postgres_data:/var/lib/postgresql
+      - postgres_data:/opt/postgres/data
       - ${QGISPLUGINS_BACKUP_VOLUME}:/backups
     restart: unless-stopped
 
