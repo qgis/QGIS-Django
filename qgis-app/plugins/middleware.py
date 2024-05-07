@@ -14,7 +14,7 @@ def HttpAuthMiddleware(get_response):
         if auth_basic and not str(auth_basic).startswith('Bearer'):
             import base64
 
-            username, dummy, password = base64.decodestring(
+            username, dummy, password = base64.decodebytes(
                 auth_basic[6:].encode("utf8")
             ).partition(b":")
             username = username.decode("utf8")
