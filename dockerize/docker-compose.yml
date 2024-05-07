@@ -50,6 +50,7 @@ services:
       - DEFAULT_PLUGINS_SITE=${DEFAULT_PLUGINS_SITE:-https://plugins.qgis.org/}
     volumes:
       - ../qgis-app:/home/web/django_project
+      - ./docker/uwsgi.conf:/uwsgi.conf
       - ${QGISPLUGINS_STATIC_VOLUME}:/home/web/static:rw
       - ${QGISPLUGINS_MEDIA_VOLUME}:/home/web/media:rw
       - celerybeat-schedule:/home/web/celerybeat-schedule:rw
