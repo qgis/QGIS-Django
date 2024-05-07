@@ -1,4 +1,3 @@
-version: '3.8'
 volumes:
   postgres_data:
   rabbitmq:
@@ -26,7 +25,6 @@ services:
     restart: unless-stopped
 
   uwsgi: &uwsgi-common
-    container_name: qgis-plugins-uwsgi-common
     build:
       context: ${PWD}/../
       dockerfile: dockerize/docker/Dockerfile
