@@ -1,4 +1,3 @@
-version: '3.8'
 volumes:
   postgres_data:
   rabbitmq:
@@ -26,7 +25,6 @@ services:
     restart: unless-stopped
 
   uwsgi: &uwsgi-common
-    container_name: qgis-plugins-uwsgi-common
     build:
       context: ${PWD}/../
       dockerfile: dockerize/docker/Dockerfile
@@ -43,6 +41,7 @@ services:
       - VIRTUAL_HOST=${VIRTUAL_HOST:-plugins.kartoza.com}
       - VIRTUAL_PORT=${VIRTUAL_PORT:-8080}
       - DEBUG=${DEBUG:-False}
+      - ENABLE_LDAP=${ENABLE_LDAP:-False}
       - RABBITMQ_HOST=${RABBITMQ_HOST:-rabbitmq}
       - BROKER_URL=amqp://rabbitmq:5672
       - EMAIL_BACKEND=${EMAIL_BACKEND}

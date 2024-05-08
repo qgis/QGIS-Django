@@ -41,7 +41,7 @@ web: db
 	@echo "------------------------------------------------------------------"
 	@echo "Running in production mode"
 	@echo "------------------------------------------------------------------"
-	@docker compose -p $(PROJECT_ID) up -d uwsgi web worker beat
+	@docker compose -p $(PROJECT_ID) up -d --scale uwsgi=2 web worker beat
 
 dbbackups: db
 	@echo
