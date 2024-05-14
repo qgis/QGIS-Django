@@ -120,10 +120,7 @@ class TestValidatorMetadataPlugins(TestCase):
     @mock.patch("requests.get", side_effect=requests.exceptions.HTTPError())
     def test_check_url_link_does_not_exist(self, mock_request):
         url = "http://example.com/"
-        self.assertRaises(
-            ValidationError,
-            _check_url_link(url, "forbidden_url", "metadata attribute"),
-        )
+        self.assertIsNone(_check_url_link(url, "forbidden_url", "metadata attribute"))
 
 
 class TestValidatorForbiddenFileFolder(TestCase):
@@ -234,3 +231,49 @@ class TestLicenseValidator(TestCase):
                 )
             )
         )
+
+class TestMultipleParentFoldersValidator(TestCase):
+    """Test if zipfile contains multiple parent folders """    
+
+    def setUp(self) -> None:
+        multi_parents_plugin = os.path.join(TESTFILE_DIR, "multi_parents_plugin.zip_")
+        self.multi_parents_plugin_package = open(multi_parents_plugin, "rb")
+        valid_plugin = os.path.join(TESTFILE_DIR, "valid_plugin.zip_")
+        self.single_parent_plugin_package = open(valid_plugin, "rb")
+
+    def tearDown(self):
+        self.multi_parents_plugin_package.close()
+        self.single_parent_plugin_package.close()
+
+    def _get_value_by_attribute(self, attribute, data):
+        for key, value in data:
+            if key == attribute:
+                return value
+        return None
+    def test_plugin_with_multiple_parents(self):
+        result =  validator(
+            InMemoryUploadedFile(
+                self.multi_parents_plugin_package,
+                field_name="tempfile",
+                name="testfile.zip",
+                content_type="application/zip",
+                size=39889,
+                charset="utf8",
+            )
+        )
+        multiple_parent_folders = self._get_value_by_attribute('multiple_parent_folders', result)
+        self.assertIsNotNone(multiple_parent_folders)
+
+    def test_plugin_with_single_parent(self):
+        result =  validator(
+            InMemoryUploadedFile(
+                self.single_parent_plugin_package,
+                field_name="tempfile",
+                name="testfile.zip",
+                content_type="application/zip",
+                size=39889,
+                charset="utf8",
+            )
+        )
+        multiple_parent_folders = self._get_value_by_attribute('multiple_parent_folders', result)
+        self.assertIsNone(multiple_parent_folders)

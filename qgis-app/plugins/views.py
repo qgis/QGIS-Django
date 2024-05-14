@@ -21,20 +21,26 @@ from django.urls import reverse
 from django.utils.timezone import now
 from django.utils.decorators import method_decorator
 from django.utils.encoding import DjangoUnicodeDecodeError
-from django.utils.translation import ugettext_lazy as _
+from django.utils.translation import gettext_lazy as _
 from django.views.decorators.cache import never_cache
-from django.views.decorators.csrf import csrf_protect, ensure_csrf_cookie
+from django.views.decorators.csrf import ensure_csrf_cookie, csrf_exempt, csrf_protect
 from django.views.decorators.http import require_POST
 from django.views.generic.detail import DetailView
+from django.db import transaction
 
 # from sortable_listview import SortableListView
 from django.views.generic.list import ListView
+from plugins.decorators import has_valid_token
 from plugins.forms import *
-from plugins.models import Plugin, PluginVersion, PluginVersionDownload, vjust
+from plugins.models import Plugin, PluginOutstandingToken, PluginVersion, PluginVersionDownload, vjust
 from plugins.validator import PLUGIN_REQUIRED_METADATA
 from django.contrib.gis.geoip2 import GeoIP2
 from plugins.utils import parse_remote_addr
 
+from rest_framework_simplejwt.token_blacklist.models import OutstandingToken
+from rest_framework_simplejwt.tokens import RefreshToken, api_settings
+from rest_framework_simplejwt.exceptions import InvalidToken, TokenError
+import time
 try:
     from urllib import unquote, urlencode
 
@@ -251,6 +257,16 @@ def check_plugin_access(user, plugin):
 
     """
     return user.is_staff or user in plugin.editors
+
+def check_plugin_token_access(user, plugin):
+    """
+    Returns true if the user can access all the plugin's token:
+
+        * is_staff
+        * is maintainer
+
+    """
+    return user.is_staff or user.pk == plugin.created_by.pk
 
 
 def check_plugin_version_approval_rights(user, plugin):
@@ -480,6 +496,17 @@ def plugin_upload(request):
                     )
                     del form.cleaned_data["license_recommended"]
 
+                if form.cleaned_data.get("multiple_parent_folders"):
+                    parent_folders = form.cleaned_data.get("multiple_parent_folders")
+                    messages.warning(
+                        request,
+                        _(
+                            f"Your plugin includes multiple parent folders: {parent_folders}. Please be aware that only the first folder has been recognized. It is strongly advised to have a single parent folder."
+                        ),
+                        fail_silently=True,
+                    )
+                    del form.cleaned_data["multiple_parent_folders"]
+
             except (IntegrityError, ValidationError, DjangoUnicodeDecodeError) as e:
                 connection.close()
                 messages.error(request, e, fail_silently=True)
@@ -522,7 +549,7 @@ class PluginDetailView(DetailView):
         context.update(
             {
                 "stats_url": stats_url,
-                "rating": int(plugin.rating.get_rating()),
+                "rating": plugin.rating.get_rating(),
                 "votes": plugin.rating.votes,
             }
         )
@@ -595,6 +622,199 @@ def plugin_update(request, package_name):
         request,
         "plugins/plugin_form.html",
         {"form": form, "form_title": _("Edit plugin"), "plugin": plugin},
+    )
+
+
+
+class PluginTokenListView(ListView):
+    """
+    Plugin token list
+    """
+    model = PluginOutstandingToken
+    queryset = PluginOutstandingToken.objects.all().order_by("-token__created_at")
+    template_name = "plugins/plugin_token_list.html"
+
+    @method_decorator(ensure_csrf_cookie)
+    def dispatch(self, *args, **kwargs):
+        return super(PluginTokenListView, self).dispatch(*args, **kwargs)
+
+    def get_filtered_queryset(self, qs):
+        package_name = self.kwargs.get('package_name')
+        plugin = get_object_or_404(Plugin, package_name=package_name)
+        if not check_plugin_token_access(self.request.user, plugin):
+            return qs.filter(
+                plugin__pk=plugin.pk, 
+                is_blacklisted=False,
+                token__user=self.request.user
+            )
+        return qs.filter(
+            plugin__pk=plugin.pk, 
+            is_blacklisted=False,
+        )
+
+    def get_queryset(self):
+        qs = super(PluginTokenListView, self).get_queryset()
+        qs = self.get_filtered_queryset(qs)
+        return qs
+
+    def get_context_data(self, **kwargs):
+        package_name = self.kwargs.get('package_name')
+        plugin = get_object_or_404(Plugin, package_name=package_name)
+        if not check_plugin_access(self.request.user, plugin):
+            context = {}
+            self.template_name = "plugins/plugin_token_permission_deny.html"
+            return context
+        context = super(PluginTokenListView, self).get_context_data(**kwargs)
+        context.update(
+            {
+                "plugin": plugin
+            }
+        )
+        return context
+
+class PluginTokenDetailView(DetailView):
+    """
+    Plugin token detail
+    """
+    model = OutstandingToken
+    queryset = OutstandingToken.objects.all()
+    template_name = "plugins/plugin_token_detail.html"
+
+    @method_decorator(ensure_csrf_cookie)
+    def dispatch(self, *args, **kwargs):
+        return super(PluginTokenDetailView, self).dispatch(*args, **kwargs)
+
+    def get_context_data(self, **kwargs):
+        context = super(PluginTokenDetailView, self).get_context_data(**kwargs)
+        package_name = self.kwargs.get('package_name')
+        token_id = self.kwargs.get('pk')
+        plugin = get_object_or_404(Plugin, package_name=package_name)
+        if not check_plugin_access(self.request.user, plugin):
+            context = {}
+            self.template_name = "plugins/plugin_token_permission_deny.html"
+            return context
+
+        outstanding_token = get_object_or_404(OutstandingToken, pk=token_id, user=self.request.user)
+        plugin_token = get_object_or_404(
+            PluginOutstandingToken, 
+            token__pk=outstanding_token.pk, 
+            is_blacklisted=False,
+            is_newly_created=True
+        )
+        try:
+            token = RefreshToken(outstanding_token.token)
+            token['plugin_id'] = plugin.pk
+            token['refresh_jti'] = token[api_settings.JTI_CLAIM]
+            del token['user_id']
+        except (InvalidToken, TokenError) as e:
+            context = {}
+            self.template_name = "plugins/plugin_token_invalid_or_expired.html"
+            return context
+        timestamp_from_last_edit = int(time.time())        
+        context.update(
+            {
+                "access_token": str(token.access_token),
+                "plugin": plugin,
+                "object": outstanding_token,
+                'timestamp_from_last_edit': timestamp_from_last_edit
+            }
+        )
+        plugin_token.is_newly_created = False
+        plugin_token.save()
+        return context
+
+@login_required
+@transaction.atomic
+def plugin_token_create(request, package_name):
+    if request.method == "POST":
+        plugin = get_object_or_404(Plugin, package_name=package_name)
+        user = request.user
+        if not check_plugin_access(user, plugin):
+            return render(request, "plugins/plugin_permission_deny.html", {})
+
+        refresh = RefreshToken.for_user(user)
+        refresh["plugin_id"] = plugin.pk
+
+        jti = refresh[api_settings.JTI_CLAIM]
+
+        outstanding_token = OutstandingToken.objects.get(jti=jti)
+
+        plugin_token = PluginOutstandingToken.objects.create(
+            plugin=plugin,
+            token=outstanding_token,
+            is_blacklisted=False,
+            is_newly_created=True
+        )
+
+        return HttpResponseRedirect(
+            reverse("plugin_token_detail", args=(plugin.package_name, plugin_token.pk))
+        )
+
+@login_required
+@transaction.atomic
+def plugin_token_update(request, package_name, token_id):
+    plugin = get_object_or_404(Plugin, package_name=package_name)
+    outstanding_token = get_object_or_404(OutstandingToken, pk=token_id)
+    if not check_plugin_token_access(request.user, plugin):
+        outstanding_token = get_object_or_404(OutstandingToken, pk=token_id, user=request.user)
+    plugin_token = get_object_or_404(
+        PluginOutstandingToken, 
+        token__pk=outstanding_token.pk, 
+        is_blacklisted=False
+    )
+    if not check_plugin_access(request.user, plugin):
+        return render(request, "plugins/version_permission_deny.html", {})
+    if request.method == "POST":
+        form = PluginTokenForm(request.POST, instance=plugin_token)
+        if form.is_valid():
+            form.save()
+            msg = _("The token description has been successfully updated.")
+            messages.success(request, msg, fail_silently=True)
+            return HttpResponseRedirect(
+                reverse("plugin_token_list", args=(plugin.package_name,))
+            )
+    else:
+        form = PluginTokenForm(instance=plugin_token)
+
+    return render(
+        request,
+        "plugins/plugin_token_form.html",
+        {"form": form, "token": plugin_token}
+    )
+
+@login_required
+@transaction.atomic
+def plugin_token_delete(request, package_name, token_id):
+    plugin = get_object_or_404(Plugin, package_name=package_name)
+    outstanding_token = get_object_or_404(OutstandingToken, pk=token_id)
+    if not check_plugin_token_access(request.user, plugin):
+        outstanding_token = get_object_or_404(OutstandingToken, pk=token_id, user=request.user)
+    plugin_token = get_object_or_404(
+        PluginOutstandingToken, 
+        token__pk=outstanding_token.pk, 
+        is_blacklisted=False
+    )
+
+    if not check_plugin_access(request.user, plugin):
+        return render(request, "plugins/version_permission_deny.html", {})
+    if "delete_confirm" in request.POST:
+        try:
+            token = RefreshToken(outstanding_token.token)
+            token.blacklist()
+            plugin_token.is_blacklisted = True
+        except (InvalidToken, TokenError) as e:
+            plugin_token.is_blacklisted = True
+        plugin_token.save()
+
+        msg = _("The token has been successfully deleted.")
+        messages.success(request, msg, fail_silently=True)
+        return HttpResponseRedirect(
+            reverse("plugin_token_list", args=(plugin.package_name,))
+        )
+    return render(
+        request,
+        "plugins/plugin_token_delete_confirm.html",
+        {"plugin": plugin, "username": outstanding_token.user},
     )
 
 
@@ -909,7 +1129,7 @@ def _main_plugin_update(request, plugin, form):
     Updates the main plugin object from version metadata
     """
     # Check if update name from metadata is allowed
-    metadata_fields = ["author", "email", "description", "about", "homepage", "tracker"]
+    metadata_fields = ["author", "email", "description", "about", "homepage", "tracker", "repository"]
     if plugin.allow_update_name:
         metadata_fields.insert(0, "name")
 
@@ -927,28 +1147,44 @@ def _main_plugin_update(request, plugin, form):
         )
     plugin.save()
 
+@has_valid_token
+@csrf_exempt
+def version_create_api(request, package_name):
+    """
+    Create a new version using a valid token. 
+    We make sure that the token is valid before 
+    disabling CSRF protection.
+    """
+    plugin = get_object_or_404(Plugin, package_name=package_name)
+    version = PluginVersion(plugin=plugin, is_from_token=True, token=request.plugin_token)
+
+    return _version_create(request, plugin, version)
+
 
 @login_required
 def version_create(request, package_name):
-    """
-    The form will create versions according to permissions,
-    plugin name and description are updated according to the info
-    contained in the package metadata
-    """
     plugin = get_object_or_404(Plugin, package_name=package_name)
     if not check_plugin_access(request.user, plugin):
         return render(
             request, "plugins/version_permission_deny.html", {"plugin": plugin}
         )
-
     version = PluginVersion(plugin=plugin, created_by=request.user)
+    is_trusted=request.user.has_perm("plugins.can_approve")
+    return _version_create(request, plugin, version, is_trusted=is_trusted)
+
+def _version_create(request, plugin, version, is_trusted=False):
+    """
+    The form will create versions according to permissions,
+    plugin name and description are updated according to the info
+    contained in the package metadata
+    """
     if request.method == "POST":
 
         form = PluginVersionForm(
             request.POST,
             request.FILES,
             instance=version,
-            is_trusted=request.user.has_perm("plugins.can_approve"),
+            is_trusted=is_trusted
         )
         if form.is_valid():
             try:
@@ -957,7 +1193,7 @@ def version_create(request, package_name):
                 messages.success(request, msg, fail_silently=True)
                 # The approved flag is also controlled in the form, but we
                 # are checking it here in any case for additional security
-                if not request.user.has_perm("plugins.can_approve"):
+                if not is_trusted:
                     new_object.approved = False
                     new_object.save()
                     messages.warning(
@@ -981,6 +1217,17 @@ def version_create(request, package_name):
                     )
                     del form.cleaned_data["license_recommended"]
 
+                if form.cleaned_data.get("multiple_parent_folders"):
+                    parent_folders = form.cleaned_data.get("multiple_parent_folders")
+                    messages.warning(
+                        request,
+                        _(
+                            f"Your plugin includes multiple parent folders: {parent_folders}. Please be aware that only the first folder has been recognized. It is strongly advised to have a single parent folder."
+                        ),
+                        fail_silently=True,
+                    )
+                    del form.cleaned_data["multiple_parent_folders"]
+
                 _main_plugin_update(request, new_object.plugin, form)
                 _check_optional_metadata(form, request)
                 return HttpResponseRedirect(new_object.plugin.get_absolute_url())
@@ -990,7 +1237,7 @@ def version_create(request, package_name):
             return HttpResponseRedirect(plugin.get_absolute_url())
     else:
         form = PluginVersionForm(
-            is_trusted=request.user.has_perm("plugins.can_approve")
+            is_trusted=is_trusted
         )
 
     return render(
@@ -1000,24 +1247,42 @@ def version_create(request, package_name):
     )
 
 
+@has_valid_token
+@csrf_exempt
+def version_update_api(request, package_name, version):
+    """
+    Update a version using a valid token. 
+    We make sure that the token is valid before 
+    disabling CSRF protection.
+    """
+    plugin = get_object_or_404(Plugin, package_name=package_name)
+    version = PluginVersion(plugin=plugin, is_from_token=True, token=request.plugin_token)
+    return _version_update(request, plugin, version)
+
+
 @login_required
 def version_update(request, package_name, version):
-    """
-    The form will update versions according to permissions
-    """
     plugin = get_object_or_404(Plugin, package_name=package_name)
     version = get_object_or_404(PluginVersion, plugin=plugin, version=version)
     if not check_plugin_access(request.user, plugin):
         return render(
             request, "plugins/version_permission_deny.html", {"plugin": plugin}
         )
+    version = PluginVersion(plugin=plugin, created_by=request.user)
+    is_trusted=request.user.has_perm("plugins.can_approve")
+    return _version_update(request, plugin, version, is_trusted=is_trusted)
+
+def _version_update(request, plugin, version, is_trusted=False):
+    """
+    The form will update versions according to permissions
+    """
 
     if request.method == "POST":
         form = PluginVersionForm(
             request.POST,
             request.FILES,
             instance=version,
-            is_trusted=request.user.has_perm("plugins.can_approve"),
+            is_trusted=is_trusted,
         )
         if form.is_valid():
             try:
@@ -1037,13 +1302,24 @@ def version_update(request, package_name, version):
                     )
                     del form.cleaned_data["license_recommended"]
 
+                if form.cleaned_data.get("multiple_parent_folders"):
+                    parent_folders = form.cleaned_data.get("multiple_parent_folders")
+                    messages.warning(
+                        request,
+                        _(
+                            f"Your plugin includes multiple parent folders: {parent_folders}. Please be aware that only the first folder has been recognized. It is strongly advised to have a single parent folder."
+                        ),
+                        fail_silently=True,
+                    )
+                    del form.cleaned_data["multiple_parent_folders"]
+
             except (IntegrityError, ValidationError, DjangoUnicodeDecodeError) as e:
                 messages.error(request, e, fail_silently=True)
                 connection.close()
             return HttpResponseRedirect(plugin.get_absolute_url())
     else:
         form = PluginVersionForm(
-            instance=version, is_trusted=request.user.has_perm("plugins.can_approve")
+            instance=version, is_trusted=is_trusted
         )
 
     return render(
@@ -1333,11 +1609,13 @@ def xml_plugins(request, qg_version=None, stable_only=None, package_name=None):
         * package_name: Plugin.package_name
 
     """
+    request_version = request.GET.get("qgis", "1.8.0")
+    version_level = len(str(request_version).split('.')) - 1
     qg_version = (
         qg_version
         if qg_version is not None
         else vjust(
-            request.GET.get("qgis", "1.8.0"), fillchar="0", level=2, force_zero=True
+            request_version, fillchar="0", level=version_level, force_zero=True
         )
     )
     stable_only = (
@@ -1449,11 +1727,13 @@ def xml_plugins_new(request, qg_version=None, stable_only=None, package_name=Non
         * package_name: Plugin.package_name
 
     """
+    request_version = request.GET.get("qgis", "1.8.0")
+    version_level = len(str(request_version).split('.')) - 1
     qg_version = (
         qg_version
         if qg_version is not None
         else vjust(
-            request.GET.get("qgis", "1.8.0"), fillchar="0", level=2, force_zero=True
+            request_version, fillchar="0", level=version_level, force_zero=True
         )
     )
     stable_only = (

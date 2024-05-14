@@ -56,9 +56,9 @@
   <h3>Tools</h3>
   <ul class="menu">
     {% if user.is_authenticated %}
-      {% ifequal user.id object.author.id %}
+      {% if user.id == object.author.id %}
         <li><a href="/snippets/{{ object.id }}/edit/">Edit this snippet</a></li>
-      {% endifequal %}
+      {% endif %}
       {% if object|is_bookmarked:request.user %}
         <li>This snippet is in <a href="/bookmarks/">your bookmarks</a></li>
       {% else %}
@@ -66,7 +66,7 @@
       {% endif %}
       {% with object|rating_score:request.user as rating_score %}
         {% if rating_score %}
-          <li>You rated this snippet <strong>{% ifequal rating_score 1 %}useful{% else %}not useful{% endifequal %}</strong>.</li>
+          <li>You rated this snippet <strong>{% if rating_score == 1 %}useful{% else %}not useful{% endif %}</strong>.</li>
         {% else %}
           <li>Rate this snippet: <a href="/snippets/{{ object.id }}/rate/?score=up">useful</a> or <a href="/snippets/{{ object.id }}/rate/?score=down">not useful</a></li>
         {% endif %}

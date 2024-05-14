@@ -31,6 +31,22 @@ To update QGIS versions, go to **[Admin](https://plugins.qgis.org/admin/)** -> *
 This application is based on Django, written in python and deployed on the server using
 docker and rancher.
 
+## Token based authentication
+
+Users have the ability to generate a Simple JWT token by providing their credentials, which can then be utilized to access endpoints requiring authentication.
+Users can create specific tokens for a plugin at `https://plugins.qgis.org/<package_name>/tokens/`.
+
+
+```sh
+# A specific plugin token can be used to upload or update a plugin version. For example:
+curl \
+  -H "Authorization: Bearer the_access_token" \
+  https://plugins.qgis.org/plugins/api/<package_name>/version/add/
+
+curl \
+  -H "Authorization: Bearer the_access_token" \
+  https://plugins.qgis.org/plugins/api/<package_name>/version/<version>/update
+```
 
 ## Contributing
 

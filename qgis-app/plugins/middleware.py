@@ -2,8 +2,7 @@
 # Author: A. Pasotti
 
 from django.contrib import auth
-from django.contrib.auth.models import User
-
+from rest_framework_simplejwt.authentication import JWTAuthentication
 
 def HttpAuthMiddleware(get_response):
     """
@@ -12,10 +11,10 @@ def HttpAuthMiddleware(get_response):
 
     def middleware(request):
         auth_basic = request.META.get("HTTP_AUTHORIZATION")
-        if auth_basic:
+        if auth_basic and not str(auth_basic).startswith('Bearer'):
             import base64
 
-            username, dummy, password = base64.decodestring(
+            username, dummy, password = base64.decodebytes(
                 auth_basic[6:].encode("utf8")
             ).partition(b":")
             username = username.decode("utf8")
@@ -27,7 +26,6 @@ def HttpAuthMiddleware(get_response):
                 # by logging the user in.
                 request.user = user
                 auth.login(request, user)
-
         response = get_response(request)
 
         # Code to be executed for each request/response after

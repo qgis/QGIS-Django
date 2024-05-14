@@ -17,7 +17,7 @@ from django.template.response import TemplateResponse
 from django.urls import reverse, reverse_lazy
 from django.utils.decorators import method_decorator
 from django.utils.text import slugify
-from django.utils.translation import ugettext_lazy as _
+from django.utils.translation import gettext_lazy as _
 from django.views.decorators.cache import never_cache
 from django.views.generic import (
     CreateView,
@@ -28,6 +28,7 @@ from django.views.generic import (
     View,
 )
 from django.views.generic.base import ContextMixin
+from django.utils.encoding import escape_uri_path
 
 GROUP_NAME = "Style Managers"
 
@@ -306,6 +307,7 @@ class ResourceBaseDetailView(ResourceBaseContextMixin, DetailView):
             context["reviewer"] = reviewer
         if user.is_staff or is_resources_manager(user):
             context["form"] = ResourceBaseReviewForm(resource_name=self.resource_name)
+            context["is_style_manager"] = is_resources_manager(user)
         if self.is_3d_model:
             context["url_viewer"] = "%s_viewer" % self.resource_name_url_base
         return context
@@ -484,9 +486,8 @@ class ResourceBaseDownload(ResourceBaseContextMixin, View):
         response = HttpResponse(
             zipfile.getvalue(), content_type="application/x-zip-compressed"
         )
-        response["Content-Disposition"] = "attachment; filename=%s.zip" % (
-            slugify(object.name, allow_unicode=True)
-        )
+        zip_name = slugify(object.name, allow_unicode=True)
+        response["Content-Disposition"] = f"attachment; filename*=utf-8''{escape_uri_path(zip_name)}.zip"
         return response
 
 

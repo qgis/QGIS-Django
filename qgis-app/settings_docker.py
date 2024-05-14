@@ -1,9 +1,14 @@
+from celery.schedules import crontab
+
+from settings import *
 import ast
 import os
 
 from settings import *
 
 SITE_ROOT = os.path.dirname(os.path.realpath(__file__))
+from datetime import timedelta
+from django.contrib.staticfiles.storage import ManifestStaticFilesStorage
 
 DEBUG = ast.literal_eval(os.environ.get("DEBUG", "True"))
 THUMBNAIL_DEBUG = DEBUG
@@ -11,7 +16,7 @@ ALLOWED_HOSTS = ["*"]
 
 # Absolute filesystem path to the directory that will hold user-uploaded files.
 # Example: "/var/www/example.com/media/"
-MEDIA_ROOT = "/home/web/media/"
+MEDIA_ROOT = os.environ.get("MEDIA_ROOT", "/home/web/media/")
 
 # URL that handles the media served from MEDIA_ROOT. Make sure to use a
 # trailing slash.
@@ -24,11 +29,15 @@ MEDIA_URL = "/media/"
 # Don't put anything in this directory yourself; store your static files
 # in apps' "static/" subdirectories and in STATICFILES_DIRS.
 # Example: "/var/www/example.com/static/"
-STATIC_ROOT = "/home/web/static"
+STATIC_ROOT = os.environ.get("STATIC_ROOT", "/home/web/static/")
 
 # URL prefix for static files.
 # Example: "http://example.com/static/", "http://static.example.com/"
 STATIC_URL = "/static/"
+
+# Manage static files storage ensuring that their 
+# filenames contain a hash of their content for cache busting
+# STATICFILES_STORAGE = 'django.contrib.staticfiles.storage.ManifestStaticFilesStorage'
 
 INSTALLED_APPS = [
     "django.contrib.auth",
@@ -63,6 +72,9 @@ INSTALLED_APPS = [
     "feedjack",
     "preferences",
     "rest_framework",
+    'rest_framework.authtoken',
+    'rest_framework_simplejwt',
+    'rest_framework_simplejwt.token_blacklist',
     "sorl_thumbnail_serializer",  # serialize image
     "drf_multiple_model",
     "drf_yasg",
@@ -76,6 +88,7 @@ INSTALLED_APPS = [
     # models (sharing .model3 file feature)
     "models",
     "wavefronts",
+    "matomo"
 ]
 
 DATABASES = {
@@ -96,7 +109,7 @@ PAGINATION_DEFAULT_PAGINATION = 20
 PAGINATION_DEFAULT_PAGINATION_HUB = 30
 LOGIN_REDIRECT_URL = "/"
 SERVE_STATIC_MEDIA = DEBUG
-DEFAULT_PLUGINS_SITE = os.environ.get("DEFAULT_PLUGINS_SITE", "")
+DEFAULT_PLUGINS_SITE = os.environ.get("DEFAULT_PLUGINS_SITE", "https://plugins.qgis.org/")
 
 # See fig.yml file for postfix container definition
 #
@@ -109,7 +122,7 @@ EMAIL_HOST = os.environ.get("EMAIL_HOST", "smtp")
 EMAIL_PORT = int(os.environ.get("EMAIL_PORT", "25"))
 # SMTP authentication information for EMAIL_HOST.
 # See fig.yml for where these are defined
-EMAIL_HOST_USER = os.environ.get("EMAIL_HOST_USER", "noreply")
+EMAIL_HOST_USER = os.environ.get("EMAIL_HOST_USER", "automation")
 EMAIL_HOST_PASSWORD = os.environ.get("EMAIL_HOST_PASSWORD", "docker")
 EMAIL_USE_TLS = ast.literal_eval(os.environ.get("EMAIL_USE_TLS", "False"))
 EMAIL_SUBJECT_PREFIX = os.environ.get("EMAIL_SUBJECT_PREFIX", "[QGIS Plugins]")
@@ -126,3 +139,29 @@ METABASE_DASHBOARD_URL = os.environ.get(
     "METABASE_DASHBOARD_URL", 
     "http://localhost:3000/public/dashboard/1d6c60d7-f855-40c3-a54c-06ba7f6c992a"
 )
+CELERY_RESULT_BACKEND = 'rpc://'
+CELERY_BROKER_URL = os.environ.get('BROKER_URL', 'amqp://rabbitmq:5672')
+CELERY_BEAT_SCHEDULE = {
+    'generate_plugins_xml': {
+        'task': 'plugins.tasks.generate_plugins_xml.generate_plugins_xml',
+        'schedule': crontab(minute='*/10'),  # Execute every 10 minutes.
+        'kwargs': {
+            'site': DEFAULT_PLUGINS_SITE
+        }
+    },
+    'update_feedjack': {
+        'task': 'plugins.tasks.update_feedjack.update_feedjack',
+        'schedule': crontab(minute='*/30'),  # Execute every 30 minutes.
+    }
+}
+# Set plugin token access and refresh validity to a very long duration
+SIMPLE_JWT = {
+    'ACCESS_TOKEN_LIFETIME': timedelta(days=365*1000),
+    'REFRESH_TOKEN_LIFETIME': timedelta(days=365*1000)
+}
+
+MATOMO_SITE_ID="1"
+MATOMO_URL="//matomo.qgis.org/"
+
+# Default primary key type
+DEFAULT_AUTO_FIELD = 'django.db.models.AutoField'

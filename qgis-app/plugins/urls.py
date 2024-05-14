@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
-from django.conf.urls import include, url
+from django.urls import re_path as url
 from django.contrib.auth.decorators import login_required, user_passes_test
-from django.utils.translation import ugettext_lazy as _
+from django.utils.translation import gettext_lazy as _
 from plugins.models import Plugin, PluginVersion
 from plugins.views import *
 from rpc4django.views import serve_rpc_request
@@ -46,6 +46,34 @@ urlpatterns = [
         plugin_update,
         {},
         name="plugin_update",
+    ),
+    url(
+        r"^(?P<package_name>[A-Za-z][A-Za-z0-9-_]+)/tokens/$",
+        PluginTokenListView.as_view(),
+        name="plugin_token_list",
+    ),
+    url(
+        r"^(?P<package_name>[A-Za-z][A-Za-z0-9-_]+)/tokens/(?P<pk>\d+)/$",
+        PluginTokenDetailView.as_view(),
+        name="plugin_token_detail",
+    ),
+    url(
+        r"^(?P<package_name>[A-Za-z][A-Za-z0-9-_]+)/tokens/create/$",
+        plugin_token_create,
+        {},
+        name="plugin_token_create",
+    ),
+    url(
+        r"^(?P<package_name>[A-Za-z][A-Za-z0-9-_]+)/tokens/(?P<token_id>\d+)/update$",
+        plugin_token_update,
+        {},
+        name="plugin_token_update",
+    ),
+    url(
+        r"^(?P<package_name>[A-Za-z][A-Za-z0-9-_]+)/tokens/(?P<token_id>[^\/]+)/delete/$",
+        plugin_token_delete,
+        {},
+        name="plugin_token_delete",
     ),
     url(
         r"^(?P<package_name>[A-Za-z][A-Za-z0-9-_]+)/set_featured/$",
@@ -225,6 +253,12 @@ urlpatterns += [
         name="version_create",
     ),
     url(
+        r"^api/(?P<package_name>[A-Za-z][A-Za-z0-9-_]+)/version/add/$",
+        version_create_api,
+        {},
+        name="version_create_api",
+    ),
+    url(
         r"^(?P<package_name>[A-Za-z][A-Za-z0-9-_]+)/version/(?P<version>[^\/]+)/$",
         version_detail,
         {},
@@ -241,6 +275,12 @@ urlpatterns += [
         version_update,
         {},
         name="version_update",
+    ),
+    url(
+        r"^api/(?P<package_name>[A-Za-z][A-Za-z0-9-_]+)/version/(?P<version>[^\/]+)/update/$",
+        version_update_api,
+        {},
+        name="version_update_api",
     ),
     url(
         r"^(?P<package_name>[A-Za-z][A-Za-z0-9-_]+)/version/(?P<version>[^\/]+)/download/$",

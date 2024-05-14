@@ -5,6 +5,10 @@ MAINTAINER Dimas Ciputra<dimas@kartoza.com>
 
 #RUN  ln -s /bin/true /sbin/initctl
 RUN apt-get clean all
+
+# Debian stretch/updates release issue. please see https://serverfault.com/a/1130167
+RUN echo "deb http://archive.debian.org/debian stretch main contrib non-free" > /etc/apt/sources.list
+
 RUN apt-get update && apt-get install -y libsasl2-dev python-dev libldap2-dev libssl-dev
 
 ARG BRANCH_TAG=develop
@@ -17,6 +21,7 @@ RUN mkdir -p /usr/src; mkdir -p /home/web && \
 RUN apt-get install -y libmaxminddb0 libmaxminddb-dev mmdb-bin
 
 RUN cd /usr/src/plugins/dockerize/docker && \
+	pip install --upgrade pip && \
 	pip install -r REQUIREMENTS.txt && \
 	pip install uwsgi && \
 	rm -rf /uwsgi.conf && \

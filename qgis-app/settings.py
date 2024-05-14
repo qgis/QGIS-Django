@@ -3,6 +3,7 @@
 # ABP: More portable config
 import os
 
+from datetime import timedelta
 SITE_ROOT = os.path.dirname(os.path.realpath(__file__))
 
 TEMPLATE_DEBUG = False
@@ -148,10 +149,14 @@ INSTALLED_APPS = [
     "leaflet",
     "bootstrapform",
     "rest_framework",
+    'rest_framework.authtoken',
+    'rest_framework_simplejwt',
+    'rest_framework_simplejwt.token_blacklist',
     "rest_framework_gis",
     "preferences",
     # styles:
     "styles",
+    "matomo"
 ]
 
 TEMPLATES = [
@@ -214,7 +219,7 @@ TAGGIT_TAGCLOUD_MAX = 30
 
 INTERNAL_IPS = ("127.0.0.1",)
 
-DEFAULT_FROM_EMAIL = "noreply@qgis.org"
+DEFAULT_FROM_EMAIL = os.environ.get("EMAIL_HOST_USER", "automation")
 
 
 # TINYMCE_JS_URL = 'http://debug.example.org/tiny_mce/tiny_mce_src.js'
@@ -248,7 +253,7 @@ RATINGS_VOTES_PER_IP = 10000
 
 DEBUG_TOOLBAR_CONFIG = {"INTERCEPT_REDIRECTS": False}
 
-THUMBNAIL_ENGINE = "sorl.thumbnail.engines.convert_engine.Engine"
+# THUMBNAIL_ENGINE = "sorl.thumbnail.engines.convert_engine.Engine"
 
 USER_MAP = {
     "project_name": "QGIS",
@@ -331,3 +336,11 @@ CELERY_BROKER_URL = BROKER_URL
 CELERY_RESULT_BACKEND = CELERY_BROKER_URL
 
 GEOIP_PATH='/var/opt/maxmind/'
+# Token access and refresh validity
+SIMPLE_JWT = {
+    'ACCESS_TOKEN_LIFETIME': timedelta(days=15),
+    'REFRESH_TOKEN_LIFETIME': timedelta(days=15),
+}
+
+MATOMO_SITE_ID="1"
+MATOMO_URL="//matomo.qgis.org/"

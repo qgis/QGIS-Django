@@ -19,7 +19,7 @@ from django.core import serializers
 from django.http import HttpResponse, HttpResponseRedirect
 from django.urls import reverse, reverse_lazy
 from django.utils.crypto import get_random_string
-from django.utils.translation import ugettext_lazy as _
+from django.utils.translation import gettext_lazy as _
 from django.views.decorators.cache import never_cache
 from styles.file_handler import read_xml_style
 from styles.forms import UpdateForm, UploadForm
@@ -100,7 +100,6 @@ class StyleUpdateView(ResourceMixin, ResourceBaseUpdateView):
                 symbol_type=xml_parse["type"]
             ).first()
         obj.require_action = False
-        obj.approved = False
         obj.save()
         resource_notify(obj, created=False, resource_type=self.resource_name)
         msg = _("The Style has been successfully updated.")
@@ -149,7 +148,7 @@ class StyleReviewView(ResourceMixin, ResourceBaseReviewView):
 
 
 class StyleDownloadView(ResourceMixin, ResourceBaseDownload):
-    """Download a GeoPackage"""
+    """Download a style"""
 
 
 def style_nav_content(request):

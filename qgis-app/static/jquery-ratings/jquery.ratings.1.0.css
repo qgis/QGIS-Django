@@ -11,3 +11,17 @@
 .jquery-ratings-full {
   background-image: url('full-star-16.png');
 }
+
+
+.jquery-ratings-quarter {
+  background-image: url('quarter-star-16.png');
+}
+
+.jquery-ratings-half {
+  background-image: url('half-star-16.png');
+}
+
+.jquery-ratings-half-and-quarter {
+  background-image: url('half-and-quarter-star-16.png');
+}
+
