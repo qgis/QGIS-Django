@@ -24,11 +24,8 @@ RUN apt-get update && apt-get install -y curl && curl -LJO https://github.com/P3
     mkdir /var/opt/maxmind && \
     mv GeoLite2-City.mmdb /var/opt/maxmind/GeoLite2-City.mmdb
 
-ADD REQUIREMENTS.txt /REQUIREMENTS.txt
-RUN pip install -r /REQUIREMENTS.txt
-RUN pip install uwsgi freezegun==1.3.1
-
 ENV GEOIP_PATH=/var/opt/maxmind/
+
 RUN rm -rf /uwsgi.conf
 ADD dockerize/docker/uwsgi.conf /uwsgi.conf
 ADD qgis-app /home/web/django_project
