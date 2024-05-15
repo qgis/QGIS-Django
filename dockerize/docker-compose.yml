@@ -23,6 +23,8 @@ services:
       - postgres_data:/opt/postgres/data
       - ${QGISPLUGINS_BACKUP_VOLUME}:/backups
     restart: unless-stopped
+    networks:
+      internal:
 
   uwsgi: &uwsgi-common
     build:
@@ -57,11 +59,14 @@ services:
       - ${QGISPLUGINS_STATIC_VOLUME}:/home/web/static:rw
       - ${QGISPLUGINS_MEDIA_VOLUME}:/home/web/media:rw
       - celerybeat-schedule:/home/web/celerybeat-schedule:rw
-    links:
-      - db:db
-      - rabbitmq:rabbitmq
+    
+    depends_on:
+      - db
+      - rabbitmq
     restart: unless-stopped
     user: root
+    networks:
+      internal:
 
   # This is the entry point for a development server.
   # Run with --no-deps to run attached to the services
@@ -82,6 +87,8 @@ services:
       - "62202:8080"
       # for ssh
       - "62203:22"
+    networks:
+      internal:
 
   rabbitmq:
     image: rabbitmq:3.7-alpine
@@ -89,6 +96,8 @@ services:
     volumes:
       - rabbitmq:/var/lib/rabbitmq
     restart: unless-stopped
+    networks:
+      internal:
 
   beat:
     <<: *uwsgi-common
@@ -96,17 +105,21 @@ services:
     working_dir: /home/web/django_project
     entrypoint: [ ]
     command: celery --app=plugins.celery:app beat -s /home/web/celerybeat-schedule/schedule -l INFO
+    networks:
+      internal:
 
   worker:
     <<: *uwsgi-common
     container_name: qgis-plugins-worker
-    links:
+    depends_on:
       - db
       - rabbitmq
       - beat
     working_dir: /home/web/django_project
     entrypoint: []
     command: celery -A plugins worker -l INFO
+    networks:
+      internal:
 
   web:
     # Note you cannot scale if you use container_name
@@ -124,9 +137,9 @@ services:
       - ${QGISPLUGINS_MEDIA_VOLUME}:/home/web/media:ro
       - ./webroot:/var/www/webroot
       - ./certbot-etc:/etc/letsencrypt
-    links:
-      - uwsgi:uwsgi
-      - metabase:metabase
+    depends_on:
+      - uwsgi
+      - metabase
     logging:
       driver: "json-file"
       options:
@@ -135,14 +148,16 @@ services:
     restart: unless-stopped
     command:
     - ${QGISPLUGINS_ENV}
+    networks:
+      internal:
 
   dbbackups:
     image: kartoza/pg-backup:16-3.4
     hostname: pg-backups
     volumes:
       - ${QGISPLUGINS_BACKUP_VOLUME}:/backups
-    links:
-      - db:db
+    depends_on:
+      - db
     environment:
       # take care to let the project name below match that
       # declared in the top of the makefile
@@ -153,16 +168,20 @@ services:
       - POSTGRES_HOST=${DATABASE_HOST:-db}
       - PGDATABASE=${DATABASE_NAME:-gis}
     restart: unless-stopped
+    networks:
+      internal:
 
   metabase:
     image: metabase/metabase:latest
     environment:
       - MB_DB_TYPE=postgres
       - MB_DB_CONNECTION_URI=jdbc:postgresql://${DATABASE_HOST:-db}:5432/metabase?user=${DATABASE_USERNAME:-docker}&password=${DATABASE_PASSWORD:-docker}
-    links:
+    depends_on:
       - db
     expose:
       - "3000"
+    networks:
+      internal:
 
   certbot:
     image: certbot/certbot
@@ -173,3 +192,8 @@ services:
     depends_on:
       - web
     command: certonly --webroot --webroot-path=/var/www/webroot --email admin@qgis.org --agree-tos --no-eff-email --force-renewal -d plugins.qgis.org
+    networks:
+      internal:
+
+networks:
+    internal:
