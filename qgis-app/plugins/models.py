@@ -844,7 +844,7 @@ class PluginVersion(models.Model):
 
     def get_download_url(self):
         return reverse(
-            "version_download",
+            "version_get",
             args=(
                 self.plugin.package_name,
                 self.version,

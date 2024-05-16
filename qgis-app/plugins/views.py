@@ -16,7 +16,7 @@ from django.db.models import Max, Q
 from django.db.models.expressions import RawSQL
 from django.db.models.functions import Lower
 from django.http import Http404, HttpResponse, HttpResponseRedirect, JsonResponse
-from django.shortcuts import get_object_or_404, render
+from django.shortcuts import get_object_or_404, render, redirect
 from django.urls import reverse
 from django.utils.timezone import now
 from django.utils.decorators import method_decorator
@@ -1506,8 +1506,38 @@ def version_feedback_delete(request, package_name, version, feedback):
         is_update_succeed: bool = True
     return JsonResponse({"success": is_update_succeed})
 
+def version_get(request, package_name, version):
+    """
+    Download a plugin zip from the browser
+    """
+    plugin = get_object_or_404(Plugin, package_name=package_name)
+    if request.method == "POST":
+        form = VersionDownloadForm(request.POST, original_name=plugin.name)
+        if form.is_valid():
+            file_content, file_name = version_download(request, package_name, version, is_from_web=True)
+            return render(
+                request,
+                "plugins/plugin_download_success.html",
+                {
+                    "file_content": file_content,
+                    "file_name": file_name,
+                    "plugin_name": plugin.name
+                }
+            )
+    else:
+        form = VersionDownloadForm(original_name=plugin.name)
 
-def version_download(request, package_name, version):
+    return render(
+        request,
+        "plugins/plugin_download.html",
+        {
+            "form": form, 
+            "plugin_name": plugin.name
+        }
+    )
+
+
+def version_download(request, package_name, version, is_from_web=False):
     """
     Update download counter(s)
     """
@@ -1534,6 +1564,8 @@ def version_download(request, package_name, version):
         version.package.file.file.close()
     zipfile = open(version.package.file.name, "rb")
     file_content = zipfile.read()
+    if is_from_web:
+        return [file_content, f"{version.plugin.package_name}-{version.version}"]
     response = HttpResponse(file_content, content_type="application/zip")
     response["Content-Disposition"] = "attachment; filename=%s-%s.zip" % (
         version.plugin.package_name,

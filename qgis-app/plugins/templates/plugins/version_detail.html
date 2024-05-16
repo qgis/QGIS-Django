@@ -2,7 +2,7 @@
 {% load local_timezone %}
 {% block content %}
     <h2>{% trans "Version" %}: {{ version }}</h2>
-    <div class="pull-right"><a href="{% url "version_download" version.plugin.package_name version.version %}" class="btn btn-primary"><i class="icon-download-alt icon-white"></i> {% trans "Download" %}</a></div>
+    <div class="pull-right"><a href="{% url "version_get" version.plugin.package_name version.version %}" class="btn btn-primary"><i class="icon-download-alt icon-white"></i> {% trans "Download" %}</a></div>
 
     {% if not version.created_by.is_active and not version.is_from_token %}
     <div class="alert alert-error">

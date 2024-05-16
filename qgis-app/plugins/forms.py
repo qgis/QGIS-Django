@@ -270,3 +270,27 @@ class PluginTokenForm(ModelForm):
         fields = (
             "description",
         )
+
+class VersionDownloadForm(forms.Form):
+    """Download confirmation for a plugin version"""
+    required_css_class = "required"
+    plugin_name = forms.CharField(
+        label=_("Confirm plugin name"),
+        required=True,
+        help_text=_(
+            "Please insert the plugin name shown above to proceed with the download."
+        ),
+        widget=forms.TextInput,
+    )
+    def __init__(self, *args, original_name=None, **kwargs):
+        super(VersionDownloadForm, self).__init__(*args, **kwargs)
+        self.original_name = original_name
+
+    def clean(self):
+        """
+        Check if plugin name match
+        """
+        super().clean()
+        if self.cleaned_data.get("plugin_name") != self.original_name:
+            raise ValidationError(_("Plugin name mismatch: Please ensure the plugin name matches the one displayed above in order to proceed with the download."))
+        return super(VersionDownloadForm, self).clean()
