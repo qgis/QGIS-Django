@@ -27,6 +27,7 @@ from django.views.decorators.csrf import ensure_csrf_cookie, csrf_exempt, csrf_p
 from django.views.decorators.http import require_POST
 from django.views.generic.detail import DetailView
 from django.db import transaction
+from django.core.cache import cache
 
 # from sortable_listview import SortableListView
 from django.views.generic.list import ListView
@@ -1510,11 +1511,26 @@ def version_get(request, package_name, version):
     """
     Download a plugin zip from the browser
     """
+
+    ip = request.META['REMOTE_ADDR']
+    key = f"download_limit_{ip}"
+    downloads = cache.get(key, 0)
+
+    if downloads >= 10:
+        response = render(
+            request,
+            "plugins/plugin_download_limit_exceed.html",
+            {}
+        )
+        response.status_code = 429
+        return response
+
     plugin = get_object_or_404(Plugin, package_name=package_name)
     if request.method == "POST":
         form = VersionDownloadForm(request.POST, original_name=plugin.name)
         if form.is_valid():
             file_content, file_name = version_download(request, package_name, version, is_from_web=True)
+            cache.set(key, downloads + 1, timeout=60)  # 60 seconds timeout for 10 requests per minute
             return render(
                 request,
                 "plugins/plugin_download_success.html",

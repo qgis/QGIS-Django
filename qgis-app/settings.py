@@ -203,8 +203,8 @@ HAYSTACK_SIGNAL_PROCESSOR = "haystack.signals.RealtimeSignalProcessor"
 # See http://docs.djangoproject.com/en/dev/topics/cache/
 CACHES = {
     "default": {
-        #'BACKEND': 'django.core.cache.backends.db.DatabaseCache',
-        "BACKEND": "django.core.cache.backends.dummy.DummyCache",
+        "BACKEND": "django.core.cache.backends.db.DatabaseCache",
+        # "BACKEND": "django.core.cache.backends.dummy.DummyCache",
         "LOCATION": "cache_table",
     }
 }
