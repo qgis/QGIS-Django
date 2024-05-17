@@ -1,22 +1,42 @@
-#--------- Generic stuff all our Dockerfiles should start with so we get caching ------------
-# Note this base image is based on debian
-FROM kartoza/django-base:3.7
-MAINTAINER Dimas Ciputra<dimas@kartoza.com>
+# For more information, please refer to https://aka.ms/vscode-docker-python
+FROM python:3.12-slim as prod
 
-#RUN  ln -s /bin/true /sbin/initctl
-RUN apt-get clean all
+EXPOSE 8000
 
-# Debian stretch/updates release issue. please see https://serverfault.com/a/1130167
-RUN echo "deb http://archive.debian.org/debian stretch main contrib non-free" > /etc/apt/sources.list
+# Keeps Python from generating .pyc files in the container
+ENV PYTHONDONTWRITEBYTECODE=1
 
-RUN apt-get update && apt-get install -y libsasl2-dev python-dev libldap2-dev libssl-dev
-ADD REQUIREMENTS.txt /REQUIREMENTS.txt
-RUN pip install -r /REQUIREMENTS.txt
-RUN pip install uwsgi freezegun==1.3.1
+# Turns off buffering for easier container logging
+ENV PYTHONUNBUFFERED=1
 
+RUN apt-get update && apt-get install -y \
+    git python3-dev libxml2-dev \
+    libsasl2-dev libldap2-dev libssl-dev \
+    libxslt1-dev zlib1g-dev \
+    build-essential \
+    libffi-dev gdal-bin\
+    libjpeg-dev libpq-dev \
+    liblcms2-dev libblas-dev libatlas-base-dev
+
+RUN rm -rf /uwsgi.conf
+ADD dockerize/docker/uwsgi.conf /uwsgi.conf
+ADD qgis-app /home/web/django_project
+ADD dockerize/docker/REQUIREMENTS.txt /REQUIREMENTS.txt
+
+RUN pip install --upgrade pip && pip install -r /REQUIREMENTS.txt
+
+RUN mkdir -p /var/log/uwsgi
+
+WORKDIR /home/web/django_project
+CMD ["uwsgi", "--ini", "/uwsgi.conf"]
+
+
+FROM prod as dev
+
+# This section taken on 2 July 2015 from
 # https://docs.docker.com/examples/running_ssh_service/
 # Sudo is needed by pycharm when it tries to pip install packages
-RUN apt-get install -y openssh-server sudo
+RUN apt-get update && apt-get install -y openssh-server sudo
 RUN mkdir /var/run/sshd
 RUN echo 'root:docker' | chpasswd
 RUN echo "PermitRootLogin yes" >> /etc/ssh/sshd_config
@@ -27,15 +47,16 @@ RUN sed 's@session\s*required\s*pam_loginuid.so@session optional pam_loginuid.so
 ENV NOTVISIBLE "in users profile"
 RUN echo "export VISIBLE=now" >> /etc/profile
 
-RUN rm -rf /uwsgi.conf
-ADD uwsgi.conf /uwsgi.conf
+# Install freezegun for feedback test
+RUN pip install freezegun
 
-# Open port 8080 as we will be running our uwsgi socket on that
+# --------------------------------------------------------
+# Open ports as needed
+# --------------------------------------------------------
+
+# Open port 8080 as we will be running our django dev server on
 EXPOSE 8080
-
 # Open port 22 as we will be using a remote interpreter from pycharm
 EXPOSE 22
 
-RUN mkdir -p /var/log/uwsgi
-WORKDIR /home/web/django_project
 CMD ["/usr/sbin/sshd", "-D"]

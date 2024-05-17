@@ -47,12 +47,13 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
-      - name: Run docker-compose build
-        run: docker-compose build
+      - name: Generate the .env file
+        run: cp .env.template .env
+
 
       - name: Run the containers
         run: docker-compose up -d db devweb
-      
+    
 
       - name: Wait for the containers to start
         run: sleep 15 
@@ -65,4 +66,3 @@ jobs:
             python manage.py migrate &&
             python manage.py test
           '
-

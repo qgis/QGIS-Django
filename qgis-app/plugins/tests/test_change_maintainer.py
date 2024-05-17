@@ -50,7 +50,7 @@ class PluginRenameTestCase(TestCase):
         self.plugin = Plugin.objects.get(name='Test Plugin')
         self.plugin.save()
 
-    @patch("plugins.tasks.generate_plugins_xml.delay", new=do_nothing)
+    @patch("plugins.tasks.generate_plugins_xml", new=do_nothing)
     @patch("plugins.validator._check_url_link", new=do_nothing)
     def test_change_maintainer(self):
         """
