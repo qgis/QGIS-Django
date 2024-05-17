@@ -10,6 +10,7 @@ from freezegun import freeze_time
 from plugins.models import Plugin, PluginVersion, PluginVersionFeedback
 from plugins.views import version_feedback_notify
 from django.conf import settings
+from django.core.cache import cache
 
 class SetupMixin:
     fixtures = ["fixtures/auth.json", "fixtures/simplemenu.json"]
@@ -150,6 +151,9 @@ class TestPluginFeedbackReceivedList(SetupMixin, TestCase):
         self.assertContains(response, "test plugin 1")
         self.assertNotContains(response, "test plugin 2")
 
+        # Clear django cache before sending another request
+        cache.clear()
+
         # add feedback for plugin 2
         PluginVersionFeedback.objects.create(
             version=self.version_2,
@@ -170,6 +174,10 @@ class TestPluginFeedbackReceivedList(SetupMixin, TestCase):
             list(response.context['object_list']),
             [self.plugin_1]
         )
+
+        # Clear django cache before sending another request
+        cache.clear()
+
         self.version_1.approved = True
         self.version_1.save()
         response = self.client.get(self.url)
@@ -185,6 +193,10 @@ class TestPluginFeedbackPendingList(SetupMixin, TestCase):
     def setUp(self):
         super().setUp()
         self.url = reverse("feedback_pending_plugins")
+
+    def tearDown(self):
+        # Clear cache after each test
+        cache.clear()
 
     def test_non_staff_should_not_see_plugin_feedback_pending_list(self):
         response = self.client.get(self.url)
@@ -207,6 +219,9 @@ class TestPluginFeedbackPendingList(SetupMixin, TestCase):
         )
         self.assertContains(response, "test plugin 2")
         self.assertNotContains(response, "test plugin 1")
+
+        # Clear django cache before sending another request
+        cache.clear()
 
         # add feedback for plugin 2
         PluginVersionFeedback.objects.create(
