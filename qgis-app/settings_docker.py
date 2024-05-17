@@ -160,3 +160,6 @@ MATOMO_URL="//matomo.qgis.org/"
 
 # Default primary key type
 DEFAULT_AUTO_FIELD = 'django.db.models.AutoField'
+
+# Download limit per minute
+DOWNLOAD_RATE_LIMIT = int(os.environ.get("DOWNLOAD_RATE_LIMIT", 10))

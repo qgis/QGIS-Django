@@ -1516,7 +1516,7 @@ def version_get(request, package_name, version):
     key = f"download_limit_{ip}"
     downloads = cache.get(key, 0)
 
-    if downloads >= 10:
+    if downloads >= settings.DOWNLOAD_RATE_LIMIT:
         response = render(
             request,
             "plugins/plugin_download_limit_exceed.html",
@@ -1529,8 +1529,8 @@ def version_get(request, package_name, version):
     if request.method == "POST":
         form = VersionDownloadForm(request.POST, original_name=plugin.name)
         if form.is_valid():
-            file_content, file_name = version_download(request, package_name, version, is_from_web=True)
-            cache.set(key, downloads + 1, timeout=60)  # 60 seconds timeout for 10 requests per minute
+            file_content, file_name = _get_file_content(package_name, version)
+            cache.set(key, downloads + 1, timeout=60)  # 60 seconds timeout for limited downloads per minute
             return render(
                 request,
                 "plugins/plugin_download_success.html",
@@ -1553,9 +1553,18 @@ def version_get(request, package_name, version):
     )
 
 
-def version_download(request, package_name, version, is_from_web=False):
+def version_download(request, package_name, version):
     """
-    Update download counter(s)
+    Download a plugin zip from QGIS
+    """
+    file_content, file_name = _get_file_content(package_name, version)
+    response = HttpResponse(file_content, content_type="application/zip")
+    response["Content-Disposition"] = f"attachment; filename={file_name}.zip"
+    return response
+
+def _get_file_content(package_name, version):
+    """
+    Update download counter(s) and return the file content
     """
     plugin = get_object_or_404(Plugin, package_name=package_name)
     version = get_object_or_404(PluginVersion, plugin=plugin, version=version)
@@ -1580,14 +1589,7 @@ def version_download(request, package_name, version, is_from_web=False):
         version.package.file.file.close()
     zipfile = open(version.package.file.name, "rb")
     file_content = zipfile.read()
-    if is_from_web:
-        return [file_content, f"{version.plugin.package_name}-{version.version}"]
-    response = HttpResponse(file_content, content_type="application/zip")
-    response["Content-Disposition"] = "attachment; filename=%s-%s.zip" % (
-        version.plugin.package_name,
-        version.version,
-    )
-    return response
+    return [file_content, f"{version.plugin.package_name}-{version.version}"]
 
 
 def version_detail(request, package_name, version):
