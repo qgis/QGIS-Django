@@ -1,0 +1,42 @@
+{% extends 'plugins/plugin_base.html' %}{% load i18n %} {% load local_timezone
+%} {% block content %}
+<h5 style="text-align: center" id="downloadText">
+  The download of the plugin {{plugin_name}} will start shortly...
+</h5>
+
+{% endblock %} {% block extrajs %} {{ block.super }}
+<script>
+  function downloadFile(fileContent, fileName, downloadText) {
+    try {
+      var blob = new Blob([fileContent], { type: "application/zip" });
+      var url = window.URL.createObjectURL(blob);
+      var link = document.createElement("a");
+      link.href = url;
+      link.download = fileName;
+
+      link.click();
+
+      // Clean up resources
+      window.URL.revokeObjectURL(url);
+
+      downloadText.innerHTML =
+        "The plugin {{plugin_name}} has been successfully downloaded.";
+    } catch (e) {
+      downloadText.innerHTML =
+        "The download of the plugin {{plugin_name}} failed.";
+    }
+  }
+
+  var fileContent = "{{ file_content }}";
+  var fileName = "{{ file_name }}";
+
+  document.addEventListener("DOMContentLoaded", function () {
+    const downloadText = document.getElementById("downloadText");
+    setTimeout(function () {
+      downloadFile(fileContent, fileName, downloadText);
+    }, 3000); // Add a delay of 3s before downloading the file
+  });
+</script>
+{% endblock %} {% block extracss %} {{ block.super }}
+<style></style>
+{% endblock %}

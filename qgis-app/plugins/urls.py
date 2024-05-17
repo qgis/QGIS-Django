@@ -289,6 +289,12 @@ urlpatterns += [
         name="version_download",
     ),
     url(
+        r"^(?P<package_name>[A-Za-z][A-Za-z0-9-_]+)/version/(?P<version>[^\/]+)/get/$",
+        version_get,
+        {},
+        name="version_get",
+    ),
+    url(
         r"^(?P<package_name>[A-Za-z][A-Za-z0-9-_]+)/version/(?P<version>[^\/]+)/approve/$",
         version_approve,
         {},

@@ -1,0 +1,114 @@
+{% extends 'plugins/plugin_base.html' %}{% load i18n %}
+{% load local_timezone %}
+{% block content %}
+
+<div style="display:flex; align-items: center;">
+    <h2>{% trans "Plugin: " %}</h2> 
+    <div class="tooltip">
+        <span class="tooltiptext" id="copyTooltip">{% trans "Copy to clipboard" %}</span>
+        <span class="copy-text" data-copy="{{plugin_name}}">
+            {{plugin_name}}
+            <i class="icon-copy icon-white"></i>
+        </span>
+       
+    </div>
+</div>
+
+{% if form.errors %}
+<div class="alert alert-error">
+  <button type="button" class="close" data-dismiss="alert">&times;</button>
+  <p>{% trans "The form contains errors and cannot be submitted, please check the fields highlighted in red." %}</p>
+</div>
+{% endif %}
+{% if form.non_field_errors %}
+<div class="alert alert-error">
+  <button type="button" class="close" data-dismiss="alert">&times;</button>
+  {% for error in form.non_field_errors %}
+  <p>{{ error }}</p>
+  {% endfor %}
+</div>
+{% endif %}
+<form action="" method="post" class="horizontal" enctype="multipart/form-data">{% csrf_token %}
+  {% include "plugins/form_snippet.html" %}
+  <div class="form-actions">
+    <button class="btn btn-primary" type="submit">{% trans "Download" %}</button>
+  </div>
+</form>
+{% endblock %}
+
+
+{% block extrajs %}
+{{ block.super }}
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const copyText = document.querySelector('.copy-text');
+        const tooltip = document.getElementById("copyTooltip");
+      
+        copyText.addEventListener('click', function() {
+          const textToCopy = this.getAttribute('data-copy');
+          navigator.clipboard.writeText(textToCopy)
+            .then(() => {
+                tooltip.innerHTML = "Plugin name copied!";
+            })
+            .catch(err => {
+                tooltip.innerHTML = "An error occured";
+            });
+        });
+      });
+      
+</script>
+{% endblock %}
+{% block extracss %}
+{{ block.super }}
+<style>
+    .copy-text {
+        position: relative;
+        display: inline-block;
+        cursor: pointer;
+        background: #eaeaea;
+        padding: 10px;
+        border-radius: 10px;
+        font-size: 14pt
+      }
+      
+    .tooltip {
+        position: relative;
+        display: inline-block;
+        opacity: 1 !important;
+        margin-left: 10px;
+      }
+   
+      .tooltip .tooltiptext {
+        visibility: hidden;
+        width: 140px;
+        background-color: #555;
+        color: #fff;
+        text-align: center;
+        border-radius: 6px;
+        padding: 5px;
+        position: absolute;
+        z-index: 1;
+        bottom: 150%;
+        left: 50%;
+        margin-left: -75px;
+        opacity: 0;
+        transition: opacity 0.3s;
+      }
+   
+      .tooltip .tooltiptext::after {
+        content: "";
+        position: absolute;
+        top: 100%;
+        left: 50%;
+        margin-left: -5px;
+        border-width: 5px;
+        border-style: solid;
+        border-color: #555 transparent transparent transparent;
+      }
+   
+      .tooltip:hover .tooltiptext {
+        visibility: visible;
+        opacity: 1;
+      }     
+</style>
+{% endblock %}
