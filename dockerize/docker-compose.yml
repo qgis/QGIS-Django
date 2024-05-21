@@ -161,13 +161,10 @@ services:
     environment:
       - MB_DB_TYPE=postgres
       - MB_DB_CONNECTION_URI=jdbc:postgresql://${DATABASE_HOST:-db}:5432/metabase?user=${DATABASE_USERNAME:-docker}&password=${DATABASE_PASSWORD:-docker}
-      # - MB_DB_USER=tim@kartoza.com
-      # - MB_DB_PASS=newpassword
     links:
       - db
     expose:
       - "3000"
-    # command: bash -c 'java -jar app/metabase.jar reset-password tim@kartoza.com'
 
   certbot:
     image: certbot/certbot
