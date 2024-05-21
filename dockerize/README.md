@@ -52,7 +52,7 @@ make certbot
 make migrate
 ```
 
-- **update**-migrations: Creates new migration files based on changes in models.
+- **update-migrations**: Creates new migration files based on changes in models.
 ```sh
 make update-migrations
 ```
