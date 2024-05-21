@@ -152,7 +152,7 @@ make shell c=container_name
 make exec c="command"
 ```
 
-#### Development Commands
+### Development Commands
 
 - **build-dev:** Builds Docker images for the development environment.
 ```sh
