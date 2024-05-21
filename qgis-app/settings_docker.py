@@ -135,9 +135,9 @@ REST_FRAMEWORK = {
 }
 
 GEOIP_PATH='/var/opt/maxmind/'
-METABASE_DASHBOARD_URL = os.environ.get(
-    "METABASE_DASHBOARD_URL", 
-    "http://localhost:3000/public/dashboard/1d6c60d7-f855-40c3-a54c-06ba7f6c992a"
+METABASE_DOWNLOAD_STATS_URL = os.environ.get(
+    "METABASE_DOWNLOAD_STATS_URL", 
+    "/metabase"
 )
 CELERY_RESULT_BACKEND = 'rpc://'
 CELERY_BROKER_URL = os.environ.get('BROKER_URL', 'amqp://rabbitmq:5672')

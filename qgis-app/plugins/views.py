@@ -545,7 +545,7 @@ class PluginDetailView(DetailView):
                         "<strong>%s</strong> metadata is missing, this metadata entry is <strong>required</strong>. Please add <strong>%s</strong> to <code>metadata.txt</code>."
                     ) % (md, md)
                     messages.error(self.request, msg, fail_silently=True)
-        stats_url = f"{settings.METABASE_DASHBOARD_URL}?package_name={plugin.package_name}#hide_parameters=package_name"
+        stats_url = f"{settings.METABASE_DOWNLOAD_STATS_URL}?package_name={plugin.package_name}#hide_parameters=package_name"
         context.update(
             {
                 "stats_url": stats_url,
