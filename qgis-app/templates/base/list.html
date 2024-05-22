@@ -79,6 +79,7 @@
                 </th>
                 <th> {% anchor_sort_arrow 'Creator' 'creator' order_by queries %} </th>
                 <th> {% anchor_sort_arrow 'Upload Date' 'upload_date' order_by queries %} </th>
+                <th> {% anchor_sort_arrow 'Modified Date' 'modified_date' order_by queries %} </th>
                 <th></th>
             </tr>
         </thead>
@@ -105,6 +106,7 @@
                     <td>{{ object.download_count }}</td>
                     <td>{{ object.get_creator_name|title }}</td>
                     <td>{{ object.upload_date|date:"d F Y" }}</td>
+                    <td>{{ object.modified_date|date:"d F Y" }}</td>
                     <td>
                         {% if user.is_staff or user == style.creator %}
                         <a class="btn btn-primary btn-mini" href="{% url url_update object.id %}" title="{% trans "Edit" %}"><i class="icon-pencil icon-white"></i></a>&nbsp
