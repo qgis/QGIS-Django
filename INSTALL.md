@@ -43,6 +43,8 @@ $ make rebuild_index
 ```
 This command ensures that the search index accurately reflects the current state of the database, resolving the presence of 'None' in the search results. Automatic synchronization is currently managed in settings.py: `HAYSTACK_SIGNAL_PROCESSOR = "haystack.signals.RealtimeSignalProcessor"`.
 
+For more information about make commands, please see the full docs [here](./dockerize/README.md).
+
 ---
 
 ### Setup git-hooks and local linting
