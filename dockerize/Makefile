@@ -15,12 +15,6 @@ build:
 	@echo "------------------------------------------------------------------"
 	@docker compose -p $(PROJECT_ID) build
 
-build-dev:
-	@echo
-	@echo "------------------------------------------------------------------"
-	@echo "Building in development mode only"
-	@echo "------------------------------------------------------------------"
-	@docker compose -p $(PROJECT_ID) build devweb
 
 db:
 	@echo
@@ -57,27 +51,6 @@ certbot: web
 	@echo "------------------------------------------------------------------"
 	@docker compose -p $(PROJECT_ID) up -d certbot
 
-devweb-test: db
-	@echo
-	@echo "------------------------------------------------------------------"
-	@echo "Running in TESTING mode"
-	@echo "------------------------------------------------------------------"
-	@docker compose up --no-deps -d devweb
-
-devweb: db
-	@echo
-	@echo "------------------------------------------------------------------"
-	@echo "Running in DEVELOPMENT mode"
-	@echo "------------------------------------------------------------------"
-	@docker compose -p $(PROJECT_ID) up --no-deps -d devweb rabbitmq worker beat
-
-devweb-runserver: devweb
-	@echo
-	@echo "------------------------------------------------------------------"
-	@echo "Running in DEVELOPMENT mode"
-	@echo "------------------------------------------------------------------"
-	@docker compose -p $(PROJECT_ID) exec devweb python manage.py runserver 0.0.0.0:8080
-
 migrate:
 	@echo
 	@echo "------------------------------------------------------------------"
@@ -105,26 +78,27 @@ collectstatic:
 	@echo "Collecting static in production mode"
 	@echo "------------------------------------------------------------------"
 	@docker compose -p $(PROJECT_ID) run uwsgi python manage.py collectstatic --noinput
-	#We need to run collect static in the same context as the running
-	# uwsgi container it seems so I use docker exec here
-	# no -it flag so we can run over remote shell
-	# @docker exec $(PROJECT_ID)-web python manage.py collectstatic --noinput
 
-reload:
+start:
 	@echo
 	@echo "------------------------------------------------------------------"
-	@echo "Reload django project in production mode"
+	@echo "Starting a specific container(s) in production mode. Use web if you want to start all."
 	@echo "------------------------------------------------------------------"
-	# no -it flag so we can run over remote shell
-	@docker exec $(PROJECT_ID)-web uwsgi --reload  /tmp/django.pid
+	@docker compose -p $(PROJECT_ID) up -d $(c)
 
+restart:
+	@echo
+	@echo "------------------------------------------------------------------"
+	@echo "Restarting all or a specific container(s) in production mode"
+	@echo "------------------------------------------------------------------"
+	@docker compose -p $(PROJECT_ID) restart $(c)
 
 kill:
 	@echo
 	@echo "------------------------------------------------------------------"
-	@echo "Killing in production mode"
+	@echo "Killing all or a specific container(s) in production mode"
 	@echo "------------------------------------------------------------------"
-	@docker compose -p $(PROJECT_ID) kill
+	@docker compose -p $(PROJECT_ID) kill $(c)
 
 rm: rm-only
 
@@ -134,20 +108,6 @@ rm-only: kill
 	@echo "Removing production instance!!! "
 	@echo "------------------------------------------------------------------"
 	@docker compose -p $(PROJECT_ID) rm
-
-maillogs:
-	@echo
-	@echo "------------------------------------------------------------------"
-	@echo "Showing smtp logs in production mode"
-	@echo "------------------------------------------------------------------"
-	@docker compose exec smtp tail -f /var/log/mail.log
-
-mailerrorlogs:
-	@echo
-	@echo "------------------------------------------------------------------"
-	@echo "Showing smtp error logs in production mode"
-	@echo "------------------------------------------------------------------"
-	@docker compose exec smtp tail -f /var/log/mail.err
 
 dbrestore:
 	@echo
@@ -176,16 +136,111 @@ create-test-db:
 	@docker compose -p $(PROJECT_ID) exec db su - postgres -c "psql -c 'create database test_db;'"
 	@docker compose -p $(PROJECT_ID) exec db su - postgres -c "psql -d test_db -c 'create extension postgis;'"
 
-dbseed:
-	@echo
-	@echo "------------------------------------------------------------------"
-	@echo "Seed db with JSON data from /fixtures/*.json"
-	@echo "------------------------------------------------------------------"
-	@docker compose -p $(PROJECT_ID) exec devweb bash -c 'python manage.py loaddata fixtures/*.json'
-
 rebuild_index:
 	@echo
 	@echo "------------------------------------------------------------------"
 	@echo "Rebuild search index in PRODUCTION mode"
 	@echo "------------------------------------------------------------------"
 	@docker compose -p $(PROJECT_ID) exec uwsgi bash -c 'python manage.py rebuild_index'
+
+uwsgi-shell:
+	@echo
+	@echo "------------------------------------------------------------------"
+	@echo "Shelling into the uwsgi container(s)"
+	@echo "------------------------------------------------------------------"
+	@docker compose -p $(PROJECT_ID) exec uwsgi bash 
+
+uwsgi-reload:
+	@echo
+	@echo "------------------------------------------------------------------"
+	@echo "Reload django project in production mode"
+	@echo "------------------------------------------------------------------"
+	@docker compose -p $(PROJECT_ID) exec uwsgi bash -c 'uwsgi uwsgi --reload  /tmp/django.pid'
+
+uwsgi-errors:
+	@echo
+	@echo "------------------------------------------------------------------"
+	@echo "Tailing errors in the uwsgi container(s)"
+	@echo "------------------------------------------------------------------"
+	@docker compose -p $(PROJECT_ID) exec uwsgi bash -c 'tail -f /var/log/uwsgi-errors.log'
+
+uwsgi-logs:
+	@echo
+	@echo "------------------------------------------------------------------"
+	@echo "Tailing access logs in uwsgi container(s)"
+	@echo "------------------------------------------------------------------"
+	@docker compose -p $(PROJECT_ID) exec uwsgi bash -c 'tail -f /var/log/uwsgi-requests.log'
+
+web-shell:
+	@echo
+	@echo "------------------------------------------------------------------"
+	@echo "Shelling into the NGINX/WEB container(s)"
+	@echo "------------------------------------------------------------------"
+	@docker compose -p $(PROJECT_ID) exec web bash 
+
+web-logs:
+	@echo
+	@echo "------------------------------------------------------------------"
+	@echo "Tailing logs in NGINX/WEB container(s)"
+	@echo "------------------------------------------------------------------"
+	@docker compose -p $(PROJECT_ID) logs -f web
+
+logs:
+	@echo
+	@echo "------------------------------------------------------------------"
+	@echo "Tailing all logs or a specific container"
+	@echo "------------------------------------------------------------------"
+	@docker compose -p $(PROJECT_ID) logs -f $(c)
+
+shell:
+	@echo
+	@echo "------------------------------------------------------------------"
+	@echo "Shelling into a specific container"
+	@echo "------------------------------------------------------------------"
+	@docker compose -p $(PROJECT_ID) exec $(c) bash
+
+exec:
+	@echo
+	@echo "------------------------------------------------------------------"
+	@echo "Execute a specific docker command"
+	@echo "------------------------------------------------------------------"
+	@docker compose -p $(PROJECT_ID) $(c)
+
+# ----------------------------------------------------------------------------
+#    D E V E L O P M E N T    C O M M A N D S
+# ----------------------------------------------------------------------------
+
+build-dev:
+	@echo
+	@echo "------------------------------------------------------------------"
+	@echo "Building in development mode only"
+	@echo "------------------------------------------------------------------"
+	@docker compose -p $(PROJECT_ID) build devweb
+
+devweb-test: db
+	@echo
+	@echo "------------------------------------------------------------------"
+	@echo "Running in TESTING mode"
+	@echo "------------------------------------------------------------------"
+	@docker compose up --no-deps -d devweb
+
+devweb: db
+	@echo
+	@echo "------------------------------------------------------------------"
+	@echo "Running in DEVELOPMENT mode"
+	@echo "------------------------------------------------------------------"
+	@docker compose -p $(PROJECT_ID) up --no-deps -d devweb rabbitmq worker beat
+
+devweb-runserver: devweb
+	@echo
+	@echo "------------------------------------------------------------------"
+	@echo "Running in DEVELOPMENT mode"
+	@echo "------------------------------------------------------------------"
+	@docker compose -p $(PROJECT_ID) exec devweb python manage.py runserver 0.0.0.0:8080
+
+dbseed:
+	@echo
+	@echo "------------------------------------------------------------------"
+	@echo "Seed db with JSON data from /fixtures/*.json"
+	@echo "------------------------------------------------------------------"
+	@docker compose -p $(PROJECT_ID) exec devweb bash -c 'python manage.py loaddata fixtures/*.json'

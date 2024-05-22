@@ -56,6 +56,7 @@ django-rest-multiple-models==2.1.3
 
 django-preferences==1.0.0
 PyWavefront==1.3.3
+geoip2==4.5.0
 django-matomo==0.1.6
 uwsgi~=2.0
 freezegun~=1.4

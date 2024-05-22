@@ -46,6 +46,7 @@ services:
       - ENABLE_LDAP=${ENABLE_LDAP:-False}
       - RABBITMQ_HOST=${RABBITMQ_HOST:-rabbitmq}
       - BROKER_URL=amqp://rabbitmq:5672
+      - METABASE_DOWNLOAD_STATS_URL=${METABASE_DOWNLOAD_STATS_URL:-/metabase}
       - EMAIL_BACKEND=${EMAIL_BACKEND}
       - EMAIL_HOST=${EMAIL_HOST}
       - EMAIL_PORT=${EMAIL_PORT}
@@ -53,6 +54,7 @@ services:
       - EMAIL_HOST_USER=${EMAIL_HOST_USER:-automation}
       - EMAIL_HOST_PASSWORD=${EMAIL_HOST_PASSWORD}
       - DEFAULT_PLUGINS_SITE=${DEFAULT_PLUGINS_SITE:-https://plugins.qgis.org/}
+
     volumes:
       - ../qgis-app:/home/web/django_project
       - ./docker/uwsgi.conf:/uwsgi.conf

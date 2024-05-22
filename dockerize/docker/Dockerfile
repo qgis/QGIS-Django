@@ -16,7 +16,15 @@ RUN apt-get update && apt-get install -y \
     build-essential \
     libffi-dev gdal-bin\
     libjpeg-dev libpq-dev \
-    liblcms2-dev libblas-dev libatlas-base-dev
+    liblcms2-dev libblas-dev libatlas-base-dev \
+    libmaxminddb0 libmaxminddb-dev mmdb-bin
+
+# GeoIp mmdb
+RUN apt-get update && apt-get install -y curl && curl -LJO https://github.com/P3TERX/GeoLite.mmdb/raw/download/GeoLite2-City.mmdb && \
+    mkdir /var/opt/maxmind && \
+    mv GeoLite2-City.mmdb /var/opt/maxmind/GeoLite2-City.mmdb
+
+ENV GEOIP_PATH=/var/opt/maxmind/
 
 RUN rm -rf /uwsgi.conf
 ADD dockerize/docker/uwsgi.conf /uwsgi.conf
