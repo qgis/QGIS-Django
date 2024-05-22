@@ -943,6 +943,8 @@ class PluginVersionDownload(models.Model):
     download_date = models.DateField(
         default=timezone.now
     )
+    country_code = models.CharField(max_length=3, default='N/D')
+    country_name = models.CharField(max_length=100, default='N/D')
     download_count = models.IntegerField(
         default=0
     )
