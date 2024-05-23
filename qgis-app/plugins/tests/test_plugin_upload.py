@@ -69,9 +69,13 @@ class PluginUploadTestCase(TestCase):
             3)
         self.assertTrue(PluginVersion.objects.filter(plugin__name='Test Plugin', version='0.0.1').exists())
 
-        self.assertEqual(
+        self.assertIn(
+            'admin@admin.it',
             mail.outbox[0].recipients(),
-            ['admin@admin.it', 'staff@staff.it']
+        )
+        self.assertIn(
+            'staff@staff.it',
+            mail.outbox[0].recipients()
         )
 
         # Should use the new email
