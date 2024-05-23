@@ -165,11 +165,12 @@ DEFAULT_AUTO_FIELD = 'django.db.models.AutoField'
 # Sentry
 SENTRY_DSN = os.environ.get("SENTRY_DSN", "")
 
-import sentry_sdk
+if SENTRY_DSN and SENTRY_DSN != "":
+    import sentry_sdk
 
-sentry_sdk.init(
-    dsn=SENTRY_DSN,
-    # Set traces_sample_rate to 1.0 to capture 100%
-    # of transactions for performance monitoring.
-    traces_sample_rate=1.0,
-)
+    sentry_sdk.init(
+        dsn=SENTRY_DSN,
+        # Set traces_sample_rate to 1.0 to capture 100%
+        # of transactions for performance monitoring.
+        traces_sample_rate=1.0,
+    )
