@@ -50,17 +50,18 @@ jobs:
         with:
           node-version: 20
 
-      - name: Run docker-compose build
-        run: docker-compose build
+      - name: Generate the .env file
+        run: cp .env.template .env
+
 
       - name: Run the containers
         run: docker-compose up -d db devweb
-      
+    
 
       - name: Wait for the containers to start
         run: sleep 15 
 
-      - name: Run test
+      - name: Run Django tests
         run: |
           docker-compose exec -T devweb bash -c '
             set -e  # Exit immediately if any command fails
@@ -70,7 +71,6 @@ jobs:
             python manage.py migrate &&
             python manage.py test
           '
-
       - name: Start Django server
         run: |
             docker-compose exec -T devweb bash -c "python manage.py loaddata fixtures/*.json"

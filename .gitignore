@@ -43,6 +43,8 @@ static_media
 dockerize/static
 dockerize/media
 dockerize/logs
+dockerize/certbot-etc
+dockerize/webroot
 .editorconfig
 
 # test cache
@@ -54,3 +56,5 @@ qgis-app/whoosh_index/
 
 # playwright fixture
 !playwright/ci-test/tests/fixtures/qgis-logo.zip
+docker-compose.override.yml
+.env

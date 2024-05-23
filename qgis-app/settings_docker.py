@@ -1,3 +1,6 @@
+from celery.schedules import crontab
+
+from settings import *
 import ast
 import os
 
@@ -26,7 +29,7 @@ MEDIA_URL = "/media/"
 # Don't put anything in this directory yourself; store your static files
 # in apps' "static/" subdirectories and in STATICFILES_DIRS.
 # Example: "/var/www/example.com/static/"
-STATIC_ROOT = os.environ.get("STATIC_ROOT", "/home/web/static")
+STATIC_ROOT = os.environ.get("STATIC_ROOT", "/home/web/static/")
 
 # URL prefix for static files.
 # Example: "http://example.com/static/", "http://static.example.com/"
@@ -106,7 +109,7 @@ PAGINATION_DEFAULT_PAGINATION = 20
 PAGINATION_DEFAULT_PAGINATION_HUB = 30
 LOGIN_REDIRECT_URL = "/"
 SERVE_STATIC_MEDIA = DEBUG
-DEFAULT_PLUGINS_SITE = os.environ.get("DEFAULT_PLUGINS_SITE", "")
+DEFAULT_PLUGINS_SITE = os.environ.get("DEFAULT_PLUGINS_SITE", "https://plugins.qgis.org/")
 
 # See fig.yml file for postfix container definition
 #
@@ -131,6 +134,26 @@ REST_FRAMEWORK = {
     "TEST_REQUEST_DEFAULT_FORMAT": "json",
 }
 
+GEOIP_PATH='/var/opt/maxmind/'
+METABASE_DOWNLOAD_STATS_URL = os.environ.get(
+    "METABASE_DOWNLOAD_STATS_URL", 
+    "/metabase"
+)
+CELERY_RESULT_BACKEND = 'rpc://'
+CELERY_BROKER_URL = os.environ.get('BROKER_URL', 'amqp://rabbitmq:5672')
+CELERY_BEAT_SCHEDULE = {
+    'generate_plugins_xml': {
+        'task': 'plugins.tasks.generate_plugins_xml.generate_plugins_xml',
+        'schedule': crontab(minute='*/10'),  # Execute every 10 minutes.
+        'kwargs': {
+            'site': DEFAULT_PLUGINS_SITE
+        }
+    },
+    'update_feedjack': {
+        'task': 'plugins.tasks.update_feedjack.update_feedjack',
+        'schedule': crontab(minute='*/30'),  # Execute every 30 minutes.
+    }
+}
 # Set plugin token access and refresh validity to a very long duration
 SIMPLE_JWT = {
     'ACCESS_TOKEN_LIFETIME': timedelta(days=365*1000),
@@ -139,3 +162,6 @@ SIMPLE_JWT = {
 
 MATOMO_SITE_ID="1"
 MATOMO_URL="//matomo.qgis.org/"
+
+# Default primary key type
+DEFAULT_AUTO_FIELD = 'django.db.models.AutoField'

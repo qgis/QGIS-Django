@@ -43,6 +43,8 @@ $ make rebuild_index
 ```
 This command ensures that the search index accurately reflects the current state of the database, resolving the presence of 'None' in the search results. Automatic synchronization is currently managed in settings.py: `HAYSTACK_SIGNAL_PROCESSOR = "haystack.signals.RealtimeSignalProcessor"`.
 
+For more information about make commands, please see the full docs [here](./dockerize/README.md).
+
 ---
 
 ### Setup git-hooks and local linting
@@ -195,6 +197,8 @@ $ make dbrestore
 ---
 
 ## Deploy Update with Rancher
+
+**TO BE DEPRECATED**
 
 - Go to [https://rancher.qgis.org](https://rancher.qgis.org)
 - Click the home icon in the top left corner,  and choose the environment: `plugins.qgis.org`

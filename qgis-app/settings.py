@@ -253,7 +253,7 @@ RATINGS_VOTES_PER_IP = 10000
 
 DEBUG_TOOLBAR_CONFIG = {"INTERCEPT_REDIRECTS": False}
 
-THUMBNAIL_ENGINE = "sorl.thumbnail.engines.convert_engine.Engine"
+# THUMBNAIL_ENGINE = "sorl.thumbnail.engines.convert_engine.Engine"
 
 USER_MAP = {
     "project_name": "QGIS",
@@ -335,6 +335,7 @@ RESULT_BACKEND = BROKER_URL
 CELERY_BROKER_URL = BROKER_URL
 CELERY_RESULT_BACKEND = CELERY_BROKER_URL
 
+GEOIP_PATH='/var/opt/maxmind/'
 # Token access and refresh validity
 SIMPLE_JWT = {
     'ACCESS_TOKEN_LIFETIME': timedelta(days=15),

@@ -21,7 +21,7 @@ from django.urls import reverse
 from django.utils.timezone import now
 from django.utils.decorators import method_decorator
 from django.utils.encoding import DjangoUnicodeDecodeError
-from django.utils.translation import ugettext_lazy as _
+from django.utils.translation import gettext_lazy as _
 from django.views.decorators.cache import never_cache
 from django.views.decorators.csrf import ensure_csrf_cookie, csrf_exempt, csrf_protect
 from django.views.decorators.http import require_POST
@@ -34,6 +34,8 @@ from plugins.decorators import has_valid_token
 from plugins.forms import *
 from plugins.models import Plugin, PluginOutstandingToken, PluginVersion, PluginVersionDownload, vjust
 from plugins.validator import PLUGIN_REQUIRED_METADATA
+from django.contrib.gis.geoip2 import GeoIP2
+from plugins.utils import parse_remote_addr
 
 from rest_framework_simplejwt.token_blacklist.models import OutstandingToken
 from rest_framework_simplejwt.tokens import RefreshToken, api_settings
@@ -543,8 +545,10 @@ class PluginDetailView(DetailView):
                         "<strong>%s</strong> metadata is missing, this metadata entry is <strong>required</strong>. Please add <strong>%s</strong> to <code>metadata.txt</code>."
                     ) % (md, md)
                     messages.error(self.request, msg, fail_silently=True)
+        stats_url = f"{settings.METABASE_DOWNLOAD_STATS_URL}?package_name={plugin.package_name}#hide_parameters=package_name"
         context.update(
             {
+                "stats_url": stats_url,
                 "rating": plugin.rating.get_rating(),
                 "votes": plugin.rating.votes,
             }
@@ -1364,7 +1368,11 @@ def version_approve(request, package_name, version):
         return HttpResponseRedirect(version.get_absolute_url())
     version.approved = True
     version.save()
-    msg = _('The plugin version "%s" is now approved' % version)
+    msg = _(
+        "The plugin version '%s' is now approved. "
+        "Please note that there may be a delay of up to 15 minutes "
+        "between the approval of the plugin and its actual availability in the XML."
+    ) % version
     messages.success(request, msg, fail_silently=True)
     plugin_approve_notify(version.plugin, msg, request.user)
     try:
@@ -1519,8 +1527,22 @@ def version_download(request, package_name, version):
     plugin.downloads = plugin.downloads + 1
     plugin.save(keep_date=True)
 
+    remote_addr = parse_remote_addr(request)
+    g = GeoIP2()
+
+    if remote_addr:
+        try:
+            country_data = g.country(remote_addr)
+            country_code = country_data['country_code']
+            country_name = country_data['country_name']
+        except Exception as e:  # AddressNotFoundErrors:
+            country_code = 'N/D'
+            country_name = 'N/D'
+
     download_record, created = PluginVersionDownload.objects.get_or_create(
         plugin_version = version, 
+        country_code = country_code,
+        country_name = country_name,
         download_date = now().date(), 
         defaults = {'download_count': 1}
     )

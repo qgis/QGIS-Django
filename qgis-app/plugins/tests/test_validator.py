@@ -114,16 +114,13 @@ class TestValidatorMetadataPlugins(TestCase):
 
     @mock.patch("requests.get", side_effect=requests.exceptions.SSLError())
     def test_check_url_link_ssl_error(self, mock_request):
-        url = "http://example.com/"
-        self.assertIsNone(_check_url_link(url, "forbidden_url", "metadata attribute"))
+        urls = [{'url': "http://example.com/", 'forbidden_url': "forbidden_url", 'metadata_attr': "metadata attribute"}]
+        self.assertIsNone(_check_url_link(urls))
 
     @mock.patch("requests.get", side_effect=requests.exceptions.HTTPError())
     def test_check_url_link_does_not_exist(self, mock_request):
-        url = "http://example.com/"
-        self.assertRaises(
-            ValidationError,
-            _check_url_link(url, "forbidden_url", "metadata attribute"),
-        )
+        urls = [{'url': "http://example.com/", 'forbidden_url': "forbidden_url", 'metadata_attr': "metadata attribute"}]
+        self.assertIsNone(_check_url_link(urls))
 
 
 class TestValidatorForbiddenFileFolder(TestCase):
@@ -157,7 +154,10 @@ class TestValidatorForbiddenFileFolder(TestCase):
         mock_namelist.return_value = ["__MACOSX/"]
         with self.assertRaisesMessage(
             Exception,
-            ("For security reasons, zip file cannot contain " "'__MACOSX' directory"),
+            (
+                "For security reasons, zip file cannot contain <strong> '__MACOSX' </strong> directory. "
+                "However, there is one present at the root of the archive."
+             ),
         ):
             validator(self.package)
 
@@ -167,8 +167,20 @@ class TestValidatorForbiddenFileFolder(TestCase):
         with self.assertRaisesMessage(
             Exception,
             (
-                "For security reasons, zip file cannot contain "
-                "'__pycache__' directory"
+                "For security reasons, zip file cannot contain <strong> '__pycache__' </strong> directory. "
+                "However, there is one present at the root of the archive."
+            ),
+        ):
+            validator(self.package)
+
+    @mock.patch("zipfile.ZipFile.namelist")
+    def test_zipfile_with_pycache_in_children(self, mock_namelist):
+        mock_namelist.return_value = ["path/to/__pycache__/"]
+        with self.assertRaisesMessage(
+            Exception,
+            (
+                "For security reasons, zip file cannot contain <strong> '__pycache__' </strong> directory. "
+                "However, it has been found at <strong> 'path/to/__pycache__/' </strong>."
             ),
         ):
             validator(self.package)
@@ -178,7 +190,10 @@ class TestValidatorForbiddenFileFolder(TestCase):
         mock_namelist.return_value = [".git"]
         with self.assertRaisesMessage(
             Exception,
-            ("For security reasons, zip file cannot contain " "'.git' directory"),
+            (
+                "For security reasons, zip file cannot contain <strong> '.git' </strong> directory. "
+                "However, there is one present at the root of the archive."
+            ),
         ):
             validator(self.package)
 
@@ -191,7 +206,8 @@ class TestValidatorForbiddenFileFolder(TestCase):
         exception = cm.exception
         self.assertNotEqual(
             exception.message,
-            "For security reasons, zip file cannot contain '.git' directory",
+            "For security reasons, zip file cannot contain <strong> '.git' </strong> directory. ",
+            "However, there is one present at the root of the archive."
         )
 
 

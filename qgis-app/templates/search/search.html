@@ -46,7 +46,7 @@
         </div>
 
         {% if query %}
-            <h3>Search results</h3>
+            <h3>Search results for "{{query}}" ({{paginator.count}} items found)</h3>
 
             {% for result in page.object_list %}
                 <p class="search-item">
@@ -58,9 +58,27 @@
 
             {% if page.has_previous or page.has_next %}
                 <div class="pagination">
-                    {% if page.has_previous %}<a href="?q={{ query }}&amp;page={{ page.previous_page_number }}">{% endif %}&laquo; Previous{% if page.has_previous %}</a>{% endif %}
+                    {% if page.has_previous %}
+                        <a href="?q={{ query }}&amp;page=1">
+                    {% endif %}&laquo; First
+                    {% if page.has_previous %}</a>{% endif %}
                     |
-                    {% if page.has_next %}<a href="?q={{ query }}&amp;page={{ page.next_page_number }}">{% endif %}Next &raquo;{% if page.has_next %}</a>{% endif %}
+                    {% if page.has_previous %}
+                        <a href="?q={{ query }}&amp;page={{ page.previous_page_number }}">
+                    {% endif %}Previous
+                    {% if page.has_previous %}</a>{% endif %}
+                    |
+                    Page {{ page.number }} of {{ paginator.num_pages }}
+                    |
+                    {% if page.has_next %}
+                        <a href="?q={{ query }}&amp;page={{ page.next_page_number }}">
+                    {% endif %}Next
+                    {% if page.has_next %}</a>{% endif %}
+                    |
+                    {% if page.has_next %}
+                        <a href="?q={{ query }}&amp;page={{ paginator.num_pages }}">
+                    {% endif %}Last &raquo;
+                    {% if page.has_next %}</a>{% endif %}
                 </div>
             {% endif %}
         {% else %}

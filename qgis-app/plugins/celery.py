@@ -3,6 +3,10 @@ from __future__ import absolute_import
 import os
 
 from celery import Celery
+import logging
+
+logger = logging.getLogger('plugins')
+
 
 # set the default Django settings module for the 'celery' program.
 os.environ.setdefault("DJANGO_SETTINGS_MODULE", "settings_docker")
