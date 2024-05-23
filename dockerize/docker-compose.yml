@@ -46,6 +46,7 @@ services:
       - ENABLE_LDAP=${ENABLE_LDAP:-False}
       - RABBITMQ_HOST=${RABBITMQ_HOST:-rabbitmq}
       - BROKER_URL=amqp://rabbitmq:5672
+      - METABASE_DOWNLOAD_STATS_URL=${METABASE_DOWNLOAD_STATS_URL:-/metabase}
       - EMAIL_BACKEND=${EMAIL_BACKEND}
       - EMAIL_HOST=${EMAIL_HOST}
       - EMAIL_PORT=${EMAIL_PORT}

@@ -335,6 +335,7 @@ RESULT_BACKEND = BROKER_URL
 CELERY_BROKER_URL = BROKER_URL
 CELERY_RESULT_BACKEND = CELERY_BROKER_URL
 
+GEOIP_PATH='/var/opt/maxmind/'
 # Token access and refresh validity
 SIMPLE_JWT = {
     'ACCESS_TOKEN_LIFETIME': timedelta(days=15),

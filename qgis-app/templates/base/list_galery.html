@@ -28,12 +28,12 @@
         display: flex;
         align-items: center;
         justify-content: center;
-        height: 420px;
+        height: 380px;
         background-color: white;
     }
     img.image-demo {
         height: auto;
-        max-height: 100%;
+        max-height: 380px;
         width: auto;
         max-width: 100%;
     }
@@ -78,6 +78,7 @@
             <option value="creator">Creator</option>
             <option value="download_count">Number of downloads</option>
             <option value="upload_date" selected>Upload date</option>
+            <option value="modified_date" selected>Modified date</option>
             <option value="name">{{ resource_name }} name</option>
             {% if object_list.first.style_type %}<option value="type">Style type</option>{% endif %}
           </select>
@@ -106,6 +107,7 @@
                  </h4>
                  <h5>
                    {{ object.get_creator_name|title }} | {{ object.upload_date|date:"d F Y" }} | {{ object.download_count }} downloads
+                   <p><em>Modified Date: {{ object.modified_date|date:"d F Y" }}</em></p>
                  </h5>
                  <p>
 

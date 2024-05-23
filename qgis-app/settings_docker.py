@@ -134,6 +134,11 @@ REST_FRAMEWORK = {
     "TEST_REQUEST_DEFAULT_FORMAT": "json",
 }
 
+GEOIP_PATH='/var/opt/maxmind/'
+METABASE_DOWNLOAD_STATS_URL = os.environ.get(
+    "METABASE_DOWNLOAD_STATS_URL", 
+    "/metabase"
+)
 CELERY_RESULT_BACKEND = 'rpc://'
 CELERY_BROKER_URL = os.environ.get('BROKER_URL', 'amqp://rabbitmq:5672')
 CELERY_BEAT_SCHEDULE = {

@@ -33,7 +33,7 @@ docker and rancher.
 
 ## Token based authentication
 
-Users have the ability to generate a Simple JWT token by providing their credentials, which can then be utilized to access endpoints requiring authentication.
+Users can generate a Simple JWT token by providing their credentials, which can then be utilized to access endpoints requiring authentication.
 Users can create specific tokens for a plugin at `https://plugins.qgis.org/<package_name>/tokens/`.
 
 
