@@ -126,7 +126,7 @@ class WavefrontDownloadView(ResourceMixin, ResourceBaseDownload):
                 return TemplateResponse(request, self.template_name, context)
         else:
             object.increase_download_counter()
-            object.save()
+            object.save(update_fields=['download_count'])
 
         # zip the 3d files folder and license.txt
         path, filename = os.path.split(object.file.file.name)

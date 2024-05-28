@@ -139,7 +139,7 @@ class ResourceAPIDownload(APIView):
             raise Http404
 
         object.increase_download_counter()
-        object.save()
+        object.save(update_fields=['download_count'])
         # zip the resource
         zipfile = zip_a_file_if_not_zipfile(object.file.file.name)
 

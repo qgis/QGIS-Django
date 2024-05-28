@@ -127,7 +127,7 @@ class LayerDefinitionDownloadView(ResourceMixin, ResourceBaseDownload):
                 return TemplateResponse(request, self.template_name, context)
         else:
             object.increase_download_counter()
-            object.save()
+            object.save(update_fields=['download_count'])
 
         # zip the resource and license.txt
         zipfile = zipped_with_license(
