@@ -158,7 +158,7 @@ def validator(package):
 
         * size <= PLUGIN_MAX_UPLOAD_SIZE
         * zip contains __init__.py in first level dir
-        * Check for LICENCE file
+        * Check for LICENSE file
         * mandatory metadata: ('name', 'description', 'version', 'qgisMinimumVersion', 'author', 'email')
         * package_name regexp: [A-Za-z][A-Za-z0-9-_]+
         * author regexp: [^/]+
@@ -350,12 +350,15 @@ def validator(package):
     _check_url_link(urls_to_check)
 
 
-    # Checks for LICENCE file presence
-    # This should be just a warning for now (for new version upload) 
-    # according to https://github.com/qgis/QGIS-Django/issues/38#issuecomment-1824010198
+    # Checks for LICENSE file presence
+    # Making it mandatory as of 03 June 2024 
+    # according to https://github.com/qgis/QGIS-Enhancement-Proposals/issues/279
     licensename = package_name + "/LICENSE"
     if licensename not in namelist:
-        metadata.append(("license_recommended", "Yes"))
+        raise ValidationError(_(
+            "Cannot find LICENSE in the plugin package. "
+            "This file is required, please consider adding it to the plugin package.")
+        )
 
     zip.close()
     del zip

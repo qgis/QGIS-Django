@@ -221,33 +221,18 @@ class TestLicenseValidator(TestCase):
     def tearDown(self):
         self.plugin_package.close()
 
-    # License file is just recommended for now
-    # def test_new_plugin_without_license(self):
-    #     self.assertRaises(
-    #         ValidationError,
-    #         validator,
-    #         InMemoryUploadedFile(
-    #             self.plugin_package,
-    #             field_name="tempfile",
-    #             name="testfile.zip",
-    #             content_type="application/zip",
-    #             size=39889,
-    #             charset="utf8",
-    #         ),
-    #         plugin_is_new=True
-    #     )
-
-    def test_plugin_without_license(self):
-        self.assertTrue(
-            validator(
-                InMemoryUploadedFile(
-                    self.plugin_package,
-                    field_name="tempfile",
-                    name="testfile.zip",
-                    content_type="application/zip",
-                    size=39889,
-                    charset="utf8",
-                )
+    # License file is required
+    def test_new_plugin_without_license(self):
+        self.assertRaises(
+            ValidationError,
+            validator,
+            InMemoryUploadedFile(
+                self.plugin_package,
+                field_name="tempfile",
+                name="testfile.zip",
+                content_type="application/zip",
+                size=39889,
+                charset="utf8",
             )
         )
 
