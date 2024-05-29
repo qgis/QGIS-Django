@@ -14,7 +14,7 @@ test('authentication-setup', async ({ page }) => {
 
   await expect(page.getByRole('link', { name: 'Login' })).toBeVisible();
 
-  await page.getByRole('link', { name: 'Login' }).click({ force: true });
+  await page.getByRole('link', { name: 'Login' }).click();
 
   await page.waitForURL('**/accounts/login/');
 
