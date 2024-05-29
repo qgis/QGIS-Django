@@ -951,7 +951,9 @@ class PluginVersionDownload(models.Model):
     class Meta:
         unique_together = (
             'plugin_version',
-            'download_date'
+            'download_date',
+            'country_code',
+            'country_name'
         )
 
 
