@@ -27,10 +27,7 @@ services:
       internal:
 
   uwsgi: &uwsgi-common
-    build:
-      context: ${PWD}/../
-      dockerfile: dockerize/docker/Dockerfile
-      target: prod
+    image: ${UWSGI_DOCKER_IMAGE}
     hostname: uwsgi
     expose:
       - "8080"
