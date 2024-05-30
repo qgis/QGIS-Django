@@ -486,16 +486,6 @@ def plugin_upload(request):
                         fail_silently=True,
                     )
 
-                if form.cleaned_data.get("license_recommended"):
-                    messages.warning(
-                        request,
-                        _(
-                            "Please note that as of 1 June 2024, providing a license file will be mandatory for any new updates to existing plugins and for any new plugins published."
-                        ),
-                        fail_silently=True,
-                    )
-                    del form.cleaned_data["license_recommended"]
-
                 if form.cleaned_data.get("multiple_parent_folders"):
                     parent_folders = form.cleaned_data.get("multiple_parent_folders")
                     messages.warning(
@@ -1207,16 +1197,6 @@ def _version_create(request, plugin, version, is_trusted=False):
                 if form.cleaned_data.get("icon_file"):
                     form.cleaned_data["icon"] = form.cleaned_data.get("icon_file")
 
-                if form.cleaned_data.get("license_recommended"):
-                    messages.warning(
-                        request,
-                        _(
-                            "Please note that as of 1 June 2024, providing a license file will be mandatory for any new updates to existing plugins and for any new plugins published."
-                        ),
-                        fail_silently=True,
-                    )
-                    del form.cleaned_data["license_recommended"]
-
                 if form.cleaned_data.get("multiple_parent_folders"):
                     parent_folders = form.cleaned_data.get("multiple_parent_folders")
                     messages.warning(
@@ -1291,16 +1271,6 @@ def _version_update(request, plugin, version, is_trusted=False):
                 _main_plugin_update(request, new_object.plugin, form)
                 msg = _("The Plugin Version has been successfully updated.")
                 messages.success(request, msg, fail_silently=True)
-
-                if form.cleaned_data.get("license_recommended"):
-                    messages.warning(
-                        request,
-                        _(
-                            "Please note that as of 1 June 2024, providing a license file will be mandatory for any new updates to existing plugins and for any new plugins published."
-                        ),
-                        fail_silently=True,
-                    )
-                    del form.cleaned_data["license_recommended"]
 
                 if form.cleaned_data.get("multiple_parent_folders"):
                     parent_folders = form.cleaned_data.get("multiple_parent_folders")
