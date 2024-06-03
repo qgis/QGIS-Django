@@ -152,6 +152,10 @@ CELERY_BEAT_SCHEDULE = {
     'update_feedjack': {
         'task': 'plugins.tasks.update_feedjack.update_feedjack',
         'schedule': crontab(minute='*/30'),  # Execute every 30 minutes.
+    },
+    'update_qgis_versions': {
+        'task': 'plugins.tasks.update_qgis_versions.update_qgis_versions',
+        'schedule': crontab(minute='*/30'),  # Execute every 30 minutes.
     }
 }
 # Set plugin token access and refresh validity to a very long duration
