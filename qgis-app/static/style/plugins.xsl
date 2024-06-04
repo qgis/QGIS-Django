@@ -76,7 +76,7 @@ td.menu_panel {
 
 </head>
 <body>
-<img src="https://plugins.qgis.org/static/static/style/new/logo.png"/>
+<img src="../static/style/new/logo.png"/>
 <h2>QGIS Python Plugins</h2>
 <p>
 NOTE: The preferred way to install QGIS plugins is via the <a href="https://docs.qgis.org/testing/en/docs/user_manual/plugins/plugins.html">Plugin Manager</a> in QGIS itself!
