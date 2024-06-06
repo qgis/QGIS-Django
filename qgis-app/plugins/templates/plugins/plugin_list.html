@@ -80,7 +80,7 @@
             {% for object in object_list %}
             <tr class="pmain {% if object.deprecated %} error deprecated{% endif %}" id="pmain{{object.pk}}">
                 <td><a title="{% if object.deprecated %} [DEPRECATED] {% endif %}{% trans "Click here for plugin details" %}" href="{% url "plugin_detail" object.package_name %}">
-                {% if object.icon and object.icon.file %}
+                {% if object.icon and object.icon.file and object.icon|is_image_valid %}
                     {% with image_extension=object.icon.name|file_extension %}
                         {% if image_extension == 'svg' %}
                             <img class="pull-right plugin-icon" alt="{% trans "Plugin icon" %}" src="{{ object.icon.url }}" width="24" height="24" />

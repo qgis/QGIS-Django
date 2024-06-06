@@ -1,4 +1,5 @@
 from django import template
+from PIL import Image, UnidentifiedImageError
 
 register = template.Library()
 
@@ -28,3 +29,14 @@ def plugin_title(context):
 @register.filter
 def file_extension(value):
     return value.split('.')[-1].lower()
+
+@register.filter
+def is_image_valid(image):
+    if not image:
+        return False
+    try:
+        img = Image.open(image.path)
+        img.verify()
+        return True
+    except (FileNotFoundError, UnidentifiedImageError):
+        return False
