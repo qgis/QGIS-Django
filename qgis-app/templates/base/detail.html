@@ -19,9 +19,11 @@
         <div class="row">
             <div class="span4 mb-5 view-resource">
                 <div class="style-polaroid">
+                  {% if object_detail.thumbnail_image and object_detail.thumbnail_image.file %}
                     {% thumbnail object_detail.thumbnail_image "420x420" format="PNG" as im %}
                     <img class="image-resource" alt="{% trans "image" %}" src="{{ im.url }}" width="{{ im.x }}" height="{{ im.y }}" />
                     {% endthumbnail %}
+                  {% endif %}
                     {% if is_3d_model %}
                       {% include "base/includes/wavefront/detail_3dviewer.html" %}
                     {% else %}
@@ -34,7 +36,11 @@
                 <dt>{{ resource_name }} File</dt>
                 <dd>
                   <div>
-                    <a class="btn btn-primary btn-mini" href="{% url url_download object_detail.id %}" title="{% trans "Download" %}"><i class="icon-download-alt"></i> Download</a>
+                        {% if object_detail.file and object_detail.file.file %}
+                          <a class="btn btn-primary btn-mini" href="{% url url_download object_detail.id %}" title="{% trans "Download" %}"><i class="icon-download-alt"></i> Download</a>
+                        {% else %}
+                          <em>File missing: The resource file couldn't be located.</em>
+                        {% endif %}
                   </div>
                 </dd>
               </dl>

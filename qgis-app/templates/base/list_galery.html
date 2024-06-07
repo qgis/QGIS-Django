@@ -100,7 +100,14 @@
                   </a>
                 </div>
                <div class="image-info">
-               <a class="btn btn-mini btn-download pull-right" href="{% url url_download object.id %}" title="{% trans "Download" %}"><i class="icon-download-alt"></i></a>
+                {% if object.file and object.file.file %}
+                  <a 
+                  class="btn btn-mini btn-download pull-right" 
+                  href="{% url url_download object.id %}" 
+                  title="{% trans "Download" %}">
+                    <i class="icon-download-alt"></i>
+                </a>
+                {% endif %}
                <a href="{% url url_detail pk=object.id %}">
                  <h4>
                    {{ object.name}}
