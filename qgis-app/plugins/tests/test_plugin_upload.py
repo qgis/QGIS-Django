@@ -83,5 +83,38 @@ class PluginUploadTestCase(TestCase):
             mail.outbox[0].from_email,
             settings.EMAIL_HOST_USER
         )
+
+    @patch("plugins.tasks.generate_plugins_xml.delay", new=do_nothing)
+    @patch("plugins.validator._check_url_link", new=do_nothing)
+    def test_plugin_qt6_upload(self):
+        # Log in the test user
+        self.client.login(username='testuser', password='testpassword')
+
+        valid_plugin = os.path.join(TESTFILE_DIR, "valid_plugin_qt6.zip_")
+        with open(valid_plugin, "rb") as file:
+            uploaded_file = SimpleUploadedFile(
+                "valid_plugin_qt6.zip_", file.read(),
+                content_type="application/zip")
+
+        # Test POST request with valid form data
+        response = self.client.post(self.url, {
+            'package': uploaded_file,
+        })
+
+        self.assertEqual(response.status_code, 302)
+        self.assertTrue(Plugin.objects.filter(name='Test Plugin').exists())
+        self.assertEqual(
+            Plugin.objects.get(name='Test Plugin').tags.filter(
+                name__in=['python', 'example', 'test']).count(),
+            3)
+        self.assertTrue(
+            PluginVersion.objects.filter(
+                plugin__name='Test Plugin', 
+                version='0.0.1',
+                min_qt_version=6,
+                max_qt_version=6,
+            ).exists()
+        )
+
     def tearDown(self):
         self.client.logout()
