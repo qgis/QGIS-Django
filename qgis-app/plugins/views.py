@@ -956,7 +956,9 @@ class UserDetailsPluginsList(PluginsList):
 
 class TagsPluginsList(PluginsList):
     def get_filtered_queryset(self, qs):
-        return qs.filter(tagged_items__tag__slug=unquote(self.kwargs["tags"]))
+        response = qs.filter(tagged_items__tag__slug=unquote(self.kwargs["tags"]))
+        print(response, "==========")
+        return response
 
     def get_context_data(self, **kwargs):
         context = super(TagsPluginsList, self).get_context_data(**kwargs)

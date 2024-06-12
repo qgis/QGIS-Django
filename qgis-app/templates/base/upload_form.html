@@ -1,4 +1,74 @@
 {% extends "base/base.html" %}{% load i18n static %}
+
+{% block extrajs %}
+{{ block.super }}
+<script type="text/javascript">
+    // Puts the included jQuery into our own namespace
+    var django = {
+        "jQuery": jQuery.noConflict(true)
+    };
+
+    (function ($) {
+        var tags_as_string;
+        $(document).ready(function (){
+            tags_as_string = $('#id_tags').val();
+            $('#id_tags').hide();
+            $('#id_tags').before('<input type="text" id="id_tags__tagautosuggest" value="" name="tags" autocomplete="off" class="as-input vTextField"><br />');
+            $("#id_tags__tagautosuggest").val(tags_as_string);
+            $("#id_tags__tagautosuggest").autoSuggest("/taggit_autosuggest/list/", {
+                asHtmlID: "id_tags__tagautosuggest",
+                startText: "Enter Tag Here",
+                emptyText: "Not found (press TAB to add)",
+                limitText: "No More Selections Are Allowed",
+                preFill: tags_as_string,
+                queryParam: 'q',
+                retrieveLimit: 100,
+                minChars: 1,
+                neverSubmit: true
+            });
+
+            $('.as-selections').addClass('vTextField');
+            $('ul.as-selections li.as-original input').addClass('vTextField');
+
+            $('#id_tags').parents().find('form').submit(function (){
+                tags_as_string = $("#as-values-id_tags__tagautosuggest").val();
+                $("#id_tags__tagautosuggest").remove();
+                $("#id_tags").val(tags_as_string);
+            });
+
+        });
+    })(django.jQuery);
+</script>
+<script src="{% static "jquery-autosuggest/js/jquery.autoSuggest.minified.js" %}" type="text/javascript"></script>
+<script src="{% static "js/chosen.jquery.min.js" %}" type="text/javascript"></script>
+
+{% endblock %}
+
+{% block extracss %}
+<link rel="stylesheet" media="all" type="text/css" href="{% static "jquery-autosuggest/css/autoSuggest.css" %}">
+{{ block.super }}
+<style type="text/css">
+/* for autocomplete */
+.vTextField {
+    width: 20em;
+}
+
+ul.vTextField {
+    padding-bottom:0;
+}
+
+ul.as-list {
+    margin: 0 0 0 0.5em !important;
+    border: solid 1px #ddd !important;
+}
+
+#id_tags__tagautosuggest {
+    height: 16px !important;
+    margin-top: 1em;
+}
+</style>
+
+{% endblock %}
 {% block content %}
     <h2>{% trans "Upload" %} {{ resource_name }}</h2>
 
