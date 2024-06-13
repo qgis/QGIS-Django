@@ -10,6 +10,8 @@ from freezegun import freeze_time
 from plugins.models import Plugin, PluginVersion, PluginVersionFeedback
 from plugins.views import version_feedback_notify
 from django.conf import settings
+from django.utils.dateformat import format
+import json
 
 class SetupMixin:
     fixtures = ["fixtures/auth.json", "fixtures/simplemenu.json"]
@@ -399,3 +401,43 @@ class TestUpdateVersionFeedback(SetupMixin, TestCase):
         feedback = self.version_1.feedback.first()
         self.assertFalse(feedback.is_completed)
         self.assertIsNone(feedback.completed_on)
+
+class VersionFeedbackEditViewTests(SetupMixin, TestCase):
+
+    def setUp(self):
+        super().setUp()
+
+    def test_version_feedback_edit_not_logged_in(self):
+        url = reverse('version_feedback_edit', args=[self.plugin_1.package_name, self.version_1.version, self.feedback_1.pk])
+        response = self.client.post(url, {'task': 'updated task'})
+        self.assertEqual(response.status_code, 302)
+        self.assertIn('/accounts/login/', response.url)
+
+    def test_version_feedback_edit_logged_in_no_permission(self):
+        self.user2 = User.objects.create_user(username='otheruser', password='password')
+        self.client.login(username='otheruser', password='password')
+        url = reverse('version_feedback_edit', args=[self.plugin_1.package_name, self.version_1.version, self.feedback_1.pk])
+        response = self.client.post(url, {'task': 'updated task'})
+        self.assertEqual(response.status_code, 401)
+        self.assertJSONEqual(response.content, {'success': False})
+
+    def test_version_feedback_edit_logged_in_with_permission(self):
+        self.client.force_login(user=self.creator)
+        url = reverse('version_feedback_edit', args=[self.plugin_1.package_name, self.version_1.version, self.feedback_1.pk])
+        response = self.client.post(url, {'task': 'updated task'})
+        self.assertEqual(response.status_code, 201)
+        self.feedback_1.refresh_from_db()
+        self.assertEqual(self.feedback_1.task, 'updated task')
+        self.assertIn('modified_on', response.json())
+
+        response_modified_on = response.json()['modified_on']
+        expected_modified_on = self.feedback_1.modified_on.isoformat()
+        self.assertEqual(str(response_modified_on)[:20], expected_modified_on[:20])
+
+
+    def test_version_feedback_edit_invalid_feedback(self):
+        self.client.force_login(user=self.creator)
+        invalid_feedback_id = self.feedback_1.pk + 1
+        url = reverse('version_feedback_edit', args=[self.plugin_1.package_name, self.version_1.version, invalid_feedback_id])
+        response = self.client.post(url, {'task': 'updated task'})
+        self.assertEqual(response.status_code, 404)
