@@ -9,6 +9,7 @@ from layerdefinitions.views import (
     LayerDefinitionReviewView,
     LayerDefinitionUnapprovedListView,
     LayerDefinitionUpdateView,
+    LayerDefinitionByTagView,
     layerdefinition_nav_content,
 )
 
@@ -49,6 +50,7 @@ urlpatterns = [
         LayerDefinitionRequireActionListView.as_view(),
         name="layerdefinition_require_action",
     ),
+    path("tags/<layerdefinition_tag>/", LayerDefinitionByTagView.as_view(), name="layerdefinition_tag"),
     # JSON
     path(
         "sidebarnav/", layerdefinition_nav_content, name="layerdefinition_nav_content"

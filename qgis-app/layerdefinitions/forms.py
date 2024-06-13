@@ -2,9 +2,11 @@ from base.forms.processing_forms import ResourceBaseCleanFileForm
 from django import forms
 from layerdefinitions.file_handler import validator
 from layerdefinitions.models import LayerDefinition
+from taggit.forms import TagField
 
 
 class ResourceFormMixin(forms.ModelForm):
+    tags = TagField(required=False)
     class Meta:
         model = LayerDefinition
         fields = [
@@ -14,6 +16,7 @@ class ResourceFormMixin(forms.ModelForm):
             "url_metadata",
             "description",
             "license",
+            "tags"
         ]
 
 
