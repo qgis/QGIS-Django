@@ -9,6 +9,7 @@ from wavefronts.views import (
     WavefrontReviewView,
     WavefrontUnapprovedListView,
     WavefrontUpdateView,
+    WavefrontByTagView,
     wavefront_nav_content,
 )
 
@@ -33,6 +34,7 @@ urlpatterns = [
         WavefrontRequireActionListView.as_view(),
         name="wavefront_require_action",
     ),
+    path("tags/<wavefront_tag>/", WavefrontByTagView.as_view(), name="wavefront_tag"),
     # JSON
     path("sidebarnav/", wavefront_nav_content, name="wavefront_nav_content"),
 ]

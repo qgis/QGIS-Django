@@ -24,6 +24,8 @@ from django.utils.translation import gettext_lazy as _
 from wavefronts.forms import UpdateForm, UploadForm
 from wavefronts.models import Review, Wavefront
 from wavefronts.utilities import zipped_all_with_license
+from django.utils.translation import gettext_lazy as _
+from urllib.parse import unquote
 
 
 class ResourceMixin:
@@ -51,6 +53,8 @@ class WavefrontCreateView(ResourceMixin, ResourceBaseCreateView):
         self.obj.creator = self.request.user
         self.obj.file.name = form.file_path
         self.obj.save()
+        # Without this next line the tags won't be saved.
+        form.save_m2m()
         resource_notify(self.obj, resource_type=self.resource_name)
         msg = _(self.success_message)
         messages.success(self.request, msg, "success", fail_silently=True)
@@ -84,6 +88,8 @@ class WavefrontUpdateView(ResourceMixin, ResourceBaseUpdateView):
         obj.require_action = False
         obj.approved = False
         obj.save()
+        # Without this next line the tags won't be saved.
+        form.save_m2m()
         resource_notify(obj, created=False, resource_type=self.resource_name)
         msg = _("The %s has been successfully updated." % self.resource_name)
         messages.success(self.request, msg, "success", fail_silently=True)
@@ -140,6 +146,26 @@ class WavefrontDownloadView(ResourceMixin, ResourceBaseDownload):
         )
         return response
 
+class WavefrontByTagView(WavefrontListView):
+    """Display WavefrontListView filtered on wavefront tag"""
+
+    def get_filtered_queryset(self, qs):
+        response = qs.filter(tagged_items__tag__slug=unquote(self.kwargs["wavefront_tag"]))
+        return response
+
+    def get_queryset(self):
+        qs = super().get_queryset()
+        return self.get_filtered_queryset(qs)
+
+    def get_context_data(self, **kwargs):
+        context = super(WavefrontByTagView, self).get_context_data(**kwargs)
+        context.update(
+            {
+                "title": _("Wavefront tagged with: %s") % unquote(self.kwargs["wavefront_tag"]),
+                "page_title": _("Tag: %s") % unquote(self.kwargs["wavefront_tag"])
+            }
+        )
+        return context
 
 def wavefront_nav_content(request):
     model = ResourceMixin.model
