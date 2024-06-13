@@ -2,6 +2,7 @@
 import copy
 import logging
 import os
+import datetime
 
 from django.conf import settings
 from django.contrib import messages
@@ -1457,6 +1458,29 @@ def version_feedback_update(request, package_name, version):
         feedback.save()
     return JsonResponse({"success": True}, status=201)
 
+
+@login_required
+@require_POST
+def version_feedback_edit(request, package_name, version, feedback):
+    feedback = get_object_or_404(
+        PluginVersionFeedback,
+        version__plugin__package_name=package_name,
+        version__version=version,
+        pk=feedback
+    )
+    plugin = feedback.version.plugin
+
+    has_update_permission: bool = (
+        request.user in plugin.editors
+        or check_plugin_version_approval_rights(request.user, plugin)
+    )
+    if not has_update_permission:
+        return JsonResponse({"success": False}, status=401)
+    task = request.POST.get('task')
+    feedback.task = str(task)
+    feedback.modified_on = datetime.datetime.now()
+    feedback.save()
+    return JsonResponse({"success": True, "modified_on": feedback.modified_on}, status=201)
 
 @login_required
 @require_POST

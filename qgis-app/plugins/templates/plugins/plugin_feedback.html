@@ -18,17 +18,32 @@
     <div class="feedback-list">
         <p>Please tick the checkbox when the task is completed and click the "Update" button to update status.</p>
         {% for feedback in feedbacks %}
-        <div class=" previous-feedback {% if feedback.reviewer == request.user %}with-box{% endif %}" data-feedback-id="{{ feedback.id }}">
-            <input type="checkbox" class="statusCheckbox pull-left" name="statusCheckbox" data-feedback-id="{{ feedback.id }}" {% if feedback.is_completed %}checked disabled{% endif %}>
-            <label class="feedback">
-                {{ feedback.task }}
-                <span class="feedback-info"> &mdash;{% if feedback.reviewer.first_name %}{{ feedback.reviewer.first_name }} {{ feedback.reviewer.last_name }}{% else %}{{ feedback.reviewer.username }}{% endif %}
-                    wrote {{ feedback.created_on|timesince }} ago
-                </span>
-            </label>
-            {% if feedback.reviewer == request.user %}
-            <button type="button" class="btn btn-danger btn-mini deleteButton pull-right" data-feedback-id="{{ feedback.id }}"><i class="icon-remove"></i></button>
-            {% endif %}
+        <div class="previous-feedback {% if feedback.reviewer == request.user %}with-box{% endif %}" data-feedback-id="{{ feedback.id }}">
+            <span style="font-weight: bolder;"> 
+                {% if feedback.reviewer.first_name %}
+                    {{ feedback.reviewer.first_name }} {{ feedback.reviewer.last_name }}
+                {% else %}
+                    {{ feedback.reviewer.username }}
+                {% endif %}
+            </span>
+            <span class="feedback-info">wrote {{ feedback.created_on|timesince }} ago</span>
+            <div>
+                <input type="checkbox" class="statusCheckbox pull-left" name="statusCheckbox" data-feedback-id="{{ feedback.id }}" {% if feedback.is_completed %}checked disabled{% endif %}>
+                <label class="feedback">
+                    <span id="feedbackTask">{{ feedback.task }}</span>
+                    <span id="editedOn" class="feedback-info">
+                        {% if feedback.modified_on %}
+                            &mdash; (edited) {{ feedback.modified_on|timesince }} ago
+                        {% endif %}
+                    </span>
+                </label>
+                {% if feedback.reviewer == request.user %}
+                <div class="pull-right">
+                    <button type="button" id="editButton" class="btn btn-primary btn-mini" data-feedback-id="{{ feedback.id }}"><i class="icon-pencil"></i></button>
+                    <button type="button" class="btn btn-danger btn-mini deleteButton" data-feedback-id="{{ feedback.id }}"><i class="icon-remove"></i></button>
+                </div>
+                {% endif %}
+            </div>
         </div>
         {% endfor %}
         {% if feedbacks %}
@@ -151,7 +166,7 @@
             if (confirm(msg)) {
                 $.ajax({
                     type: 'POST',
-                    url: url + feedbackId + '/',
+                    url: url + feedbackId + '/delete/',
                     data: formData,
                     success: function (response) {
                         if (response.success) {
@@ -165,6 +180,56 @@
                 });
             }
         }
+        $(document).on('click', '#editButton', function() {
+            var $feedbackDiv = $(this).closest('.previous-feedback');
+            var feedbackId = $feedbackDiv.data('feedback-id');
+            var feedbackTask = $feedbackDiv.find('#feedbackTask').text();
+
+            // Store the original content
+            var originalContent = $feedbackDiv.html();
+
+            var inputForm = `
+                <input type="text" class="form-control" id="editFeedbackInput" value="${feedbackTask}" style="width: 100%;margin-bottom: 0 !important;">
+                <div style="display: flex;gap: 10px;">
+                    <button type="button" class="btn btn-success btn-mini" id="saveButton" data-feedback-id="${feedbackId}">Save</button>
+                    <button type="button" class="btn btn-secondary btn-mini" id="cancelButton" data-feedback-id="${feedbackId}">Cancel</button>
+                </div>
+            `;
+
+            $feedbackDiv.html(inputForm);
+            $feedbackDiv.attr("style", "display: flex;justify-content: space-between;align-items: center;gap: 10px;");
+
+            $(document).on('click', '#cancelButton', function() {
+                // Restore the original content
+                $feedbackDiv.html(originalContent);
+                $feedbackDiv.attr("style", "");
+            });
+
+            $(document).on('click', '#saveButton', function() {
+                var newFeedbackTask = $feedbackDiv.find('#editFeedbackInput').val();
+
+                $.ajax({
+                    url: url + feedbackId + '/edit/',
+                    method: 'POST',
+                    data: {
+                        'csrfmiddlewaretoken': '{{ csrf_token }}',
+                        'task': newFeedbackTask
+                    },
+                    success: function(response) {
+                        if (response.success) {
+                            $feedbackDiv.html(originalContent);
+                            $feedbackDiv.attr("style", "");
+                            $feedbackDiv.find('#feedbackTask').html(newFeedbackTask);
+                            $feedbackDiv.find('#editedOn').html(
+                                `&mdash; (edited)`
+                            );
+                        } else {
+                            alert('Failed to update feedback.');
+                        }
+                    }
+                });
+            });
+        });
     })
     </script>
 {% endblock %}

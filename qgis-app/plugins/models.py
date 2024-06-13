@@ -890,6 +890,13 @@ class PluginVersionFeedback(models.Model):
         auto_now_add=True,
         editable=False
     )
+    modified_on = models.DateTimeField(
+        _("Modified on"), 
+        editable=False,
+        blank=True,
+        null=True
+    )
+
     completed_on = models.DateTimeField(
         verbose_name=_("Completed on"),
         blank=True,
