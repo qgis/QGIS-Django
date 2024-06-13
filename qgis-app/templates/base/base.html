@@ -1,5 +1,5 @@
 {% extends BASE_TEMPLATE %}{% load i18n static thumbnail %}
-{% load resources_custom_tags %}
+{% load resources_custom_tags resources_tagcloud %}
 {% block extratitle %}{{ resource_name }}{% endblock %}
 {% block app_title %}
 <h2 xmlns="http://www.w3.org/1999/html">QGIS {{ resource_name }}</h2>
@@ -82,7 +82,8 @@
     </script>
 
 <hr>
-<h1>Helloo</h1>
+{% include_resources_tagcloud_modal app_label=app_label model=model_name %}
+
 {% endblock %}
 
 {% block "credits" %}

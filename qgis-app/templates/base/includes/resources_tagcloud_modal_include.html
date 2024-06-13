@@ -1,0 +1,19 @@
+{% load i18n resources_tagcloud %}
+
+<a id="tagcloudModalButton" href="#tagcloudModal" role="button" class="btn btn-block btn-link btn-large" data-toggle="modal">
+  <i class="icon-tags icon-white icon-2x"></i>
+  {{ tags_title }}
+  <i class="icon-resize-full icon-white"></i>
+</a>
+
+<div id="tagcloudModal" class="modal hide" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+  <div class="tag_cloud_modal">
+    <div class="modal-header">
+      <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+      <h3>{{ tags_title }}</h3>
+    </div>
+    <div class="modal-body">
+    {% include "base/includes/resources_tagcloud_include.html" %}
+    </div>
+  </div>
+</div>

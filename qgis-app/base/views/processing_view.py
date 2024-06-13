@@ -223,6 +223,8 @@ class ResourceBaseContextMixin(ContextMixin):
         context["url_delete"] = "%s_delete" % self.resource_name_url_base
         context["url_review"] = "%s_review" % self.resource_name_url_base
         context["url_detail"] = "%s_detail" % self.resource_name_url_base
+        context["app_label"] = self.model._meta.app_label
+        context["model_name"] = self.model._meta.model_name
         return context
 
 

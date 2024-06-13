@@ -1,0 +1,6 @@
+<div class="tag_cloud">
+{% for tag in tags %}{% if tag.slug %}
+<a style="font-size:{{tag.weight|floatformat:0}}px" href="{% url tags_list_url tag.slug|iriencode %}">{{tag}}</a>
+{% endif %}{% endfor %}
+<div style="clear:both"></div>
+</div>
