@@ -78,8 +78,17 @@ class TestUploadLayerDefinitionFile(SetUpTest, TestCase):
             "thumbnail_image": self.uploaded_thumbnail,
             "file": self.uploaded_file,
             "license": "license",
+            "tags": "layerdefinition,test"
         }
         self.response = self.client.post(url, self.data, follow=True)
+
+    def test_tags_wavefront(self):
+        # Check the tags
+        qlr = LayerDefinition.objects.first()
+        self.assertEqual(
+            qlr.tags.filter(
+                name__in=['layerdefinition', 'test']).count(),
+            2)
 
     def test_upload_file_succeed_send_notification(self):
         self.assertEqual(self.response.status_code, 200)

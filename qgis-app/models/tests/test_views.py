@@ -159,12 +159,18 @@ class TestUploadModel(SetUpTest, TestCase):
             "description": "Test upload an acceptable model size",
             "thumbnail_image": uploaded_thumbnail,
             "file": uploaded_model,
+            "tags": "model,project,test"
         }
         response = self.client.post(url, data, follow=True)
         # should send email notify
         self.assertEqual(len(mail.outbox), 1)
         model = Model.objects.first()
         self.assertEqual(model.name, "flooded buildings extractor")
+        # Check the tags
+        self.assertEqual(
+            model.tags.filter(
+                name__in=['model', 'project', 'test']).count(),
+            3)
         url = reverse("model_detail", kwargs={"pk": model.id})
         response = self.client.get(url)
         self.assertEqual(response.status_code, 200)

@@ -69,6 +69,7 @@ class TestUploadStyle(TestCase):
                     "file": xml_file,
                     "thumbnail_image": self.thumbnail,
                     "description": "This style is for testing only purpose",
+                    "tags": "xml,style,test"
                 },
             )
         self.assertEqual(self.response.status_code, 200)
@@ -84,6 +85,12 @@ class TestUploadStyle(TestCase):
             mail.outbox[0].from_email,
             settings.EMAIL_HOST_USER
         )
+
+        # Check the tags
+        self.assertEqual(
+            Style.objects.get(name='Cat Trail').tags.filter(
+                name__in=['xml', 'style', 'test']).count(),
+            3)
 
         # style should be in Waiting Review
         url = reverse("style_unapproved")
