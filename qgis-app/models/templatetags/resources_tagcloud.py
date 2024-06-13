@@ -70,7 +70,6 @@ def get_resources_tagcloud(context, app_label, model):
 @register.inclusion_tag("base/includes/resources_tagcloud_modal_include.html", takes_context=True)
 def include_resources_tagcloud_modal(context, app_label, model):
     tags = get_resources_tagcloud(context, app_label, model)
-    print(tags, 333333333)
     return {
         'tags': tags, 
         'tags_title': model[0].upper() + model[1:] + " Tags",
