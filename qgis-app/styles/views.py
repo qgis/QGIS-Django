@@ -72,6 +72,8 @@ class StyleCreateView(ResourceMixin, ResourceBaseCreateView):
                 )
             obj.style_type = style_type
         obj.save()
+        # Without this next line the tags won't be saved.
+        form.save_m2m()
         resource_notify(obj, self.resource_name)
         msg = _("The Style has been successfully created.")
         messages.success(self.request, msg, "success", fail_silently=True)
@@ -113,7 +115,7 @@ class StyleUpdateView(ResourceMixin, ResourceBaseUpdateView):
 class StyleListView(ResourceMixin, ResourceBaseListView):
     """Style ListView."""
 
-class StyleByTypeTagView(StyleListView):
+class StyleByTagView(StyleListView):
     """Display StyleListView filtered on style tag"""
 
     def get_filtered_queryset(self, qs):
@@ -125,7 +127,7 @@ class StyleByTypeTagView(StyleListView):
         return self.get_filtered_queryset(qs)
 
     def get_context_data(self, **kwargs):
-        context = super(StyleByTypeTagView, self).get_context_data(**kwargs)
+        context = super(StyleByTagView, self).get_context_data(**kwargs)
         context.update(
             {
                 "title": _("Style tagged with: %s") % unquote(self.kwargs["style_tag"]),

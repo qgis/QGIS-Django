@@ -245,6 +245,8 @@ class ResourceBaseCreateView(
         self.obj = form.save(commit=False)
         self.obj.creator = self.request.user
         self.obj.save()
+        # Without this next line the tags won't be saved.
+        form.save_m2m()
         resource_notify(self.obj, resource_type=self.resource_name)
         msg = _(self.success_message)
         messages.success(self.request, msg, "success", fail_silently=True)
@@ -336,6 +338,8 @@ class ResourceBaseUpdateView(LoginRequiredMixin, ResourceBaseContextMixin, Updat
         obj.require_action = False
         obj.approved = False
         obj.save()
+        # Without this next line the tags won't be saved.
+        form.save_m2m()
         resource_notify(obj, created=False, resource_type=self.resource_name)
         msg = _("The %s has been successfully updated." % self.resource_name)
         messages.success(self.request, msg, "success", fail_silently=True)
