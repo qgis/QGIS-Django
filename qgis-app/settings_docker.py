@@ -173,6 +173,7 @@ DEFAULT_AUTO_FIELD = 'django.db.models.AutoField'
 
 # Sentry
 SENTRY_DSN = os.environ.get("SENTRY_DSN", "")
+SENTRY_RATE = os.environ.get("SENTRY_RATE", 1.0)
 
 if SENTRY_DSN and SENTRY_DSN != "":
     import sentry_sdk
@@ -181,5 +182,5 @@ if SENTRY_DSN and SENTRY_DSN != "":
         dsn=SENTRY_DSN,
         # Set traces_sample_rate to 1.0 to capture 100%
         # of transactions for performance monitoring.
-        traces_sample_rate=1.0,
+        traces_sample_rate=SENTRY_RATE,
     )

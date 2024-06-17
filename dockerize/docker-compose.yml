@@ -52,6 +52,7 @@ services:
       - EMAIL_HOST_PASSWORD=${EMAIL_HOST_PASSWORD}
       - DEFAULT_PLUGINS_SITE=${DEFAULT_PLUGINS_SITE:-https://plugins.qgis.org/}
       - SENTRY_DSN=${SENTRY_DSN}
+      - SENTRY_RATE=${SENTRY_RATE}
     volumes:
       - ../qgis-app:/home/web/django_project
       - ./docker/uwsgi.conf:/uwsgi.conf

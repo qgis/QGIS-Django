@@ -144,7 +144,7 @@
         <div class="span12">
         {% endif %}
             <h2>{{ object.name }}
-            {% if object.icon and object.icon.file %}
+            {% if object.icon and object.icon.file and object.icon|is_image_valid %}
                 {% with image_extension=object.icon.name|file_extension %}
                     {% if image_extension == 'svg' %}
                         <img class="pull-right plugin-icon" alt="{% trans "Plugin icon" %}" src="{{ object.icon.url }}" width="24" height="24" />
@@ -154,6 +154,8 @@
                         {% endthumbnail %}
                     {% endif %}
                 {% endwith %}
+            {% else %}
+                <img height="32" width="32" class="pull-right plugin-icon" src="{% static "images/qgis-icon-32x32.png" %}" alt="{% trans "Plugin icon" %}" />
             {% endif %}
             </h2>
             <div>
