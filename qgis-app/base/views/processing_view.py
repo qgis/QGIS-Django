@@ -1,5 +1,5 @@
 import logging
-
+from os.path import exists
 from base.forms.processing_forms import ResourceBaseReviewForm
 from base.license import zipped_with_license
 from django.conf import settings
@@ -29,6 +29,7 @@ from django.views.generic import (
 )
 from django.views.generic.base import ContextMixin
 from django.utils.encoding import escape_uri_path
+from django.http import Http404
 
 GROUP_NAME = "Style Managers"
 
@@ -468,6 +469,8 @@ class ResourceBaseDownload(ResourceBaseContextMixin, View):
 
     def get(self, request, *args, **kwargs):
         object = get_object_or_404(self.model, pk=self.kwargs["pk"])
+        if not exists(object.file.path):
+            raise Http404
         if not object.approved:
             if not check_resources_access(self.request.user, object):
                 context = super(ResourceBaseDownload, self).get_context_data()
