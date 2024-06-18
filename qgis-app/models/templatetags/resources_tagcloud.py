@@ -38,8 +38,9 @@ def get_queryset(app_label, model):
         queryset = queryset.annotate(num_times=Count("taggit_taggeditem_items"))
 
     # Show only the tags that are used over a given times (defined by TAGCLOUD_COUNT_GTE)
-    if TAGCLOUD_COUNT_GTE:
-        queryset = queryset.filter(num_times__gte=TAGCLOUD_COUNT_GTE)
+    # Commented this for now as the tagging feature is new for the resources
+    # if TAGCLOUD_COUNT_GTE:
+    #     queryset = queryset.filter(num_times__gte=TAGCLOUD_COUNT_GTE)
 
     return queryset
 
