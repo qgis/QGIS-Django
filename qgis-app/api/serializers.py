@@ -4,6 +4,8 @@ from models.models import Model
 from rest_framework import serializers
 from sorl_thumbnail_serializer.fields import HyperlinkedSorlImageField
 from styles.models import Style
+from layerdefinitions.models import LayerDefinition
+from wavefronts.models import Wavefront
 
 
 class ResourceBaseSerializer(serializers.ModelSerializer):
@@ -38,6 +40,8 @@ class ResourceBaseSerializer(serializers.ModelSerializer):
         return attrs
 
     def get_resource_type(self, obj):
+        if self.Meta.model.__name__ == "Wavefront":
+            return "3DModel"
         return self.Meta.model.__name__
 
 
@@ -62,3 +66,18 @@ class StyleSerializer(ResourceBaseSerializer):
 
     class Meta(ResourceBaseSerializer.Meta):
         model = Style
+
+class LayerDefinitionSerializer(ResourceBaseSerializer):
+    class Meta(ResourceBaseSerializer.Meta):
+        model = LayerDefinition
+
+    def get_resource_subtype(self, obj):
+        return None
+
+
+class WavefrontSerializer(ResourceBaseSerializer):
+    class Meta(ResourceBaseSerializer.Meta):
+        model = Wavefront
+
+    def get_resource_subtype(self, obj):
+        return None
