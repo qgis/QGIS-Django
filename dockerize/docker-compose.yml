@@ -100,8 +100,8 @@ services:
       internal:
     healthcheck:
       test: ["CMD", "rabbitmqctl", "status"]
-      interval: 5s
-      timeout: 3s
+      interval: 10s
+      timeout: 5s
       retries: 5
 
   beat:
