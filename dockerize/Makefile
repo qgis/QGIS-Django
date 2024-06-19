@@ -236,7 +236,7 @@ devweb-runserver: devweb
 	@echo "------------------------------------------------------------------"
 	@echo "Running in DEVELOPMENT mode"
 	@echo "------------------------------------------------------------------"
-	@docker compose -p $(PROJECT_ID) exec devweb python manage.py runserver 0.0.0.0:8080
+	@docker compose -p $(PROJECT_ID) exec devweb python manage.py runserver 0.0.0.0:8081
 
 dbseed:
 	@echo
