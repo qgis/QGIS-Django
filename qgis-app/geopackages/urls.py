@@ -9,6 +9,7 @@ from geopackages.views import (
     GeopackageReviewView,
     GeopackageUnapprovedListView,
     GeopackageUpdateView,
+    GeopackageByTagView,
     geopackage_nav_content,
 )
 
@@ -35,6 +36,7 @@ urlpatterns = [
         GeopackageRequireActionListView.as_view(),
         name="geopackage_require_action",
     ),
+    path("tags/<geopackage_tag>/", GeopackageByTagView.as_view(), name="geopackage_tag"),
     # JSON
     path("sidebarnav/", geopackage_nav_content, name="geopackage_nav_content"),
 ]

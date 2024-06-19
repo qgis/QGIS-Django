@@ -157,6 +157,7 @@ class TestUploadGeoPackage(SetUpTest, TestCase):
             "description": "Test upload an acceptable gpkg size",
             "thumbnail_image": uploaded_thumbnail,
             "file": uploaded_gpkg,
+            "tags": "gpkg,project,test"
         }
         response = self.client.post(url, data, follow=True)
         # should send email notify
@@ -166,6 +167,11 @@ class TestUploadGeoPackage(SetUpTest, TestCase):
         )
         gpkg = Geopackage.objects.first()
         self.assertEqual(gpkg.name, "spiky polygons")
+        # Check the tags
+        self.assertEqual(
+            gpkg.tags.filter(
+                name__in=['gpkg', 'project', 'test']).count(),
+            3)
         url = reverse("geopackage_detail", kwargs={"pk": gpkg.id})
         response = self.client.get(url)
         self.assertEqual(response.status_code, 200)

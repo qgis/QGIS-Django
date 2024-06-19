@@ -224,6 +224,8 @@ class ResourceBaseContextMixin(ContextMixin):
         context["url_delete"] = "%s_delete" % self.resource_name_url_base
         context["url_review"] = "%s_review" % self.resource_name_url_base
         context["url_detail"] = "%s_detail" % self.resource_name_url_base
+        context["app_label"] = self.model._meta.app_label
+        context["model_name"] = self.model._meta.model_name
         return context
 
 
@@ -244,6 +246,8 @@ class ResourceBaseCreateView(
         self.obj = form.save(commit=False)
         self.obj.creator = self.request.user
         self.obj.save()
+        # Without this next line the tags won't be saved.
+        form.save_m2m()
         resource_notify(self.obj, resource_type=self.resource_name)
         msg = _(self.success_message)
         messages.success(self.request, msg, "success", fail_silently=True)
@@ -335,6 +339,8 @@ class ResourceBaseUpdateView(LoginRequiredMixin, ResourceBaseContextMixin, Updat
         obj.require_action = False
         obj.approved = False
         obj.save()
+        # Without this next line the tags won't be saved.
+        form.save_m2m()
         resource_notify(obj, created=False, resource_type=self.resource_name)
         msg = _("The %s has been successfully updated." % self.resource_name)
         messages.success(self.request, msg, "success", fail_silently=True)

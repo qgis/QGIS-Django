@@ -10,6 +10,7 @@ from styles.views import (
     StyleReviewView,
     StyleUnapprovedListView,
     StyleUpdateView,
+    StyleByTagView,
     style_nav_content,
     style_type_list,
 )
@@ -29,6 +30,7 @@ urlpatterns = [
     ),
     path("types/<style_type>/", StyleByTypeListView.as_view(), name="style_by_type"),
     path("<int:pk>/review/", StyleReviewView.as_view(), name="style_review"),
+    path("tags/<style_tag>/", StyleByTagView.as_view(), name="style_tag"),
     # JSON
     path("sidebarnav/", style_nav_content, name="style_nav_content"),
     path("sidebarnav_type/", style_type_list, name="style_nav_typelist"),

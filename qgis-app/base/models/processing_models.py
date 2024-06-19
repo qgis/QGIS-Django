@@ -8,6 +8,7 @@ import uuid
 from django.contrib.auth.models import User
 from django.db import models
 from django.utils.translation import gettext_lazy as _
+from taggit_autosuggest.managers import TaggableManager
 
 
 class UnapprovedManager(models.Manager):
@@ -122,6 +123,8 @@ class Resource(models.Model):
     approved_objects = ApprovedManager()
     unapproved_objects = UnapprovedManager()
     requireaction_objects = RequireActionManager()
+
+    tags = TaggableManager(blank=True)
 
     class Meta:
         abstract = True

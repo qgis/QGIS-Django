@@ -24,6 +24,7 @@ from django.views.decorators.cache import never_cache
 from styles.file_handler import read_xml_style
 from styles.forms import UpdateForm, UploadForm
 from styles.models import Review, Style, StyleType
+from urllib.parse import unquote
 
 
 class ResourceMixin:
@@ -71,6 +72,8 @@ class StyleCreateView(ResourceMixin, ResourceBaseCreateView):
                 )
             obj.style_type = style_type
         obj.save()
+        # Without this next line the tags won't be saved.
+        form.save_m2m()
         resource_notify(obj, self.resource_name)
         msg = _("The Style has been successfully created.")
         messages.success(self.request, msg, "success", fail_silently=True)
@@ -101,6 +104,8 @@ class StyleUpdateView(ResourceMixin, ResourceBaseUpdateView):
             ).first()
         obj.require_action = False
         obj.save()
+        # Without this next line the tags won't be saved.
+        form.save_m2m()
         resource_notify(obj, created=False, resource_type=self.resource_name)
         msg = _("The Style has been successfully updated.")
         messages.success(self.request, msg, "success", fail_silently=True)
@@ -110,6 +115,26 @@ class StyleUpdateView(ResourceMixin, ResourceBaseUpdateView):
 class StyleListView(ResourceMixin, ResourceBaseListView):
     """Style ListView."""
 
+class StyleByTagView(StyleListView):
+    """Display StyleListView filtered on style tag"""
+
+    def get_filtered_queryset(self, qs):
+        response = qs.filter(tagged_items__tag__slug=unquote(self.kwargs["style_tag"]))
+        return response
+
+    def get_queryset(self):
+        qs = super().get_queryset()
+        return self.get_filtered_queryset(qs)
+
+    def get_context_data(self, **kwargs):
+        context = super(StyleByTagView, self).get_context_data(**kwargs)
+        context.update(
+            {
+                "title": _("Style tagged with: %s") % unquote(self.kwargs["style_tag"]),
+                "page_title": _("Tag: %s") % unquote(self.kwargs["style_tag"])
+            }
+        )
+        return context
 
 class StyleByTypeListView(StyleListView):
     """Display StyleListView filtered on style type"""

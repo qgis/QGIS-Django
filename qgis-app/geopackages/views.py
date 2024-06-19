@@ -12,6 +12,8 @@ from base.views.processing_view import (
 )
 from geopackages.forms import UpdateForm, UploadForm
 from geopackages.models import Geopackage, Review
+from django.utils.translation import gettext_lazy as _
+from urllib.parse import unquote
 
 
 class ResourceMixin:
@@ -67,6 +69,26 @@ class GeopackageReviewView(ResourceMixin, ResourceBaseReviewView):
 class GeopackageDownloadView(ResourceMixin, ResourceBaseDownload):
     """Download a GeoPackage"""
 
+class GeopackageByTagView(GeopackageListView):
+    """Display GeopackageListView filtered on geopackage tag"""
+
+    def get_filtered_queryset(self, qs):
+        response = qs.filter(tagged_items__tag__slug=unquote(self.kwargs["geopackage_tag"]))
+        return response
+
+    def get_queryset(self):
+        qs = super().get_queryset()
+        return self.get_filtered_queryset(qs)
+
+    def get_context_data(self, **kwargs):
+        context = super(GeopackageByTagView, self).get_context_data(**kwargs)
+        context.update(
+            {
+                "title": _("Geopackage tagged with: %s") % unquote(self.kwargs["geopackage_tag"]),
+                "page_title": _("Tag: %s") % unquote(self.kwargs["geopackage_tag"])
+            }
+        )
+        return context
 
 def geopackage_nav_content(request):
     model = ResourceMixin.model

@@ -3,9 +3,10 @@ from django.core.exceptions import ValidationError
 from django.utils.translation import gettext_lazy as _
 from styles.file_handler import validator
 from styles.models import Style
-
+from taggit.forms import TagField
 
 class ResourceFormMixin(forms.ModelForm):
+    tags = TagField(required=False)
     class Meta:
         model = Style
         fields = [
@@ -13,6 +14,7 @@ class ResourceFormMixin(forms.ModelForm):
             "thumbnail_image",
             "name",
             "description",
+            "tags"
         ]
 
 
@@ -21,12 +23,14 @@ class UploadForm(forms.ModelForm):
     Style Upload Form.
     """
 
+    tags = TagField(required=False)
     class Meta:
         model = Style
         fields = [
             "file",
             "thumbnail_image",
             "description",
+            "tags"
         ]
 
     def clean_file(self):

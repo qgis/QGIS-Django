@@ -2,9 +2,11 @@ from base.forms.processing_forms import ResourceBaseCleanFileForm
 from django import forms
 from wavefronts.models import Wavefront
 from wavefronts.validator import WavefrontValidator
+from taggit.forms import TagField
 
 
 class ResourceFormMixin(forms.ModelForm):
+    tags = TagField(required=False)
     class Meta:
         model = Wavefront
         fields = [
@@ -12,6 +14,7 @@ class ResourceFormMixin(forms.ModelForm):
             "thumbnail_image",
             "name",
             "description",
+            "tags"
         ]
 
 

@@ -9,6 +9,7 @@ from models.views import (
     ModelReviewView,
     ModelUnapprovedListView,
     ModelUpdateView,
+    ModelByTagView,
     model_nav_content,
 )
 
@@ -27,6 +28,7 @@ urlpatterns = [
         ModelRequireActionListView.as_view(),
         name="model_require_action",
     ),
+    path("tags/<model_tag>/", ModelByTagView.as_view(), name="model_tag"),
     # JSON
     path("sidebarnav/", model_nav_content, name="model_nav_content"),
 ]

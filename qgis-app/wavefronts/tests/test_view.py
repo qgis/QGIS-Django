@@ -79,10 +79,18 @@ class TestReviewWavefront(SetUpTest, TestCase):
             "description": "Test upload a wavefront",
             "thumbnail_image": uploaded_thumbnail,
             "file": uploaded_file,
+            "tags": "3dmodel,wavefront,test"
         }
         self.client.post(url, data, follow=True)
         self.object = Wavefront.objects.first()
         self.client.logout()
+
+    def test_tags_wavefront(self):
+        # Check the tags
+        self.assertEqual(
+            self.object.tags.filter(
+                name__in=['3dmodel', 'wavefront', 'test']).count(),
+            3)
 
     def test_approve_wavefront(self):
         login = self.client.login(username="staff", password="password")

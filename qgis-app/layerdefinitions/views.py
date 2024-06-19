@@ -24,10 +24,12 @@ from layerdefinitions.file_handler import get_provider, get_url_datasource
 from layerdefinitions.forms import UpdateForm, UploadForm
 from layerdefinitions.license import zipped_with_license
 from layerdefinitions.models import LayerDefinition, Review
+from django.utils.translation import gettext_lazy as _
+from urllib.parse import unquote
 
 
 class ResourceMixin:
-    """Mixin class for Geopackage."""
+    """Mixin class for LayerDefinition."""
 
     model = LayerDefinition
 
@@ -52,6 +54,8 @@ class LayerDefinitionCreateView(ResourceMixin, ResourceBaseCreateView):
         obj.url_datasource = get_url_datasource(obj.file.file)
         obj.provider = get_provider(obj.file.file)
         obj.save()
+        # Without this next line the tags won't be saved.
+        form.save_m2m()
         resource_notify(obj, resource_type=self.resource_name)
         msg = _(self.success_message)
         messages.success(self.request, msg, "success", fail_silently=True)
@@ -83,6 +87,8 @@ class LayerDefinitionUpdateView(ResourceMixin, ResourceBaseUpdateView):
         obj.url_datasource = get_url_datasource(obj.file.file)
         obj.provider = get_provider(obj.file.file)
         obj.save()
+        # Without this next line the tags won't be saved.
+        form.save_m2m()
         resource_notify(obj, created=False, resource_type=self.resource_name)
         msg = _("The %s has been successfully updated." % self.resource_name)
         messages.success(self.request, msg, "success", fail_silently=True)
@@ -111,6 +117,26 @@ class LayerDefinitionDeleteView(ResourceMixin, ResourceBaseDeleteView):
 class LayerDefinitionReviewView(ResourceMixin, ResourceBaseReviewView):
     """Create a review."""
 
+class LayerDefinitionByTagView(LayerDefinitionListView):
+    """Display LayerDefinitionListView filtered on layerdefinition tag"""
+
+    def get_filtered_queryset(self, qs):
+        response = qs.filter(tagged_items__tag__slug=unquote(self.kwargs["layerdefinition_tag"]))
+        return response
+
+    def get_queryset(self):
+        qs = super().get_queryset()
+        return self.get_filtered_queryset(qs)
+
+    def get_context_data(self, **kwargs):
+        context = super(LayerDefinitionByTagView, self).get_context_data(**kwargs)
+        context.update(
+            {
+                "title": _("LayerDefinition tagged with: %s") % unquote(self.kwargs["layerdefinition_tag"]),
+                "page_title": _("Tag: %s") % unquote(self.kwargs["layerdefinition_tag"])
+            }
+        )
+        return context
 
 class LayerDefinitionDownloadView(ResourceMixin, ResourceBaseDownload):
     """Download a Layer Definition File (.qlr)."""
