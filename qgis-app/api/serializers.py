@@ -14,10 +14,13 @@ class ResourceBaseSerializer(serializers.ModelSerializer):
     resource_subtype = serializers.SerializerMethodField()
     thumbnail_full = serializers.ImageField(source="thumbnail_image")
 
-    # A thumbnail image, sorl options and read-only
-    thumbnail = HyperlinkedSorlImageField(
-        "128x128", options={"crop": "center"}, source="thumbnail_image", read_only=True
-    )
+    try:
+        # A thumbnail image, sorl options and read-only
+        thumbnail = HyperlinkedSorlImageField(
+            "128x128", options={"crop": "center"}, source="thumbnail_image", read_only=True
+        )
+    except FileNotFoundError:
+        thumbnail = serializers.ImageField(source="thumbnail_image")
 
     class Meta:
         fields = [
