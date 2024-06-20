@@ -1,0 +1,79 @@
+[
+  {
+    "model": "feedjack.link",
+    "pk": 1,
+    "fields": { "name": "Linfiniti", "link": "http://linfiniti.com/" }
+  },
+  {
+    "model": "feedjack.link",
+    "pk": 3,
+    "fields": { "name": "Kartoza", "link": "http://kartoza.com/" }
+  },
+  {
+    "model": "feedjack.site",
+    "pk": 1,
+    "fields": {
+      "name": "QGIS Planet",
+      "url": "http://plugins.qgis.org/planet",
+      "title": "QGIS Planet",
+      "description": "QGIS Planet - A feed aggregator for QGIS related blogs.",
+      "welcome": "Welcome to the QGIS Planet. If you would like you blog added to this 'planet', please send an email to the QGIS community mailing list with the address of your RSS feed.",
+      "default_site": true,
+      "posts_per_page": 20,
+      "order_posts_by": 1,
+      "tagcloud_levels": 5,
+      "show_tagcloud": true,
+      "use_internal_cache": true,
+      "cache_duration": 86400,
+      "template": "default",
+      "links": [1]
+    }
+  },
+  {
+    "model": "feedjack.feed",
+    "pk": 28,
+    "fields": {
+      "feed_url": "https://blog.qgis.org/feed/",
+      "name": "QGIS Project blog",
+      "shortname": "QGIS Project blog",
+      "is_active": true,
+      "title": "QGIS.org blog",
+      "tagline": "",
+      "link": "https://blog.qgis.org",
+      "etag": "",
+      "last_modified": "2023-12-24T06:46:05",
+      "last_checked": "2024-02-11T18:50:20.194"
+    }
+  },
+  { "model": "feedjack.tag", "pk": 1, "fields": { "name": "geodjango" } },
+  { "model": "feedjack.tag", "pk": 2, "fields": { "name": "qgis" } },
+  { "model": "feedjack.tag", "pk": 3, "fields": { "name": "web development" } },
+  {
+    "model": "feedjack.post",
+    "pk": 3353,
+    "fields": {
+      "feed": 28,
+      "title": "QGIS Annual General Meeting \u2013 2023",
+      "link": "https:/example.com",
+      "content": "<p>This is a content example</p>",
+      "date_modified": "2023-12-23T22:00:00",
+      "guid": "https:/example.com",
+      "author": "underdark",
+      "author_email": "example@email.com",
+      "comments": "",
+      "date_created": "2023-12-23",
+      "tags": [3]
+    }
+  },
+  {
+    "model": "feedjack.subscriber",
+    "pk": 27,
+    "fields": {
+      "site": 1,
+      "feed": 28,
+      "name": "QGIS Project blog",
+      "shortname": "QGIS Project blog",
+      "is_active": true
+    }
+  }
+]
