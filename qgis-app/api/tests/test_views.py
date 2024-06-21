@@ -1,6 +1,7 @@
 import io
 import json
 import zipfile
+import os
 
 from django.contrib.auth.models import Group, User
 from django.core.files.base import ContentFile
@@ -275,3 +276,48 @@ class TestResourceAPIList(TestCase):
             self.assertIn("a_filename", zip_file.namelist()[0])
             self.assertNotIn(".zip", zip_file.namelist())
             zip_file.close()
+
+    def test_thumbnail_exists(self):
+        url = reverse("resource-list")
+        response = self.client.get(url)
+        json_parse = json.loads(response.content)
+        self.assertEqual(json_parse["total"], 5)
+        result = json_parse["results"]
+        for i, d in enumerate(result):
+            if d["resource_type"] == "Geopackage":
+                g_index = i
+            elif d["resource_type"] == "Model":
+                m_index = i
+            elif d["resource_type"] == "Style":
+                s_index = i
+            elif d["resource_type"] == "LayerDefinition":
+                l_index = i
+            elif d["resource_type"] == "3DModel":
+                w_index = i
+
+        expected_url = 'http://testserver/media/cache'
+        self.assertTrue(str(result[s_index]['thumbnail']).startswith(expected_url))
+
+    def test_thumbnail_missing(self):
+        # Ensure that the object's thumbnail_image is missing
+        os.remove(self.style.thumbnail_image.path)
+        url = reverse("resource-list")
+        response = self.client.get(url)
+        json_parse = json.loads(response.content)
+        self.assertEqual(json_parse["total"], 5)
+        result = json_parse["results"]
+        for i, d in enumerate(result):
+            if d["resource_type"] == "Geopackage":
+                g_index = i
+            elif d["resource_type"] == "Model":
+                m_index = i
+            elif d["resource_type"] == "Style":
+                s_index = i
+            elif d["resource_type"] == "LayerDefinition":
+                l_index = i
+            elif d["resource_type"] == "3DModel":
+                w_index = i
+
+        expected_url = 'http://testserver/static/images/qgis-icon-32x32.png'
+        print(result[s_index]['thumbnail'])
+        self.assertTrue(str(result[s_index]['thumbnail']).startswith(expected_url))
