@@ -105,6 +105,16 @@ class ResourceAPIList(FlatMultipleModelAPIView):
 
     querylist = [
         {
+            "queryset": LayerDefinition.approved_objects.all(),
+            "serializer_class": LayerDefinitionSerializer,
+            "filter_fn": filter_general,
+        },
+        {
+            "queryset": Wavefront.approved_objects.all(),
+            "serializer_class": WavefrontSerializer,
+            "filter_fn": filter_general,
+        },
+        {
             "queryset": Geopackage.approved_objects.all(),
             "serializer_class": GeopackageSerializer,
             "filter_fn": filter_general,
@@ -117,16 +127,6 @@ class ResourceAPIList(FlatMultipleModelAPIView):
         {
             "queryset": Style.approved_objects.all(),
             "serializer_class": StyleSerializer,
-            "filter_fn": filter_general,
-        },
-        {
-            "queryset": LayerDefinition.approved_objects.all(),
-            "serializer_class": LayerDefinitionSerializer,
-            "filter_fn": filter_general,
-        },
-        {
-            "queryset": Wavefront.approved_objects.all(),
-            "serializer_class": WavefrontSerializer,
             "filter_fn": filter_general,
         },
     ]

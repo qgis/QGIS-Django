@@ -1,4 +1,19 @@
 # -*- coding:utf-8 -*-
+# myapp/middleware.py
+
+from django.template import TemplateDoesNotExist
+from django.shortcuts import render
+from django.http import HttpResponse
+from django.utils.deprecation import MiddlewareMixin
+
+class HandleTemplateDoesNotExistMiddleware(MiddlewareMixin):
+    """Handle missing templates"""
+    def process_exception(self, request, exception):
+        if isinstance(exception, TemplateDoesNotExist):
+            return render(request, '404.html', status=404)
+        return None
+
+
 """
     QGIS-DJANGO - MIDDLEWARE
 
