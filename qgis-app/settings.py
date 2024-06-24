@@ -90,6 +90,8 @@ MIDDLEWARE = [
     "middleware.HandleTemplateDoesNotExistMiddleware",
     # Handle OSError
     "middleware.HandleOSErrorMiddleware",
+    # Handle RequestDataTooBig error
+    "middleware.HandleRequestDataTooBigMiddleware",
 ]
 
 ROOT_URLCONF = "urls"

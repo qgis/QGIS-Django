@@ -3,7 +3,8 @@
 
 from django.template import TemplateDoesNotExist
 from django.shortcuts import render
-from django.http import HttpResponse
+from django.core.exceptions import RequestDataTooBig
+from django.http import JsonResponse
 from django.utils.deprecation import MiddlewareMixin
 import logging
 import sentry_sdk
@@ -58,3 +59,13 @@ class HandleOSErrorMiddleware:
             sentry_sdk.capture_exception(e)
             raise e
         return response
+class HandleRequestDataTooBigMiddleware:
+    def __init__(self, get_response):
+        self.get_response = get_response
+
+    def __call__(self, request):
+        try:
+            response = self.get_response(request)
+            return response
+        except RequestDataTooBig:
+            return JsonResponse({'error': 'Request data is too large. Please upload smaller files.'}, status=413)
