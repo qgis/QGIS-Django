@@ -107,6 +107,9 @@ services:
   beat:
     <<: *uwsgi-common
     container_name: qgis-plugins-beat
+    depends_on:
+      rabbitmq:
+        condition: service_healthy
     working_dir: /home/web/django_project
     entrypoint: [ ]
     command: celery --app=plugins.celery:app beat -s /home/web/celerybeat-schedule/schedule -l INFO
@@ -119,8 +122,6 @@ services:
     depends_on:
       db:
         condition: service_started
-      rabbitmq:
-        condition: service_healthy
       beat:
         condition: service_started
     working_dir: /home/web/django_project
