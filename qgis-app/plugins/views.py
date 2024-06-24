@@ -1534,6 +1534,10 @@ def version_download(request, package_name, version):
             country_code = 'N/D'
             country_name = 'N/D'
 
+    # Handle null values
+    country_code = country_code or 'N/D'
+    country_name = country_name or 'N/D'
+
     download_record, created = PluginVersionDownload.objects.get_or_create(
         plugin_version = version, 
         country_code = country_code,

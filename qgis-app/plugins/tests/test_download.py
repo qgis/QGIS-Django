@@ -66,3 +66,20 @@ class TestVersionDownloadView(TestCase):
         self.assertEqual(response.status_code, 200)
         self.assertTrue(download_record.country_code == 'ID')
         self.assertTrue(download_record.country_name == 'Indonesia')
+
+
+    def test_download_per_country_with_invalid_ip(self):
+        download_url = reverse('version_download', args=[self.plugin.package_name, self.version.version])
+        c = Client(REMOTE_ADDR='123.456.789.100')
+        response = c.get(download_url)
+
+        self.version.refresh_from_db()
+        self.plugin.refresh_from_db()
+        download_record = PluginVersionDownload.objects.get(
+            plugin_version=self.version, 
+            download_date=timezone.now().date()
+        )
+
+        self.assertEqual(response.status_code, 200)
+        self.assertTrue(download_record.country_code == 'N/D')
+        self.assertTrue(download_record.country_name == 'N/D')
