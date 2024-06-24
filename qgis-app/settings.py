@@ -88,6 +88,8 @@ MIDDLEWARE = [
     "middleware.XForwardedForMiddleware",
     # Handle missing template
     "middleware.HandleTemplateDoesNotExistMiddleware",
+    # Handle OSError
+    "middleware.HandleOSErrorMiddleware",
 ]
 
 ROOT_URLCONF = "urls"

@@ -5,14 +5,8 @@ from django.template import TemplateDoesNotExist
 from django.shortcuts import render
 from django.http import HttpResponse
 from django.utils.deprecation import MiddlewareMixin
-
-class HandleTemplateDoesNotExistMiddleware(MiddlewareMixin):
-    """Handle missing templates"""
-    def process_exception(self, request, exception):
-        if isinstance(exception, TemplateDoesNotExist):
-            return render(request, '404.html', status=404)
-        return None
-
+import logging
+import sentry_sdk
 
 """
     QGIS-DJANGO - MIDDLEWARE
@@ -22,6 +16,7 @@ class HandleTemplateDoesNotExistMiddleware(MiddlewareMixin):
     @license: GNU AGPL, see COPYING for details.
 """
 
+logger = logging.getLogger(__name__)
 
 def XForwardedForMiddleware(get_response):
     # One-time configuration and initialization.
@@ -43,3 +38,23 @@ def XForwardedForMiddleware(get_response):
         return response
 
     return middleware
+
+class HandleTemplateDoesNotExistMiddleware(MiddlewareMixin):
+    """Handle missing templates"""
+    def process_exception(self, request, exception):
+        if isinstance(exception, TemplateDoesNotExist):
+            return render(request, '404.html', status=404)
+        return None
+
+class HandleOSErrorMiddleware:
+    def __init__(self, get_response):
+        self.get_response = get_response
+
+    def __call__(self, request):
+        try:
+            response = self.get_response(request)
+        except OSError as e:
+            logger.error("OSError occurred", exc_info=True)
+            sentry_sdk.capture_exception(e)
+            raise e
+        return response
