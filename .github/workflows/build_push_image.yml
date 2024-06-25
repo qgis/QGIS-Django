@@ -11,7 +11,7 @@ jobs:
 
     steps:
     - name: Checkout code
-      uses: actions/checkout@v3
+      uses: actions/checkout@v5
 
     - name: Set up Docker Buildx
       uses: docker/setup-buildx-action@v3
@@ -25,8 +25,12 @@ jobs:
     - name: Build and push Docker image
       uses: docker/build-push-action@v5
       with:
-        context: dockerize/docker
+        context: .
+        file: dockerize/docker/Dockerfile
         push: true
         tags: |
           ${{ secrets.DOCKER_USERNAME }}/qgis-plugins-uwsgi:${{ github.ref_name }}
           ${{ secrets.DOCKER_USERNAME }}/qgis-plugins-uwsgi:latest
+
+    - name: Log out from Docker Hub
+      run: docker logout
