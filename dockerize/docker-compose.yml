@@ -84,7 +84,7 @@ services:
       - ${QGISPLUGINS_MEDIA_VOLUME}:/home/web/media:rw
     ports:
       # for django test server
-      - "62202:8080"
+      - "62202:8081"
       # for ssh
       - "62203:22"
     networks:
@@ -98,10 +98,18 @@ services:
     restart: unless-stopped
     networks:
       internal:
+    healthcheck:
+      test: ["CMD", "rabbitmqctl", "status"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
 
   beat:
     <<: *uwsgi-common
     container_name: qgis-plugins-beat
+    depends_on:
+      rabbitmq:
+        condition: service_healthy
     working_dir: /home/web/django_project
     entrypoint: [ ]
     command: celery --app=plugins.celery:app beat -s /home/web/celerybeat-schedule/schedule -l INFO
@@ -112,9 +120,10 @@ services:
     <<: *uwsgi-common
     container_name: qgis-plugins-worker
     depends_on:
-      - db
-      - rabbitmq
-      - beat
+      db:
+        condition: service_started
+      beat:
+        condition: service_started
     working_dir: /home/web/django_project
     entrypoint: []
     command: celery -A plugins worker -l INFO

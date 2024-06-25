@@ -156,6 +156,13 @@ CELERY_BEAT_SCHEDULE = {
     'update_qgis_versions': {
         'task': 'plugins.tasks.update_qgis_versions.update_qgis_versions',
         'schedule': crontab(minute='*/30'),  # Execute every 30 minutes.
+    },
+    # Index synchronization sometimes fails when deleting
+    # a plugin and None is listed in the search list. So I think
+    # it would be better if we rebuild the index frequently
+    'rebuild_index': {
+        'task': 'plugins.tasks.rebuild_index.rebuild_index',
+        'schedule': crontab(minute=0, hour=3),  # Execute every day at 3 AM.
     }
 }
 # Set plugin token access and refresh validity to a very long duration

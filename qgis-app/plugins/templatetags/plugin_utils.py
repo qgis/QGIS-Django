@@ -1,5 +1,6 @@
 from django import template
 from PIL import Image, UnidentifiedImageError
+import xml.etree.ElementTree as ET
 
 register = template.Library()
 
@@ -34,8 +35,23 @@ def file_extension(value):
 def is_image_valid(image):
     if not image:
         return False
+    # Check if the file is an SVG by extension
+    if image.path.lower().endswith('.svg'):
+        return _validate_svg(image.path)
+    return _validate_image(image.path)
+
+
+def _validate_svg(file_path):
     try:
-        img = Image.open(image.path)
+        # Parse the SVG file to ensure it's well-formed XML
+        ET.parse(file_path)
+        return True
+    except (ET.ParseError, FileNotFoundError):
+        return False
+
+def _validate_image(file_path):
+    try:
+        img = Image.open(file_path)
         img.verify()
         return True
     except (FileNotFoundError, UnidentifiedImageError):

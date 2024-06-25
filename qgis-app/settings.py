@@ -86,6 +86,12 @@ MIDDLEWARE = [
     # Added by Tim for advanced loggin options
     "django.middleware.cache.FetchFromCacheMiddleware",
     "middleware.XForwardedForMiddleware",
+    # Handle missing template
+    "middleware.HandleTemplateDoesNotExistMiddleware",
+    # Handle OSError
+    "middleware.HandleOSErrorMiddleware",
+    # Handle RequestDataTooBig error
+    "middleware.HandleRequestDataTooBigMiddleware",
 ]
 
 ROOT_URLCONF = "urls"

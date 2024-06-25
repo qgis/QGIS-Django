@@ -172,6 +172,11 @@ class ResourceSearchMixin(object):
     """
 
     def get_queryset_search(self, qs):
+        # Allowed fields for ordering
+        allowed_order_by_fields = [
+            "name", "type", "download_count"
+            "creator", "upload_date", "modified_date"
+        ]
         q = self.request.GET.get("q")
         if q:
             qs = qs.annotate(
@@ -192,7 +197,8 @@ class ResourceSearchMixin(object):
             elif order_by == "type":
                 qs = qs.order_by("style_type__name")
             else:
-                qs = qs.order_by(order_by)
+                if order_by.lstrip('-') in allowed_order_by_fields:
+                    qs = qs.order_by(order_by)
         return qs
 
     def get_queryset_search_and_is_creator(self, qs):
