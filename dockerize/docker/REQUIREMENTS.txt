@@ -2,7 +2,7 @@ django~=4.2
 django-auth-ldap~=4.6
 python-ldap~=3.4
 django-taggit~=5.0
-django-tinymce==3.4.0
+django-tinymce==4.1.0
 psycopg2-binary~=2.9
 # Updates for Django 2
 git+https://github.com/metamatik/django-templatetag-sugar.git
