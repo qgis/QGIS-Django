@@ -160,8 +160,8 @@ CELERY_BEAT_SCHEDULE = {
     # Index synchronization sometimes fails when deleting
     # a plugin and None is listed in the search list. So I think
     # it would be better if we rebuild the index frequently
-    'rebuild_index': {
-        'task': 'plugins.tasks.rebuild_index.rebuild_index',
+    'rebuild_search_index': {
+        'task': 'plugins.tasks.rebuild_search_index.rebuild_search_index',
         'schedule': crontab(minute=0, hour=3),  # Execute every day at 3 AM.
     }
 }
