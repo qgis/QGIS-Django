@@ -338,11 +338,11 @@
                                         <i class="icon-thumbs-down icon-white"></i></button>
                                     {% endif %}
                                 {% endif %}
-                                <a class="btn {% if version.feedback.exists %}btn-warning{% else %}btn-primary{% endif %} btn-mini"
+                                <a class="btn {% if version.feedback|feedbacks_not_completed|length >= 1 %}btn-warning{% else %}btn-primary{% endif %} btn-mini"
                                    href="{% url "version_feedback" object.package_name version.version %}" title="{% trans "Feedback" %}">
                                    <i class="icon-comments icon-white"></i>
-                                    {% if version.feedback.count >= 2 %}
-                                        {{ version.feedback.count }}
+                                    {% if version.feedback|feedbacks_not_completed|length >= 2 %}
+                                        {{ version.feedback|feedbacks_not_completed|length }}
                                     {% endif %}
                                 </a>
                                 {% if user.is_staff or user in version.plugin.editors %}

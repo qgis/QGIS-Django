@@ -56,3 +56,7 @@ def _validate_image(file_path):
         return True
     except (FileNotFoundError, UnidentifiedImageError):
         return False
+
+@register.filter
+def feedbacks_not_completed(feedbacks):
+    return feedbacks.filter(is_completed=False)
