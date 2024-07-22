@@ -12,8 +12,6 @@ For licensing information, please read the COPYING file included in this directo
 
 For setup, installation and backup notes, please read [INSTALL](INSTALL.md) included in this directory.
 
-For setting up a local development environment using Vagrant please read the Vagrant [README](vagrant_assets/README.md).
-
 To contribute to this project, please contact Tim Sutton - tim@kartoza.com
 
 
@@ -22,14 +20,14 @@ Tim Sutton 2010
 
 ## Admin
 
-To update QGIS versions, go to **[Admin](https://plugins.qgis.org/admin/)** -> **[Site preferences](https://plugins.qgis.org/admin/preferences/sitepreference/)**.
+QGIS versions are updated automatically from a scheduled task. To update QGIS versions manually, go to **[Admin](https://plugins.qgis.org/admin/)** -> **[Site preferences](https://plugins.qgis.org/admin/preferences/sitepreference/)**.
 
 ## Tech stack
 
-![image](https://user-images.githubusercontent.com/178003/91535744-8c8a3000-e90b-11ea-8ca3-b6ce1bb910bd.png)
+![image](./img/Docker_Services.png)
 
-This application is based on Django, written in python and deployed on the server using
-docker and rancher.
+This application is based on Django, written in Python and deployed on the server using
+docker-compose.
 
 ## Token based authentication
 
