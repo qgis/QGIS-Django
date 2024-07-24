@@ -59,7 +59,7 @@ services:
       - ${QGISPLUGINS_STATIC_VOLUME}:/home/web/static:rw
       - ${QGISPLUGINS_MEDIA_VOLUME}:/home/web/media:rw
       - celerybeat-schedule:/home/web/celerybeat-schedule:rw
-    
+    command: uwsgi --ini /uwsgi.conf
     depends_on:
       - db
       - rabbitmq
