@@ -282,7 +282,7 @@ class FeedbackCompletedPlugins(models.Manager):
     """
     def get_queryset(self):
         feedback_count_subquery = PluginVersionFeedback.objects.filter(
-            id=OuterRef('pluginversion__feedback'),
+            version=OuterRef('pluginversion'),
             is_completed=True
         ).values('version').annotate(
             completed_count=Count('id')
@@ -315,15 +315,27 @@ class FeedbackCompletedPlugins(models.Manager):
 
 class FeedbackReceivedPlugins(models.Manager):
     """
-    Show only unapproved plugins with a feedback
+    Show only unapproved plugins with a pending feedback
     """
     def get_queryset(self):
+        feedback_count_subquery = PluginVersionFeedback.objects.filter(
+            version=OuterRef('pluginversion'),
+            is_completed=False
+        ).values('version').annotate(
+            received_count=Count('id')
+        ).values('received_count')
+
         return (
             super(FeedbackReceivedPlugins, self)
             .get_queryset()
             .filter(
-                pluginversion__approved=False,
-                pluginversion__feedback__isnull=False
+                pluginversion__approved=False
+            )
+            .annotate(
+                received_feedback_count=Subquery(feedback_count_subquery)
+            )
+            .filter(
+                received_feedback_count__gte=1
             )
             .extra(
                 select={
