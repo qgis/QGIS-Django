@@ -170,6 +170,16 @@ class UnapprovedPlugins(BasePluginManager):
             super(UnapprovedPlugins, self)
             .get_queryset()
             .filter(pluginversion__approved=False, deprecated=False)
+            .extra(
+                select={
+                    "average_vote": "rating_score/(rating_votes+0.001)",
+                    "latest_version_date": (
+                        "SELECT created_on FROM plugins_pluginversion WHERE "
+                        "plugins_pluginversion.plugin_id = plugins_plugin.id "
+                        "ORDER BY created_on DESC LIMIT 1"
+                    ),
+                }
+            )
             .distinct()
         )
 
@@ -292,7 +302,8 @@ class FeedbackCompletedPlugins(models.Manager):
             super(FeedbackCompletedPlugins, self)
             .get_queryset()
             .filter(
-                pluginversion__approved=False
+                pluginversion__approved=False,
+                deprecated=False
             )
             .annotate(
                 total_feedback_count=Count('pluginversion__feedback'),
@@ -329,7 +340,8 @@ class FeedbackReceivedPlugins(models.Manager):
             super(FeedbackReceivedPlugins, self)
             .get_queryset()
             .filter(
-                pluginversion__approved=False
+                pluginversion__approved=False,
+                deprecated=False
             )
             .annotate(
                 received_feedback_count=Subquery(feedback_count_subquery)
@@ -360,7 +372,13 @@ class FeedbackPendingPlugins(models.Manager):
             .get_queryset()
             .filter(
                 pluginversion__approved=False,
-                pluginversion__feedback__isnull=True
+                deprecated=False
+            )
+            .annotate(
+                total_feedback_count=Count('pluginversion__feedback'),
+            )
+            .filter(
+                total_feedback_count=0
             )
             .extra(
                 select={
