@@ -1,6 +1,6 @@
 # Installation
 
-## Development Environment Deployment
+## Development Environment
 
 - Clone git repo `git clone https://github.com/qgis/QGIS-Django.git`
 - Run `$ pwd` in order to get your current directory
@@ -45,7 +45,11 @@ This command ensures that the search index accurately reflects the current state
 
 For more information about make commands, please see the full docs [here](./dockerize/README.md).
 
+## Production Environment
+For the production environment, please see the the private repo of the System Administration Documentation.
+
 ---
+
 
 ### Setup git-hooks and local linting
 
@@ -194,27 +198,3 @@ $ cd dockerize
 $ make dbrestore
 ```
 
----
-
-## Deploy Update with Rancher
-
-**TO BE DEPRECATED**
-
-- Go to [https://rancher.qgis.org](https://rancher.qgis.org)
-- Click the home icon in the top left corner,  and choose the environment: `plugins.qgis.org`
-- You will be redirected to User Stacks page, choose the plugins stack by clicking on `plugins` link
-- Next, let's go inside the container, click on `uwsgi` link.
-
-  ![image](https://user-images.githubusercontent.com/178003/99949715-65f55d00-2d73-11eb-929c-966a7b2877a7.png)
-
-- In Containers tab, click on tripe-dot icon > `Execute Shell`
-
-  ![image](https://user-images.githubusercontent.com/40058076/102454128-7352ee00-4078-11eb-80aa-f782c6ea9f6f.png)
-
-  Now you are inside the container and ready to deploy your update.
-
-  ![image](https://user-images.githubusercontent.com/40058076/102455185-1ce6af00-407a-11eb-8318-3e084b24c095.png)
-- Pull the latest commit: `git pull origin master`
-- Run migration: `python manage.py migrate`
-- Run collectstatic: `python manage.py collectstatic`
-- Reload uwsgi: `uwsgi --reload /tmp/django.pid`
