@@ -14,6 +14,8 @@ from djangoratings.fields import AnonymousRatingField
 from taggit_autosuggest.managers import TaggableManager
 from rest_framework_simplejwt.token_blacklist.models import OutstandingToken
 
+from django.db.models import OuterRef, Count, Subquery, F
+
 PLUGINS_STORAGE_PATH = getattr(settings, "PLUGINS_STORAGE_PATH", "packages/%Y")
 PLUGINS_FRESH_DAYS = getattr(settings, "PLUGINS_FRESH_DAYS", 30)
 
@@ -168,6 +170,16 @@ class UnapprovedPlugins(BasePluginManager):
             super(UnapprovedPlugins, self)
             .get_queryset()
             .filter(pluginversion__approved=False, deprecated=False)
+            .extra(
+                select={
+                    "average_vote": "rating_score/(rating_votes+0.001)",
+                    "latest_version_date": (
+                        "SELECT created_on FROM plugins_pluginversion WHERE "
+                        "plugins_pluginversion.plugin_id = plugins_plugin.id "
+                        "ORDER BY created_on DESC LIMIT 1"
+                    ),
+                }
+            )
             .distinct()
         )
 
@@ -274,17 +286,78 @@ class ServerPlugins(ApprovedPlugins):
         return super(ServerPlugins, self).get_queryset().filter(server=True).distinct()
 
 
-class FeedbackReceivedPlugins(models.Manager):
+class FeedbackCompletedPlugins(models.Manager):
     """
-    Show only unapproved plugins with a feedback
+    Show only unapproved plugins with resolved feedbacks
     """
     def get_queryset(self):
+        feedback_count_subquery = PluginVersionFeedback.objects.filter(
+            version=OuterRef('pluginversion'),
+            is_completed=True
+        ).values('version').annotate(
+            completed_count=Count('id')
+        ).values('completed_count')
+
+        return (
+            super(FeedbackCompletedPlugins, self)
+            .get_queryset()
+            .filter(
+                pluginversion__approved=False,
+                deprecated=False
+            )
+            .annotate(
+                total_feedback_count=Count('pluginversion__feedback'),
+                completed_feedback_count=Subquery(feedback_count_subquery)
+            )
+            .filter(
+                total_feedback_count=F('completed_feedback_count')
+            )
+            .extra(
+                select={
+                    "average_vote": "rating_score/(rating_votes+0.001)",
+                    "latest_version_date": (
+                        "SELECT created_on FROM plugins_pluginversion WHERE "
+                        "plugins_pluginversion.plugin_id = plugins_plugin.id "
+                        "ORDER BY created_on DESC LIMIT 1"
+                    ),
+                }
+            ).distinct()
+        )
+
+class FeedbackReceivedPlugins(models.Manager):
+    """
+    Show only unapproved plugins with a pending feedback
+    """
+    def get_queryset(self):
+        feedback_count_subquery = PluginVersionFeedback.objects.filter(
+            version=OuterRef('pluginversion'),
+            is_completed=False
+        ).values('version').annotate(
+            received_count=Count('id')
+        ).values('received_count')
+
         return (
             super(FeedbackReceivedPlugins, self)
             .get_queryset()
             .filter(
                 pluginversion__approved=False,
-                pluginversion__feedback__isnull=False
+                deprecated=False
+            )
+            .annotate(
+                received_feedback_count=Subquery(feedback_count_subquery)
+            )
+            .filter(
+                received_feedback_count__gte=1
+            )
+            .extra(
+                select={
+                    "average_vote": "rating_score/(rating_votes+0.001)",
+                    "latest_version_date": (
+                        "SELECT created_on FROM plugins_pluginversion WHERE "
+                        "plugins_pluginversion.plugin_id = plugins_plugin.id "
+                        "ORDER BY created_on DESC LIMIT 1"
+                    ),
+                }
             ).distinct()
         )
 
@@ -299,7 +372,23 @@ class FeedbackPendingPlugins(models.Manager):
             .get_queryset()
             .filter(
                 pluginversion__approved=False,
-                pluginversion__feedback__isnull=True
+                deprecated=False
+            )
+            .annotate(
+                total_feedback_count=Count('pluginversion__feedback'),
+            )
+            .filter(
+                total_feedback_count=0
+            )
+            .extra(
+                select={
+                    "average_vote": "rating_score/(rating_votes+0.001)",
+                    "latest_version_date": (
+                        "SELECT created_on FROM plugins_pluginversion WHERE "
+                        "plugins_pluginversion.plugin_id = plugins_plugin.id "
+                        "ORDER BY created_on DESC LIMIT 1"
+                    ),
+                }
             ).distinct()
         )
 
@@ -407,6 +496,7 @@ class Plugin(models.Model):
     most_voted_objects = MostVotedPlugins()
     most_rated_objects = MostRatedPlugins()
     server_objects = ServerPlugins()
+    feedback_completed_objects = FeedbackCompletedPlugins()
     feedback_received_objects = FeedbackReceivedPlugins()
     feedback_pending_objects = FeedbackPendingPlugins()
 

@@ -122,6 +122,66 @@ class TestFeedbackNotify(SetupMixin, TestCase):
             settings.EMAIL_HOST_USER
         )
 
+class TestPluginFeedbackCompletedList(SetupMixin, TestCase):
+    fixtures = ["fixtures/simplemenu.json", "fixtures/auth.json"]
+
+    def setUp(self):
+        super().setUp()
+        self.feedback_1.is_completed = True
+        self.feedback_1.save()
+        self.url = reverse("feedback_completed_plugins")
+
+    def test_non_staff_should_not_see_plugin_feedback_completed_list(self):
+        response = self.client.get(self.url)
+        self.assertEqual(response.status_code, 404)
+
+        self.client.force_login(user=self.creator)
+        response = self.client.get(self.url)
+        self.assertEqual(response.status_code, 404)
+
+    def test_staff_should_see_plugin_feedback_completed(self):
+        self.client.force_login(user=self.staff)
+        response = self.client.get(self.url)
+        self.assertEqual(response.status_code, 200)
+        self.assertTemplateUsed(
+            response, 'plugins/plugin_list.html'
+        )
+        self.assertEqual(
+            list(response.context['object_list']),
+            [self.plugin_1]
+        )
+        self.assertContains(response, "test plugin 1")
+        self.assertNotContains(response, "test plugin 2")
+
+        # add feedback for plugin 2
+        PluginVersionFeedback.objects.create(
+            version=self.version_2,
+            reviewer=self.staff,
+            task="test comment in a feedback for plugin 2."
+        )
+        response = self.client.get(self.url)
+
+        # The plugin should not appear in the feedback completed list
+        self.assertEqual(
+            list(response.context['object_list']),
+            [self.plugin_1]
+        )
+        self.assertNotContains(response, "test plugin 2")
+
+    def test_approved_plugin_should_not_show_in_feedback_completed_list(self):
+        self.client.force_login(user=self.staff)
+        response = self.client.get(self.url)
+        self.assertEqual(
+            list(response.context['object_list']),
+            [self.plugin_1]
+        )
+        self.version_1.approved = True
+        self.version_1.save()
+        response = self.client.get(self.url)
+        self.assertEqual(
+            list(response.context['object_list']),
+            []
+        )
 
 class TestPluginFeedbackReceivedList(SetupMixin, TestCase):
     fixtures = ["fixtures/simplemenu.json", "fixtures/auth.json"]
@@ -159,10 +219,9 @@ class TestPluginFeedbackReceivedList(SetupMixin, TestCase):
             task="test comment in a feedback for plugin 2."
         )
         response = self.client.get(self.url)
-        self.assertEqual(
-            list(response.context['object_list']),
-            [self.plugin_1, self.plugin_2]
-        )
+        object_list = set(response.context['object_list'])
+        expected_objects = {self.plugin_1, self.plugin_2}
+        self.assertEqual(object_list, expected_objects)
         self.assertContains(response, "test plugin 2")
 
     def test_approved_plugin_should_not_show_in_feedback_received_list(self):

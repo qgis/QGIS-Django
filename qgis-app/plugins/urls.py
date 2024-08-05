@@ -120,7 +120,7 @@ urlpatterns = [
     url(
         r"^unapproved/$",
         PluginsList.as_view(
-            queryset=Plugin.unapproved_objects.all(),
+            queryset=Plugin.unapproved_objects.all().order_by("-latest_version_date"),
             additional_context={"title": _("Unapproved plugins")},
         ),
         name="unapproved_plugins",
@@ -206,16 +206,23 @@ urlpatterns = [
         name="most_rated_plugins",
     ),
     url(
+        r"^feedback_completed/$",
+        FeedbackCompletedPluginsList.as_view(
+            additional_context={"title": _("Reviewed Plugins (Resolved)")}
+        ),
+        name="feedback_completed_plugins",
+    ),
+    url(
         r"^feedback_pending/$",
         FeedbackPendingPluginsList.as_view(
-            additional_context={"title": _("Feedback pending plugins")}
+            additional_context={"title": _("Awaiting review")}
         ),
         name="feedback_pending_plugins",
     ),
     url(
         r"^feedback_received/$",
         FeedbackReceivedPluginsList.as_view(
-            additional_context={"title": _("Feedback received plugins")}
+            additional_context={"title": _("Reviewed Plugins (Pending)")}
         ),
         name="feedback_received_plugins",
     ),
