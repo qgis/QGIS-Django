@@ -52,7 +52,7 @@ jobs:
 
 
       - name: Run the containers
-        run: docker-compose up -d db devweb
+        run: docker compose up -d db devweb
     
 
       - name: Wait for the containers to start
@@ -60,7 +60,7 @@ jobs:
 
       - name: Run test
         run: |
-          docker-compose exec -T devweb bash -c '
+          docker compose exec -T devweb bash -c '
             set -e  # Exit immediately if any command fails
             python manage.py makemigrations &&
             python manage.py migrate &&
