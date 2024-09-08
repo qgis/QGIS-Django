@@ -176,14 +176,14 @@ web-logs:
 	@echo "------------------------------------------------------------------"
 	@echo "Tailing logs in NGINX/WEB container(s)"
 	@echo "------------------------------------------------------------------"
-	@docker compose -p $(PROJECT_ID) logs -f web
+	@docker compose -p $(PROJECT_ID) logs -f --tail=10 web
 
 logs:
 	@echo
 	@echo "------------------------------------------------------------------"
 	@echo "Tailing all logs or a specific container"
 	@echo "------------------------------------------------------------------"
-	@docker compose -p $(PROJECT_ID) logs -f $(c)
+	@docker compose -p $(PROJECT_ID) logs -f --tail=10 $(c)
 
 shell:
 	@echo
