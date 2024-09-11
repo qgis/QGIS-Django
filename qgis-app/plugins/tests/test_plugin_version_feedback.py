@@ -331,7 +331,7 @@ class TestCreateVersionFeedback(SetupMixin, TestCase):
                 "feedback": "single line feedback"
             }
         )
-        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.status_code, 302)
         feedbacks = PluginVersionFeedback.objects.filter(
             version=self.version_2).all()
         self.assertEqual(len(feedbacks), 1)
@@ -345,7 +345,7 @@ class TestCreateVersionFeedback(SetupMixin, TestCase):
                 "feedback": "- [ ] task one\n - [ ] task two"
             }
         )
-        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.status_code, 302)
         feedbacks = PluginVersionFeedback.objects.filter(
             version=self.version_2).all()
         self.assertEqual(len(feedbacks), 2)
