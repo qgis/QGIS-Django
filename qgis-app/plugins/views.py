@@ -1263,7 +1263,7 @@ def version_update(request, package_name, version):
         return render(
             request, "plugins/version_permission_deny.html", {"plugin": plugin}
         )
-    version = PluginVersion(plugin=plugin, created_by=request.user)
+    version.created_by = request.user
     is_trusted=request.user.has_perm("plugins.can_approve")
     return _version_update(request, plugin, version, is_trusted=is_trusted)
 
