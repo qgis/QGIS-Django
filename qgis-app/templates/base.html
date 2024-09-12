@@ -71,8 +71,9 @@
                               <ul id="sharingAppMenu" class="dropdown-menu" role="menu" aria-labelledby="drop4">
                                 {% for item in Hub %}
                                   <li role="presentation"><a role="menuitem" tabindex="-1" href="{{ item.page.url }}">{{ item.name }}</a></li>
-                                {% endfor %}
-                              </ul>
+                                  {% endfor %}
+                                  <li role="presentation"><a role="menuitem" tabindex="-1" href="{% url "hub_token_list" %}">API</a></li>
+                                </ul>
                             </li>
 
                             {% if user.is_authenticated %}

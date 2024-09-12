@@ -3,12 +3,22 @@ from collections import OrderedDict
 from api.serializers import GeopackageSerializer, ModelSerializer, StyleSerializer, LayerDefinitionSerializer, WavefrontSerializer
 from base.license import zip_a_file_if_not_zipfile
 from django.contrib.postgres.search import SearchVector
-from django.http import Http404, HttpResponse
+from django.http import Http404, HttpResponse, HttpResponseRedirect
 from django.utils.decorators import method_decorator
 from django.utils.text import slugify
 from django.views.decorators.cache import cache_page
 from drf_multiple_model.pagination import MultipleModelLimitOffsetPagination
 from drf_multiple_model.views import FlatMultipleModelAPIView
+from django.views.decorators.csrf import ensure_csrf_cookie
+from django.shortcuts import get_object_or_404, render
+from django.contrib.auth.decorators import login_required
+from django.db import transaction
+
+from django.views.generic import ListView, DetailView
+from rest_framework_simplejwt.tokens import RefreshToken, api_settings
+from django.urls import reverse
+from rest_framework_simplejwt.exceptions import InvalidToken, TokenError
+import time
 
 # models
 from geopackages.models import Geopackage
@@ -18,7 +28,8 @@ from rest_framework.views import APIView
 from styles.models import Style
 from layerdefinitions.models import LayerDefinition
 from wavefronts.models import Wavefront
-
+from api.models import HubOutstandingToken
+from rest_framework_simplejwt.token_blacklist.models import OutstandingToken
 
 def filter_resource_type(queryset, request, *args, **kwargs):
     resource_type = request.query_params["resource_type"]
@@ -168,3 +179,98 @@ class ResourceAPIDownload(APIView):
             slugify(object.name, allow_unicode=True)
         )
         return response
+
+
+class HubTokenDetailView(DetailView):
+    """
+    Hub token detail
+    """
+    model = OutstandingToken
+    queryset = OutstandingToken.objects.all()
+    template_name = "hub_token_detail.html"
+
+    @method_decorator(ensure_csrf_cookie)
+    def dispatch(self, *args, **kwargs):
+        return super(HubTokenDetailView, self).dispatch(*args, **kwargs)
+
+    def get_context_data(self, **kwargs):
+        context = super(HubTokenDetailView, self).get_context_data(**kwargs)
+        token_id = self.kwargs.get('pk')
+
+        outstanding_token = get_object_or_404(
+            OutstandingToken, 
+            pk=token_id, 
+            user=self.request.user
+        )
+        hub_token = get_object_or_404(
+            HubOutstandingToken, 
+            token__pk=outstanding_token.pk, 
+            is_blacklisted=False,
+            is_newly_created=True
+        )
+        try:
+            token = RefreshToken(outstanding_token.token)
+            token['refresh_jti'] = token[api_settings.JTI_CLAIM]
+        except (InvalidToken, TokenError) as e:
+            context = {}
+            self.template_name = "hub_token_invalid_or_expired.html"
+            return context
+        timestamp_from_last_edit = int(time.time())        
+        context.update(
+            {
+                "access_token": str(token.access_token),
+                "object": outstanding_token,
+                'timestamp_from_last_edit': timestamp_from_last_edit
+            }
+        )
+        hub_token.is_newly_created = False
+        hub_token.save()
+        return context
+
+
+class HubTokenListView(ListView):
+    """
+    Hub token list
+    """
+    model = HubOutstandingToken
+    queryset = HubOutstandingToken.objects.all().order_by("-token__created_at")
+    template_name = "hub_token_list.html"
+
+    @method_decorator(ensure_csrf_cookie)
+    def dispatch(self, *args, **kwargs):
+        return super(HubTokenListView, self).dispatch(*args, **kwargs)
+
+    def get_filtered_queryset(self, qs):
+        return qs.filter(
+            is_blacklisted=False
+        )
+
+    def get_queryset(self):
+        qs = super(HubTokenListView, self).get_queryset()
+        qs = self.get_filtered_queryset(qs)
+        return qs
+
+
+
+@login_required
+@transaction.atomic
+def hub_token_create(request):
+    if request.method == "POST":
+        user = request.user
+        refresh = RefreshToken.for_user(user)
+
+        jti = refresh[api_settings.JTI_CLAIM]
+
+        outstanding_token = OutstandingToken.objects.get(jti=jti)
+
+        hub_token = HubOutstandingToken.objects.create(
+            user=user,
+            token=outstanding_token,
+            is_blacklisted=False,
+            is_newly_created=True
+        )
+
+        return HttpResponseRedirect(
+            reverse("hub_token_detail", args=[hub_token.pk])
+        )
+
