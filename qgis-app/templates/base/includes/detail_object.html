@@ -5,6 +5,8 @@
 <dd>{{ object_detail.name }}</dd>
 <dt>Description</dt>
 <dd>{{ object_detail.description|md_to_html }}</dd>
+<dt>Dependencies</dt>
+<dd>{{ object_detail.dependencies|default:"-" }}</dd>
 <dt>Uploaded Date</dt>
 <dd>{{ object_detail.upload_date|date:"d F Y" }}</dd>
 {% if object_detail.review_set.last.review_date and object_detail.approved%}

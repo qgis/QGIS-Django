@@ -118,6 +118,15 @@ class Resource(models.Model):
         db_index=True,
     )
 
+    # plugin dependencies
+    dependencies = models.TextField(
+        _("Plugin dependencies"),
+        help_text=_("Comma-separated list for the plugin the resource needs"),
+        blank=True,
+        null=True,
+    )
+
+
     # Manager
     objects = models.Manager()
     approved_objects = ApprovedManager()
