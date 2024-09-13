@@ -77,7 +77,6 @@ class TestReviewWavefront(SetUpTest, TestCase):
         data = {
             "name": "odm texturing",
             "description": "Test upload a wavefront",
-            "dependencies": "QuickOSM",
             "thumbnail_image": uploaded_thumbnail,
             "file": uploaded_file,
             "tags": "3dmodel,wavefront,test"
@@ -165,7 +164,6 @@ class TestDownloadWavefront(SetUpTest, TestCase):
         data = {
             "name": "odm texturing",
             "description": "Test upload a wavefront",
-            "dependencies": "QuickOSM",
             "thumbnail_image": uploaded_thumbnail,
             "file": uploaded_file,
         }

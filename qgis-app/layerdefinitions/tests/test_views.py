@@ -75,7 +75,6 @@ class TestUploadLayerDefinitionFile(SetUpTest, TestCase):
         self.data = {
             "name": "Test QLR File",
             "description": "Test upload a QLR File",
-            "dependencies": "QuickOSM",
             "thumbnail_image": self.uploaded_thumbnail,
             "file": self.uploaded_file,
             "license": "license",
@@ -122,7 +121,6 @@ class TestReviewLayerDefinition(SetUpTest, TestCase):
             creator=self.creator,
             name="Test QLR File",
             description="A QLR file for testing purpose",
-            dependencies="QuickOSM",
             thumbnail_image=self.thumbnail,
             file=self.file,
         )
@@ -191,7 +189,6 @@ class TestDownloadLayerDefinition(SetUpTest, TestCase):
         data = {
             "name": "Test QLR File",
             "description": "Test upload a QLR File",
-            "dependencies": "QuickOSM",
             "thumbnail_image": uploaded_thumbnail,
             "file": uploaded_file,
             "license": "license",

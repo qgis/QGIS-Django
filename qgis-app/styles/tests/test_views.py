@@ -69,7 +69,6 @@ class TestUploadStyle(TestCase):
                     "file": xml_file,
                     "thumbnail_image": self.thumbnail,
                     "description": "This style is for testing only purpose",
-                    "dependencies": "QuickOSM",
                     "tags": "xml,style,test"
                 },
             )
@@ -139,7 +138,6 @@ class TestModeration(TestCase):
                     "file": xml_file,
                     "thumbnail_image": cls.thumbnail,
                     "description": "This style is for testing only purpose",
-                    "dependencies": "QuickOSM",
                 },
             )
         c.logout()
@@ -293,7 +291,6 @@ class TestDownloadStyles(TestCase):
             style_type=StyleType.objects.get(pk=1),
             name="Blues",
             description="This file is saved in styles/tests/stylefiles folder",
-            dependencies="QuickOSM",
             thumbnail_image="thumbnail.png",
             file="colorramp_blue.xml",
             download_count=0,

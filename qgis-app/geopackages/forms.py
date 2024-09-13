@@ -14,7 +14,6 @@ class ResourceFormMixin(forms.ModelForm):
             "name",
             "description",
             "tags",
-            "dependencies"
         ]
 
 
