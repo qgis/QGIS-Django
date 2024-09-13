@@ -16,7 +16,7 @@ class ResourceFormMixin(forms.ModelForm):
             "url_metadata",
             "description",
             "license",
-            "tags",
+            "tags"
         ]
 
 

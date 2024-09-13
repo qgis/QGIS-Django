@@ -13,7 +13,7 @@ class ResourceFormMixin(forms.ModelForm):
             "thumbnail_image",
             "name",
             "description",
-            "tags",
+            "tags"
         ]
 
 

@@ -14,7 +14,7 @@ class ResourceFormMixin(forms.ModelForm):
             "thumbnail_image",
             "name",
             "description",
-            "tags",
+            "tags"
         ]
 
 
@@ -30,7 +30,7 @@ class UploadForm(forms.ModelForm):
             "file",
             "thumbnail_image",
             "description",
-            "tags",
+            "tags"
         ]
 
     def clean_file(self):
