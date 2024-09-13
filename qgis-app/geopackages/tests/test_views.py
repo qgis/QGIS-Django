@@ -155,6 +155,7 @@ class TestUploadGeoPackage(SetUpTest, TestCase):
         data = {
             "name": "spiky polygons",
             "description": "Test upload an acceptable gpkg size",
+            "dependencies": "QuickOSM",
             "thumbnail_image": uploaded_thumbnail,
             "file": uploaded_gpkg,
             "tags": "gpkg,project,test"
@@ -209,6 +210,7 @@ class TestReviewGeopackage(SetUpTest, TestCase):
             creator=self.creator,
             name="spiky polygons",
             description="A GeoPackage for testing purpose",
+            dependencies="QuickOSM",
             thumbnail_image=self.thumbnail,
             file=self.file,
         )
