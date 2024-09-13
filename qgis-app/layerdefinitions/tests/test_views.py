@@ -122,7 +122,7 @@ class TestReviewLayerDefinition(SetUpTest, TestCase):
             creator=self.creator,
             name="Test QLR File",
             description="A QLR file for testing purpose",
-            dependencies= "QuickOSM",
+            dependencies="QuickOSM",
             thumbnail_image=self.thumbnail,
             file=self.file,
         )
