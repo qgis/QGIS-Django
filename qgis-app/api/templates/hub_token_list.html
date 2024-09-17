@@ -29,20 +29,15 @@
       <tr class="{% cycle "even" "odd" %}">
         <td>{{ hub_token.token.user }}</td>
         <td>{{ hub_token.description|default:"-" }}</td>
-        <td style="max-width:200px">
-          <span class="truncate" style="display:block !important;">
-            {{ hub_token.token.jti }}
-          </span>
-        </td>
         <td>{{ hub_token.token.created_at|local_timezone }}</td>
         <td>{{ hub_token.last_used_on|default:"-"|local_timezone }}</td>
         <td>
-          <a class="btn btn-primary btn-mini" href="{% url "hub_token_update" hub_token.token.id %}"
+          {% comment %} <a class="btn btn-primary btn-mini" href="{% url "hub_token_update" hub_token.token.id %}"
             title="{% trans "Edit description" %}"><i class="icon-pencil icon-white"></i></a>&nbsp;
           <a class="btn btn-danger btn-mini delete"
             href="{% url "hub_token_delete" hub_token.token.id %}"
             title="{% trans "Delete" %}"><i class="icon-remove icon-white"></i>
-          </a>
+          </a> {% endcomment %}
         </td>
       </tr>
       {% endfor %}

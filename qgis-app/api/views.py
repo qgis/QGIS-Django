@@ -196,17 +196,16 @@ class HubTokenDetailView(DetailView):
     def get_context_data(self, **kwargs):
         context = super(HubTokenDetailView, self).get_context_data(**kwargs)
         token_id = self.kwargs.get('pk')
-
-        outstanding_token = get_object_or_404(
-            OutstandingToken, 
-            pk=token_id, 
-            user=self.request.user
-        )
         hub_token = get_object_or_404(
             HubOutstandingToken, 
-            token__pk=outstanding_token.pk, 
+            pk=token_id,
             is_blacklisted=False,
             is_newly_created=True
+        )
+        outstanding_token = get_object_or_404(
+            OutstandingToken, 
+            pk=hub_token.token.pk, 
+            user=self.request.user
         )
         try:
             token = RefreshToken(outstanding_token.token)
@@ -223,8 +222,8 @@ class HubTokenDetailView(DetailView):
                 'timestamp_from_last_edit': timestamp_from_last_edit
             }
         )
-        hub_token.is_newly_created = False
-        hub_token.save()
+        # hub_token.is_newly_created = False
+        # hub_token.save()
         return context
 
 
