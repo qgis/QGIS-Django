@@ -1,0 +1,26 @@
+{% extends BASE_TEMPLATE %}{% load i18n %}
+{% load local_timezone %}
+{% block content %}
+<h2>{% trans "Edit token description " %} {{ token.jti }}</h2>
+
+{% if form.errors %}
+<div class="alert alert-error">
+  <button type="button" class="close" data-dismiss="alert">&times;</button>
+  <p>{% trans "The form contains errors and cannot be submitted, please check the fields highlighted in red." %}</p>
+</div>
+{% endif %}
+{% if form.non_field_errors %}
+<div class="alert alert-error">
+  <button type="button" class="close" data-dismiss="alert">&times;</button>
+  {% for error in form.non_field_errors %}
+  <p>{{ error }}</p>
+  {% endfor %}
+</div>
+{% endif %}
+<form action="" method="post" class="horizontal" enctype="multipart/form-data">{% csrf_token %}
+  {% include "base/form_snippet.html" %}
+  <div class="form-actions">
+    <button class="btn btn-primary" type="submit">{% trans "Save" %}</button>
+  </div>
+</form>
+{% endblock %}

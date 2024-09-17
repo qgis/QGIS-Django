@@ -4,7 +4,7 @@ from django.utils.translation import gettext_lazy as _
 from rest_framework_simplejwt.token_blacklist.models import OutstandingToken
 from django.contrib.auth.models import User
 
-class HubOutstandingToken(models.Model):
+class UserOutstandingToken(models.Model):
     """
     Hub outstanding token
     """

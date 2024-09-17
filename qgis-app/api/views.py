@@ -19,6 +19,9 @@ from rest_framework_simplejwt.tokens import RefreshToken, api_settings
 from django.urls import reverse
 from rest_framework_simplejwt.exceptions import InvalidToken, TokenError
 import time
+from django.utils.translation import gettext_lazy as _
+from api.forms import UserTokenForm
+from django.contrib import messages
 
 # models
 from geopackages.models import Geopackage
@@ -28,7 +31,7 @@ from rest_framework.views import APIView
 from styles.models import Style
 from layerdefinitions.models import LayerDefinition
 from wavefronts.models import Wavefront
-from api.models import HubOutstandingToken
+from api.models import UserOutstandingToken
 from rest_framework_simplejwt.token_blacklist.models import OutstandingToken
 
 def filter_resource_type(queryset, request, *args, **kwargs):
@@ -181,30 +184,30 @@ class ResourceAPIDownload(APIView):
         return response
 
 
-class HubTokenDetailView(DetailView):
+class UserTokenDetailView(DetailView):
     """
     Hub token detail
     """
     model = OutstandingToken
     queryset = OutstandingToken.objects.all()
-    template_name = "hub_token_detail.html"
+    template_name = "user_token_detail.html"
 
     @method_decorator(ensure_csrf_cookie)
     def dispatch(self, *args, **kwargs):
-        return super(HubTokenDetailView, self).dispatch(*args, **kwargs)
+        return super(UserTokenDetailView, self).dispatch(*args, **kwargs)
 
     def get_context_data(self, **kwargs):
-        context = super(HubTokenDetailView, self).get_context_data(**kwargs)
+        context = super(UserTokenDetailView, self).get_context_data(**kwargs)
         token_id = self.kwargs.get('pk')
-        hub_token = get_object_or_404(
-            HubOutstandingToken, 
+        user_token = get_object_or_404(
+            UserOutstandingToken, 
             pk=token_id,
             is_blacklisted=False,
             is_newly_created=True
         )
         outstanding_token = get_object_or_404(
             OutstandingToken, 
-            pk=hub_token.token.pk, 
+            pk=user_token.token.pk, 
             user=self.request.user
         )
         try:
@@ -212,32 +215,32 @@ class HubTokenDetailView(DetailView):
             token['refresh_jti'] = token[api_settings.JTI_CLAIM]
         except (InvalidToken, TokenError) as e:
             context = {}
-            self.template_name = "hub_token_invalid_or_expired.html"
+            self.template_name = "user_token_invalid_or_expired.html"
             return context
         timestamp_from_last_edit = int(time.time())        
         context.update(
             {
                 "access_token": str(token.access_token),
-                "object": outstanding_token,
+                "object": user_token,
                 'timestamp_from_last_edit': timestamp_from_last_edit
             }
         )
-        # hub_token.is_newly_created = False
-        # hub_token.save()
+        user_token.is_newly_created = False
+        user_token.save()
         return context
 
 
-class HubTokenListView(ListView):
+class UserTokenListView(ListView):
     """
     Hub token list
     """
-    model = HubOutstandingToken
-    queryset = HubOutstandingToken.objects.all().order_by("-token__created_at")
-    template_name = "hub_token_list.html"
+    model = UserOutstandingToken
+    queryset = UserOutstandingToken.objects.all().order_by("-token__created_at")
+    template_name = "user_token_list.html"
 
     @method_decorator(ensure_csrf_cookie)
     def dispatch(self, *args, **kwargs):
-        return super(HubTokenListView, self).dispatch(*args, **kwargs)
+        return super(UserTokenListView, self).dispatch(*args, **kwargs)
 
     def get_filtered_queryset(self, qs):
         return qs.filter(
@@ -245,7 +248,7 @@ class HubTokenListView(ListView):
         )
 
     def get_queryset(self):
-        qs = super(HubTokenListView, self).get_queryset()
+        qs = super(UserTokenListView, self).get_queryset()
         qs = self.get_filtered_queryset(qs)
         return qs
 
@@ -253,16 +256,13 @@ class HubTokenListView(ListView):
 
 @login_required
 @transaction.atomic
-def hub_token_create(request):
+def user_token_create(request):
     if request.method == "POST":
         user = request.user
         refresh = RefreshToken.for_user(user)
-
         jti = refresh[api_settings.JTI_CLAIM]
-
         outstanding_token = OutstandingToken.objects.get(jti=jti)
-
-        hub_token = HubOutstandingToken.objects.create(
+        user_token = UserOutstandingToken.objects.create(
             user=user,
             token=outstanding_token,
             is_blacklisted=False,
@@ -270,6 +270,72 @@ def hub_token_create(request):
         )
 
         return HttpResponseRedirect(
-            reverse("hub_token_detail", args=[hub_token.pk])
+            reverse("user_token_detail", args=[user_token.pk])
         )
 
+
+@login_required
+@transaction.atomic
+def user_token_update(request, token_id):
+    print(token_id)
+    user_token = get_object_or_404(
+        UserOutstandingToken, 
+        pk=token_id,
+        is_blacklisted=False
+    )
+    outstanding_token = get_object_or_404(
+        OutstandingToken, 
+        pk=user_token.token.pk, 
+        user=request.user
+    )
+    if request.method == "POST":
+        form = UserTokenForm(request.POST, instance=user_token)
+        if form.is_valid():
+            form.save()
+            msg = _("The token description has been successfully updated.")
+            messages.success(request, msg, fail_silently=True)
+            return HttpResponseRedirect(
+                reverse("user_token_list")
+            )
+    else:
+        form = UserTokenForm(instance=user_token)
+
+    return render(
+        request,
+        "user_token_form.html",
+        {"form": form, "token": user_token}
+    )
+
+
+@login_required
+@transaction.atomic
+def user_token_delete(request, token_id):
+    user_token = get_object_or_404(
+        UserOutstandingToken, 
+        pk=token_id,
+        is_blacklisted=False
+    )
+    outstanding_token = get_object_or_404(
+        OutstandingToken, 
+        pk=user_token.token.pk, 
+        user=request.user
+    )
+    if "delete_confirm" in request.POST:
+        try:
+            token = RefreshToken(outstanding_token.token)
+            token.blacklist()
+            user_token.is_blacklisted = True
+        except (InvalidToken, TokenError) as e:
+            user_token.is_blacklisted = True
+        user_token.save()
+
+        msg = _("The token has been successfully deleted.")
+        messages.success(request, msg, fail_silently=True)
+        return HttpResponseRedirect(
+            reverse("user_token_list")
+        )
+    return render(
+        request,
+        "user_token_delete.html",
+        {"description": user_token.description, "username": outstanding_token.user},
+    )

@@ -10,18 +10,6 @@
   is lost, you can generate a new one at any time.
 </div>
 <dl class="dl-horizontal">
-    <dt>{% trans "User"%}</dt>
-    <dd>
-        <a href="{% url "user_details" object.user %}">{{ object.user }}</a>
-    </dd>
-    <dt>{% trans "Created at"%}</dt>
-    <dd>
-        {{ object.created_at|local_timezone }}
-    </dd>
-    <dt>{% trans "Expires at"%}</dt>
-    <dd>
-        {{ object.expires_at|local_timezone }}
-    </dd>
     <dt>{% trans "Access token"%}</dt>
     <dd>
         <textarea 
@@ -43,8 +31,8 @@
 
 </dl>
 <div>
-  <a class="btn" href="{% url "hub_token_list" %}?v={{ timestamp_from_last_edit }}">{% trans "Back to the list" %}</a>
-  {% comment %} <a class="btn btn-primary" href="{% url "hub_token_update" object.pk %}">{% trans "Edit description" %}</a> {% endcomment %}
+  <a class="btn" href="{% url "user_token_list" %}?v={{ timestamp_from_last_edit }}">{% trans "Back to the list" %}</a>
+  <a class="btn btn-primary" href="{% url "user_token_update" object.pk %}">{% trans "Edit description" %}</a>
 </div>
 {% endblock %}
 {% block extracss %}
