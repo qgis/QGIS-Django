@@ -1,11 +1,21 @@
 from api.views import ResourceAPIDownload, ResourceAPIList
 from django.urls import path
 from django.urls import re_path as url
-from api.views import UserTokenDetailView, UserTokenListView, user_token_create, user_token_update, user_token_delete
+from api.views import (
+    UserTokenDetailView,
+    UserTokenListView,
+    user_token_create,
+    user_token_update,
+    user_token_delete,
+    ResourceCreateView
+)
 urlpatterns = [
     path("resources/", ResourceAPIList.as_view(), name="resource-list"),
     path(
         "resource/<uuid:uuid>/", ResourceAPIDownload.as_view(), name="resource-download"
+    ),
+    path(
+        "resource/create", ResourceCreateView.as_view(), name="geopackage-create"
     ),
     url(
         r"^tokens/$",

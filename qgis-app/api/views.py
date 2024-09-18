@@ -16,6 +16,7 @@ from django.db import transaction
 
 from django.views.generic import ListView, DetailView
 from rest_framework_simplejwt.tokens import RefreshToken, api_settings
+from rest_framework_simplejwt.authentication import JWTAuthentication
 from django.urls import reverse
 from rest_framework_simplejwt.exceptions import InvalidToken, TokenError
 import time
@@ -27,12 +28,16 @@ from django.contrib import messages
 from geopackages.models import Geopackage
 from models.models import Model
 from rest_framework import filters, permissions
+from rest_framework.permissions import IsAuthenticated
 from rest_framework.views import APIView
 from styles.models import Style
 from layerdefinitions.models import LayerDefinition
 from wavefronts.models import Wavefront
 from api.models import UserOutstandingToken
 from rest_framework_simplejwt.token_blacklist.models import OutstandingToken
+from rest_framework.response import Response
+from rest_framework.parsers import MultiPartParser, FormParser
+from rest_framework import status
 
 def filter_resource_type(queryset, request, *args, **kwargs):
     resource_type = request.query_params["resource_type"]
@@ -339,3 +344,35 @@ def user_token_delete(request, token_id):
         "user_token_delete.html",
         {"description": user_token.description, "username": outstanding_token.user},
     )
+
+
+class ResourceCreateView(APIView):
+    """
+    Create a new Resource
+    """
+    authentication_classes = [JWTAuthentication]
+    permission_classes = [IsAuthenticated]
+    parser_classes = [MultiPartParser, FormParser]
+
+    def post(self, request, *args, **kwargs):
+        print(request.data.get("resource_type"))
+        if request.data.get("resource_type").lower() == "geopackage":
+            serializer = GeopackageSerializer(data=request.data)
+        elif request.data.get("resource_type").lower() == "3dmodel":
+            serializer = WavefrontSerializer(data=request.data)
+        elif request.data.get("resource_type").lower() == "style":
+            serializer = StyleSerializer(data=request.data)
+        elif request.data.get("resource_type").lower() == "layerdefinition":
+            serializer = LayerDefinitionSerializer(data=request.data)
+        elif request.data.get("resource_type").lower() == "model":
+            serializer = ModelSerializer(data=request.data)
+        else:
+            return Response(
+                {"resource_type": "Resource type not supported"},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+        if serializer.is_valid():
+            serializer.save(creator=request.user)
+            return Response(serializer.data, status=status.HTTP_201_CREATED)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+

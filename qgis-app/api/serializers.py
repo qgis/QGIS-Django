@@ -2,7 +2,6 @@ from base.validator import filesize_validator
 from geopackages.models import Geopackage
 from models.models import Model
 from rest_framework import serializers
-from sorl_thumbnail_serializer.fields import HyperlinkedSorlImageField
 from styles.models import Style
 from layerdefinitions.models import LayerDefinition
 from wavefronts.models import Wavefront
@@ -10,6 +9,11 @@ from sorl.thumbnail import get_thumbnail
 from django.conf import settings
 from os.path import exists
 from django.templatetags.static import static
+from wavefronts.validator import WavefrontValidator
+
+from django.core.exceptions import ValidationError
+from django.utils.translation import gettext_lazy as _
+from styles.file_handler import validator
 
 class ResourceBaseSerializer(serializers.ModelSerializer):
     creator = serializers.ReadOnlyField(source="get_creator_name")
@@ -83,6 +87,19 @@ class StyleSerializer(ResourceBaseSerializer):
     class Meta(ResourceBaseSerializer.Meta):
         model = Style
 
+    def validate(self, attrs):
+        attrs = super().validate(attrs)
+        xml_file = attrs.get("file")
+
+        if xml_file:
+            print("xml_file", xml_file)
+            style = validator(xml_file)
+            if not style:
+                raise ValidationError(
+                    _("Undefined style type. " "Please register your style type.")
+                )
+        return attrs
+
 class LayerDefinitionSerializer(ResourceBaseSerializer):
     class Meta(ResourceBaseSerializer.Meta):
         model = LayerDefinition
@@ -97,3 +114,10 @@ class WavefrontSerializer(ResourceBaseSerializer):
 
     def get_resource_subtype(self, obj):
         return None
+
+    def validate(self, attrs):
+        attrs = super().validate(attrs)
+        file = attrs.get("file")
+        if file and file.name.endswith('.zip'):
+            WavefrontValidator(file).validate_wavefront()
+        return attrs
