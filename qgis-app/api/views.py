@@ -345,6 +345,33 @@ def user_token_delete(request, token_id):
         {"description": user_token.description, "username": outstanding_token.user},
     )
 
+def _get_resource_serializer(resource_type):
+    if resource_type.lower() == "geopackage":
+        return GeopackageSerializer
+    elif resource_type.lower() == "3dmodel":
+        return WavefrontSerializer
+    elif resource_type.lower() == "style":
+        return StyleSerializer
+    elif resource_type.lower() == "layerdefinition":
+        return LayerDefinitionSerializer
+    elif resource_type.lower() == "model":
+        return ModelSerializer
+    else:
+        return None
+
+def _get_resource_object(uuid, resource_type):
+    if resource_type.lower() == "geopackage":
+        return get_object_or_404(Geopackage.approved_objects, uuid=uuid)
+    elif resource_type.lower() == "3dmodel":
+        return get_object_or_404(Wavefront.approved_objects, uuid=uuid)
+    elif resource_type.lower() == "style":
+        return get_object_or_404(Style.approved_objects, uuid=uuid)
+    elif resource_type.lower() == "layerdefinition":
+        return get_object_or_404(LayerDefinition.approved_objects, uuid=uuid)
+    elif resource_type.lower() == "model":
+        return get_object_or_404(Model.approved_objects, uuid=uuid)
+    else:
+        return None
 
 class ResourceCreateView(APIView):
     """
@@ -355,17 +382,8 @@ class ResourceCreateView(APIView):
     parser_classes = [MultiPartParser, FormParser]
 
     def post(self, request, *args, **kwargs):
-        if request.data.get("resource_type").lower() == "geopackage":
-            serializer = GeopackageSerializer(data=request.data)
-        elif request.data.get("resource_type").lower() == "3dmodel":
-            serializer = WavefrontSerializer(data=request.data)
-        elif request.data.get("resource_type").lower() == "style":
-            serializer = StyleSerializer(data=request.data)
-        elif request.data.get("resource_type").lower() == "layerdefinition":
-            serializer = LayerDefinitionSerializer(data=request.data)
-        elif request.data.get("resource_type").lower() == "model":
-            serializer = ModelSerializer(data=request.data)
-        else:
+        serializer = _get_resource_serializer(request.data.get("resource_type"))
+        if serializer is None:
             return Response(
                 {"resource_type": "Resource type not supported"},
                 status=status.HTTP_400_BAD_REQUEST,
@@ -375,3 +393,54 @@ class ResourceCreateView(APIView):
             return Response(serializer.data, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
+class ResourceDetailView(APIView):
+    """
+    Retrieve or update a Resource
+    """
+    authentication_classes = [JWTAuthentication]
+    permission_classes = [IsAuthenticated]
+
+    def get(self, request, *args, **kwargs):
+        uuid = kwargs.get("uuid")
+        resource_type = kwargs.get("resource_type")
+        object = _get_resource_object(uuid, resource_type)
+        if object is None:
+            raise Http404
+        if not object.creator.is_staff and object.creator != request.user:
+            return Response(
+                {"detail": "You do not have permission to perform this action."},
+                status=status.HTTP_403_FORBIDDEN,
+            )
+        serializer = _get_resource_serializer(resource_type)(object)
+        return Response(serializer.data)
+
+    def put(self, request, *args, **kwargs):
+        uuid = kwargs.get("uuid")
+        resource_type = kwargs.get("resource_type")
+        object = _get_resource_object(uuid, resource_type)
+        if object is None:
+            raise Http404
+        if not object.creator.is_staff and object.creator != request.user:
+            return Response(
+                {"detail": "You do not have permission to perform this action."},
+                status=status.HTTP_403_FORBIDDEN,
+            )
+        serializer = _get_resource_serializer(resource_type)(object, data=request.data)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+    def delete(self, request, *args, **kwargs):
+        uuid = kwargs.get("uuid")
+        resource_type = kwargs.get("resource_type")
+        object = _get_resource_object(uuid, resource_type)
+        if object is None:
+            raise Http404
+        if not object.creator.is_staff and object.creator != request.user:
+            return Response(
+                {"detail": "You do not have permission to perform this action."},
+                status=status.HTTP_403_FORBIDDEN,
+            )
+        object.delete()
+        return Response(status=status.HTTP_204_NO_CONTENT)

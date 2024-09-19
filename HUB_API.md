@@ -1,5 +1,5 @@
 API URL Configuration
-# QGIS Django API Documentation
+# QGIS Resources Hub API Documentation
 
 The `urlpatterns` list routes URLs to views. For more information please see:
 [https://docs.djangoproject.com/en/3.2/topics/http/urls/](https://docs.djangoproject.com/en/3.2/topics/http/urls/)
@@ -38,3 +38,15 @@ The `urlpatterns` list routes URLs to views. For more information please see:
     --form 'resource_type="model"'
     ```
 
+### Resource Detail
+- **URL:** `/resource/<str:resource_type>/<uuid:uuid>/`
+- **Methods:** `GET`, `PUT`, `DELETE`
+- **View:** `ResourceDetailView.as_view()`
+- **Name:** `resource-detail`
+- **Description:** Handles the detailed display, update, and deletion of a specific resource based on its type and UUID.
+- **Example:**
+    To access the details of a resource with type 'style' and UUID '123e4567-e89b-12d3-a456-426614174000':
+    ```sh
+    GET /resource/style/123e4567-e89b-12d3-a456-426614174000/
+    ```
+- **Permissions:** Ensure that the user has the necessary permissions (staff or creator) to view, update, or delete the resource details.

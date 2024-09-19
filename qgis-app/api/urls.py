@@ -7,7 +7,8 @@ from api.views import (
     user_token_create,
     user_token_update,
     user_token_delete,
-    ResourceCreateView
+    ResourceCreateView,
+    ResourceDetailView,
 )
 urlpatterns = [
     path("resources/", ResourceAPIList.as_view(), name="resource-list"),
@@ -16,6 +17,9 @@ urlpatterns = [
     ),
     path(
         "resource/create", ResourceCreateView.as_view(), name="resource-create"
+    ),
+    path(
+        "resource/<str:resource_type>/<uuid:uuid>/", ResourceDetailView.as_view(), name="resource-detail"
     ),
     url(
         r"^tokens/$",
