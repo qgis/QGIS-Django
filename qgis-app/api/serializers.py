@@ -14,7 +14,7 @@ from wavefronts.validator import WavefrontValidator
 from django.core.exceptions import ValidationError
 from django.utils.translation import gettext_lazy as _
 from styles.file_handler import read_xml_style, validator as style_validator
-from layerdefinitions.file_handler import validator as layer_validator
+from layerdefinitions.file_handler import get_provider, get_url_datasource, validator as layer_validator
 import tempfile
 
 class ResourceBaseSerializer(serializers.ModelSerializer):
@@ -163,6 +163,9 @@ class LayerDefinitionSerializer(ResourceBaseSerializer):
 
                 with open(temp_file.name, 'rb') as qlr_file:
                     layer_validator(qlr_file)
+                    self.url_datasource = get_url_datasource(qlr_file)
+                    self.provider = get_provider(qlr_file)
+
 
         finally:
             import os

@@ -396,6 +396,12 @@ class ResourceCreateView(APIView):
             if hasattr(serializer, 'style_type'):
                 serializer.instance.style_type = serializer.style_type
                 serializer.instance.save()
+            if hasattr(serializer, 'url_datasource'):
+                serializer.instance.url_datasource = serializer.url_datasource
+                serializer.instance.save()
+            if hasattr(serializer, 'provider'):
+                serializer.instance.provider = serializer.provider
+                serializer.instance.save()
             return Response(serializer.data, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
