@@ -2,7 +2,7 @@ from base.validator import filesize_validator
 from geopackages.models import Geopackage
 from models.models import Model
 from rest_framework import serializers
-from styles.models import Style
+from styles.models import Style, StyleType
 from layerdefinitions.models import LayerDefinition
 from wavefronts.models import WAVEFRONTS_STORAGE_PATH, Wavefront
 from sorl.thumbnail import get_thumbnail
@@ -13,7 +13,7 @@ from wavefronts.validator import WavefrontValidator
 
 from django.core.exceptions import ValidationError
 from django.utils.translation import gettext_lazy as _
-from styles.file_handler import validator as style_validator
+from styles.file_handler import read_xml_style, validator as style_validator
 from layerdefinitions.file_handler import validator as layer_validator
 import tempfile
 
@@ -112,6 +112,16 @@ class StyleSerializer(ResourceBaseSerializer):
 
                 with open(temp_file.name, 'rb') as xml_file:
                     style = style_validator(xml_file)
+                    xml_parse = read_xml_style(xml_file)
+                    if xml_parse:
+                        self.style_type, created = StyleType.objects.get_or_create(
+                            symbol_type=xml_parse["type"],
+                            defaults={
+                                "name": xml_parse["type"].title(),
+                                "description": "Automatically created from '"
+                                "'an uploaded Style file",
+                            }
+                        )
 
                     if not style:
                         raise ValidationError(

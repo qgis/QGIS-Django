@@ -393,6 +393,9 @@ class ResourceCreateView(APIView):
             if hasattr(serializer, 'new_filepath'):
                 serializer.instance.file.name = serializer.new_filepath
                 serializer.instance.save()
+            if hasattr(serializer, 'style_type'):
+                serializer.instance.style_type = serializer.style_type
+                serializer.instance.save()
             return Response(serializer.data, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
