@@ -4,10 +4,10 @@ from models.models import Model
 from rest_framework import serializers
 from styles.models import Style
 from layerdefinitions.models import LayerDefinition
-from wavefronts.models import Wavefront
+from wavefronts.models import WAVEFRONTS_STORAGE_PATH, Wavefront
 from sorl.thumbnail import get_thumbnail
 from django.conf import settings
-from os.path import exists
+from os.path import exists, join
 from django.templatetags.static import static
 from wavefronts.validator import WavefrontValidator
 
@@ -172,5 +172,6 @@ class WavefrontSerializer(ResourceBaseSerializer):
         attrs = super().validate(attrs)
         file = attrs.get("file")
         if file and file.name.endswith('.zip'):
-            WavefrontValidator(file).validate_wavefront()
+            valid_3dmodel = WavefrontValidator(file).validate_wavefront()
+            self.new_filepath = join(WAVEFRONTS_STORAGE_PATH, valid_3dmodel)
         return attrs

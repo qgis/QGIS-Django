@@ -382,7 +382,7 @@ class ResourceCreateView(APIView):
     parser_classes = [MultiPartParser, FormParser]
 
     def post(self, request, *args, **kwargs):
-        serializer = _get_resource_serializer(request.data.get("resource_type"))
+        serializer = _get_resource_serializer(request.data.get("resource_type"))(data=request.data)
         if serializer is None:
             return Response(
                 {"resource_type": "Resource type not supported"},
@@ -390,6 +390,9 @@ class ResourceCreateView(APIView):
             )
         if serializer.is_valid():
             serializer.save(creator=request.user)
+            if hasattr(serializer, 'new_filepath'):
+                serializer.instance.file.name = serializer.new_filepath
+                serializer.instance.save()
             return Response(serializer.data, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
