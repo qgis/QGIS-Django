@@ -15,7 +15,7 @@ urlpatterns = [
         "resource/<uuid:uuid>/", ResourceAPIDownload.as_view(), name="resource-download"
     ),
     path(
-        "resource/create", ResourceCreateView.as_view(), name="geopackage-create"
+        "resource/create", ResourceCreateView.as_view(), name="resource-create"
     ),
     url(
         r"^tokens/$",

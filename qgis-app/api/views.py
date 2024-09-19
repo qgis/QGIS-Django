@@ -355,7 +355,6 @@ class ResourceCreateView(APIView):
     parser_classes = [MultiPartParser, FormParser]
 
     def post(self, request, *args, **kwargs):
-        print(request.data.get("resource_type"))
         if request.data.get("resource_type").lower() == "geopackage":
             serializer = GeopackageSerializer(data=request.data)
         elif request.data.get("resource_type").lower() == "3dmodel":
