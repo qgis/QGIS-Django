@@ -13,7 +13,9 @@ from wavefronts.validator import WavefrontValidator
 
 from django.core.exceptions import ValidationError
 from django.utils.translation import gettext_lazy as _
-from styles.file_handler import validator
+from styles.file_handler import validator as style_validator
+from layerdefinitions.file_handler import validator as layer_validator
+import tempfile
 
 class ResourceBaseSerializer(serializers.ModelSerializer):
     creator = serializers.ReadOnlyField(source="get_creator_name")
@@ -88,16 +90,38 @@ class StyleSerializer(ResourceBaseSerializer):
         model = Style
 
     def validate(self, attrs):
+        """
+        Validate a style file.
+        We need to check if the uploaded file is a valid XML file.
+        Then, we upload the file to a temporary file, validate it
+        and check if the style type is defined.
+        """
         attrs = super().validate(attrs)
-        xml_file = attrs.get("file")
+        file = attrs.get("file")
 
-        if xml_file:
-            print("xml_file", xml_file)
-            style = validator(xml_file)
-            if not style:
-                raise ValidationError(
-                    _("Undefined style type. " "Please register your style type.")
-                )
+        if not file:
+            raise ValidationError(_("File is required."))
+
+        if file.size == 0:
+            raise ValidationError(_("Uploaded file is empty."))
+        try:
+            with tempfile.NamedTemporaryFile(delete=False) as temp_file:
+                for chunk in file.chunks():
+                    temp_file.write(chunk)
+                temp_file.flush()
+
+                with open(temp_file.name, 'rb') as xml_file:
+                    style = style_validator(xml_file)
+
+                    if not style:
+                        raise ValidationError(
+                            _("Undefined style type. Please register your style type.")
+                        )
+        finally:
+            import os
+            if temp_file and os.path.exists(temp_file.name):
+                os.remove(temp_file.name)
+
         return attrs
 
 class LayerDefinitionSerializer(ResourceBaseSerializer):
@@ -107,6 +131,35 @@ class LayerDefinitionSerializer(ResourceBaseSerializer):
     def get_resource_subtype(self, obj):
         return None
 
+    def validate(self, attrs):
+        """
+        Validate a qlr file.
+        We need to check if the uploaded file is a valid QLR file.
+        Then, we upload the file to a temporary file and validate it
+        """
+        attrs = super().validate(attrs)
+        file = attrs.get("file")
+
+        if not file:
+            raise ValidationError(_("File is required."))
+
+        if file.size == 0:
+            raise ValidationError(_("Uploaded file is empty."))
+        try:
+            with tempfile.NamedTemporaryFile(delete=False) as temp_file:
+                for chunk in file.chunks():
+                    temp_file.write(chunk)
+                temp_file.flush()
+
+                with open(temp_file.name, 'rb') as qlr_file:
+                    layer_validator(qlr_file)
+
+        finally:
+            import os
+            if temp_file and os.path.exists(temp_file.name):
+                os.remove(temp_file.name)
+
+        return attrs
 
 class WavefrontSerializer(ResourceBaseSerializer):
     class Meta(ResourceBaseSerializer.Meta):
