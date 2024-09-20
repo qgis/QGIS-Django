@@ -1,7 +1,7 @@
-{% extends BASE_TEMPLATE %}{% load i18n %}
+{% extends 'user_token_base.html' %}{% load i18n %}
 {% load local_timezone %}
 {% block content %}
-<h2>{% trans "Token for" %} {{ hub.name }}</h2>
+<h2>{% trans "New Token" %}</h2>
 <div class="alert">
   <button type="button" class="close" data-dismiss="alert">&times;</button>
   To enhance the security of your token, 
@@ -30,7 +30,7 @@
     </dd>
 
 </dl>
-<div>
+<div style="margin-bottom: 10px;">
   <a class="btn" href="{% url "user_token_list" %}?v={{ timestamp_from_last_edit }}">{% trans "Back to the list" %}</a>
   <a class="btn btn-primary" href="{% url "user_token_update" object.pk %}">{% trans "Edit description" %}</a>
 </div>

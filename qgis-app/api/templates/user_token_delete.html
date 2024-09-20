@@ -1,4 +1,4 @@
-{% extends BASE_TEMPLATE %}{% load i18n %}
+{% extends 'user_token_base.html' %}{% load i18n %}
 {% block content %}
     <h3>Delete token of "{{ username }}"</h3>
     <form action="" method="post">{% csrf_token %}

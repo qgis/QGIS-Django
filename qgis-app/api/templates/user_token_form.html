@@ -1,4 +1,4 @@
-{% extends BASE_TEMPLATE %}{% load i18n %}
+{% extends 'user_token_base.html' %}{% load i18n %}
 {% load local_timezone %}
 {% block content %}
 <h2>{% trans "Edit token description " %} {{ token.jti }}</h2>

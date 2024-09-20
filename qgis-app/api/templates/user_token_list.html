@@ -1,18 +1,11 @@
-{% extends BASE_TEMPLATE %}{% load i18n %}
+{% extends 'user_token_base.html' %}{% load i18n %}
 {% load local_timezone %}
 {% block content %}
 <h2>{% trans "My Tokens" %}</h2>
-<form method="post" action="{% url "user_token_create"%}">{% csrf_token %}
-  <div style="margin:0; width:fit-content;">
-    <h2>
-      <button type="submit" name="user_token_create" id="user_token_create"
-        value="{% trans "Generate a New Token" %}" class="btn btn-block btn-primary" style="padding: 10px">
-        <i class="icon-plus icon-white icon-2x" style=" vertical-align: middle;"></i>
-        &nbsp;{% trans "Generate a New Token" %}
-      </button>
-    </h2>
-  </div>
-</form>
+<p>
+  The token allows access to the Resources API, enabling you to create, view, update, or delete resources. 
+  For more details, refer to the <a href="https://github.com/qgis/QGIS-Django/blob/master/HUB_API.md" target="_blank">HUB_API.md</a> file.
+</p>
 {% if object_list.count %}
 <div>
   <table class="table table-striped plugins">
