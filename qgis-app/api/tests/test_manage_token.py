@@ -4,10 +4,10 @@ from rest_framework_simplejwt.tokens import RefreshToken, api_settings
 from rest_framework_simplejwt.token_blacklist.models import OutstandingToken
 from api.models import UserOutstandingToken
 from django.contrib.auth.models import User
-from django.test import TransactionTestCase
+from django.test import TestCase
 
 
-class UserTokenDetailViewTests(TransactionTestCase):
+class UserTokenDetailViewTests(TestCase):
     fixtures = ["fixtures/simplemenu.json"]
     def setUp(self):
         self.client = APIClient()
@@ -35,7 +35,7 @@ class UserTokenDetailViewTests(TransactionTestCase):
         self.assertEqual(response.status_code, 404)
 
 
-class TestUserTokenListView(TransactionTestCase):
+class TestUserTokenListView(TestCase):
     fixtures = ["fixtures/simplemenu.json"]
 
     def setUp(self):
@@ -70,7 +70,7 @@ class TestUserTokenListView(TransactionTestCase):
         self.assertTemplateUsed(response, "user_token_list.html")
 
 
-class TestUserTokenCreate(TransactionTestCase):
+class TestUserTokenCreate(TestCase):
     fixtures = ["fixtures/simplemenu.json"]
 
     def setUp(self):
@@ -93,7 +93,7 @@ class TestUserTokenCreate(TransactionTestCase):
         self.assertRedirects(response, reverse("user_token_detail", args=[2]))
 
 
-class TestUserTokenUpdate(TransactionTestCase):
+class TestUserTokenUpdate(TestCase):
     fixtures = ["fixtures/simplemenu.json"]
 
     def setUp(self):
@@ -126,7 +126,7 @@ class TestUserTokenUpdate(TransactionTestCase):
         self.assertEqual(self.user_token.description, "Updated description")
 
 
-class TestUserTokenDelete(TransactionTestCase):
+class TestUserTokenDelete(TestCase):
     fixtures = ["fixtures/simplemenu.json"]
 
     def setUp(self):
