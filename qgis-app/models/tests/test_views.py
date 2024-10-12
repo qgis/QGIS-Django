@@ -65,6 +65,7 @@ class TestFormValidation(SetUpTest, TestCase):
         data = {
             "name": "flooded building extractor",
             "description": "Test upload with valid data",
+            "dependencies": "QuickOSM"
         }
         file_data = {"thumbnail_image": uploaded_thumbnail, "file": uploaded_model}
         form = UploadForm(data, file_data)
@@ -96,6 +97,7 @@ class TestFormValidation(SetUpTest, TestCase):
         data = {
             "name": "flooded buildings extractor",
             "description": "Test upload invalid model filesize",
+            "dependencies": "QuickOSM"
         }
         file_data = {"thumbnail_image": uploaded_thumbnail, "file": uploaded_model}
         form = UploadForm(data, file_data)
@@ -119,6 +121,7 @@ class TestEmailNotification(SetUpTest, TestCase):
             creator=self.creator,
             name="flooded buildings extractor",
             description="A Model for testing purpose",
+            dependencies="QuickOSM",
             thumbnail_image=self.thumbnail,
             file=self.file,
         )
@@ -157,6 +160,7 @@ class TestUploadModel(SetUpTest, TestCase):
         data = {
             "name": "flooded buildings extractor",
             "description": "Test upload an acceptable model size",
+            "dependencies": "QuickOSM",
             "thumbnail_image": uploaded_thumbnail,
             "file": uploaded_model,
             "tags": "model,project,test"
@@ -188,6 +192,7 @@ class TestUploadModel(SetUpTest, TestCase):
         data = {
             "name": "flooded buildings extractor",
             "description": "Test upload .zip model",
+            "dependencies": "QuickOSM",
             "thumbnail_image": uploaded_thumbnail,
             "file": uploaded_model,
         }
@@ -213,6 +218,7 @@ class TestUploadModel(SetUpTest, TestCase):
         data = {
             "name": "flooded buildings extractor",
             "description": "Test upload a model > 1Mb filesize",
+            "dependencies": "QuickOSM",
             "thumbnail_image": uploaded_thumbnail,
             "file": uploaded_model,
         }
