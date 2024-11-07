@@ -62,6 +62,7 @@ jobs:
         run: |
           docker compose exec -T devweb bash -c '
             set -e  # Exit immediately if any command fails
+            pip install pycountry~=24.6 &&
             python manage.py makemigrations &&
             python manage.py migrate &&
             python manage.py test

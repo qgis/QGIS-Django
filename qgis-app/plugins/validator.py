@@ -4,8 +4,10 @@ Plugin validator class
 """
 import codecs
 import configparser
+import locale
 import mimetypes
 import os
+import pycountry
 import re
 import zipfile
 from io import StringIO
@@ -46,6 +48,10 @@ PLUGIN_OPTIONAL_METADATA = getattr(
         "experimental",
         "external_deps",
         "server",
+        "payment",
+        "authentication",
+        "countries",
+        "languages",
     ),
 )
 PLUGIN_BOOLEAN_METADATA = getattr(
@@ -367,6 +373,34 @@ def validator(package):
     if "author" in dict(metadata):
         if not re.match(r"^[^/]+$", dict(metadata)["author"]):
             raise ValidationError(_("Author name cannot contain slashes."))
+
+    # Check payment
+    if "payment" in dict(metadata):
+        value = dict(metadata)["payment"].strip().lower()
+        if value not in ("true", "1", "false", "0", "partial"):
+            raise ValidationError(_("payment should be one of True, False or Partial"))
+
+    # Check authentication
+    if "authentication" in dict(metadata):
+        value = dict(metadata)["authentication"].strip().lower()
+        if value not in ("true", "1", "false", "0", "partial"):
+            raise ValidationError(_("authentication should be one of True, False or Partial"))
+
+    # Check countries
+    if "countries" in dict(metadata):
+        values = dict(metadata)["countries"].strip().lower().split(',')
+        known_countries = [x.alpha_2.lower() for x in pycountry.countries]
+        for value in values:
+            if value not in known_countries:
+                raise ValidationError(_("Country %s is unknown. Accepted values are %s") % (value, ",".join(known_countries)))
+
+    # Check languages
+    if "languages" in dict(metadata):
+        values = dict(metadata)["languages"].strip().split(',')
+        known_locales = [x[0] for x in locale.locale_alias.items()]
+        for value in values:
+            if value not in known_locales:
+                raise ValidationError(_("Language %s is unknown. Accepted values are %s") % (value, ",".join(known_locales)))
 
     # strip and check
     checked_metadata = []
