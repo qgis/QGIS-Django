@@ -8,6 +8,10 @@ the QGIS project.
 This software is open source and licensed under GNU General Public License v2.0.
 For licensing information, please read the COPYING file included in this directory.
 
+## Important Note
+
+***This repository is dedicated solely to the QGIS Plugins Website (plugins.qgis.org). For issues related to specific plugins or other concerns, please use the respective bug tracker.***
+
 ## Installation
 
 For setup, installation and backup notes, please read [INSTALL](INSTALL.md) included in this directory.
