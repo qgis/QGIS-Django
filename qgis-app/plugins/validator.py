@@ -149,7 +149,7 @@ def _check_url_link(urls):
     )
 
 
-def validator(package, is_new=False):
+def validator(package, is_new: bool = False):
     """
     Analyzes a zipped file, returns metadata if success, False otherwise.
     If the new icon metadata is found, an inmemory file object is also returned
