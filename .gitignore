@@ -50,6 +50,7 @@ dockerize/webroot
 # test cache
 qgis-app/*/tests/*/cache
 qgis-app/api/tests/*/
+!qgis-app/wavefronts/tests/wavefrontfiles/*.zip
 
 # whoosh_index
 qgis-app/whoosh_index/

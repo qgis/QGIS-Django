@@ -1,0 +1,98 @@
+{% extends 'user_token_base.html' %}{% load i18n %}
+{% load local_timezone %}
+{% block content %}
+<h2>{% trans "New Token" %}</h2>
+<div class="alert">
+  <button type="button" class="close" data-dismiss="alert">&times;</button>
+  To enhance the security of your token, 
+  it will be displayed only once. Please ensure 
+  to save it in a secure location. If the token 
+  is lost, you can generate a new one at any time.
+</div>
+<dl class="dl-horizontal">
+    <dt>{% trans "Access token"%}</dt>
+    <dd>
+        <textarea 
+            id="access_token" 
+            name="access_token" 
+            rows="5" 
+            cols="50" 
+            style="width: auto"
+            readonly
+        >{{access_token}}</textarea>
+        <div class="tooltip">
+            <button class="btn btn-primary" onclick="copyToClipBoard('{{ access_token }}')">
+              <span class="tooltiptext" id="copyTooltip">{% trans "Copy token to clipboard" %}</span>
+              <i class="icon-copy icon-white"></i>
+            </button>
+        </div>
+
+    </dd>
+
+</dl>
+<div style="margin-bottom: 10px;">
+  <a class="btn" href="{% url "user_token_list" %}?v={{ timestamp_from_last_edit }}">{% trans "Back to the list" %}</a>
+  <a class="btn btn-primary" href="{% url "user_token_update" object.pk %}">{% trans "Edit description" %}</a>
+</div>
+{% endblock %}
+{% block extracss %}
+{{ block.super }}
+<style>
+
+  .tooltip {
+    position: relative;
+    display: inline-block;
+    opacity: 1 !important;
+  }
+
+  .tooltip .tooltiptext {
+    visibility: hidden;
+    width: 140px;
+    background-color: #555;
+    color: #fff;
+    text-align: center;
+    border-radius: 6px;
+    padding: 5px;
+    position: absolute;
+    z-index: 1;
+    bottom: 150%;
+    left: 50%;
+    margin-left: -75px;
+    opacity: 0;
+    transition: opacity 0.3s;
+  }
+
+  .tooltip .tooltiptext::after {
+    content: "";
+    position: absolute;
+    top: 100%;
+    left: 50%;
+    margin-left: -5px;
+    border-width: 5px;
+    border-style: solid;
+    border-color: #555 transparent transparent transparent;
+  }
+
+  .tooltip:hover .tooltiptext {
+    visibility: visible;
+    opacity: 1;
+  }
+</style>
+{% endblock %}
+
+{% block extrajs %}
+<script type="text/javascript">
+  {
+    {
+      block.super
+    }
+  }
+
+  function copyToClipBoard(token) {
+    navigator.clipboard.writeText(token);
+
+    var tooltip = document.getElementById("copyTooltip");
+    tooltip.innerHTML = "Token copied!";
+  }
+</script>
+{% endblock %}
