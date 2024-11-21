@@ -35,9 +35,12 @@ from layerdefinitions.models import LayerDefinition
 from wavefronts.models import Wavefront
 from api.models import UserOutstandingToken
 from rest_framework_simplejwt.token_blacklist.models import OutstandingToken
+
 from rest_framework.response import Response
 from rest_framework.parsers import MultiPartParser, FormParser
 from rest_framework import status
+from django.contrib.auth.mixins import LoginRequiredMixin
+from api.permissions import HasValidToken
 
 def filter_resource_type(queryset, request, *args, **kwargs):
     resource_type = request.query_params["resource_type"]
@@ -189,7 +192,7 @@ class ResourceAPIDownload(APIView):
         return response
 
 
-class UserTokenDetailView(DetailView):
+class UserTokenDetailView(LoginRequiredMixin, DetailView):
     """
     Hub token detail
     """
@@ -235,7 +238,7 @@ class UserTokenDetailView(DetailView):
         return context
 
 
-class UserTokenListView(ListView):
+class UserTokenListView(LoginRequiredMixin, ListView):
     """
     Hub token list
     """
@@ -249,6 +252,7 @@ class UserTokenListView(ListView):
 
     def get_filtered_queryset(self, qs):
         return qs.filter(
+            token__user=self.request.user,
             is_blacklisted=False
         )
 
@@ -282,7 +286,6 @@ def user_token_create(request):
 @login_required
 @transaction.atomic
 def user_token_update(request, token_id):
-    print(token_id)
     user_token = get_object_or_404(
         UserOutstandingToken, 
         pk=token_id,
@@ -378,7 +381,7 @@ class ResourceCreateView(APIView):
     Create a new Resource
     """
     authentication_classes = [JWTAuthentication]
-    permission_classes = [IsAuthenticated]
+    permission_classes = [HasValidToken]
     parser_classes = [MultiPartParser, FormParser]
 
     def post(self, request, *args, **kwargs):
@@ -411,7 +414,7 @@ class ResourceDetailView(APIView):
     Retrieve or update a Resource
     """
     authentication_classes = [JWTAuthentication]
-    permission_classes = [IsAuthenticated]
+    permission_classes = [HasValidToken]
 
     def get(self, request, *args, **kwargs):
         uuid = kwargs.get("uuid")

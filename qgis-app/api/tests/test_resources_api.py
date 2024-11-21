@@ -15,6 +15,9 @@ from os.path import dirname, join
 from django.core.files.uploadedfile import SimpleUploadedFile
 from wavefronts.models import Wavefront
 
+from rest_framework_simplejwt.token_blacklist.models import OutstandingToken
+from api.models import UserOutstandingToken
+
 GPKG_DIR = join(dirname(dirname(dirname(__file__))), "geopackages", "tests", "gpkgfiles")
 LAYERDEFINITION_DIR = join(dirname(dirname(dirname(__file__))), "layerdefinitions", "tests", "testfiles")
 MODELS_DIR = join(dirname(dirname(dirname(__file__))), "models", "tests", "modelfiles")
@@ -50,8 +53,21 @@ class TestResourceCreateView(SetUpTest, TestCase):
         super().setUp()
         self.client = APIClient()
         self.user = User.objects.create_user(username='testuser', password='testpass')
-        self.token = RefreshToken.for_user(self.user)
-        self.client.credentials(HTTP_AUTHORIZATION=f'Bearer {self.token.access_token}')
+        self.client.login(username='testuser', password='testpass')
+        self.refresh = RefreshToken.for_user(self.user)
+        self.outstanding_token = OutstandingToken.objects.get(jti=self.refresh['jti'])
+        self.user_token = UserOutstandingToken.objects.create(
+            user=self.user,
+            token=self.outstanding_token,
+            is_blacklisted=False,
+            is_newly_created=True
+        )
+        self.url = reverse('user_token_detail', args=[self.user_token.pk])
+        response = self.client.get(self.url)
+        self.assertEqual(response.status_code, 200)
+        self.client.logout()
+        access_token = response.context.get('access_token')
+        self.client.credentials(HTTP_AUTHORIZATION=f'Bearer {access_token}')
 
     def test_create_geopackage(self):
         url = reverse('resource-create')
@@ -202,6 +218,44 @@ class TestResourceCreateView(SetUpTest, TestCase):
         self.assertEqual(response.status_code, 400)
         self.assertEqual(response.data, {"resource_type": "Resource type not supported"})
 
+    def test_create_with_invalid_token(self):
+        url = reverse('resource-create')
+        self.client.credentials(HTTP_AUTHORIZATION='Bearer invalidtoken')
+        uploaded_thumbnail = SimpleUploadedFile(
+            self.thumbnail_content.name, self.thumbnail_content.read()
+        )
+        uploaded_gpkg = SimpleUploadedFile(
+            self.gpkg_file_content.name, self.gpkg_file_content.read()
+        )
+        data = {
+            "resource_type": "geopackage",
+            "name": "Test Geopackage",
+            "description": "A test geopackage",
+            "thumbnail_full": uploaded_thumbnail,
+            "file": uploaded_gpkg,
+        }
+        response = self.client.post(url, data, format='multipart')
+        self.assertEqual(response.status_code, 401)
+
+    def test_create_with_blacklisted_token(self):
+        url = reverse('resource-create')
+        self.refresh.blacklist()
+        uploaded_thumbnail = SimpleUploadedFile(
+            self.thumbnail_content.name, self.thumbnail_content.read()
+        )
+        uploaded_gpkg = SimpleUploadedFile(
+            self.gpkg_file_content.name, self.gpkg_file_content.read()
+        )
+        data = {
+            "resource_type": "geopackage",
+            "name": "Test Geopackage",
+            "description": "A test geopackage",
+            "thumbnail_full": uploaded_thumbnail,
+            "file": uploaded_gpkg,
+        }
+        response = self.client.post(url, data, format='multipart')
+        self.assertEqual(response.status_code, 403)
+
 
 @override_settings(MEDIA_ROOT=tempfile.mkdtemp())
 class TestResourceDetailView(SetUpTest, TestCase):
@@ -210,8 +264,21 @@ class TestResourceDetailView(SetUpTest, TestCase):
         super().setUp()
         self.client = APIClient()
         self.user = User.objects.create_user(username='testuser', password='testpass')
-        self.token = RefreshToken.for_user(self.user)
-        self.client.credentials(HTTP_AUTHORIZATION=f'Bearer {self.token.access_token}')
+        self.client.login(username='testuser', password='testpass')
+        self.refresh = RefreshToken.for_user(self.user)
+        self.outstanding_token = OutstandingToken.objects.get(jti=self.refresh['jti'])
+        self.user_token = UserOutstandingToken.objects.create(
+            user=self.user,
+            token=self.outstanding_token,
+            is_blacklisted=False,
+            is_newly_created=True
+        )
+        self.url = reverse('user_token_detail', args=[self.user_token.pk])
+        response = self.client.get(self.url)
+        self.assertEqual(response.status_code, 200)
+        self.client.logout()
+        access_token = response.context.get('access_token')
+        self.client.credentials(HTTP_AUTHORIZATION=f'Bearer {access_token}')
 
         uploaded_thumbnail = SimpleUploadedFile(
             self.thumbnail_content.name, self.thumbnail_content.read()
@@ -407,3 +474,193 @@ class TestResourceDetailView(SetUpTest, TestCase):
         response = self.client.delete(url)
         self.assertEqual(response.status_code, 204)
         self.assertFalse(Wavefront.objects.filter(uuid=self.wavefront.uuid).exists())
+
+    def test_update_geopackage_with_invalid_token(self):
+        url = reverse("resource-detail", kwargs={"uuid": self.geopackage.uuid, "resource_type": "geopackage"})
+        self.client.credentials(HTTP_AUTHORIZATION='Bearer invalidtoken')
+        data = {
+            "name": "Updated Geopackage",
+            "description": "Updated description",
+            "thumbnail_full": self.geopackage.thumbnail_image,
+            "file": self.geopackage.file,
+        }
+        response = self.client.put(url, data, format="multipart")
+        self.assertEqual(response.status_code, 401)
+
+    def test_update_geopackage_with_blacklisted_token(self):
+        url = reverse("resource-detail", kwargs={"uuid": self.geopackage.uuid, "resource_type": "geopackage"})
+        self.refresh.blacklist()
+        data = {
+            "name": "Updated Geopackage",
+            "description": "Updated description",
+            "thumbnail_full": self.geopackage.thumbnail_image,
+            "file": self.geopackage.file,
+        }
+        response = self.client.put(url, data, format="multipart")
+        self.assertEqual(response.status_code, 403)
+
+    def test_update_layerdefinition_with_invalid_token(self):
+        url = reverse("resource-detail", kwargs={"uuid": self.layerdefinition.uuid, "resource_type": "layerdefinition"})
+        self.client.credentials(HTTP_AUTHORIZATION='Bearer invalidtoken')
+        data = {
+            "name": "Updated Layer Definition",
+            "description": "Updated description",
+            "thumbnail_full": self.layerdefinition.thumbnail_image,
+            "file": self.layerdefinition.file,
+        }
+        response = self.client.put(url, data, format="multipart")
+        self.assertEqual(response.status_code, 401)
+
+    def test_update_layerdefinition_with_blacklisted_token(self):
+        url = reverse("resource-detail", kwargs={"uuid": self.layerdefinition.uuid, "resource_type": "layerdefinition"})
+        self.refresh.blacklist()
+        data = {
+            "name": "Updated Layer Definition",
+            "description": "Updated description",
+            "thumbnail_full": self.layerdefinition.thumbnail_image,
+            "file": self.layerdefinition.file,
+        }
+        response = self.client.put(url, data, format="multipart")
+        self.assertEqual(response.status_code, 403)
+
+    def test_update_model_with_invalid_token(self):
+        url = reverse("resource-detail", kwargs={"uuid": self.model.uuid, "resource_type": "model"})
+        self.client.credentials(HTTP_AUTHORIZATION='Bearer invalidtoken')
+        data = {
+            "name": "Updated Model",
+            "description": "Updated description",
+            "thumbnail_full": self.model.thumbnail_image,
+            "file": self.model.file,
+        }
+        response = self.client.put(url, data, format="multipart")
+        self.assertEqual(response.status_code, 401)
+
+    def test_update_model_with_blacklisted_token(self):
+        url = reverse("resource-detail", kwargs={"uuid": self.model.uuid, "resource_type": "model"})
+        self.refresh.blacklist()
+        data = {
+            "name": "Updated Model",
+            "description": "Updated description",
+            "thumbnail_full": self.model.thumbnail_image,
+            "file": self.model.file,
+        }
+        response = self.client.put(url, data, format="multipart")
+        self.assertEqual(response.status_code, 403)
+
+    def test_update_style_with_invalid_token(self):
+        url = reverse("resource-detail", kwargs={"uuid": self.style.uuid, "resource_type": "style"})
+        self.client.credentials(HTTP_AUTHORIZATION='Bearer invalidtoken')
+        data = {
+            "name": "Updated Style",
+            "description": "Updated description",
+            "thumbnail_full": self.style.thumbnail_image,
+            "file": self.style.file,
+        }
+        response = self.client.put(url, data, format="multipart")
+        self.assertEqual(response.status_code, 401)
+
+    def test_update_style_with_blacklisted_token(self):
+        url = reverse("resource-detail", kwargs={"uuid": self.style.uuid, "resource_type": "style"})
+        self.refresh.blacklist()
+        data = {
+            "name": "Updated Style",
+            "description": "Updated description",
+            "thumbnail_full": self.style.thumbnail_image,
+            "file": self.style.file,
+        }
+        response = self.client.put(url, data, format="multipart")
+        self.assertEqual(response.status_code, 403)
+
+    def test_update_wavefront_with_invalid_token(self):
+        url = reverse("resource-detail", kwargs={"uuid": self.wavefront.uuid, "resource_type": "3dmodel"})
+        self.client.credentials(HTTP_AUTHORIZATION='Bearer invalidtoken')
+        data = {
+            "name": "Updated 3D Model",
+            "description": "Updated description",
+            "thumbnail_full": self.wavefront.thumbnail_image,
+            "file": self.wavefront.file,
+        }
+        response = self.client.put(url, data, format="multipart")
+        self.assertEqual(response.status_code, 401)
+
+    def test_update_wavefront_with_blacklisted_token(self):
+        url = reverse("resource-detail", kwargs={"uuid": self.wavefront.uuid, "resource_type": "3dmodel"})
+        self.refresh.blacklist()
+        data = {
+            "name": "Updated 3D Model",
+            "description": "Updated description",
+            "thumbnail_full": self.wavefront.thumbnail_image,
+            "file": self.wavefront.file,
+        }
+        response = self.client.put(url, data, format="multipart")
+        self.assertEqual(response.status_code, 403)
+
+    def test_delete_geopackage_with_invalid_token(self):
+        url = reverse("resource-detail", kwargs={"uuid": self.geopackage.uuid, "resource_type": "geopackage"})
+        self.client.credentials(HTTP_AUTHORIZATION='Bearer invalidtoken')
+        response = self.client.delete(url)
+        self.assertEqual(response.status_code, 401)
+        self.assertTrue(Geopackage.objects.filter(uuid=self.geopackage.uuid).exists())
+
+    def test_delete_geopackage_with_blacklisted_token(self):
+        url = reverse("resource-detail", kwargs={"uuid": self.geopackage.uuid, "resource_type": "geopackage"})
+        self.refresh.blacklist()
+        response = self.client.delete(url)
+        self.assertEqual(response.status_code, 403)
+        self.assertTrue(Geopackage.objects.filter(uuid=self.geopackage.uuid).exists())
+
+    def test_delete_layerdefinition_with_invalid_token(self):
+        url = reverse("resource-detail", kwargs={"uuid": self.layerdefinition.uuid, "resource_type": "layerdefinition"})
+        self.client.credentials(HTTP_AUTHORIZATION='Bearer invalidtoken')
+        response = self.client.delete(url)
+        self.assertEqual(response.status_code, 401)
+        self.assertTrue(LayerDefinition.objects.filter(uuid=self.layerdefinition.uuid).exists())
+
+    def test_delete_layerdefinition_with_blacklisted_token(self):
+        url = reverse("resource-detail", kwargs={"uuid": self.layerdefinition.uuid, "resource_type": "layerdefinition"})
+        self.refresh.blacklist()
+        response = self.client.delete(url)
+        self.assertEqual(response.status_code, 403)
+        self.assertTrue(LayerDefinition.objects.filter(uuid=self.layerdefinition.uuid).exists())
+
+    def test_delete_model_with_invalid_token(self):
+        url = reverse("resource-detail", kwargs={"uuid": self.model.uuid, "resource_type": "model"})
+        self.client.credentials(HTTP_AUTHORIZATION='Bearer invalidtoken')
+        response = self.client.delete(url)
+        self.assertEqual(response.status_code, 401)
+        self.assertTrue(Model.objects.filter(uuid=self.model.uuid).exists())
+
+    def test_delete_model_with_blacklisted_token(self):
+        url = reverse("resource-detail", kwargs={"uuid": self.model.uuid, "resource_type": "model"})
+        self.refresh.blacklist()
+        response = self.client.delete(url)
+        self.assertEqual(response.status_code, 403)
+        self.assertTrue(Model.objects.filter(uuid=self.model.uuid).exists())
+
+    def test_delete_style_with_invalid_token(self):
+        url = reverse("resource-detail", kwargs={"uuid": self.style.uuid, "resource_type": "style"})
+        self.client.credentials(HTTP_AUTHORIZATION='Bearer invalidtoken')
+        response = self.client.delete(url)
+        self.assertEqual(response.status_code, 401)
+        self.assertTrue(Style.objects.filter(uuid=self.style.uuid).exists())
+
+    def test_delete_style_with_blacklisted_token(self):
+        url = reverse("resource-detail", kwargs={"uuid": self.style.uuid, "resource_type": "style"})
+        self.refresh.blacklist()
+        response = self.client.delete(url)
+        self.assertEqual(response.status_code, 403)
+        self.assertTrue(Style.objects.filter(uuid=self.style.uuid).exists())
+
+    def test_delete_wavefront_with_invalid_token(self):
+        url = reverse("resource-detail", kwargs={"uuid": self.wavefront.uuid, "resource_type": "3dmodel"})
+        self.client.credentials(HTTP_AUTHORIZATION='Bearer invalidtoken')
+        response = self.client.delete(url)
+        self.assertEqual(response.status_code, 401)
+        self.assertTrue(Wavefront.objects.filter(uuid=self.wavefront.uuid).exists())
+
+    def test_delete_wavefront_with_blacklisted_token(self):
+        url = reverse("resource-detail", kwargs={"uuid": self.wavefront.uuid, "resource_type": "3dmodel"})
+        self.refresh.blacklist()
+        response = self.client.delete(url)
+        self.assertEqual(response.status_code, 403)
+        self.assertTrue(Wavefront.objects.filter(uuid=self.wavefront.uuid).exists())
