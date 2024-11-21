@@ -422,7 +422,7 @@ class ResourceDetailView(APIView):
         object = _get_resource_object(uuid, resource_type)
         if object is None:
             raise Http404
-        if not object.creator.is_staff and object.creator != request.user:
+        if not request.user.is_superuser and object.creator != request.user:
             return Response(
                 {"detail": "You do not have permission to perform this action."},
                 status=status.HTTP_403_FORBIDDEN,
@@ -436,7 +436,7 @@ class ResourceDetailView(APIView):
         object = _get_resource_object(uuid, resource_type)
         if object is None:
             raise Http404
-        if not object.creator.is_staff and object.creator != request.user:
+        if not request.user.is_superuser and object.creator != request.user:
             return Response(
                 {"detail": "You do not have permission to perform this action."},
                 status=status.HTTP_403_FORBIDDEN,
@@ -453,7 +453,7 @@ class ResourceDetailView(APIView):
         object = _get_resource_object(uuid, resource_type)
         if object is None:
             raise Http404
-        if not object.creator.is_staff and object.creator != request.user:
+        if not request.user.is_superuser and object.creator != request.user:
             return Response(
                 {"detail": "You do not have permission to perform this action."},
                 status=status.HTTP_403_FORBIDDEN,
