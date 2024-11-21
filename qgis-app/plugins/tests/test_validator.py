@@ -210,6 +210,31 @@ class TestValidatorForbiddenFileFolder(TestCase):
             "However, there is one present at the root of the archive."
         )
 
+class TestValidatorInvalidPackageName(TestCase):
+    """Test if plugin's directory is not PEP8 compliant """
+
+    def setUp(self) -> None:
+        invalid_package_name = os.path.join(TESTFILE_DIR, "invalid_package_name.zip_")
+        self.plugin_package = open(invalid_package_name, "rb")
+
+    def tearDown(self):
+        self.plugin_package.close()
+
+    # License file is required
+    def test_new_plugin_invalid_package_name(self):
+        self.assertRaises(
+            ValidationError,
+            validator,
+            InMemoryUploadedFile(
+                self.plugin_package,
+                field_name="tempfile",
+                name="testfile.zip",
+                content_type="application/zip",
+                size=39889,
+                charset="utf8",
+            ),
+            is_new=True
+        )
 
 class TestLicenseValidator(TestCase):
     """Test if zipfile contains LICENSE file """    
