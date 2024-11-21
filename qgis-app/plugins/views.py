@@ -1434,6 +1434,10 @@ def version_feedback(request, package_name, version):
                     task=task
                 )
             version_feedback_notify(version, request.user)
+            return HttpResponseRedirect(
+                reverse('version_feedback', 
+                args=[package_name, version.version])
+            )
     form = VersionFeedbackForm()
     feedbacks = PluginVersionFeedback.objects.filter(version=version)
     return render(
