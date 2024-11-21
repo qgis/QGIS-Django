@@ -25,8 +25,12 @@ class UserOutstandingToken(models.Model):
         blank=True,
         null=True,
     )
-    last_used_on = models.DateTimeField(
-        verbose_name=_("Last used on"),
+    created_at = models.DateTimeField(
+        verbose_name=_("Created at"),
+        auto_now_add=True,
+    )
+    last_used_at = models.DateTimeField(
+        verbose_name=_("Last used at"),
         blank=True,
         null=True
     )

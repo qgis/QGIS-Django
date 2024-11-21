@@ -50,7 +50,7 @@ class HasValidToken(BasePermission):
       if not user:
         return False
       user_token = UserOutstandingToken.objects.get(token__pk=token_id, user=user)
-      user_token.last_used_on = datetime.datetime.now()
+      user_token.last_used_at = datetime.datetime.now()
       user_token.save()
       request.user_token = user_token
       return True

@@ -22,9 +22,9 @@
       {% for user_token in object_list %}
       <tr class="{% cycle "even" "odd" %}">
         <td>{{ user_token.description|default:"-" }}</td>
-        <td>{{ user_token.token.created_at|local_timezone }}</td>
+        <td>{{ user_token.created_at|local_timezone }}</td>
         {% comment %} <td>{{ user_token.token.expires_at|local_timezone }}</td> {% endcomment %}
-        <td>{{ user_token.last_used_on|default:"-"|local_timezone }}</td>
+        <td>{{ user_token.last_used_at|default:"-"|local_timezone }}</td>
         <td>
           <a class="btn btn-primary btn-mini" href="{% url "user_token_update" user_token.pk %}"
             title="{% trans "Edit description" %}"><i class="icon-pencil icon-white"></i></a>&nbsp;
