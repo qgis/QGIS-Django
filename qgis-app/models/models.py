@@ -34,6 +34,15 @@ class Model(Resource):
         null=False,
     )
 
+    # plugin dependencies
+    dependencies = models.TextField(
+        _("Plugin dependencies"),
+        help_text=_("Comma-separated list for the plugin the model needs"),
+        blank=True,
+        null=True,
+    )
+
+
     def extension(self):
         name, extension = os.path.splitext(self.file.name)
         return extension
