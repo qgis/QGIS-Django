@@ -21,7 +21,7 @@
             {% endif %}
             {{ field }}
             {% endif %}
-            <div class="help">{{ field.help_text }}</div>
+            <div class="help">{{ field.help_text|safe }}</div>
         </div>
 {% endfor %}
     </fieldset>
