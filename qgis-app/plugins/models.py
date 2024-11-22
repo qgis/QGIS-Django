@@ -484,7 +484,7 @@ class Plugin(models.Model):
         db_index=True,
         help_text=_(
             "A server plugin is a plugin which can run on QGIS Server,"
-            " by having a entrypoint <b>serverClassFactory</b>, see the"
+            " by having a entrypoint <pre>serverClassFactory</pre>, see the"
             " <a href=\"https://docs.qgis.org/latest/en/docs/pyqgis_developer_cookbook/server.html#init-py\" target=\"_blank\">documentation</a>."
         ),
     )
