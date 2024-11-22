@@ -478,7 +478,16 @@ class Plugin(models.Model):
     deprecated = models.BooleanField(_("Deprecated"), default=False, db_index=True)
 
     # True if the plugin has a server interface
-    server = models.BooleanField(_("Server"), default=False, db_index=True)
+    server = models.BooleanField(
+        _("Server"), 
+        default=False, 
+        db_index=True,
+        help_text=_(
+            "A server plugin is a plugin which can run on QGIS Server,"
+            " by having a entrypoint <b>serverClassFactory</b>, see the"
+            " <a href=\"https://docs.qgis.org/latest/en/docs/pyqgis_developer_cookbook/server.html#init-py\" target=\"_blank\">documentation</a>."
+        ),
+    )
 
     # Managers
     objects = models.Manager()
