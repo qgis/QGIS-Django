@@ -1,0 +1,27 @@
+<!DOCTYPE qgis_style>
+<qgis_style version="2">
+  <symbols>
+    <symbol name="CustomPoint" type="marker" alpha="1" clip_to_extent="1" force_rhr="0">
+      <layer pass="0" class="SimpleMarker" enabled="1">
+        <!-- Marker properties -->
+        <prop k="name" v="ellipse"/>
+        <prop k="color" v="255,0,0,255"/>
+        <prop k="size" v="5"/>
+        <prop k="angle" v="0"/>
+        <prop k="horizontal_anchor_point" v="1"/>
+        <prop k="vertical_anchor_point" v="1"/>
+        <prop k="offset" v="0,0"/>
+        <prop k="offset_unit" v="MM"/>
+        <prop k="outline_color" v="0,0,0,255"/>
+        <prop k="outline_width" v="0"/>
+        <prop k="outline_width_unit" v="MM"/>
+        <prop k="outline_style" v="solid"/>
+      </layer>
+    </symbol>
+  </symbols>
+  <colorramps/>
+  <textformats/>
+  <labelsettings/>
+  <legendpatchshapes/>
+  <symbols3d/>
+</qgis_style>
