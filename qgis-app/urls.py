@@ -15,6 +15,7 @@ from drf_yasg.views import get_schema_view
 # from users.views import *
 from homepage import homepage
 from rest_framework import permissions
+from docs import docs_publish
 
 admin.autodiscover()
 
@@ -91,6 +92,7 @@ urlpatterns += [
 # Home
 urlpatterns += [
     url(r"^$", homepage),
+    url(r"^publish", docs_publish, name="docs_publish"),
 ]
 
 # API
@@ -122,6 +124,6 @@ simplemenu.register(
     "/layerdefinitions/?order_by=-upload_date&&is_gallery=true",
     "/models/?order_by=-upload_date&&is_gallery=true",
     "/wavefronts/?order_by=-upload_date&&is_gallery=true",
-    FlatPage.objects.all(),
+    FlatPage.objects.exclude(url="/publish/"),
     simplemenu.models.URLItem.objects.all(),
 )

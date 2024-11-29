@@ -1,0 +1,214 @@
+{% extends BASE_TEMPLATE %}
+
+{% block content %}
+<div class="responsive-content">
+  <h4>How to add your plugin to this repository</h4>
+  <ul>
+    <li>
+      You will need an
+      <a href="http://www.osgeo.org/osgeo_userid">OSGEO ID</a>&nbsp; to publish
+      a plugin
+    </li>
+    <li>
+      Go to <a title="Repo" href="/plugins/">QGIS plugin repo</a> and click on
+      <a title="Share" href="/plugins/add/">Share a plugin</a>.
+    </li>
+    <li>For a prompt approval of the plugin read the following guidelines</li>
+  </ul>
+  <h4>Requirements</h4>
+  <ul>
+    <li>Plugins need to have at least minimal documentation</li>
+    <li>
+      The plugin metadata contains a valid link to the homepage, the repository
+      (source code), the tracker (issue tracker) and a license
+    </li>
+    <li>
+      The plugin license is compatible with the
+      <a href="https://www.gnu.org/licenses/old-licenses/gpl-2.0.en.html"
+        >GPLv2 or later</a
+      >
+      (<a
+        href="http://blog.qgis.org/2016/05/29/licensing-requirements-for-qgis-plugins/"
+        >more information about licensing</a
+      >)
+    </li>
+    <li>
+      Respect the licenses by libraries and other resources that your plugin
+      uses
+    </li>
+    <li>
+      If the plugin has an external dependency, this needs to be clearly stated
+      in the About metadata field; you can include a short guide to install
+      Python libs as needed, or opint to existing guides, e.g. for Windows
+      https://landscapearchaeology.org/2018/installing-python-packages-in-qgis-3-for-windows/
+    </li>
+    <li>Don't include binaries</li>
+    <li>The size of the plugin package should not exceed 20MB</li>
+  </ul>
+  <h4>Recommendations</h4>
+  <ul>
+    <li>
+      Write comments in your code in English, it will make it easier for others
+      to contribute
+    </li>
+    <li>Provide a minimal data set for testing</li>
+    <li>
+      Put the plugin into the appropriate menu (Vector, Raster, Web, Database)
+    </li>
+    <li>
+      Before publishing a new plugin, check if it duplicates existing
+      functionality and explore collaboration possibilities
+    </li>
+    <li>
+      Make your plugin work on all supported platforms (Windows, Linux, macOs)
+    </li>
+    <li>
+      Don't rename the plugin title just because it's upgraded to a newer
+      version like QGIS 3
+    </li>
+    <li>
+      Check if source code uploaded to the QGIS plugin repo as zip is identical
+      to "Code repository" indicated in metadata.txt
+    </li>
+    <li>
+      Mention any requirements, dependencies and restrictions in the description
+      text section (which can be multi-line). Examples of requirements,
+      dependencies and restrictions are, if the plugin is running only on
+      selected platforms, requires SW to be installed separately or some user
+      account, but also if the plugin is spatially covering just some countries
+      or regions.
+    </li>
+  </ul>
+  <h4>Tips and Tricks</h4>
+  <ul>
+    <li>
+      Keep your source repository in good shape:&nbsp;
+      <ul>
+        <li>
+          No generated files left in the repository (ui_*.py, resources_rc.py,
+          gen. help files…).
+        </li>
+        <li>No __MACOSX, .git, __pycache__ or other hidden directories</li>
+        <li>Good code organization (subfolders).</li>
+        <li>Code comments are available.</li>
+        <li>PEP8 &amp; Python/QGIS guidelines compliance.</li>
+        <li>A README file and a LICENSE file are present.</li>
+      </ul>
+    </li>
+    <li>
+      If some dependencies are not available in OSGeo4w Python, provide
+      instructions on how to install them on Windows.
+    </li>
+    <li>
+      The name of the plugin and the folder name do not repeat the word
+      `plugin`.
+    </li>
+    <li>
+      Plugins should make use of QgsNetworkAccessManager instead of using
+      urllib2/requests/etc... which often fail to use correct proxy settings.
+    </li>
+    <li>
+      The
+      <a title="Plugin builder" href="/plugins/pluginbuilder3/"
+        >plugin builder</a
+      >
+      plugin is recommended, especially for new users.
+    </li>
+  </ul>
+  <h4>Plugin approval process</h4>
+  <p>
+    The approval of plugins is primarily carried out by contributors. Currently,
+    the primary contributor is Admire Nyakudya (<a href="mailto:addloe@gmail.com">addloe@gmail.com</a>). Do not
+    hesitate to get in touch with him if you have any questions about the plugin
+    approval process.
+  </p>
+  <p>The approval process involves the following steps.</p>
+  <h5>New Plugins</h5>
+  <p>All new plugins follow the rough guidelines outlined below:</p>
+  <ul>
+    <li>
+      Plugin metadata.txt should be properly populated with working links i.e.:
+      <ul>
+        <li>
+          Plugin home page - This link should direct users to a page on a
+          website that describes the plugin functionality. If you do not have a
+          dedicated page on your website that describes plugin usage, please use
+          the README in the repository or use the code repository as the link.
+          Any other links will result in the plugin being rejected.
+        </li>
+        <li>
+          Tracker - This should link to the issue tracker in your code
+          repository.
+        </li>
+        <li>
+          Code repository - This should link to the code repository. It is
+          expected that the code in the repository is accessible and not a zip
+          file. The repository should also be publicly accessible. Plugins that
+          utilize binaries will not be approved. If you feel that there is no
+          way to provide your plugin without binaries, please reach out to the
+          QGIS Developers mailing list to motivate your case or the QGIS PSC for
+          further discussions.
+        </li>
+      </ul>
+    </li>
+  </ul>
+  <p class="alert alert-info">
+    <strong>Note:</strong> Plugins cover a whole range of domains which the person doing the
+    approval might not be versed with. With such an expectation, we will try to
+    do random tests (random plugins will be selected) to see if the plugin
+    installs and runs without crashing QGIS. We also expect plugins to be
+    cross-platform, working on Unix systems and Windows. In the list of
+    published plugins, we have a diverse range of plugins offering different
+    functionality. We encourage plugin developers to collaborate on plugins
+    offering the same functionality as developing plugins with functionality
+    that is almost similar. If you need to enhance a particular plugin, we are
+    able to facilitate this with an existing author. For issues relating to the
+    transfer of ownership, or updating any other metadata about existing
+    plugins, please do not hesitate to contact us through the QGIS Developer
+    mailing lists.
+  </p>
+  <h5>Existing Plugins (New updates)</h5>
+  <p>
+    These are plugins that are already in use and being enhanced by new versions
+    being uploaded. During the approval process, we expect the following:
+  </p>
+  <ul>
+    <li>
+      Properly update metadata to include a changelog. This will be beneficial
+      for users to understand what has changed between versions.
+    </li>
+    <li>Properly annotate versions with new version numbers.</li>
+    <li>
+      We will also check the metadata.txt links i.e. plugin homepage, tracker,
+      etc. to see if they are still working.
+    </li>
+  </ul>
+  <p class="alert alert-info">
+    <strong>Note:</strong> Testing will also be done randomly to see if the plugin still works
+    and does not crash QGIS.
+  </p>
+  <p>
+    We try to publish/approve plugins daily with the exception of weekends. If
+    you have uploaded a plugin on Friday-Sunday, it will most likely be approved
+    on Monday. During extended holiday periods, the timelines might be even
+    longer. We also take into consideration that contributors live in different
+    parts of the world with different public holidays. This might also impact
+    the timelines for approval.
+  </p>
+  <div
+    id="_mcePaste"
+    class="mcePaste"
+    style="
+      position: absolute;
+      left: -10000px;
+      top: 187px;
+      width: 1px;
+      height: 1px;
+      overflow: hidden;
+    "
+  >
+    <p style="text-indent: 0px; margin: 0px">dai nomi dei campi)</p>
+    <!-- p, li { white-space: pre-wrap; } -->
+  </div>
+</div>
+{% endblock %}
