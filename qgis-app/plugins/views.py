@@ -36,7 +36,7 @@ from plugins.forms import *
 from plugins.models import Plugin, PluginOutstandingToken, PluginVersion, PluginVersionDownload, vjust
 from plugins.validator import PLUGIN_REQUIRED_METADATA
 from django.contrib.gis.geoip2 import GeoIP2
-from plugins.utils import parse_remote_addr
+from plugins.utils import parse_remote_addr, get_version_from_label
 
 from rest_framework_simplejwt.token_blacklist.models import OutstandingToken
 from rest_framework_simplejwt.tokens import RefreshToken, api_settings
@@ -1630,6 +1630,11 @@ def xml_plugins(request, qg_version=None, stable_only=None, package_name=None):
 
     """
     request_version = request.GET.get("qgis", "1.8.0")
+    if request_version in ["latest", "ltr", "stable"]:
+        numbered_version = get_version_from_label(request_version)
+        # Redirect to this view using the numbered version because
+        # the xml file is cached with that.
+        return HttpResponseRedirect(reverse("xml_plugins") + f"?qgis={numbered_version}")
     version_level = len(str(request_version).split('.')) - 1
     qg_version = (
         qg_version

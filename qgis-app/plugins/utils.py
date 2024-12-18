@@ -56,3 +56,36 @@ def parse_remote_addr(request: HttpRequest) -> str:
     if x_forwarded_for:
         return x_forwarded_for.split(",")[0]
     return request.META.get("REMOTE_ADDR", "")
+
+def get_version_from_label(param):
+    """
+    Fetches the QGIS version based on the given parameter.
+
+    Args:
+        param (str): The parameter to determine which version to fetch.
+                     Accepts 'ltr', 'stable', or 'latest'.
+
+    Returns:
+        str: The major and minor version of QGIS.
+
+    Raises:
+        ValueError: If the parameter value is invalid.
+        Exception: If the request to the QGIS version service fails or the version is not found.
+    """
+    if param.lower() in ['ltr', 'stable']:
+        url = 'https://version.qgis.org/version-ltr.txt'
+    elif param.lower() == 'latest':
+        url = 'https://version.qgis.org/version.txt'
+    else:
+        raise ValueError('Invalid parameter value')
+
+    response = requests.get(url)
+    if response.status_code != 200:
+        raise Exception('Request failed')
+
+    content = response.text
+    match = re.search(r'QGIS Version \d+\|Visit .+ version (\d+\.\d+)', content)
+    if match:
+        return match.group(1)
+    else:
+        raise Exception('Version not found in response')
