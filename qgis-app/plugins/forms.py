@@ -122,16 +122,6 @@ class PluginVersionForm(ModelForm):
             package = self.cleaned_data.get("package")
             try:
                 cleaned_data = validator(package)
-                if (
-                    "experimental" in dict(cleaned_data)
-                    and "experimental" in self.cleaned_data
-                    and dict(cleaned_data)["experimental"]
-                    != self.cleaned_data["experimental"]
-                ):
-                    msg = _(
-                        "The 'experimental' flag in the form does not match the 'experimental' flag in the plugins package metadata.<br />"
-                    )
-                    raise ValidationError(mark_safe("%s" % msg))
                 self.cleaned_data.update(cleaned_data)
             except ValidationError as e:
                 msg = _(
