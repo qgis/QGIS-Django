@@ -6,6 +6,7 @@ from celery.utils.log import get_task_logger
 from preferences import preferences
 from django.conf import settings
 from preferences import preferences
+from plugins.utils import get_version_from_label
 
 
 logger = get_task_logger(__name__)
@@ -28,6 +29,7 @@ def generate_plugins_xml(site=""):
     plugins_url = "{}/plugins/plugins_new.xml".format(site)
 
     versions = preferences.SitePreference.qgis_versions
+    labels = ["latest", "stable", "ltr"]
 
     if versions:
         versions = versions.split(",")
@@ -80,12 +82,17 @@ def generate_plugins_xml(site=""):
     if not os.path.exists(folder_path):
         os.mkdir(folder_path)
 
-    for version in versions:
-        response = requests.get(
-            "{url}?qgis={version}".format(url=plugins_url, version=version)
-        )
+    def fetch_and_save_xml(version_or_label, is_label=False):
+        version = get_version_from_label(version_or_label) if is_label else version_or_label
+        response = requests.get(f"{plugins_url}?qgis={version}")
 
         if response.status_code == 200:
-            file_name = "plugins_{}.xml".format(version)
+            file_name = f"plugins_{version_or_label}.xml"
             with open(os.path.join(folder_path, file_name), "w+") as file:
                 file.write(response.text)
+
+    for version in versions:
+        fetch_and_save_xml(version)
+
+    for label in labels:
+        fetch_and_save_xml(label, is_label=True)
