@@ -74,7 +74,8 @@ class TestPluginTask(TestCase):
         # Given
         mock_response = MagicMock()
         mock_response.status_code = 200
-        mock_response.text = '<some xml content> QGIS Version 34002|Visit https://download.qgis.org to get your copy of version 3.40.2'
+        mock_response.text = '<some xml content>'
+        mock_response.json.return_value = {'latest': {'version': '3.40'}, 'ltr': {'version': '3.40'}}
         mock_get.return_value = mock_response
         preferences.SitePreference.qgis_versions = '3.24,3.25'
 

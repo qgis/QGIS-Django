@@ -72,20 +72,19 @@ def get_version_from_label(param):
         ValueError: If the parameter value is invalid.
         Exception: If the request to the QGIS version service fails or the version is not found.
     """
-    if param.lower() in ['ltr', 'stable']:
-        url = 'https://version.qgis.org/version-ltr.txt'
-    elif param.lower() == 'latest':
-        url = 'https://version.qgis.org/version.txt'
-    else:
-        raise ValueError('Invalid parameter value')
+    url = 'https://version.qgis.org/version.json'
 
     response = requests.get(url)
     if response.status_code != 200:
         raise Exception('Request failed')
 
-    content = response.text
-    match = re.search(r'QGIS Version \d+\|Visit .+ version (\d+\.\d+)', content)
-    if match:
-        return match.group(1)
-    else:
-        raise Exception('Version not found in response')
+    content = response.json()
+    param = param.lower()
+
+    if param == 'stable':
+        param = 'ltr'
+
+    if param in content:
+        version_info = content[param]
+        return version_info['version']
+    return None
