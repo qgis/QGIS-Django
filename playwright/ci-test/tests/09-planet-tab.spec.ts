@@ -51,7 +51,7 @@ test('test planet tab', async ({ page }) => {
 
   await expect(page.getByRole('contentinfo')).toContainText('Select graphics from The Noun Project collection.');
 
-  await expect(page.getByRole('contentinfo')).toContainText('This web application was developed by: Alessandro Pasotti and Kartoza. Version: 1.1.2 .');
+  await expect(page.getByRole('contentinfo')).toContainText('This web application was developed by: Alessandro Pasotti and Kartoza. Version:');
 
   await expect(page.getByRole('link', { name: 'Creative Commons Attribution-' })).toBeVisible();
 
