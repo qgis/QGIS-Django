@@ -91,8 +91,8 @@ def generate_plugins_xml(site=""):
             with open(os.path.join(folder_path, file_name), "w+") as file:
                 file.write(response.text)
 
-    for version in versions:
-        fetch_and_save_xml(version)
-
     for label in labels:
         fetch_and_save_xml(label, is_label=True)
+
+    for version in versions:
+        fetch_and_save_xml(version)
