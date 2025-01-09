@@ -73,8 +73,8 @@ jobs:
           '
       - name: Start Django server
         run: |
-            docker-compose exec -T devweb bash -c "python manage.py loaddata fixtures/*.json"
-            docker-compose exec -T devweb bash -c "nohup python manage.py runserver 0.0.0.0:8080 &"
+            docker compose exec -T devweb bash -c "python manage.py loaddata fixtures/*.json"
+            docker compose exec -T devweb bash -c "nohup python manage.py runserver 0.0.0.0:8081 &"
             # Wait for the server to start
             until curl -s http://localhost:62202; do
               echo "Waiting for Django server to be up..."

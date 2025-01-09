@@ -63,9 +63,11 @@ test('plugins', async ({ page }) => {
 
   await expect(page.getByRole('link', { name: 'Unapproved' })).toBeVisible();
 
-  await expect(page.getByRole('link', { name: 'Feedback received' })).toBeVisible();
+  await expect(page.getByRole('link', { name: 'Reviewed Plugins (Resolved)' })).toBeVisible();
 
-  await expect(page.getByRole('link', { name: 'Feedback pending' })).toBeVisible();
+  await expect(page.getByRole('link', { name: 'Reviewed Plugins (Pending)' })).toBeVisible();
+
+  await expect(page.getByRole('link', { name: 'Awaiting review' })).toBeVisible();
 
   await expect(page.getByRole('link', { name: 'Deprecated' })).toBeVisible();
 
