@@ -213,28 +213,23 @@ def version_feedback_notify(version,  user):
             % (plugin, )
         )
 
-def version_feedback_resolved_notify(version,  user):
+def version_feedback_resolved_notify(version,  user, all_tasks):
     """
     Sends a message when a version feedback is resolved.
     """
     plugin = version.plugin
-    
-    recipients = [
-        u.email
-        for u in User.objects.filter(is_staff=True, email__isnull=False).exclude(
-            email=""
-        )
-    ]
 
-    if recipients:
+    reviewers_emails = all_tasks.values_list('reviewer__email', flat=True)
+    reviewers_emails = list(set(reviewers_emails))
+
+    if reviewers_emails:
         domain = Site.objects.get_current().domain
         mail_from = settings.DEFAULT_FROM_EMAIL
 
         logging.debug(
             "Sending email feedback resolved notification for %s plugin version %s, recipients:  %s"
-            % (plugin, version.version, recipients)
+            % (plugin, version.version, reviewers_emails)
         )
-        print('sending email')
         send_mail_wrapper(
             _("Plugin %s feedback resolved notification.") % (plugin, ),
             _("\r\nPlugin %s feedback resolved by %s.\r\nLink: http://%s%sfeedback/\r\n")
@@ -245,7 +240,7 @@ def version_feedback_resolved_notify(version,  user):
                 version.get_absolute_url(),
             ),
             mail_from,
-            recipients,
+            reviewers_emails,
             fail_silently=True,
         )
     else:
@@ -1513,14 +1508,12 @@ def version_feedback_update(request, package_name, version):
         feedback = PluginVersionFeedback.objects.filter(
             version=version, pk=task_id).first()
         feedback.is_completed = True
-        feedback.save()
-    
-    all_tasks_count = PluginVersionFeedback.objects.filter(
-        version=version).count()
-    if all_tasks_count == len(completed_tasks):
-        print('tasks completed')
-        version_feedback_resolved_notify(version, request.user)
-    
+        feedback.save()    
+    all_tasks = PluginVersionFeedback.objects.filter(
+        version=version)
+    if all_tasks.count() == len(completed_tasks):
+        version_feedback_resolved_notify(version, request.user, all_tasks)
+
     return JsonResponse({"success": True}, status=201)
 
 
