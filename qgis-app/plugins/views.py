@@ -232,7 +232,7 @@ def version_feedback_resolved_notify(version,  user, all_tasks):
         )
         send_mail_wrapper(
             _("Plugin %s feedback resolved notification.") % (plugin, ),
-            _("\r\nPlugin %s feedback resolved by %s.\r\nLink: http://%s%sfeedback/\r\n")
+            _("\r\nPlugin %s feedback resolved by %s.\r\nLink: http://%s%sfeedback/\r\n. The plunin is now ready for review again.")
             % (
                 plugin.name,
                 user,
