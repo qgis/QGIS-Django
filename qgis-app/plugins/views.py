@@ -213,6 +213,46 @@ def version_feedback_notify(version,  user):
             % (plugin, )
         )
 
+def version_feedback_resolved_notify(version,  user):
+    """
+    Sends a message when a version feedback is resolved.
+    """
+    plugin = version.plugin
+    
+    recipients = [
+        u.email
+        for u in User.objects.filter(is_staff=True, email__isnull=False).exclude(
+            email=""
+        )
+    ]
+
+    if recipients:
+        domain = Site.objects.get_current().domain
+        mail_from = settings.DEFAULT_FROM_EMAIL
+
+        logging.debug(
+            "Sending email feedback resolved notification for %s plugin version %s, recipients:  %s"
+            % (plugin, version.version, recipients)
+        )
+        print('sending email')
+        send_mail_wrapper(
+            _("Plugin %s feedback resolved notification.") % (plugin, ),
+            _("\r\nPlugin %s feedback resolved by %s.\r\nLink: http://%s%sfeedback/\r\n")
+            % (
+                plugin.name,
+                user,
+                domain,
+                version.get_absolute_url(),
+            ),
+            mail_from,
+            recipients,
+            fail_silently=True,
+        )
+    else:
+        logging.warning(
+            "No recipients found for %s plugin feedback resolved notification"
+            % (plugin, )
+        )
 
 def user_trust_notify(user):
     """
@@ -1474,6 +1514,13 @@ def version_feedback_update(request, package_name, version):
             version=version, pk=task_id).first()
         feedback.is_completed = True
         feedback.save()
+    
+    all_tasks_count = PluginVersionFeedback.objects.filter(
+        version=version).count()
+    if all_tasks_count == len(completed_tasks):
+        print('tasks completed')
+        version_feedback_resolved_notify(version, request.user)
+    
     return JsonResponse({"success": True}, status=201)
 
 
