@@ -67,7 +67,7 @@ class TestValidatorMetadataPlugins(TestCase):
                 charset="utf8",
             ),
         )
-    
+
     def test_invalid_metadata_multiline_attribute(self):
         """
         The invalid_metadata_multiline.zip contains metadata file with
