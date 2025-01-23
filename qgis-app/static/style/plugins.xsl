@@ -157,6 +157,12 @@ Minimum QGIS Version: <xsl:value-of select="qgis_minimum_version" />
 Maximum QGIS Version: <xsl:value-of select="qgis_maximum_version" />
 </div>
 <div class="author">
+Minimum Qt version: <xsl:value-of select="min_qt_version" />
+</div>
+<div class="author">
+Maximum Qt version: <xsl:value-of select="max_qt_version" />
+</div>
+<div class="author">
 Home page:
 <xsl:element name="a">
  <xsl:attribute name="href">

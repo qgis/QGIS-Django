@@ -46,6 +46,8 @@ PLUGIN_OPTIONAL_METADATA = getattr(
         "experimental",
         "external_deps",
         "server",
+        "minQtVersion",
+        "maxQtVersion",
     ),
 )
 PLUGIN_BOOLEAN_METADATA = getattr(

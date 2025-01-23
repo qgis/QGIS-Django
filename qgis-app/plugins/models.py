@@ -849,6 +849,17 @@ class PluginVersion(models.Model):
         blank=False,
         null=True,
     )
+
+    min_qt_version = models.IntegerField(
+        _("Minimum Qt version"),
+        default=5
+    )
+
+    max_qt_version = models.IntegerField(
+        _("Maximum Qt version"),
+        default=5
+    )
+
     is_from_token = models.BooleanField(
         _("Is uploaded using token"),
         default=False
