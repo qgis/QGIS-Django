@@ -264,8 +264,8 @@ select#languages option {
     padding: 0;
     width: 30px;
 }
-.footer #twitter {
-    background: url("images/footer-twitter.png") no-repeat scroll 0 0 transparent;
+.footer #mastodon {
+    background: url("images/footer-mastodon.svg") no-repeat scroll 0 0 transparent;
 }
 .footer #facebook {
     background: url("images/footer-facebook.png") no-repeat scroll 0 0 transparent;

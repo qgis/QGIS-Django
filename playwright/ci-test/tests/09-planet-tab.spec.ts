@@ -41,7 +41,7 @@ test('test planet tab', async ({ page }) => {
 
   await expect(page.locator('h3')).toContainText('Sustaining Members');
 
-  await expect(page.locator('#twitter').getByRole('link')).toBeVisible();
+  await expect(page.locator('#mastodon').getByRole('link')).toBeVisible();
 
   await expect(page.locator('#facebook').getByRole('link')).toBeVisible();
 
