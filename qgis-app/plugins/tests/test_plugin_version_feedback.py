@@ -8,7 +8,7 @@ from django.urls import reverse
 from freezegun import freeze_time
 
 from plugins.models import Plugin, PluginVersion, PluginVersionFeedback
-from plugins.views import version_feedback_notify
+from plugins.views import version_feedback_notify, version_feedback_resolved_notify
 from django.conf import settings
 from django.utils.dateformat import format
 import json
@@ -138,6 +138,30 @@ class TestPluginFeedbackCompletedList(SetupMixin, TestCase):
         self.client.force_login(user=self.creator)
         response = self.client.get(self.url)
         self.assertEqual(response.status_code, 404)
+
+    def test_version_feedback_resolved_notify(self):
+        self.creator.email = 'email@example.com'
+
+        # add feedback for plugin 2
+        PluginVersionFeedback.objects.create(
+            version=self.version_1,
+            reviewer=self.staff,
+            task="test comment in a feedback for plugin 2."
+        )
+        all_tasks = PluginVersionFeedback.objects.filter(version=self.version_1)
+
+        with self.assertLogs(level='DEBUG'):
+            version_feedback_resolved_notify(self.version_1, self.creator, all_tasks)
+        self.assertEqual(
+            mail.outbox[0].recipients(),
+            ['staff@staff.it']
+        )
+
+        # Should use the new email
+        self.assertEqual(
+            mail.outbox[0].from_email,
+            settings.EMAIL_HOST_USER
+        )
 
     def test_staff_should_see_plugin_feedback_completed(self):
         self.client.force_login(user=self.staff)
