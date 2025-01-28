@@ -99,7 +99,7 @@ test('plugins', async ({ page }) => {
 
   await expect(page.getByRole('contentinfo')).toBeVisible();
 
-  await expect(page.locator('#twitter').getByRole('link')).toBeVisible();
+  await expect(page.locator('#mastodon').getByRole('link')).toBeVisible();
 
   await expect(page.locator('#facebook').getByRole('link')).toBeVisible();
 
