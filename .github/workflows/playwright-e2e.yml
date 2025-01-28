@@ -1,0 +1,75 @@
+name: 🧪 Playwright End To End (e2e) Tests Workflow
+
+on:
+  push:
+    branches: [ master ]
+  pull_request:
+    branches: [ master ]  
+
+  # Allows you to run this workflow manually from the Actions tab
+  workflow_dispatch:
+
+jobs:
+  e2e-tests:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: dockerize
+    steps:
+      - name: 🛒 Checkout
+        uses: actions/checkout@v4
+      - uses: actions/setup-node@v3
+        with:
+          node-version: 20
+
+      - name: Generate the .env file
+        run: cp .env.template .env
+
+      - name: Run the containers
+        run: docker compose up -d db devweb
+      
+
+      - name: Wait for the containers to start
+        run: sleep 15 
+
+      - name: Start Django server
+        run: |
+            docker compose exec -T devweb bash -c '
+              set -e  # Exit immediately if any command fails
+              python manage.py makemigrations --merge --noinput &&
+              python manage.py makemigrations feedjack &&
+              python manage.py makemigrations &&
+              python manage.py migrate &&
+              python manage.py loaddata fixtures/*.json
+              nohup python manage.py runserver 0.0.0.0:8081 &
+            '
+            # Wait for the server to start
+            until curl -s http://localhost:62202; do
+              echo "Waiting for Django server to be up..."
+              sleep 5
+            done
+      
+      - name: Test django endpoint
+        run: |
+          curl -v http://0.0.0.0:62202
+          if [ $? -ne 0 ]; then
+            echo "Curl command failed"
+            exit 1
+          fi
+  
+      - name: Install playwright dependencies
+        working-directory: playwright/ci-test
+        run: |
+          npm install
+          npm ci
+          npx playwright install --with-deps
+      - name: Run Playwright tests
+        working-directory: playwright/ci-test
+        run: npx playwright test
+      - uses: actions/upload-artifact@v3
+        if: always()
+        with:
+          name: playwright-report
+          path: playwright/ci-test/playwright-report/
+          retention-days: 30
+        
