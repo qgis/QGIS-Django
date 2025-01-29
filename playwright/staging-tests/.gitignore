@@ -1,0 +1,11 @@
+node_modules/
+/test-results/
+/playwright-report/
+/blob-report/
+/playwright/.cache/
+*auth.json
+.env
+.direnv/
+/test-results/
+__pycache__
+*package-lock.json
