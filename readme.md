@@ -1,4 +1,11 @@
-# Introduction
+# OLD Repository of QGIS Plugins
+**This repository will no longer be maintained. Please refer to the links provided for the QGIS Plugins/Hub/Planet Websites:**
+
+- [QGIS Plugins](https://plugins.qgis.org): https://github.com/qgis/QGIS-Plugins-Website
+- [QGIS Hub](https://hub.qgis.org): https://github.com/qgis/QGIS-Hub-Website
+- [QGIS Planet](https://planet.qgis.org): https://github.com/qgis/QGIS-Planet-Website
+
+## Introduction
 
 ![image](https://user-images.githubusercontent.com/178003/91536115-2356ec80-e90c-11ea-971b-f23ac72d3aea.png)
 
