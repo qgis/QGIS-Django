@@ -96,6 +96,28 @@ def _check_required_metadata(metadata):
             )
         )
 
+def _check_multiline_metadata(metadata):
+    """
+    Only the fields 'description', 'about' and 'changelog' can be multiline
+    If other fields are multiline, raise ValidationError
+    """
+    allowed_multiline_fields = ['description', 'about', 'changelog']
+    multiline_fields = [
+        field for field in [item[0] for item in metadata]
+        if field not in ['description', 'about', 'changelog'] and '\n' in dict(metadata).get(field, '')
+    ]
+    if len(multiline_fields) > 0:
+        multiline_fields_str = ', '.join(multiline_fields)
+        allowed_multiline_fields_str = ', '.join(allowed_multiline_fields)
+        raise ValidationError(
+            _(
+            f'The following metadata fields must be single-line: <code>{multiline_fields_str}</code>. '
+            'Please ensure these fields contain single-line values only. Note that multiline values can also occur if an allowed '
+            f'multiline field (<code>{allowed_multiline_fields_str}</code>) is commented out but still contains a multiline value.'
+            )
+        )
+
+
 def _check_url_link(urls):
     """
     Checks if all the url link is valid.
@@ -293,6 +315,7 @@ def validator(package, is_new: bool = False):
         metadata.append(("metadata_source", "__init__.py"))
 
     _check_required_metadata(metadata)
+    _check_multiline_metadata(metadata)
 
     # Process Icon
     try:
@@ -375,7 +398,6 @@ def validator(package, is_new: bool = False):
     if "author" in dict(metadata):
         if not re.match(r"^[^/]+$", dict(metadata)["author"]):
             raise ValidationError(_("Author name cannot contain slashes."))
-
     # strip and check
     checked_metadata = []
     for k, v in metadata:

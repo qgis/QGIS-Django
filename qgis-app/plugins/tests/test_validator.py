@@ -18,8 +18,10 @@ class TestValidatorMetadataPlugins(TestCase):
         )
         web_not_exist_plugins = os.path.join(TESTFILE_DIR, "web_not_exist.zip")
         valid_plugins = os.path.join(TESTFILE_DIR, "valid_metadata_link.zip")
+        invalid_metadata_multiline = os.path.join(TESTFILE_DIR, "invalid_metadata_multiline.zip_")
         self.valid_metadata_link = open(valid_plugins, "rb")
         self.invalid_metadata_link = open(invalid_plugins, "rb")
+        self.invalid_metadata_multiline = open(invalid_metadata_multiline, "rb")
         self.web_not_exist = open(web_not_exist_plugins, "rb")
         self.invalid_url_scheme = open(invalid_url_scheme_plugins, "rb")
 
@@ -58,6 +60,27 @@ class TestValidatorMetadataPlugins(TestCase):
             validator,
             InMemoryUploadedFile(
                 self.invalid_metadata_link,
+                field_name="tempfile",
+                name="testfile.zip",
+                content_type="application/zip",
+                size=39889,
+                charset="utf8",
+            ),
+        )
+
+    def test_invalid_metadata_multiline_attribute(self):
+        """
+        The invalid_metadata_multiline.zip contains metadata file with
+        a multiline attribute that is commented but still has value.
+        The parser will append the value of the attribute to the previous 
+        one and make it invalid.
+        """
+
+        self.assertRaises(
+            ValidationError,
+            validator,
+            InMemoryUploadedFile(
+                self.invalid_metadata_multiline,
                 field_name="tempfile",
                 name="testfile.zip",
                 content_type="application/zip",
