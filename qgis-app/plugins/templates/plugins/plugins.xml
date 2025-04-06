@@ -26,5 +26,7 @@
         <rating_votes>{{version.plugin.rating_votes}}</rating_votes>
         <external_dependencies>{{version.plugin.external_deps }}</external_dependencies>
         <server>{% if version.plugin.server %}True{% else%}False{% endif %}</server>
+        <min_qt_version>{{ version.min_qt_version }}</min_qt_version>
+        <max_qt_version>{{ version.max_qt_version }}</max_qt_version>
     </pyqgis_plugin>{% endfor %}
 </plugins>
